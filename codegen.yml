@@ -1,5 +1,10 @@
 overwrite: true
-schema: ${REACT_APP_GRAPHQL_ENDPOINT}
+schema:
+  - apollo-engine:
+      engine:
+        apiKey: ${REACT_APP_APOLLO_ENGINE_KEY_ID}
+      graph: ${REACT_APP_GRAPH_ID}
+      variant: ${REACT_APP_GRAPH_VARIANT}
 documents: 'src/**/*.graphql'
 generates:
   src/graphql/index.ts:

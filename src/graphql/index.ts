@@ -17,6 +17,225 @@ export type Scalars = {
 
 
 
+export type CreateGroupInput = {
+  name: Scalars['String'];
+  description: Scalars['String'];
+};
+
+export type CreateGroupMembershipInput = {
+  groupId: Scalars['ID'];
+  memberId: Scalars['ID'];
+  role: MembershipRole;
+  status: MembershipStatus;
+};
+
+export type DeleteMembershipInput = {
+  membershipId: Scalars['ID'];
+};
+
+export type DisableGroupInput = {
+  groupId: Scalars['ID'];
+};
+
+export type Group = {
+  __typename?: 'Group';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  active: Scalars['Boolean'];
+  description: Scalars['String'];
+  memberships: Array<GroupMembership>;
+};
+
+export type GroupExistsInput = {
+  name: Scalars['String'];
+};
+
+export type GroupInput = {
+  groupId: Scalars['ID'];
+};
+
+export type GroupMembership = {
+  __typename?: 'GroupMembership';
+  id: Scalars['ID'];
+  group: Group;
+  member: User;
+  active: Scalars['Boolean'];
+  role: MembershipRole;
+  status: MembershipStatus;
+  orders: Array<Order>;
+};
+
+export type GroupMembersInput = {
+  groupId: Scalars['ID'];
+};
+
+export type MembershipRequestsInput = {
+  groupId: Scalars['ID'];
+};
+
+export enum MembershipRole {
+  Member = 'MEMBER',
+  Trader = 'TRADER',
+  Admin = 'ADMIN'
+}
+
+export enum MembershipStatus {
+  Approved = 'APPROVED',
+  Denied = 'DENIED',
+  Pending = 'PENDING'
+}
+
+export type MyMembershipsInput = {
+  roles?: Maybe<Array<MembershipRole>>;
+  statuses?: Maybe<Array<MembershipStatus>>;
+};
+
+export type RenameGroupInput = {
+  groupId: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+export type RequestGroupAccessInput = {
+  groupId: Scalars['ID'];
+};
+
+export type UpdateGroupDescriptionInput = {
+  groupId: Scalars['ID'];
+  description: Scalars['String'];
+};
+
+export type UpdateMembershipActiveInput = {
+  membershipId: Scalars['ID'];
+  active: Scalars['Boolean'];
+};
+
+export type UpdateMembershipRoleInput = {
+  membershipId: Scalars['ID'];
+  role: MembershipRole;
+};
+
+export type UpdateMembershipStatusInput = {
+  membershipId: Scalars['ID'];
+  status: MembershipStatus;
+};
+
+export type BinanceCurrency = {
+  __typename?: 'BinanceCurrency';
+  id: Scalars['ID'];
+  symbol: Scalars['String'];
+  lastPrice?: Maybe<Scalars['Float']>;
+  openPrice?: Maybe<Scalars['Float']>;
+  highPrice?: Maybe<Scalars['Float']>;
+  lowPrice?: Maybe<Scalars['Float']>;
+  priceChange?: Maybe<Scalars['Float']>;
+  priceChangePercent?: Maybe<Scalars['Float']>;
+};
+
+export type BitmexCurrency = {
+  __typename?: 'BitmexCurrency';
+  id: Scalars['ID'];
+  symbol: Scalars['String'];
+  underlying: Scalars['String'];
+  active: Scalars['Boolean'];
+  fractionalDigits?: Maybe<Scalars['Int']>;
+  lastPrice?: Maybe<Scalars['Float']>;
+  markPrice?: Maybe<Scalars['Float']>;
+  tickSize?: Maybe<Scalars['Float']>;
+};
+
+export type CancelOrderInput = {
+  orderId: Scalars['String'];
+};
+
+export type CreateOrderSetInput = {
+  groupId: Scalars['ID'];
+  description?: Maybe<Scalars['String']>;
+  side: OrderSide;
+  orderType: OrderType;
+  price?: Maybe<Scalars['Float']>;
+  stopPrice?: Maybe<Scalars['Float']>;
+  percent?: Maybe<Scalars['Float']>;
+};
+
+
+export type GroupOrderSetsInput = {
+  groupId: Scalars['ID'];
+};
+
+export type Order = {
+  __typename?: 'Order';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  membership: GroupMembership;
+  orderSet: OrderSet;
+  side?: Maybe<OrderSide>;
+  orderType?: Maybe<OrderType>;
+  price?: Maybe<Scalars['Float']>;
+  quantity?: Maybe<Scalars['Float']>;
+  stopPrice?: Maybe<Scalars['Float']>;
+  symbol: Scalars['String'];
+  lastTimestamp: Scalars['DateTime'];
+};
+
+export type OrderSet = {
+  __typename?: 'OrderSet';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  description: Scalars['String'];
+  orders: Array<Order>;
+  orderSide?: Maybe<OrderSide>;
+  orderType?: Maybe<OrderType>;
+  percent: Scalars['Float'];
+  price?: Maybe<Scalars['Float']>;
+  stopPrice?: Maybe<Scalars['Float']>;
+};
+
+export type OrderSetInput = {
+  id: Scalars['ID'];
+};
+
+export enum OrderSide {
+  Buy = 'BUY',
+  Sell = 'SELL'
+}
+
+export enum OrderType {
+  Market = 'MARKET',
+  Limit = 'LIMIT'
+}
+
+export type UpdateOrderSetInput = {
+  orderSetId: Scalars['ID'];
+  description: Scalars['String'];
+  price?: Maybe<Scalars['Float']>;
+  stopPrice?: Maybe<Scalars['Float']>;
+};
+
+export type AuthPayload = {
+  __typename?: 'AuthPayload';
+  token: Scalars['String'];
+};
+
+export type LoginUserInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type SignupUserInput = {
+  email: Scalars['String'];
+  username: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  email: Scalars['String'];
+  username: Scalars['String'];
+  admin: Scalars['Boolean'];
+  memberships: Array<GroupMembership>;
+};
+
 export type Query = {
   __typename?: 'Query';
   allGroups: Array<Group>;
@@ -65,139 +284,6 @@ export type QueryOrderSetArgs = {
 
 export type QueryGroupOrderSetsArgs = {
   input: GroupOrderSetsInput;
-};
-
-export type Group = {
-  __typename?: 'Group';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  active: Scalars['Boolean'];
-  description: Scalars['String'];
-  memberships: Array<GroupMembership>;
-};
-
-export type GroupMembership = {
-  __typename?: 'GroupMembership';
-  id: Scalars['ID'];
-  group: Group;
-  member: User;
-  active: Scalars['Boolean'];
-  role: MembershipRole;
-  status: MembershipStatus;
-  orders: Array<Order>;
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  email: Scalars['String'];
-  username: Scalars['String'];
-  admin: Scalars['Boolean'];
-  memberships: Array<GroupMembership>;
-};
-
-export enum MembershipRole {
-  Member = 'MEMBER',
-  Trader = 'TRADER',
-  Admin = 'ADMIN'
-}
-
-export enum MembershipStatus {
-  Approved = 'APPROVED',
-  Denied = 'DENIED',
-  Pending = 'PENDING'
-}
-
-export type Order = {
-  __typename?: 'Order';
-  id: Scalars['ID'];
-  createdAt: Scalars['DateTime'];
-  membership: GroupMembership;
-  orderSet: OrderSet;
-  side?: Maybe<OrderSide>;
-  orderType?: Maybe<OrderType>;
-  price?: Maybe<Scalars['Float']>;
-  quantity?: Maybe<Scalars['Float']>;
-  stopPrice?: Maybe<Scalars['Float']>;
-  symbol: Scalars['String'];
-  lastTimestamp: Scalars['DateTime'];
-};
-
-
-export type OrderSet = {
-  __typename?: 'OrderSet';
-  id: Scalars['ID'];
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  orders: Array<Order>;
-  orderSide?: Maybe<OrderSide>;
-  orderType?: Maybe<OrderType>;
-  percent: Scalars['Float'];
-  price?: Maybe<Scalars['Float']>;
-  stopPrice?: Maybe<Scalars['Float']>;
-};
-
-export enum OrderSide {
-  Buy = 'BUY',
-  Sell = 'SELL'
-}
-
-export enum OrderType {
-  Market = 'MARKET',
-  Limit = 'LIMIT'
-}
-
-export type GroupInput = {
-  groupId: Scalars['ID'];
-};
-
-export type GroupExistsInput = {
-  name: Scalars['String'];
-};
-
-export type MyMembershipsInput = {
-  roles?: Maybe<Array<MembershipRole>>;
-  statuses?: Maybe<Array<MembershipStatus>>;
-};
-
-export type GroupMembersInput = {
-  groupId: Scalars['ID'];
-};
-
-export type MembershipRequestsInput = {
-  groupId: Scalars['ID'];
-};
-
-export type OrderSetInput = {
-  id: Scalars['ID'];
-};
-
-export type GroupOrderSetsInput = {
-  groupId: Scalars['ID'];
-};
-
-export type BinanceCurrency = {
-  __typename?: 'BinanceCurrency';
-  id: Scalars['ID'];
-  symbol: Scalars['String'];
-  lastPrice?: Maybe<Scalars['Float']>;
-  openPrice?: Maybe<Scalars['Float']>;
-  highPrice?: Maybe<Scalars['Float']>;
-  lowPrice?: Maybe<Scalars['Float']>;
-  priceChange?: Maybe<Scalars['Float']>;
-  priceChangePercent?: Maybe<Scalars['Float']>;
-};
-
-export type BitmexCurrency = {
-  __typename?: 'BitmexCurrency';
-  id: Scalars['ID'];
-  symbol: Scalars['String'];
-  underlying: Scalars['String'];
-  active: Scalars['Boolean'];
-  fractionalDigits?: Maybe<Scalars['Int']>;
-  lastPrice?: Maybe<Scalars['Float']>;
-  markPrice?: Maybe<Scalars['Float']>;
-  tickSize?: Maybe<Scalars['Float']>;
 };
 
 export type Mutation = {
@@ -292,92 +378,6 @@ export type MutationLoginUserArgs = {
 
 export type MutationSignupUserArgs = {
   input: SignupUserInput;
-};
-
-export type CreateGroupInput = {
-  name: Scalars['String'];
-  description: Scalars['String'];
-};
-
-export type RenameGroupInput = {
-  groupId: Scalars['ID'];
-  name: Scalars['String'];
-};
-
-export type UpdateGroupDescriptionInput = {
-  groupId: Scalars['ID'];
-  description: Scalars['String'];
-};
-
-export type DisableGroupInput = {
-  groupId: Scalars['ID'];
-};
-
-export type RequestGroupAccessInput = {
-  groupId: Scalars['ID'];
-};
-
-export type CreateGroupMembershipInput = {
-  groupId: Scalars['ID'];
-  memberId: Scalars['ID'];
-  role: MembershipRole;
-  status: MembershipStatus;
-};
-
-export type UpdateMembershipRoleInput = {
-  membershipId: Scalars['ID'];
-  role: MembershipRole;
-};
-
-export type UpdateMembershipStatusInput = {
-  membershipId: Scalars['ID'];
-  status: MembershipStatus;
-};
-
-export type UpdateMembershipActiveInput = {
-  membershipId: Scalars['ID'];
-  active: Scalars['Boolean'];
-};
-
-export type DeleteMembershipInput = {
-  membershipId: Scalars['ID'];
-};
-
-export type CreateOrderSetInput = {
-  groupId: Scalars['ID'];
-  description?: Maybe<Scalars['String']>;
-  side: OrderSide;
-  orderType: OrderType;
-  price?: Maybe<Scalars['Float']>;
-  stopPrice?: Maybe<Scalars['Float']>;
-  percent?: Maybe<Scalars['Float']>;
-};
-
-export type UpdateOrderSetInput = {
-  orderSetId: Scalars['ID'];
-  description: Scalars['String'];
-  price?: Maybe<Scalars['Float']>;
-  stopPrice?: Maybe<Scalars['Float']>;
-};
-
-export type CancelOrderInput = {
-  orderId: Scalars['String'];
-};
-
-export type LoginUserInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type AuthPayload = {
-  __typename?: 'AuthPayload';
-  token: Scalars['String'];
-};
-
-export type SignupUserInput = {
-  email: Scalars['String'];
-  username: Scalars['String'];
-  password: Scalars['String'];
 };
 
 
