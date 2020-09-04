@@ -91,6 +91,7 @@
     "@graphql-codegen/typescript": "^1.17.9",
     "@graphql-codegen/typescript-operations": "^1.17.8",
     "@graphql-codegen/typescript-react-apollo": "^2.0.6",
+    "@types/react-helmet": "^6.1.0",
     "babel-plugin-import": "^1.13.0",
     "customize-cra": "^0.9.1",
     "eslint-config-airbnb": "^17.1.1",

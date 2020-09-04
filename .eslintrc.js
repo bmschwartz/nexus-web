@@ -4,7 +4,7 @@ module.exports = {
     'react/jsx-filename-extension': [
       1,
       {
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.tsx'],
       },
     ],
     'no-useless-escape': 'off',
