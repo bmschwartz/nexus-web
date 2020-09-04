@@ -6,12 +6,15 @@ import './global.scss' // app & third-party component styles
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { createHashHistory } from 'history'
+import * as dotenv from 'dotenv'
 import { createStore, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
+import { ApolloProvider } from '@apollo/client'
 // import { logger } from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
 import { routerMiddleware } from 'connected-react-router'
 
+import { createClient } from 'apollo'
 import reducers from './redux/reducers'
 import sagas from './redux/sagas'
 import Localization from './localization'
@@ -21,11 +24,16 @@ import * as serviceWorker from './serviceWorker'
 // mocking api
 import 'services/axios/fakeApi'
 
+// load env
+dotenv.config()
+
 // middlewared
 const history = createHashHistory()
 const sagaMiddleware = createSagaMiddleware()
 const routeMiddleware = routerMiddleware(history)
 const middlewares = [sagaMiddleware, routeMiddleware]
+const client = createClient()
+
 // if (process.env.NODE_ENV === 'development') {
 //   middlewares.push(logger)
 // }
@@ -33,11 +41,13 @@ const store = createStore(reducers(history), compose(applyMiddleware(...middlewa
 sagaMiddleware.run(sagas)
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Localization>
-      <Router history={history} />
-    </Localization>
-  </Provider>,
+  <ApolloProvider client={client}>
+    <Provider store={store}>
+      <Localization>
+        <Router history={history} />
+      </Localization>
+    </Provider>
+  </ApolloProvider>,
   document.getElementById('root'),
 )
 

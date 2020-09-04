@@ -1,0 +1,6 @@
+fragment GroupDetails on Group {
+  id
+  name
+  description
+  active
+}

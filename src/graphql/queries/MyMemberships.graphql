@@ -1,0 +1,11 @@
+query MyMemberships($input: MyMembershipsInput!) {
+  myMemberships(input: $input) {
+    id
+    active
+    role
+    status
+    group {
+      ...GroupDetails
+    }
+  }
+}
