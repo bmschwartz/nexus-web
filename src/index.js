@@ -5,25 +5,28 @@ import './global.scss' // app & third-party component styles
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createHashHistory } from 'history'
+import { createBrowserHistory } from 'history'
 import * as dotenv from 'dotenv'
+import { ApolloProvider } from '@apollo/client'
 import { createStore, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 // import { logger } from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
 import { routerMiddleware } from 'connected-react-router'
 
+import Router from './router'
 import reducers from './redux/reducers'
 import sagas from './redux/sagas'
 import Localization from './localization'
-import Router from './router'
 import * as serviceWorker from './serviceWorker'
+/* eslint-disable-next-line */
+import { client } from './services/apollo/client'
 
 // load env
 dotenv.config()
 
 // middlewared
-const history = createHashHistory()
+const history = createBrowserHistory()
 const sagaMiddleware = createSagaMiddleware()
 const routeMiddleware = routerMiddleware(history)
 const middlewares = [sagaMiddleware, routeMiddleware]
@@ -35,11 +38,13 @@ const store = createStore(reducers(history), compose(applyMiddleware(...middlewa
 sagaMiddleware.run(sagas)
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Localization>
-      <Router history={history} />
-    </Localization>
-  </Provider>,
+  <ApolloProvider client={client}>
+    <Provider store={store}>
+      <Localization>
+        <Router history={history} />
+      </Localization>
+    </Provider>
+  </ApolloProvider>,
   document.getElementById('root'),
 )
 

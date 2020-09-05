@@ -35,6 +35,22 @@ export default async function getMenuData() {
     },
     {
       category: true,
+      title: 'Groups',
+    },
+    {
+      title: 'Groups',
+      key: 'groups',
+      icon: 'fe fe-menu',
+      children: [
+        {
+          title: 'Dashboard',
+          key: 'groupsDashboard',
+          url: '/groups',
+        },
+      ],
+    },
+    {
+      category: true,
       title: 'Apps & Pages',
     },
     {

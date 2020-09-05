@@ -33,7 +33,7 @@ const Login = ({ dispatch, user, logo }) => {
           <br />
           An excellent front-end solution for web applications built upon Ant Design.
           <br />
-          Credentials for testing purposes - <strong>demo@sellpixels.com</strong> /{' '}
+          Credentials for testing purposes - <strong>ben@example.com</strong> /{' '}
           <strong>demo123</strong>
         </p>
       </div>
@@ -47,7 +47,7 @@ const Login = ({ dispatch, user, logo }) => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           className="mb-4"
-          initialValues={{ email: '', password: 'demo123' }}
+          initialValues={{ email: 'ben@example.com', password: 'P@ssword123' }}
         >
           <Form.Item
             name="email"
