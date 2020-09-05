@@ -7,7 +7,10 @@ export interface GroupTableItem {
   id: number
   name: string
   active: boolean
-  isMember: boolean
+  isMember?: boolean
+  activeMembership?: boolean
+  memberRole?: MembershipRole
+  memberStatus?: MembershipStatus
 }
 
 interface Badge {
@@ -19,18 +22,53 @@ export const createGroupTableData = (
   groups: Group[],
   memberships: Membership[],
 ): GroupTableItem[] => {
-  const groupsMap = _.keyBy(groups, 'id')
-  console.log(groupsMap)
-  const membershipGroupIds = memberships.map(membership => membership.group.id)
-  return groups.map(({ id: groupId, name, active }) => ({
-    id: groupId,
-    name,
-    active,
-    isMember: membershipGroupIds.includes(groupId),
-    status: '',
-  }))
+  let groupMembershipMap = {}
+
+  _.forEach(memberships, membership => {
+    const {
+      group: { id: groupId },
+    } = membership
+
+    groupMembershipMap = Object.assign(groupMembershipMap, {
+      [groupId]: {
+        isMember: true,
+        memberRole: membership.role,
+        memberStatus: membership.status,
+        activeMembership: membership.active,
+      },
+    })
+  })
+
+  const groupTableItems: GroupTableItem[] = groups.map((group: Group) => {
+    const membership = groupMembershipMap[group.id]
+
+    return {
+      ...group,
+      ...membership,
+    }
+  })
+  console.log(groupTableItems)
+  return groupTableItems
 }
 
+export const badgeForIsMember = (isMember: boolean, record: GroupTableItem) => {
+  const badge: Badge = {
+    style: '',
+    text: '',
+  }
+
+  if (isMember) {
+    badge.style = record.activeMembership ? 'badge-success' : 'badge-warning'
+  } else {
+    badge.style = 'badge-danger'
+  }
+
+  return (
+    <span className={`font-size-12 badge ${badge.style}`}>
+      <i className="fa fa-check-circle" />
+    </span>
+  )
+}
 export const badgeForIsActiveGroup = (active: boolean) => {
   return (
     <span
@@ -41,7 +79,8 @@ export const badgeForIsActiveGroup = (active: boolean) => {
   )
 }
 
-export const badgeForRole = (role: MembershipRole) => {
+export const badgeForRole = ({ memberRole: role }: GroupTableItem) => {
+  console.log(role)
   const badge: Badge = {
     style: '',
     text: '',
@@ -66,11 +105,12 @@ export const badgeForRole = (role: MembershipRole) => {
   return <span className={`font-size-12 badge ${badge.style}`}>{badge.text}</span>
 }
 
-export const badgeForStatus = (status: MembershipStatus) => {
+export const badgeForStatus = ({ memberStatus: status }: GroupTableItem) => {
   const badge: Badge = {
     style: '',
     text: '',
   }
+  console.log(status)
   switch (status) {
     case MembershipStatus.Approved:
       badge.style = 'badge-success'

@@ -6,13 +6,17 @@ import { SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface'
 
 import { Group } from 'types/group'
 import { Membership, MembershipStatus, MembershipRole } from 'types/membership'
+
+/* eslint-disable */
 import {
   GroupTableItem,
   createGroupTableData,
   badgeForStatus,
   badgeForIsActiveGroup,
   badgeForRole,
+  badgeForIsMember,
 } from './utils'
+/* eslint-enable */
 
 interface GroupTableProps {
   groups: Group[]
@@ -21,18 +25,10 @@ interface GroupTableProps {
 
 const columns = [
   {
-    title: 'Member',
-    dataIndex: 'isMember',
-    key: 'isMember',
-    render: (isMember: boolean) => (
-      <span
-        className={
-          isMember ? 'font-size-12 badge badge-success' : 'font-size-12 badge badge-default'
-        }
-      >
-        {isMember ? <i className="fa fa-check-circle" /> : ''}
-      </span>
-    ),
+    title: 'Active',
+    dataIndex: 'active',
+    key: 'active',
+    render: (active: boolean) => badgeForIsActiveGroup(active),
   },
   {
     title: 'Name',
@@ -40,33 +36,37 @@ const columns = [
     key: 'name',
     sorter: (a: GroupTableItem, b: GroupTableItem) => (a.name > b.name ? -1 : 1),
     render: (text: string) => (
-      <a className="btn btn-sm btn-light" href="#" onClick={e => e.preventDefault()}>
+      <a className="btn btn-md btn-light" href="#" onClick={e => e.preventDefault()}>
         {text}
       </a>
     ),
   },
   {
-    title: 'Active',
-    dataIndex: 'active',
-    key: 'active',
-    render: (active: boolean) => badgeForIsActiveGroup(active),
+    title: 'Member',
+    dataIndex: 'isMember',
+    key: 'isMember',
+    render: (isMember: boolean, record: GroupTableItem) => {
+      return badgeForIsMember(isMember, record)
+    },
   },
   {
     title: 'Role',
     dataIndex: 'role',
     key: 'role',
-    render: (role: MembershipRole) => badgeForRole(role),
+    render: (text: MembershipRole, record: GroupTableItem) => badgeForRole(record),
   },
   {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    render: (status: MembershipStatus) => badgeForStatus(status),
+    render: (text: MembershipStatus, record: GroupTableItem) => badgeForStatus(record),
   },
 ]
 
 const GroupTable: FC<GroupTableProps> = ({ groups, memberships }) => {
   const mergedTableData: GroupTableItem[] = createGroupTableData(groups, memberships)
+
+  console.log(mergedTableData)
 
   const handleTableChange = (
     pagination: TablePaginationConfig,
