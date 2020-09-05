@@ -8,6 +8,7 @@ const mapStateToProps = ({ user, dispatch }) => ({ user, dispatch })
 
 const Register = ({ dispatch, user }) => {
   const onFinish = values => {
+    console.log(values)
     dispatch({
       type: 'user/REGISTER',
       payload: values,
@@ -38,20 +39,20 @@ const Register = ({ dispatch, user }) => {
           className="mb-4"
         >
           <Form.Item
-            name="name"
-            rules={[{ required: true, message: 'Please input your full name' }]}
-          >
-            <Input size="large" placeholder="Full Name" />
-          </Form.Item>
-          <Form.Item
             name="email"
             rules={[{ required: true, message: 'Please input your e-mail address' }]}
           >
             <Input size="large" placeholder="Email Address" />
           </Form.Item>
           <Form.Item
+            name="username"
+            rules={[{ required: true, message: 'Please input your username' }]}
+          >
+            <Input size="large" placeholder="Username" />
+          </Form.Item>
+          <Form.Item
             name="password"
-            rules={[{ required: true, message: 'Please input your e-mail address' }]}
+            rules={[{ required: true, message: 'Please input your password' }]}
           >
             <Input type="password" size="large" placeholder="Password" />
           </Form.Item>

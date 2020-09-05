@@ -1,10 +1,23 @@
 module.exports = {
   extends: ['react-app', 'airbnb', 'prettier'],
+  settings: {
+    'import/extensions': ['.js', '.jsx', '.ts', '.tsx', '.mjs'],
+  },
   rules: {
     'react/jsx-filename-extension': [
       1,
       {
         extensions: ['.js', '.jsx', '.tsx'],
+      },
+    ],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
       },
     ],
     'no-useless-escape': 'off',

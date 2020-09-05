@@ -1,24 +1,8 @@
-import { all, takeEvery, put, call, select } from 'redux-saga/effects'
+import { all, takeEvery, put, call } from 'redux-saga/effects'
 import { notification } from 'antd'
 import { history } from 'index'
-import * as firebase from 'services/firebase'
-import * as jwt from 'services/jwt'
+import * as apollo from 'services/apollo'
 import actions from './actions'
-
-const mapAuthProviders = {
-  firebase: {
-    login: firebase.login,
-    register: firebase.register,
-    currentAccount: firebase.currentAccount,
-    logout: firebase.logout,
-  },
-  jwt: {
-    login: jwt.login,
-    register: jwt.register,
-    currentAccount: jwt.currentAccount,
-    logout: jwt.logout,
-  },
-}
 
 export function* LOGIN({ payload }) {
   const { email, password } = payload
@@ -28,8 +12,8 @@ export function* LOGIN({ payload }) {
       loading: true,
     },
   })
-  const { authProvider: autProviderName } = yield select(state => state.settings)
-  const success = yield call(mapAuthProviders[autProviderName].login, email, password)
+
+  const { success, error } = yield call(apollo.login, { email, password })
   if (success) {
     yield put({
       type: 'user/LOAD_CURRENT_ACCOUNT',
@@ -39,43 +23,51 @@ export function* LOGIN({ payload }) {
       message: 'Logged In',
       description: 'You have successfully logged in!',
     })
-  }
-  if (!success) {
+  } else if (error) {
     yield put({
       type: 'user/SET_STATE',
       payload: {
         loading: false,
       },
     })
+    notification.error({
+      message: 'Login Error',
+      description: error,
+      duration: 3, // seconds
+    })
   }
 }
 
 export function* REGISTER({ payload }) {
-  const { email, password, name } = payload
+  const { email, password, username } = payload
   yield put({
     type: 'user/SET_STATE',
     payload: {
       loading: true,
     },
   })
-  const { authProvider } = yield select(state => state.settings)
-  const success = yield call(mapAuthProviders[authProvider].register, email, password, name)
+  const { success, error } = yield call(apollo.register, { email, username, password })
+
   if (success) {
     yield put({
       type: 'user/LOAD_CURRENT_ACCOUNT',
     })
     yield history.push('/')
     notification.success({
-      message: 'Succesful Registered',
+      message: 'Succesful Registration',
       description: 'You have successfully registered!',
     })
-  }
-  if (!success) {
+  } else if (error) {
     yield put({
       type: 'user/SET_STATE',
       payload: {
         loading: false,
       },
+    })
+    notification.error({
+      message: 'Signup Error',
+      description: error,
+      duration: 3, // seconds
     })
   }
 }
@@ -87,18 +79,15 @@ export function* LOAD_CURRENT_ACCOUNT() {
       loading: true,
     },
   })
-  const { authProvider } = yield select(state => state.settings)
-  const response = yield call(mapAuthProviders[authProvider].currentAccount)
+  const response = yield call(apollo.currentAccount)
   if (response) {
-    const { id, email, name, avatar, role } = response
+    const { id, email, username } = response
     yield put({
       type: 'user/SET_STATE',
       payload: {
         id,
-        name,
         email,
-        avatar,
-        role,
+        username,
         authorized: true,
       },
     })
@@ -112,16 +101,13 @@ export function* LOAD_CURRENT_ACCOUNT() {
 }
 
 export function* LOGOUT() {
-  const { authProvider } = yield select(state => state.settings)
-  yield call(mapAuthProviders[authProvider].logout)
+  yield call(apollo.logout)
   yield put({
     type: 'user/SET_STATE',
     payload: {
       id: '',
-      name: '',
-      role: '',
       email: '',
-      avatar: '',
+      username: '',
       authorized: false,
       loading: false,
     },

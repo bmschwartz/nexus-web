@@ -2,10 +2,8 @@ import actions from './actions'
 
 const initialState = {
   id: '',
-  name: '',
-  role: '',
   email: '',
-  avatar: '',
+  username: '',
   authorized: process.env.REACT_APP_AUTHENTICATED || false, // false is default value
   loading: false,
 }

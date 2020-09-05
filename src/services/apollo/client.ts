@@ -4,7 +4,7 @@ import { setContext } from '@apollo/client/link/context'
 /* Local */
 import introspectionQueryResultData from 'graphql/fragments-gen'
 
-export function createClient() {
+function createClient() {
   const httpLink = createHttpLink({
     uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
     credentials: 'same-origin',
@@ -29,3 +29,5 @@ export function createClient() {
     link: authLink.concat(httpLink),
   })
 }
+
+export const client = createClient()
