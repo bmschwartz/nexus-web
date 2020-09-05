@@ -1,25 +1,32 @@
 import React, { FC, ReactNode } from 'react'
 import GroupTable from 'components/nexus/groups/GroupTable'
 import { Helmet } from 'react-helmet'
+
 import { Group } from 'types/group'
+import { Membership } from 'types/membership'
 // eslint-disable-next-line
 import { useGetAllGroupsQuery, useMyMembershipsQuery } from '../../../graphql/index'
-// import { Membership } from 'types/membership'
 
 interface GroupsDashboardProps {
   children?: ReactNode
 }
 const GroupsDashboard: FC<GroupsDashboardProps> = () => {
   const { data: allGroupsData } = useGetAllGroupsQuery()
-  const { data: membershipData } = useMyMembershipsQuery()
+  const { data: membershipData } = useMyMembershipsQuery({
+    variables: { input: { roles: null, statuses: null } },
+  })
 
-  console.log(membershipData?.myMemberships)
-  // const transformMemberships = (memberships: any[]): Membership[] => {
-  //   const transformed: Membership[] = memberships.map(membership => ({
-  //     group: membership.group,
-  //   }))
-  //   return transformed
-  // }
+  const transformMemberships = (memberships: any[]): Membership[] => {
+    const transformed: Membership[] = memberships.map(membership => ({
+      group: membership.group,
+      active: membership.active,
+      member: membership.member,
+      role: membership.role,
+      status: membership.status,
+      orders: membership.orders,
+    }))
+    return transformed
+  }
   const transformGroups = (groups: any[]): Group[] => {
     const transformed: Group[] = groups.map(group => ({
       id: group.id,
@@ -36,7 +43,12 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
       <div className="cui__utils__heading">
         <strong>Groups</strong>
       </div>
-      {allGroupsData && <GroupTable groups={transformGroups(allGroupsData.allGroups)} />}
+      {allGroupsData?.allGroups && membershipData?.myMemberships && (
+        <GroupTable
+          groups={transformGroups(allGroupsData.allGroups)}
+          memberships={transformMemberships(membershipData.myMemberships)}
+        />
+      )}
     </div>
   )
 }

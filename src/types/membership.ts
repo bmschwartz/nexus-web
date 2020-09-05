@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Group } from './group'
 import { User } from './user'
 import { Order } from './order'
