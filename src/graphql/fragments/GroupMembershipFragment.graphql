@@ -1,0 +1,6 @@
+fragment GroupMembershipDetails on GroupMembership {
+  id
+  active
+  role
+  status
+}

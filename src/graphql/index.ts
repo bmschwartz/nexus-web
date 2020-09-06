@@ -74,6 +74,10 @@ export type GroupMembersInput = {
   groupId: Scalars['ID']
 }
 
+export type MembershipInput = {
+  groupId: Scalars['ID']
+}
+
 export type MembershipRequestsInput = {
   groupId: Scalars['ID']
 }
@@ -245,6 +249,7 @@ export type Query = {
   allGroups: Array<Group>
   group?: Maybe<Group>
   groupExists: Scalars['Boolean']
+  membership: GroupMembership
   myMemberships?: Maybe<Array<GroupMembership>>
   groupMembers?: Maybe<Array<GroupMembership>>
   membershipRequests?: Maybe<Array<GroupMembership>>
@@ -261,6 +266,10 @@ export type QueryGroupArgs = {
 
 export type QueryGroupExistsArgs = {
   input: GroupExistsInput
+}
+
+export type QueryMembershipArgs = {
+  input: MembershipInput
 }
 
 export type QueryMyMembershipsArgs = {
@@ -367,6 +376,11 @@ export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
   'id' | 'name' | 'description' | 'active'
 >
 
+export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } & Pick<
+  GroupMembership,
+  'id' | 'active' | 'role' | 'status'
+>
+
 export type CreateGroupMutationVariables = Exact<{
   input: CreateGroupInput
 }>
@@ -411,6 +425,14 @@ export type MeQuery = { __typename?: 'Query' } & {
   me?: Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'email' | 'admin' | 'username'>>
 }
 
+export type GetMembershipQueryVariables = Exact<{
+  input: MembershipInput
+}>
+
+export type GetMembershipQuery = { __typename?: 'Query' } & {
+  membership: { __typename?: 'GroupMembership' } & GroupMembershipDetailsFragment
+}
+
 export type GroupExistsQueryVariables = Exact<{
   input: GroupExistsInput
 }>
@@ -441,6 +463,14 @@ export const GroupDetailsFragmentDoc = gql`
     name
     description
     active
+  }
+`
+export const GroupMembershipDetailsFragmentDoc = gql`
+  fragment GroupMembershipDetails on GroupMembership {
+    id
+    active
+    role
+    status
   }
 `
 export const CreateGroupDocument = gql`
@@ -693,6 +723,53 @@ export function useMeLazyQuery(
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>
+export const GetMembershipDocument = gql`
+  query GetMembership($input: MembershipInput!) {
+    membership(input: $input) {
+      ...GroupMembershipDetails
+    }
+  }
+  ${GroupMembershipDetailsFragmentDoc}
+`
+
+/**
+ * __useGetMembershipQuery__
+ *
+ * To run a query within a React component, call `useGetMembershipQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMembershipQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMembershipQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetMembershipQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetMembershipQuery, GetMembershipQueryVariables>,
+) {
+  return Apollo.useQuery<GetMembershipQuery, GetMembershipQueryVariables>(
+    GetMembershipDocument,
+    baseOptions,
+  )
+}
+export function useGetMembershipLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetMembershipQuery, GetMembershipQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetMembershipQuery, GetMembershipQueryVariables>(
+    GetMembershipDocument,
+    baseOptions,
+  )
+}
+export type GetMembershipQueryHookResult = ReturnType<typeof useGetMembershipQuery>
+export type GetMembershipLazyQueryHookResult = ReturnType<typeof useGetMembershipLazyQuery>
+export type GetMembershipQueryResult = Apollo.QueryResult<
+  GetMembershipQuery,
+  GetMembershipQueryVariables
+>
 export const GroupExistsDocument = gql`
   query GroupExists($input: GroupExistsInput!) {
     groupExists(input: $input)
