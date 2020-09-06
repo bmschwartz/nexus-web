@@ -52,19 +52,14 @@ export const createGroupTableData = (
 }
 
 export const badgeForIsMember = (isMember: boolean, record: GroupTableItem) => {
-  const badge: Badge = {
-    style: '',
-    text: '',
+  if (!isMember) {
+    return <span />
   }
 
-  if (isMember) {
-    badge.style = record.activeMembership ? 'badge-success' : 'badge-warning'
-  } else {
-    badge.style = 'badge-danger'
-  }
+  const style = record.activeMembership ? 'badge-success' : 'badge-danger'
 
   return (
-    <span className={`font-size-12 badge ${badge.style}`}>
+    <span className={`font-size-12 badge ${style}`}>
       <i className="fa fa-check-circle" />
     </span>
   )

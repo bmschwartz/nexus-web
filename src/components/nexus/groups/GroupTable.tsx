@@ -5,13 +5,12 @@ import { TablePaginationConfig } from 'antd/lib/table'
 import { SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface'
 
 import { Group } from 'types/group'
-import { Membership, MembershipStatus, MembershipRole } from 'types/membership'
+import { Membership, MembershipRole } from 'types/membership'
 
 /* eslint-disable */
 import {
   GroupTableItem,
   createGroupTableData,
-  badgeForStatus,
   badgeForIsActiveGroup,
   badgeForRole,
   badgeForIsMember,
@@ -55,18 +54,10 @@ const columns = [
     key: 'role',
     render: (text: MembershipRole, record: GroupTableItem) => badgeForRole(record),
   },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-    render: (text: MembershipStatus, record: GroupTableItem) => badgeForStatus(record),
-  },
 ]
 
 const GroupTable: FC<GroupTableProps> = ({ groups, memberships }) => {
   const mergedTableData: GroupTableItem[] = createGroupTableData(groups, memberships)
-
-  console.log(mergedTableData)
 
   const handleTableChange = (
     pagination: TablePaginationConfig,
@@ -84,7 +75,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships }) => {
           <h5 className="mb-0">Groups</h5>
         </div>
         <div className="d-flex flex-column justify-content-center">
-          <Link className="btn btn-primary" to="/dashboard/alpha">
+          <Link className="btn btn-primary" to="/groups/create">
             Create Group
           </Link>
         </div>
