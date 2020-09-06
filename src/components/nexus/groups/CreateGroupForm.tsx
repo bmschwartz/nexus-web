@@ -7,7 +7,7 @@ import flatten from 'flat'
 import * as Yup from 'yup'
 import { Divider } from 'antd'
 import { validateAddress } from './validation'
-import { groupExists } from 'services/apollo/group'
+import { groupExists, createGroup } from 'services/apollo/group'
 
 const FormikPatchTouched = () => {
   const { errors, setFieldTouched, isSubmitting, isValidating } = useFormikContext()
@@ -143,9 +143,34 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
             try {
               setSubmitting(true)
 
-              // await createGroup()
+              const {
+                name,
+                description,
+                membershipLength,
+                membershipFee,
+                payInPlatform,
+                telegram,
+                discord,
+                email,
+                payoutCurrency,
+                payoutAddress,
+              } = values
 
-              setStatus({ success: true })
+              const { groupId, error } = await createGroup(
+                name,
+                description,
+                membershipLength,
+                membershipFee,
+                payInPlatform,
+                telegram,
+                discord,
+                email,
+                payoutCurrency,
+                payoutAddress,
+              )
+
+              console.log(groupId)
+              setStatus({ success: !error })
               setSubmitting(false)
             } catch (err) {
               setStatus({ success: false })

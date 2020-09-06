@@ -1,12 +1,10 @@
 /* eslint-disable */
 import { client } from './client'
 import { GroupExistsDocument, CreateGroupDocument } from '../../graphql/index'
-import { Group } from 'types/group'
-import { Membership, statusFromString, roleFromString } from 'types/membership'
 /* eslint-enable */
 
 interface CreateGroupResponse {
-  group?: Group
+  groupId?: string
   error?: string
 }
 
@@ -18,37 +16,39 @@ interface GroupExistsResponse {
 export const createGroup = async (
   name: string,
   description: string,
+  membershipLength: number,
+  membershipFee: number,
+  payInPlatform: boolean,
+  telegram?: string,
+  discord?: string,
+  email?: string,
+  payoutCurrency?: string,
+  payoutAddress?: string,
 ): Promise<CreateGroupResponse> => {
   try {
     const { data } = await client.mutate({
       mutation: CreateGroupDocument,
-      variables: { input: { name, description } },
+      variables: {
+        input: {
+          name,
+          description,
+          membershipLength,
+          membershipFee,
+          payInPlatform,
+          telegram,
+          discord,
+          email,
+          payoutCurrency,
+          payoutAddress,
+        },
+      },
     })
 
     if (!data) {
       return { error: 'Unable to create the group' }
     }
 
-    const { id: groupId, active, memberships: groupMemberships } = data.createGroup
-    const memberships: Membership[] = groupMemberships.map((membership: any) => ({
-      id: membership.id,
-      groupId,
-      memberId: 1,
-      active: membership.active,
-      status: statusFromString(membership.status),
-      role: roleFromString(membership.role),
-      orders: [],
-    }))
-
-    return {
-      group: {
-        id: groupId,
-        name,
-        active,
-        description,
-        memberships,
-      },
-    }
+    return { groupId: data.createGroup.id }
   } catch (error) {
     return { error: error.message }
   }

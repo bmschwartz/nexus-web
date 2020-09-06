@@ -17,6 +17,14 @@ export type Scalars = {
 export type CreateGroupInput = {
   name: Scalars['String']
   description: Scalars['String']
+  telegram?: Maybe<Scalars['String']>
+  discord?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
+  membershipLength: Scalars['Int']
+  membershipFee: Scalars['Float']
+  payInPlatform: Scalars['Boolean']
+  payoutCurrency?: Maybe<Scalars['String']>
+  payoutAddress?: Maybe<Scalars['String']>
 }
 
 export type CreateGroupMembershipInput = {
@@ -364,16 +372,7 @@ export type CreateGroupMutationVariables = Exact<{
 }>
 
 export type CreateGroupMutation = { __typename?: 'Mutation' } & {
-  createGroup?: Maybe<
-    { __typename?: 'Group' } & Pick<Group, 'id' | 'name' | 'active' | 'description'> & {
-        memberships: Array<
-          { __typename?: 'GroupMembership' } & Pick<
-            GroupMembership,
-            'id' | 'active' | 'status' | 'role'
-          > & { member: { __typename?: 'User' } & Pick<User, 'id'> }
-        >
-      }
-  >
+  createGroup?: Maybe<{ __typename?: 'Group' } & Pick<Group, 'id'>>
 }
 
 export type UserLoginMutationVariables = Exact<{
@@ -437,18 +436,6 @@ export const CreateGroupDocument = gql`
   mutation CreateGroup($input: CreateGroupInput!) {
     createGroup(input: $input) {
       id
-      name
-      active
-      description
-      memberships {
-        id
-        active
-        status
-        role
-        member {
-          id
-        }
-      }
     }
   }
 `

@@ -1,17 +1,5 @@
 mutation CreateGroup($input: CreateGroupInput!) {
   createGroup(input: $input) {
     id
-    name
-    active
-    description
-    memberships {
-      id
-      active
-      status
-      role
-      member {
-        id
-      }
-    }
   }
 }
