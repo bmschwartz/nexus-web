@@ -3,4 +3,10 @@ fragment GroupMembershipDetails on GroupMembership {
   active
   role
   status
+  group {
+    id
+  }
+  member {
+    id
+  }
 }

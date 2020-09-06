@@ -379,7 +379,10 @@ export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
 export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } & Pick<
   GroupMembership,
   'id' | 'active' | 'role' | 'status'
->
+> & {
+    group: { __typename?: 'Group' } & Pick<Group, 'id'>
+    member: { __typename?: 'User' } & Pick<User, 'id'>
+  }
 
 export type CreateGroupMutationVariables = Exact<{
   input: CreateGroupInput
@@ -471,6 +474,12 @@ export const GroupMembershipDetailsFragmentDoc = gql`
     active
     role
     status
+    group {
+      id
+    }
+    member {
+      id
+    }
   }
 `
 export const CreateGroupDocument = gql`
