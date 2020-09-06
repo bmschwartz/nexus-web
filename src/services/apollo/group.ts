@@ -3,44 +3,35 @@ import { client } from './client'
 import { GroupExistsDocument, CreateGroupDocument } from '../../graphql/index'
 /* eslint-enable */
 
-interface CreateGroupResponse {
+export interface CreateGroupResponse {
   groupId?: string
   error?: string
 }
 
-interface GroupExistsResponse {
+export interface GroupExistsResponse {
   exists: boolean
   error: string | null
 }
 
-export const createGroup = async (
-  name: string,
-  description: string,
-  membershipLength: number,
-  membershipFee: number,
-  payInPlatform: boolean,
-  telegram?: string,
-  discord?: string,
-  email?: string,
-  payoutCurrency?: string,
-  payoutAddress?: string,
-): Promise<CreateGroupResponse> => {
+export interface CreateGroupInput {
+  name: string
+  description: string
+  membershipLength: number
+  membershipFee: number
+  payInPlatform: boolean
+  telegram?: string
+  discord?: string
+  email?: string
+  payoutCurrency?: string
+  payoutAddress?: string
+}
+
+export const createGroup = async (input: CreateGroupInput): Promise<CreateGroupResponse> => {
   try {
     const { data } = await client.mutate({
       mutation: CreateGroupDocument,
       variables: {
-        input: {
-          name,
-          description,
-          membershipLength,
-          membershipFee,
-          payInPlatform,
-          telegram,
-          discord,
-          email,
-          payoutCurrency,
-          payoutAddress,
-        },
+        input,
       },
     })
 

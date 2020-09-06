@@ -1,4 +1,6 @@
+/* eslint-disable */
 import actions from './actions'
+/* eslint-enable */
 
 export interface GroupState {
   createGroup: CreateGroupState
@@ -7,18 +9,18 @@ export interface GroupState {
 export interface CreateGroupState {
   name: string
   description: string
-  telegram: string
-  discord: string
-  email: string
+  telegram?: string
+  discord?: string
+  email?: string
   membershipLength: number
   membershipFee: number
   payInPlatform: boolean
-  payoutCurrency: string
-  payoutAddress: string
+  payoutCurrency?: string
+  payoutAddress?: string
   submitting: boolean
 }
 
-const initialState: GroupState = {
+export const initialState: GroupState = {
   createGroup: {
     name: '',
     description: '',

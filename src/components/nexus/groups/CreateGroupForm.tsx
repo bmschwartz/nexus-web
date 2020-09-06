@@ -7,29 +7,17 @@ import * as Yup from 'yup'
 import { Divider } from 'antd'
 import { validateAddress } from './validation'
 import { groupExists } from 'services/apollo/group'
-import { CreateGroupState } from 'redux/group/reducers'
 
 const validPayoutCurrencies = ['BTC', 'ETH', 'LTC']
 
-interface CreateGroupStateInput {
-  createGroup: CreateGroupState
-  dispatch: any
-}
-
 interface CreateGroupFormProps {
-  createGroup: CreateGroupState
+  group: any
   dispatch: any
 }
 
-const mapStateToProps = ({
-  createGroup,
-  dispatch,
-}: CreateGroupStateInput): CreateGroupFormProps => ({
-  dispatch,
-  createGroup,
-})
+const mapStateToProps = ({ group, dispatch }: any) => ({ group, dispatch })
 
-const CreateGroupForm: FC<CreateGroupFormProps> = ({ createGroup, dispatch }) => {
+const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
   const [currentPayoutCurrency, setCurrentPayoutCurrency] = useState<string | null>('BTC')
 
   const CreateGroupSchema = Yup.object().shape({
@@ -142,7 +130,6 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ createGroup, dispatch }) =>
         payInPlatform: true,
         payoutCurrency: 'BTC',
         payoutAddress: '',
-        submit: null,
       }}
       validationSchema={CreateGroupSchema}
       onSubmit={values => {
@@ -200,9 +187,6 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ createGroup, dispatch }) =>
                   style={{ width: 120 }}
                   onChange={e => {
                     setCurrentPayoutCurrency(e)
-                    try {
-                      // CreateGroupSchema.validate({ payoutAddress: values.payoutAddress })
-                    } catch (e) {}
                     handleChange(e)
                   }}
                   disabled={!values.payInPlatform}
@@ -220,7 +204,7 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ createGroup, dispatch }) =>
                 />
               </Form.Item>
               <Divider />
-              <SubmitButton disabled={createGroup.submitting}>Create Group</SubmitButton>
+              <SubmitButton disabled={group.createGroup.submitting}>Create Group</SubmitButton>
             </Form>
           </div>
         </div>

@@ -35,11 +35,15 @@ const routes = [
     path: '/groups',
     Component: lazy(() => import('pages/groups/dashboard')),
   },
-
   {
     exact: true,
     path: '/groups/create',
     Component: lazy(() => import('pages/groups/create-group')),
+  },
+  {
+    exact: true,
+    path: '/groups/:groupId',
+    Component: lazy(() => import('pages/groups/group-detail')),
   },
 
   // Ecommerce
