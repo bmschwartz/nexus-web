@@ -1,10 +1,25 @@
 /* eslint-disable */
-import React, { FC } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { ApolloConsumer } from '@apollo/client'
-import { Formik } from 'formik'
+import { Formik, useFormikContext } from 'formik'
 import { Form, Input, Checkbox, InputNumber, Select } from 'formik-antd'
+import flatten from 'flat'
 import * as Yup from 'yup'
 import { Divider } from 'antd'
+import { validateAddress } from './validation'
+import { groupExists } from 'services/apollo/group'
+
+const FormikPatchTouched = () => {
+  const { errors, setFieldTouched, isSubmitting, isValidating } = useFormikContext()
+  useEffect(() => {
+    if (isSubmitting && !isValidating) {
+      for (const path of Object.keys(flatten(errors))) {
+        setFieldTouched(path, true, false)
+      }
+    }
+  }, [errors, isSubmitting, isValidating, setFieldTouched])
+  return null
+}
 
 interface CreateGroupFormProps {}
 
@@ -63,6 +78,10 @@ const CreateGroupSchema = Yup.object().shape({
 })
 
 const CreateGroupForm: FC<CreateGroupFormProps> = () => {
+  const [searchedName, setSearchedName] = useState<boolean>(false)
+  const [nameAvailable, setNameAvailable] = useState<boolean>(false)
+  const [isValidPayoutAddress, setIsValidPayoutAddress] = useState<boolean>(false)
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -72,6 +91,17 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
       xs: { span: 24 },
       sm: { span: 12 },
     },
+  }
+
+  const getNameValidateStatus = () => {
+    if (searchedName) {
+      return nameAvailable ? 'success' : 'error'
+    }
+    return ''
+  }
+
+  const getNameValidateHelpText = () => {
+    return searchedName && !nameAvailable ? 'Name is not available' : ''
   }
 
   return (
@@ -92,13 +122,33 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
           }}
           validationSchema={CreateGroupSchema}
           onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+            console.log(values)
             try {
-              console.log(values)
-              // NOTE: Make API request
-              setStatus({ success: true })
+              setSubmitting(true)
+
+              let errorMessage = null
+
+              // Check payout address
+              if (
+                values.payInPlatform &&
+                !validateAddress(values.payoutAddress, values.payoutCurrency)
+              ) {
+                errorMessage = `Not a valid ${values.payoutCurrency.toUpperCase()} address`
+              }
+
+              if (!nameAvailable) {
+                errorMessage = 'Name not available'
+              }
+
+              if (errorMessage) {
+                setStatus({ success: false })
+                setErrors({ submit: errorMessage })
+              } else {
+                setStatus({ success: true })
+              }
+
               setSubmitting(false)
             } catch (err) {
-              console.error(err)
               setStatus({ success: false })
               setErrors({ submit: err.message })
               setSubmitting(false)
@@ -118,11 +168,31 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
             <div className="card">
               <div className="card-body">
                 <Form {...formItemLayout} labelAlign="left">
+                  <FormikPatchTouched />
                   <Divider orientation="left">
                     <strong>General</strong>
                   </Divider>
-                  <Form.Item name="name" label="Group Name">
+                  {/* <Form.Item name="name" label="Group Name">
                     <Input name="name" placeholder="Enter Group Name" />
+                  </Form.Item> */}
+                  <Form.Item
+                    name="name"
+                    label="Group Name"
+                    validateStatus={getNameValidateStatus()}
+                    help={getNameValidateHelpText()}
+                  >
+                    <Input
+                      name="name"
+                      placeholder="Enter Group Name"
+                      onBlur={async e => {
+                        console.log('searching name')
+                        const { exists, error } = await groupExists(e.target.value)
+                        console.log(`name: ${exists} ${error}`)
+                        setSearchedName(true)
+                        setNameAvailable(!exists && !error)
+                      }}
+                      onError={console.log}
+                    />
                   </Form.Item>
                   <Form.Item name="description" label="Description">
                     <Input.TextArea name="description" placeholder="Enter Description..." />
@@ -178,11 +248,19 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
                       <Select.Option value="LTC">LTC</Select.Option>
                     </Select>
                   </Form.Item>
-                  <Form.Item name="payoutAddress" label="Payout Address">
+                  <Form.Item
+                    name="payoutAddress"
+                    label="Payout Address"
+                    validateStatus={getAddressValidateStatus()}
+                    help={getValidateAddressHelpText()}
+                  >
                     <Input
                       name="payoutAddress"
                       disabled={!values.payInPlatform}
                       placeholder="e.g. 1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"
+                      onBlur={({ target: { value: address } }) => {
+                        setIsValidPayoutAddress(validateAddress(address, values.payoutCurrency))
+                      }}
                     />
                   </Form.Item>
                   <Divider />

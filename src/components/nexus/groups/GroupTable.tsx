@@ -14,7 +14,7 @@ import {
   badgeForIsActiveGroup,
   badgeForRole,
   badgeForIsMember,
-} from './utils'
+} from './groupTableUtils'
 /* eslint-enable */
 
 interface GroupTableProps {
