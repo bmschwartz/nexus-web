@@ -53,6 +53,12 @@ const CreateGroupSchema = Yup.object().shape({
         .nullable()
         .notRequired(),
     }),
+  membershipLength: Yup.number()
+    .label('Membership Length')
+    .min(1)
+    .max(12)
+    .integer()
+    .required(),
   membershipFee: Yup.number()
     .label('Membership Fee')
     .min(0)
@@ -80,7 +86,7 @@ const CreateGroupSchema = Yup.object().shape({
 const CreateGroupForm: FC<CreateGroupFormProps> = () => {
   const [searchedName, setSearchedName] = useState<boolean>(false)
   const [nameAvailable, setNameAvailable] = useState<boolean>(false)
-  const [isValidPayoutAddress, setIsValidPayoutAddress] = useState<boolean>(false)
+  const [isValidPayoutAddress, setIsValidPayoutAddress] = useState<boolean>(true)
 
   const formItemLayout = {
     labelCol: {
@@ -100,8 +106,18 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
     return ''
   }
 
-  const getNameValidateHelpText = () => {
-    return searchedName && !nameAvailable ? 'Name is not available' : ''
+  const getAddressValidateStatus = (payoutAddress: string) => {
+    if (payoutAddress) {
+      return isValidPayoutAddress ? 'success' : 'error'
+    }
+    return ''
+  }
+
+  const getAddressValidateHelp = (payoutAddress: string) => {
+    if (payoutAddress && !isValidPayoutAddress) {
+      return 'Invalid payout address'
+    }
+    return ''
   }
 
   return (
@@ -114,6 +130,7 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
             payInPlatform: true,
             payoutCurrency: 'BTC',
             payoutAddress: '',
+            membershipLength: 1,
             membershipFee: 0.0,
             telegram: '',
             discord: '',
@@ -126,31 +143,13 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
             try {
               setSubmitting(true)
 
-              let errorMessage = null
+              // await createGroup()
 
-              // Check payout address
-              if (
-                values.payInPlatform &&
-                !validateAddress(values.payoutAddress, values.payoutCurrency)
-              ) {
-                errorMessage = `Not a valid ${values.payoutCurrency.toUpperCase()} address`
-              }
-
-              if (!nameAvailable) {
-                errorMessage = 'Name not available'
-              }
-
-              if (errorMessage) {
-                setStatus({ success: false })
-                setErrors({ submit: errorMessage })
-              } else {
-                setStatus({ success: true })
-              }
-
+              setStatus({ success: true })
               setSubmitting(false)
             } catch (err) {
               setStatus({ success: false })
-              setErrors({ submit: err.message })
+              setErrors({ payoutAddress: err.message })
               setSubmitting(false)
             }
           }}
@@ -179,7 +178,7 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
                     name="name"
                     label="Group Name"
                     validateStatus={getNameValidateStatus()}
-                    help={getNameValidateHelpText()}
+                    help={searchedName && !nameAvailable ? 'Name is not available' : ''}
                   >
                     <Input
                       name="name"
@@ -213,24 +212,22 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
                     <strong>Membership</strong>
                   </Divider>
                   <Form.Item
-                    name="membershipPeriod"
-                    label="Membership Period (Months)"
+                    name="membershipLength"
+                    label="Membership Length (Months)"
                     className="mb-3"
                   >
-                    <InputNumber
-                      name="membershipPeriod"
-                      min={1}
-                      max={12}
-                      defaultValue={1}
-                      onChange={e => console.log(e)}
-                    />
+                    <InputNumber name="membershipPeriod" min={1} max={12} defaultValue={1} />
                   </Form.Item>
                   <Form.Item name="membershipFee" label="Membership Fee" className="mb-3">
                     <Input name="membershipFee" type="number" placeholder="0.00" addonBefore="$" />
                   </Form.Item>
                   <Form.Item name="payInPlatform" label="Pay In Platform">
                     <Checkbox
-                      onChange={handleChange}
+                      onChange={e => {
+                        setFieldValue('payoutAddress', '')
+                        setIsValidPayoutAddress(false)
+                        handleChange(e)
+                      }}
                       value={values.payInPlatform}
                       name="payInPlatform"
                     />
@@ -251,8 +248,8 @@ const CreateGroupForm: FC<CreateGroupFormProps> = () => {
                   <Form.Item
                     name="payoutAddress"
                     label="Payout Address"
-                    validateStatus={getAddressValidateStatus()}
-                    help={getValidateAddressHelpText()}
+                    validateStatus={getAddressValidateStatus(values.payoutAddress)}
+                    help={getAddressValidateHelp(values.payoutAddress)}
                   >
                     <Input
                       name="payoutAddress"

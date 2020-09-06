@@ -25,12 +25,8 @@ export const createGroupTableData = (
   let groupMembershipMap = {}
 
   _.forEach(memberships, membership => {
-    const {
-      group: { id: groupId },
-    } = membership
-
     groupMembershipMap = Object.assign(groupMembershipMap, {
-      [groupId]: {
+      [membership.groupId]: {
         isMember: true,
         memberRole: membership.role,
         memberStatus: membership.status,

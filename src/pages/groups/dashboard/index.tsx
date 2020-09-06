@@ -18,9 +18,10 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
 
   const transformMemberships = (memberships: any[]): Membership[] => {
     const transformed: Membership[] = memberships.map(membership => ({
-      group: membership.group,
+      id: membership.id,
+      groupId: membership.groupId,
       active: membership.active,
-      member: membership.member,
+      memberId: membership.memberId,
       role: membership.role,
       status: membership.status,
       orders: membership.orders,
