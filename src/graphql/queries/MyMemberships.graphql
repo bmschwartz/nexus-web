@@ -4,6 +4,9 @@ query MyMemberships($input: MyMembershipsInput!) {
     active
     role
     status
+    member {
+      id
+    }
     group {
       ...GroupDetails
     }
