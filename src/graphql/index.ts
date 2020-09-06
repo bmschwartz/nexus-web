@@ -1,506 +1,451 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
-export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+import { gql } from '@apollo/client'
+import * as Apollo from '@apollo/client'
+
+export type Maybe<T> = T | null
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  DateTime: any;
-  _FieldSet: any;
-};
-
-
-
-
+  ID: string
+  String: string
+  Boolean: boolean
+  Int: number
+  Float: number
+  DateTime: any
+  _FieldSet: any
+}
 
 export type CreateGroupInput = {
-  name: Scalars['String'];
-  description: Scalars['String'];
-  telegram?: Maybe<Scalars['String']>;
-  discord?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  membershipLength: Scalars['Int'];
-  membershipFee: Scalars['Float'];
-  payInPlatform: Scalars['Boolean'];
-  payoutCurrency?: Maybe<Scalars['String']>;
-  payoutAddress?: Maybe<Scalars['String']>;
-};
+  name: Scalars['String']
+  description: Scalars['String']
+  telegram?: Maybe<Scalars['String']>
+  discord?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
+  membershipLength: Scalars['Int']
+  membershipFee: Scalars['Float']
+  payInPlatform: Scalars['Boolean']
+  payoutCurrency?: Maybe<Scalars['String']>
+  payoutAddress?: Maybe<Scalars['String']>
+}
 
 export type CreateGroupMembershipInput = {
-  groupId: Scalars['ID'];
-  memberId: Scalars['ID'];
-  role: MembershipRole;
-  status: MembershipStatus;
-};
+  groupId: Scalars['ID']
+  memberId: Scalars['ID']
+  role: MembershipRole
+  status: MembershipStatus
+}
 
 export type DeleteMembershipInput = {
-  membershipId: Scalars['ID'];
-};
+  membershipId: Scalars['ID']
+}
 
 export type DisableGroupInput = {
-  groupId: Scalars['ID'];
-};
+  groupId: Scalars['ID']
+}
 
 export type Group = {
-  __typename?: 'Group';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  active: Scalars['Boolean'];
-  description: Scalars['String'];
-  memberships: Array<GroupMembership>;
-};
+  __typename?: 'Group'
+  id: Scalars['ID']
+  name: Scalars['String']
+  active: Scalars['Boolean']
+  description: Scalars['String']
+  memberships: Array<GroupMembership>
+}
 
 export type GroupExistsInput = {
-  name: Scalars['String'];
-};
+  name: Scalars['String']
+}
 
 export type GroupInput = {
-  groupId: Scalars['ID'];
-};
+  groupId: Scalars['ID']
+}
 
 export type GroupMembership = {
-  __typename?: 'GroupMembership';
-  id: Scalars['ID'];
-  group: Group;
-  member: User;
-  active: Scalars['Boolean'];
-  role: MembershipRole;
-  status: MembershipStatus;
-  orders: Array<Order>;
-};
+  __typename?: 'GroupMembership'
+  id: Scalars['ID']
+  group: Group
+  member: User
+  active: Scalars['Boolean']
+  role: MembershipRole
+  status: MembershipStatus
+  orders: Array<Order>
+}
 
 export type GroupMembersInput = {
-  groupId: Scalars['ID'];
-};
+  groupId: Scalars['ID']
+}
 
 export type MembershipRequestsInput = {
-  groupId: Scalars['ID'];
-};
+  groupId: Scalars['ID']
+}
 
 export enum MembershipRole {
   Member = 'MEMBER',
   Trader = 'TRADER',
-  Admin = 'ADMIN'
+  Admin = 'ADMIN',
 }
 
 export enum MembershipStatus {
   Approved = 'APPROVED',
   Denied = 'DENIED',
-  Pending = 'PENDING'
+  Pending = 'PENDING',
 }
 
 export type MyMembershipsInput = {
-  roles?: Maybe<Array<MembershipRole>>;
-  statuses?: Maybe<Array<MembershipStatus>>;
-};
+  roles?: Maybe<Array<MembershipRole>>
+  statuses?: Maybe<Array<MembershipStatus>>
+}
 
 export type RenameGroupInput = {
-  groupId: Scalars['ID'];
-  name: Scalars['String'];
-};
+  groupId: Scalars['ID']
+  name: Scalars['String']
+}
 
 export type RequestGroupAccessInput = {
-  groupId: Scalars['ID'];
-};
+  groupId: Scalars['ID']
+}
 
 export type UpdateGroupDescriptionInput = {
-  groupId: Scalars['ID'];
-  description: Scalars['String'];
-};
+  groupId: Scalars['ID']
+  description: Scalars['String']
+}
 
 export type UpdateMembershipActiveInput = {
-  membershipId: Scalars['ID'];
-  active: Scalars['Boolean'];
-};
+  membershipId: Scalars['ID']
+  active: Scalars['Boolean']
+}
 
 export type UpdateMembershipRoleInput = {
-  membershipId: Scalars['ID'];
-  role: MembershipRole;
-};
+  membershipId: Scalars['ID']
+  role: MembershipRole
+}
 
 export type UpdateMembershipStatusInput = {
-  membershipId: Scalars['ID'];
-  status: MembershipStatus;
-};
+  membershipId: Scalars['ID']
+  status: MembershipStatus
+}
 
 export type BinanceCurrency = {
-  __typename?: 'BinanceCurrency';
-  id: Scalars['ID'];
-  symbol: Scalars['String'];
-  lastPrice?: Maybe<Scalars['Float']>;
-  openPrice?: Maybe<Scalars['Float']>;
-  highPrice?: Maybe<Scalars['Float']>;
-  lowPrice?: Maybe<Scalars['Float']>;
-  priceChange?: Maybe<Scalars['Float']>;
-  priceChangePercent?: Maybe<Scalars['Float']>;
-};
+  __typename?: 'BinanceCurrency'
+  id: Scalars['ID']
+  symbol: Scalars['String']
+  lastPrice?: Maybe<Scalars['Float']>
+  openPrice?: Maybe<Scalars['Float']>
+  highPrice?: Maybe<Scalars['Float']>
+  lowPrice?: Maybe<Scalars['Float']>
+  priceChange?: Maybe<Scalars['Float']>
+  priceChangePercent?: Maybe<Scalars['Float']>
+}
 
 export type BitmexCurrency = {
-  __typename?: 'BitmexCurrency';
-  id: Scalars['ID'];
-  symbol: Scalars['String'];
-  underlying: Scalars['String'];
-  active: Scalars['Boolean'];
-  fractionalDigits?: Maybe<Scalars['Int']>;
-  lastPrice?: Maybe<Scalars['Float']>;
-  markPrice?: Maybe<Scalars['Float']>;
-  tickSize?: Maybe<Scalars['Float']>;
-};
+  __typename?: 'BitmexCurrency'
+  id: Scalars['ID']
+  symbol: Scalars['String']
+  underlying: Scalars['String']
+  active: Scalars['Boolean']
+  fractionalDigits?: Maybe<Scalars['Int']>
+  lastPrice?: Maybe<Scalars['Float']>
+  markPrice?: Maybe<Scalars['Float']>
+  tickSize?: Maybe<Scalars['Float']>
+}
 
 export type CancelOrderInput = {
-  orderId: Scalars['String'];
-};
+  orderId: Scalars['String']
+}
 
 export type CreateOrderSetInput = {
-  groupId: Scalars['ID'];
-  description?: Maybe<Scalars['String']>;
-  side: OrderSide;
-  orderType: OrderType;
-  price?: Maybe<Scalars['Float']>;
-  stopPrice?: Maybe<Scalars['Float']>;
-  percent?: Maybe<Scalars['Float']>;
-};
-
+  groupId: Scalars['ID']
+  description?: Maybe<Scalars['String']>
+  side: OrderSide
+  orderType: OrderType
+  price?: Maybe<Scalars['Float']>
+  stopPrice?: Maybe<Scalars['Float']>
+  percent?: Maybe<Scalars['Float']>
+}
 
 export type GroupOrderSetsInput = {
-  groupId: Scalars['ID'];
-};
+  groupId: Scalars['ID']
+}
 
 export type Order = {
-  __typename?: 'Order';
-  id: Scalars['ID'];
-  createdAt: Scalars['DateTime'];
-  membership: GroupMembership;
-  orderSet: OrderSet;
-  side?: Maybe<OrderSide>;
-  orderType?: Maybe<OrderType>;
-  price?: Maybe<Scalars['Float']>;
-  quantity?: Maybe<Scalars['Float']>;
-  stopPrice?: Maybe<Scalars['Float']>;
-  symbol: Scalars['String'];
-  lastTimestamp: Scalars['DateTime'];
-};
+  __typename?: 'Order'
+  id: Scalars['ID']
+  createdAt: Scalars['DateTime']
+  membership: GroupMembership
+  orderSet: OrderSet
+  side?: Maybe<OrderSide>
+  orderType?: Maybe<OrderType>
+  price?: Maybe<Scalars['Float']>
+  quantity?: Maybe<Scalars['Float']>
+  stopPrice?: Maybe<Scalars['Float']>
+  symbol: Scalars['String']
+  lastTimestamp: Scalars['DateTime']
+}
 
 export type OrderSet = {
-  __typename?: 'OrderSet';
-  id: Scalars['ID'];
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  orders: Array<Order>;
-  orderSide?: Maybe<OrderSide>;
-  orderType?: Maybe<OrderType>;
-  percent: Scalars['Float'];
-  price?: Maybe<Scalars['Float']>;
-  stopPrice?: Maybe<Scalars['Float']>;
-};
+  __typename?: 'OrderSet'
+  id: Scalars['ID']
+  createdAt: Scalars['DateTime']
+  description: Scalars['String']
+  orders: Array<Order>
+  orderSide?: Maybe<OrderSide>
+  orderType?: Maybe<OrderType>
+  percent: Scalars['Float']
+  price?: Maybe<Scalars['Float']>
+  stopPrice?: Maybe<Scalars['Float']>
+}
 
 export type OrderSetInput = {
-  id: Scalars['ID'];
-};
+  id: Scalars['ID']
+}
 
 export enum OrderSide {
   Buy = 'BUY',
-  Sell = 'SELL'
+  Sell = 'SELL',
 }
 
 export enum OrderType {
   Market = 'MARKET',
-  Limit = 'LIMIT'
+  Limit = 'LIMIT',
 }
 
 export type UpdateOrderSetInput = {
-  orderSetId: Scalars['ID'];
-  description: Scalars['String'];
-  price?: Maybe<Scalars['Float']>;
-  stopPrice?: Maybe<Scalars['Float']>;
-};
+  orderSetId: Scalars['ID']
+  description: Scalars['String']
+  price?: Maybe<Scalars['Float']>
+  stopPrice?: Maybe<Scalars['Float']>
+}
 
 export type AuthPayload = {
-  __typename?: 'AuthPayload';
-  token: Scalars['String'];
-};
+  __typename?: 'AuthPayload'
+  token: Scalars['String']
+}
 
 export type LoginUserInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
+  email: Scalars['String']
+  password: Scalars['String']
+}
 
 export type SignupUserInput = {
-  email: Scalars['String'];
-  username: Scalars['String'];
-  password: Scalars['String'];
-};
+  email: Scalars['String']
+  username: Scalars['String']
+  password: Scalars['String']
+}
 
 export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  email: Scalars['String'];
-  username: Scalars['String'];
-  admin: Scalars['Boolean'];
-  memberships: Array<GroupMembership>;
-};
+  __typename?: 'User'
+  id: Scalars['ID']
+  email: Scalars['String']
+  username: Scalars['String']
+  admin: Scalars['Boolean']
+  memberships: Array<GroupMembership>
+}
 
 export type Query = {
-  __typename?: 'Query';
-  allGroups: Array<Group>;
-  group?: Maybe<Group>;
-  groupExists: Scalars['Boolean'];
-  myMemberships?: Maybe<Array<GroupMembership>>;
-  groupMembers?: Maybe<Array<GroupMembership>>;
-  membershipRequests?: Maybe<Array<GroupMembership>>;
-  orderSet?: Maybe<OrderSet>;
-  groupOrderSets?: Maybe<Array<OrderSet>>;
-  binanceCurrencies: Array<BinanceCurrency>;
-  bitmexCurrencies: Array<BitmexCurrency>;
-  me?: Maybe<User>;
-};
-
+  __typename?: 'Query'
+  allGroups: Array<Group>
+  group?: Maybe<Group>
+  groupExists: Scalars['Boolean']
+  myMemberships?: Maybe<Array<GroupMembership>>
+  groupMembers?: Maybe<Array<GroupMembership>>
+  membershipRequests?: Maybe<Array<GroupMembership>>
+  orderSet?: Maybe<OrderSet>
+  groupOrderSets?: Maybe<Array<OrderSet>>
+  binanceCurrencies: Array<BinanceCurrency>
+  bitmexCurrencies: Array<BitmexCurrency>
+  me?: Maybe<User>
+}
 
 export type QueryGroupArgs = {
-  input: GroupInput;
-};
-
+  input: GroupInput
+}
 
 export type QueryGroupExistsArgs = {
-  input: GroupExistsInput;
-};
-
+  input: GroupExistsInput
+}
 
 export type QueryMyMembershipsArgs = {
-  input?: Maybe<MyMembershipsInput>;
-};
-
+  input?: Maybe<MyMembershipsInput>
+}
 
 export type QueryGroupMembersArgs = {
-  input: GroupMembersInput;
-};
-
+  input: GroupMembersInput
+}
 
 export type QueryMembershipRequestsArgs = {
-  input: MembershipRequestsInput;
-};
-
+  input: MembershipRequestsInput
+}
 
 export type QueryOrderSetArgs = {
-  input: OrderSetInput;
-};
-
+  input: OrderSetInput
+}
 
 export type QueryGroupOrderSetsArgs = {
-  input: GroupOrderSetsInput;
-};
+  input: GroupOrderSetsInput
+}
 
 export type Mutation = {
-  __typename?: 'Mutation';
-  createGroup?: Maybe<Group>;
-  renameGroup?: Maybe<Group>;
-  updateGroupDescription?: Maybe<Group>;
-  disableGroup?: Maybe<Group>;
-  requestGroupAccess?: Maybe<GroupMembership>;
-  createMembership?: Maybe<GroupMembership>;
-  updateMembershipRole?: Maybe<GroupMembership>;
-  updateMembershipStatus?: Maybe<GroupMembership>;
-  updateMembershipActive?: Maybe<GroupMembership>;
-  deleteMembership?: Maybe<GroupMembership>;
-  createOrderSet?: Maybe<OrderSet>;
-  updateOrderSet?: Maybe<OrderSet>;
-  cancelOrder?: Maybe<Order>;
-  loginUser: AuthPayload;
-  signupUser: AuthPayload;
-};
-
+  __typename?: 'Mutation'
+  createGroup?: Maybe<Group>
+  renameGroup?: Maybe<Group>
+  updateGroupDescription?: Maybe<Group>
+  disableGroup?: Maybe<Group>
+  requestGroupAccess?: Maybe<GroupMembership>
+  createMembership?: Maybe<GroupMembership>
+  updateMembershipRole?: Maybe<GroupMembership>
+  updateMembershipStatus?: Maybe<GroupMembership>
+  updateMembershipActive?: Maybe<GroupMembership>
+  deleteMembership?: Maybe<GroupMembership>
+  createOrderSet?: Maybe<OrderSet>
+  updateOrderSet?: Maybe<OrderSet>
+  cancelOrder?: Maybe<Order>
+  loginUser: AuthPayload
+  signupUser: AuthPayload
+}
 
 export type MutationCreateGroupArgs = {
-  input: CreateGroupInput;
-};
-
+  input: CreateGroupInput
+}
 
 export type MutationRenameGroupArgs = {
-  input: RenameGroupInput;
-};
-
+  input: RenameGroupInput
+}
 
 export type MutationUpdateGroupDescriptionArgs = {
-  input: UpdateGroupDescriptionInput;
-};
-
+  input: UpdateGroupDescriptionInput
+}
 
 export type MutationDisableGroupArgs = {
-  input: DisableGroupInput;
-};
-
+  input: DisableGroupInput
+}
 
 export type MutationRequestGroupAccessArgs = {
-  input: RequestGroupAccessInput;
-};
-
+  input: RequestGroupAccessInput
+}
 
 export type MutationCreateMembershipArgs = {
-  input: CreateGroupMembershipInput;
-};
-
+  input: CreateGroupMembershipInput
+}
 
 export type MutationUpdateMembershipRoleArgs = {
-  input: UpdateMembershipRoleInput;
-};
-
+  input: UpdateMembershipRoleInput
+}
 
 export type MutationUpdateMembershipStatusArgs = {
-  input: UpdateMembershipStatusInput;
-};
-
+  input: UpdateMembershipStatusInput
+}
 
 export type MutationUpdateMembershipActiveArgs = {
-  input: UpdateMembershipActiveInput;
-};
-
+  input: UpdateMembershipActiveInput
+}
 
 export type MutationDeleteMembershipArgs = {
-  input: DeleteMembershipInput;
-};
-
+  input: DeleteMembershipInput
+}
 
 export type MutationCreateOrderSetArgs = {
-  input: CreateOrderSetInput;
-};
-
+  input: CreateOrderSetInput
+}
 
 export type MutationUpdateOrderSetArgs = {
-  input: UpdateOrderSetInput;
-};
-
+  input: UpdateOrderSetInput
+}
 
 export type MutationCancelOrderArgs = {
-  input: CancelOrderInput;
-};
-
+  input: CancelOrderInput
+}
 
 export type MutationLoginUserArgs = {
-  input: LoginUserInput;
-};
-
+  input: LoginUserInput
+}
 
 export type MutationSignupUserArgs = {
-  input: SignupUserInput;
-};
+  input: SignupUserInput
+}
 
-
-export type GroupDetailsFragment = (
-  { __typename?: 'Group' }
-  & Pick<Group, 'id' | 'name' | 'description' | 'active'>
-);
+export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
+  Group,
+  'id' | 'name' | 'description' | 'active'
+>
 
 export type CreateGroupMutationVariables = Exact<{
-  input: CreateGroupInput;
-}>;
+  input: CreateGroupInput
+}>
 
-
-export type CreateGroupMutation = (
-  { __typename?: 'Mutation' }
-  & { createGroup?: Maybe<(
-    { __typename?: 'Group' }
-    & Pick<Group, 'id'>
-  )> }
-);
+export type CreateGroupMutation = { __typename?: 'Mutation' } & {
+  createGroup?: Maybe<{ __typename?: 'Group' } & Pick<Group, 'id'>>
+}
 
 export type UserLoginMutationVariables = Exact<{
-  input: LoginUserInput;
-}>;
+  input: LoginUserInput
+}>
 
-
-export type UserLoginMutation = (
-  { __typename?: 'Mutation' }
-  & { loginUser: (
-    { __typename?: 'AuthPayload' }
-    & Pick<AuthPayload, 'token'>
-  ) }
-);
+export type UserLoginMutation = { __typename?: 'Mutation' } & {
+  loginUser: { __typename?: 'AuthPayload' } & Pick<AuthPayload, 'token'>
+}
 
 export type SignupUserMutationVariables = Exact<{
-  input: SignupUserInput;
-}>;
+  input: SignupUserInput
+}>
 
+export type SignupUserMutation = { __typename?: 'Mutation' } & {
+  signupUser: { __typename?: 'AuthPayload' } & Pick<AuthPayload, 'token'>
+}
 
-export type SignupUserMutation = (
-  { __typename?: 'Mutation' }
-  & { signupUser: (
-    { __typename?: 'AuthPayload' }
-    & Pick<AuthPayload, 'token'>
-  ) }
-);
+export type GetAllGroupsQueryVariables = Exact<{ [key: string]: never }>
 
-export type GetAllGroupsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllGroupsQuery = { __typename?: 'Query' } & {
+  allGroups: Array<{ __typename?: 'Group' } & GroupDetailsFragment>
+}
 
+export type MeQueryVariables = Exact<{ [key: string]: never }>
 
-export type GetAllGroupsQuery = (
-  { __typename?: 'Query' }
-  & { allGroups: Array<(
-    { __typename?: 'Group' }
-    & GroupDetailsFragment
-  )> }
-);
-
-export type MeQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type MeQuery = (
-  { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'email' | 'admin' | 'username'>
-  )> }
-);
+export type MeQuery = { __typename?: 'Query' } & {
+  me?: Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'email' | 'admin' | 'username'>>
+}
 
 export type GroupExistsQueryVariables = Exact<{
-  input: GroupExistsInput;
-}>;
+  input: GroupExistsInput
+}>
 
-
-export type GroupExistsQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'groupExists'>
-);
+export type GroupExistsQuery = { __typename?: 'Query' } & Pick<Query, 'groupExists'>
 
 export type MyMembershipsQueryVariables = Exact<{
-  input: MyMembershipsInput;
-}>;
+  input: MyMembershipsInput
+}>
 
-
-export type MyMembershipsQuery = (
-  { __typename?: 'Query' }
-  & { myMemberships?: Maybe<Array<(
-    { __typename?: 'GroupMembership' }
-    & Pick<GroupMembership, 'id' | 'active' | 'role' | 'status'>
-    & { member: (
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-    ), group: (
-      { __typename?: 'Group' }
-      & GroupDetailsFragment
-    ) }
-  )>> }
-);
+export type MyMembershipsQuery = { __typename?: 'Query' } & {
+  myMemberships?: Maybe<
+    Array<
+      { __typename?: 'GroupMembership' } & Pick<
+        GroupMembership,
+        'id' | 'active' | 'role' | 'status'
+      > & {
+          member: { __typename?: 'User' } & Pick<User, 'id'>
+          group: { __typename?: 'Group' } & GroupDetailsFragment
+        }
+    >
+  >
+}
 
 export const GroupDetailsFragmentDoc = gql`
-    fragment GroupDetails on Group {
-  id
-  name
-  description
-  active
-}
-    `;
-export const CreateGroupDocument = gql`
-    mutation CreateGroup($input: CreateGroupInput!) {
-  createGroup(input: $input) {
+  fragment GroupDetails on Group {
     id
+    name
+    description
+    active
   }
-}
-    `;
-export type CreateGroupMutationFn = Apollo.MutationFunction<CreateGroupMutation, CreateGroupMutationVariables>;
+`
+export const CreateGroupDocument = gql`
+  mutation CreateGroup($input: CreateGroupInput!) {
+    createGroup(input: $input) {
+      id
+    }
+  }
+`
+export type CreateGroupMutationFn = Apollo.MutationFunction<
+  CreateGroupMutation,
+  CreateGroupMutationVariables
+>
 
 /**
  * __useCreateGroupMutation__
@@ -519,20 +464,31 @@ export type CreateGroupMutationFn = Apollo.MutationFunction<CreateGroupMutation,
  *   },
  * });
  */
-export function useCreateGroupMutation(baseOptions?: Apollo.MutationHookOptions<CreateGroupMutation, CreateGroupMutationVariables>) {
-        return Apollo.useMutation<CreateGroupMutation, CreateGroupMutationVariables>(CreateGroupDocument, baseOptions);
-      }
-export type CreateGroupMutationHookResult = ReturnType<typeof useCreateGroupMutation>;
-export type CreateGroupMutationResult = Apollo.MutationResult<CreateGroupMutation>;
-export type CreateGroupMutationOptions = Apollo.BaseMutationOptions<CreateGroupMutation, CreateGroupMutationVariables>;
-export const UserLoginDocument = gql`
-    mutation UserLogin($input: LoginUserInput!) {
-  loginUser(input: $input) {
-    token
-  }
+export function useCreateGroupMutation(
+  baseOptions?: Apollo.MutationHookOptions<CreateGroupMutation, CreateGroupMutationVariables>,
+) {
+  return Apollo.useMutation<CreateGroupMutation, CreateGroupMutationVariables>(
+    CreateGroupDocument,
+    baseOptions,
+  )
 }
-    `;
-export type UserLoginMutationFn = Apollo.MutationFunction<UserLoginMutation, UserLoginMutationVariables>;
+export type CreateGroupMutationHookResult = ReturnType<typeof useCreateGroupMutation>
+export type CreateGroupMutationResult = Apollo.MutationResult<CreateGroupMutation>
+export type CreateGroupMutationOptions = Apollo.BaseMutationOptions<
+  CreateGroupMutation,
+  CreateGroupMutationVariables
+>
+export const UserLoginDocument = gql`
+  mutation UserLogin($input: LoginUserInput!) {
+    loginUser(input: $input) {
+      token
+    }
+  }
+`
+export type UserLoginMutationFn = Apollo.MutationFunction<
+  UserLoginMutation,
+  UserLoginMutationVariables
+>
 
 /**
  * __useUserLoginMutation__
@@ -551,20 +507,31 @@ export type UserLoginMutationFn = Apollo.MutationFunction<UserLoginMutation, Use
  *   },
  * });
  */
-export function useUserLoginMutation(baseOptions?: Apollo.MutationHookOptions<UserLoginMutation, UserLoginMutationVariables>) {
-        return Apollo.useMutation<UserLoginMutation, UserLoginMutationVariables>(UserLoginDocument, baseOptions);
-      }
-export type UserLoginMutationHookResult = ReturnType<typeof useUserLoginMutation>;
-export type UserLoginMutationResult = Apollo.MutationResult<UserLoginMutation>;
-export type UserLoginMutationOptions = Apollo.BaseMutationOptions<UserLoginMutation, UserLoginMutationVariables>;
-export const SignupUserDocument = gql`
-    mutation SignupUser($input: SignupUserInput!) {
-  signupUser(input: $input) {
-    token
-  }
+export function useUserLoginMutation(
+  baseOptions?: Apollo.MutationHookOptions<UserLoginMutation, UserLoginMutationVariables>,
+) {
+  return Apollo.useMutation<UserLoginMutation, UserLoginMutationVariables>(
+    UserLoginDocument,
+    baseOptions,
+  )
 }
-    `;
-export type SignupUserMutationFn = Apollo.MutationFunction<SignupUserMutation, SignupUserMutationVariables>;
+export type UserLoginMutationHookResult = ReturnType<typeof useUserLoginMutation>
+export type UserLoginMutationResult = Apollo.MutationResult<UserLoginMutation>
+export type UserLoginMutationOptions = Apollo.BaseMutationOptions<
+  UserLoginMutation,
+  UserLoginMutationVariables
+>
+export const SignupUserDocument = gql`
+  mutation SignupUser($input: SignupUserInput!) {
+    signupUser(input: $input) {
+      token
+    }
+  }
+`
+export type SignupUserMutationFn = Apollo.MutationFunction<
+  SignupUserMutation,
+  SignupUserMutationVariables
+>
 
 /**
  * __useSignupUserMutation__
@@ -583,19 +550,28 @@ export type SignupUserMutationFn = Apollo.MutationFunction<SignupUserMutation, S
  *   },
  * });
  */
-export function useSignupUserMutation(baseOptions?: Apollo.MutationHookOptions<SignupUserMutation, SignupUserMutationVariables>) {
-        return Apollo.useMutation<SignupUserMutation, SignupUserMutationVariables>(SignupUserDocument, baseOptions);
-      }
-export type SignupUserMutationHookResult = ReturnType<typeof useSignupUserMutation>;
-export type SignupUserMutationResult = Apollo.MutationResult<SignupUserMutation>;
-export type SignupUserMutationOptions = Apollo.BaseMutationOptions<SignupUserMutation, SignupUserMutationVariables>;
-export const GetAllGroupsDocument = gql`
-    query GetAllGroups {
-  allGroups {
-    ...GroupDetails
-  }
+export function useSignupUserMutation(
+  baseOptions?: Apollo.MutationHookOptions<SignupUserMutation, SignupUserMutationVariables>,
+) {
+  return Apollo.useMutation<SignupUserMutation, SignupUserMutationVariables>(
+    SignupUserDocument,
+    baseOptions,
+  )
 }
-    ${GroupDetailsFragmentDoc}`;
+export type SignupUserMutationHookResult = ReturnType<typeof useSignupUserMutation>
+export type SignupUserMutationResult = Apollo.MutationResult<SignupUserMutation>
+export type SignupUserMutationOptions = Apollo.BaseMutationOptions<
+  SignupUserMutation,
+  SignupUserMutationVariables
+>
+export const GetAllGroupsDocument = gql`
+  query GetAllGroups {
+    allGroups {
+      ...GroupDetails
+    }
+  }
+  ${GroupDetailsFragmentDoc}
+`
 
 /**
  * __useGetAllGroupsQuery__
@@ -612,25 +588,38 @@ export const GetAllGroupsDocument = gql`
  *   },
  * });
  */
-export function useGetAllGroupsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllGroupsQuery, GetAllGroupsQueryVariables>) {
-        return Apollo.useQuery<GetAllGroupsQuery, GetAllGroupsQueryVariables>(GetAllGroupsDocument, baseOptions);
-      }
-export function useGetAllGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllGroupsQuery, GetAllGroupsQueryVariables>) {
-          return Apollo.useLazyQuery<GetAllGroupsQuery, GetAllGroupsQueryVariables>(GetAllGroupsDocument, baseOptions);
-        }
-export type GetAllGroupsQueryHookResult = ReturnType<typeof useGetAllGroupsQuery>;
-export type GetAllGroupsLazyQueryHookResult = ReturnType<typeof useGetAllGroupsLazyQuery>;
-export type GetAllGroupsQueryResult = Apollo.QueryResult<GetAllGroupsQuery, GetAllGroupsQueryVariables>;
-export const MeDocument = gql`
-    query Me {
-  me {
-    id
-    email
-    admin
-    username
-  }
+export function useGetAllGroupsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetAllGroupsQuery, GetAllGroupsQueryVariables>,
+) {
+  return Apollo.useQuery<GetAllGroupsQuery, GetAllGroupsQueryVariables>(
+    GetAllGroupsDocument,
+    baseOptions,
+  )
 }
-    `;
+export function useGetAllGroupsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetAllGroupsQuery, GetAllGroupsQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetAllGroupsQuery, GetAllGroupsQueryVariables>(
+    GetAllGroupsDocument,
+    baseOptions,
+  )
+}
+export type GetAllGroupsQueryHookResult = ReturnType<typeof useGetAllGroupsQuery>
+export type GetAllGroupsLazyQueryHookResult = ReturnType<typeof useGetAllGroupsLazyQuery>
+export type GetAllGroupsQueryResult = Apollo.QueryResult<
+  GetAllGroupsQuery,
+  GetAllGroupsQueryVariables
+>
+export const MeDocument = gql`
+  query Me {
+    me {
+      id
+      email
+      admin
+      username
+    }
+  }
+`
 
 /**
  * __useMeQuery__
@@ -648,19 +637,21 @@ export const MeDocument = gql`
  * });
  */
 export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
-        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
-      }
-export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
-          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
-        }
-export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
-export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
-export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
-export const GroupExistsDocument = gql`
-    query GroupExists($input: GroupExistsInput!) {
-  groupExists(input: $input)
+  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions)
 }
-    `;
+export function useMeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>,
+) {
+  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions)
+}
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>
+export const GroupExistsDocument = gql`
+  query GroupExists($input: GroupExistsInput!) {
+    groupExists(input: $input)
+  }
+`
 
 /**
  * __useGroupExistsQuery__
@@ -678,31 +669,42 @@ export const GroupExistsDocument = gql`
  *   },
  * });
  */
-export function useGroupExistsQuery(baseOptions?: Apollo.QueryHookOptions<GroupExistsQuery, GroupExistsQueryVariables>) {
-        return Apollo.useQuery<GroupExistsQuery, GroupExistsQueryVariables>(GroupExistsDocument, baseOptions);
-      }
-export function useGroupExistsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GroupExistsQuery, GroupExistsQueryVariables>) {
-          return Apollo.useLazyQuery<GroupExistsQuery, GroupExistsQueryVariables>(GroupExistsDocument, baseOptions);
-        }
-export type GroupExistsQueryHookResult = ReturnType<typeof useGroupExistsQuery>;
-export type GroupExistsLazyQueryHookResult = ReturnType<typeof useGroupExistsLazyQuery>;
-export type GroupExistsQueryResult = Apollo.QueryResult<GroupExistsQuery, GroupExistsQueryVariables>;
+export function useGroupExistsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GroupExistsQuery, GroupExistsQueryVariables>,
+) {
+  return Apollo.useQuery<GroupExistsQuery, GroupExistsQueryVariables>(
+    GroupExistsDocument,
+    baseOptions,
+  )
+}
+export function useGroupExistsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GroupExistsQuery, GroupExistsQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GroupExistsQuery, GroupExistsQueryVariables>(
+    GroupExistsDocument,
+    baseOptions,
+  )
+}
+export type GroupExistsQueryHookResult = ReturnType<typeof useGroupExistsQuery>
+export type GroupExistsLazyQueryHookResult = ReturnType<typeof useGroupExistsLazyQuery>
+export type GroupExistsQueryResult = Apollo.QueryResult<GroupExistsQuery, GroupExistsQueryVariables>
 export const MyMembershipsDocument = gql`
-    query MyMemberships($input: MyMembershipsInput!) {
-  myMemberships(input: $input) {
-    id
-    active
-    role
-    status
-    member {
+  query MyMemberships($input: MyMembershipsInput!) {
+    myMemberships(input: $input) {
       id
-    }
-    group {
-      ...GroupDetails
+      active
+      role
+      status
+      member {
+        id
+      }
+      group {
+        ...GroupDetails
+      }
     }
   }
-}
-    ${GroupDetailsFragmentDoc}`;
+  ${GroupDetailsFragmentDoc}
+`
 
 /**
  * __useMyMembershipsQuery__
@@ -720,12 +722,25 @@ export const MyMembershipsDocument = gql`
  *   },
  * });
  */
-export function useMyMembershipsQuery(baseOptions?: Apollo.QueryHookOptions<MyMembershipsQuery, MyMembershipsQueryVariables>) {
-        return Apollo.useQuery<MyMembershipsQuery, MyMembershipsQueryVariables>(MyMembershipsDocument, baseOptions);
-      }
-export function useMyMembershipsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyMembershipsQuery, MyMembershipsQueryVariables>) {
-          return Apollo.useLazyQuery<MyMembershipsQuery, MyMembershipsQueryVariables>(MyMembershipsDocument, baseOptions);
-        }
-export type MyMembershipsQueryHookResult = ReturnType<typeof useMyMembershipsQuery>;
-export type MyMembershipsLazyQueryHookResult = ReturnType<typeof useMyMembershipsLazyQuery>;
-export type MyMembershipsQueryResult = Apollo.QueryResult<MyMembershipsQuery, MyMembershipsQueryVariables>;
+export function useMyMembershipsQuery(
+  baseOptions?: Apollo.QueryHookOptions<MyMembershipsQuery, MyMembershipsQueryVariables>,
+) {
+  return Apollo.useQuery<MyMembershipsQuery, MyMembershipsQueryVariables>(
+    MyMembershipsDocument,
+    baseOptions,
+  )
+}
+export function useMyMembershipsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<MyMembershipsQuery, MyMembershipsQueryVariables>,
+) {
+  return Apollo.useLazyQuery<MyMembershipsQuery, MyMembershipsQueryVariables>(
+    MyMembershipsDocument,
+    baseOptions,
+  )
+}
+export type MyMembershipsQueryHookResult = ReturnType<typeof useMyMembershipsQuery>
+export type MyMembershipsLazyQueryHookResult = ReturnType<typeof useMyMembershipsLazyQuery>
+export type MyMembershipsQueryResult = Apollo.QueryResult<
+  MyMembershipsQuery,
+  MyMembershipsQueryVariables
+>
