@@ -548,7 +548,7 @@ const DashboardCrypto = () => {
           <div className="card">
             <div className="card-body">
               <div>
-                {!myOrderHistoryLoaded && (
+                {
                   <a href="#" onClick={handleMyOrderHistory}>
                     <Spin spinning={myOrderHistoryLoading}>
                       <Alert
@@ -558,7 +558,7 @@ const DashboardCrypto = () => {
                       />
                     </Spin>
                   </a>
-                )}
+                }
                 {myOrderHistoryLoaded && (
                   <div className={`${styles.table} kit__utils__table`}>
                     <Table
