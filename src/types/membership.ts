@@ -5,6 +5,7 @@ export interface Membership {
   id: string
   groupId: string
   memberId: string
+  username: string
   active: boolean
   orders: Order[]
   role: MembershipRole

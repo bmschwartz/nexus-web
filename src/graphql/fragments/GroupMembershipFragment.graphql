@@ -5,8 +5,10 @@ fragment GroupMembershipDetails on GroupMembership {
   status
   group {
     id
+    name
   }
   member {
     id
+    username
   }
 }

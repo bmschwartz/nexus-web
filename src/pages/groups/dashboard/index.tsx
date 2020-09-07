@@ -22,6 +22,7 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
       groupId: membership.group.id,
       active: membership.active,
       memberId: membership.member.id,
+      username: membership.member.username,
       role: membership.role,
       status: membership.status,
       orders: membership.orders,

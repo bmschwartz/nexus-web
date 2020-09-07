@@ -38,11 +38,11 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
   }
 
   const transformMembershipData = (membership: any): Membership => {
-    console.log(membership)
     return {
       id: membership.id,
       groupId: membership.group.id,
       memberId: membership.member.id,
+      username: membership.member.username,
       active: membership.active,
       orders: [],
       role: roleFromString(membership.role)!,
