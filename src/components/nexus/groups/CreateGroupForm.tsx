@@ -167,15 +167,11 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
               <Divider orientation="left">
                 <strong>Membership</strong>
               </Divider>
-              <Form.Item
-                name="membershipLength"
-                label="Membership Length (Months)"
-                className="mb-3"
-              >
-                <InputNumber name="membershipPeriod" min={1} max={12} defaultValue={1} />
-              </Form.Item>
               <Form.Item name="membershipFee" label="Membership Fee" className="mb-3">
                 <Input name="membershipFee" type="number" placeholder="0.00" addonBefore="$" />
+              </Form.Item>
+              <Form.Item name="membershipLength" label="Length (Months)" className="mb-3">
+                <InputNumber name="membershipLength" min={1} max={12} defaultValue={1} />
               </Form.Item>
               <Form.Item name="payInPlatform" label="Pay In Platform">
                 <Checkbox value={values.payInPlatform} name="payInPlatform" />
