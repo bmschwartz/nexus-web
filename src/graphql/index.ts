@@ -380,8 +380,14 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
   GroupMembership,
   'id' | 'active' | 'role' | 'status'
 > & {
-    group: { __typename?: 'Group' } & Pick<Group, 'id' | 'name'>
     member: { __typename?: 'User' } & Pick<User, 'id' | 'username'>
+    group: { __typename?: 'Group' } & Pick<Group, 'id' | 'name'>
+    orders: Array<
+      { __typename?: 'Order' } & Pick<
+        Order,
+        'id' | 'createdAt' | 'price' | 'quantity' | 'stopPrice' | 'symbol' | 'orderType'
+      >
+    >
   }
 
 export type CreateGroupMutationVariables = Exact<{
@@ -419,7 +425,11 @@ export type GetGroupQueryVariables = Exact<{
 }>
 
 export type GetGroupQuery = { __typename?: 'Query' } & {
-  group?: Maybe<{ __typename?: 'Group' } & GroupDetailsFragment>
+  group?: Maybe<
+    { __typename?: 'Group' } & {
+      memberships: Array<{ __typename?: 'GroupMembership' } & GroupMembershipDetailsFragment>
+    } & GroupDetailsFragment
+  >
 }
 
 export type MeQueryVariables = Exact<{ [key: string]: never }>
@@ -474,13 +484,22 @@ export const GroupMembershipDetailsFragmentDoc = gql`
     active
     role
     status
+    member {
+      id
+      username
+    }
     group {
       id
       name
     }
-    member {
+    orders {
       id
-      username
+      createdAt
+      price
+      quantity
+      stopPrice
+      symbol
+      orderType
     }
   }
 `
@@ -663,9 +682,13 @@ export const GetGroupDocument = gql`
   query GetGroup($input: GroupInput!) {
     group(input: $input) {
       ...GroupDetails
+      memberships {
+        ...GroupMembershipDetails
+      }
     }
   }
   ${GroupDetailsFragmentDoc}
+  ${GroupMembershipDetailsFragmentDoc}
 `
 
 /**

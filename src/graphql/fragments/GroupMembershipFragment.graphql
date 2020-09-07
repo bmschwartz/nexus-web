@@ -3,12 +3,15 @@ fragment GroupMembershipDetails on GroupMembership {
   active
   role
   status
+  member {
+    id
+    username
+  }
   group {
     id
     name
   }
-  member {
-    id
-    username
+  orders {
+    ...OrderDetails
   }
 }

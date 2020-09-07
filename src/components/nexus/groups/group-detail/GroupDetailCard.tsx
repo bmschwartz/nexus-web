@@ -19,11 +19,11 @@ import { GroupMembers } from './GroupMembers'
 
 interface GroupDetailCardProps {
   group: Group
-  membership: Membership
+  myMembership: Membership
 }
 
-export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, membership }) => {
-  const menuTabs: Tab[] = availableTabs(membership.role)
+export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership }) => {
+  const menuTabs: Tab[] = availableTabs(myMembership.role)
 
   const [tabKey, setTabKey] = useState<string>(menuTabs[0].key)
 
@@ -31,7 +31,6 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, membership })
     setTabKey(key)
   }
 
-  console.log(tabKey)
   return (
     <div className="row">
       <div className="col-xl-12 col-lg-12">
@@ -45,14 +44,14 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, membership })
           </div>
           <div className="card-body">
             {/* Member tabs */}
-            {tabKey === 'memberDashboard' && <MemberDashboard membership={membership} />}
-            {tabKey === 'memberOrders' && <MemberOrders membership={membership} />}
-            {tabKey === 'memberPositions' && <MemberPositions membership={membership} />}
-            {tabKey === 'memberSettings' && <MemberSettings membership={membership} />}
+            {tabKey === 'memberDashboard' && <MemberDashboard membership={myMembership} />}
+            {tabKey === 'memberOrders' && <MemberOrders membership={myMembership} />}
+            {tabKey === 'memberPositions' && <MemberPositions membership={myMembership} />}
+            {tabKey === 'memberSettings' && <MemberSettings membership={myMembership} />}
 
             {/* Group tabs */}
             {tabKey === 'groupDashboard' && <GroupDashboard group={group} />}
-            {tabKey === 'groupMembers' && <GroupMembers memberships={group.memberships} />}
+            {tabKey === 'groupMembers' && <GroupMembers group={group} />}
             {tabKey === 'groupOrders' && <GroupOrders group={group} />}
             {tabKey === 'groupPositions' && <GroupPositions group={group} />}
             {tabKey === 'groupProfile' && <GroupProfile group={group} />}

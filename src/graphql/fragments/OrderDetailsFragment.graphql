@@ -1,0 +1,9 @@
+fragment OrderDetails on Order {
+  id
+  createdAt
+  price
+  quantity
+  stopPrice
+  symbol
+  orderType
+}

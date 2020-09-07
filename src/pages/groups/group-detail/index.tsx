@@ -8,6 +8,7 @@ import { useGetGroupQuery, useGetMembershipQuery } from '../../../graphql/index'
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
 import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
 import { Membership, roleFromString, statusFromString } from 'types/membership'
+import { Order } from 'types/order'
 /* eslint-enable */
 
 interface GroupDetailProps {
@@ -33,21 +34,40 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
       name: group.name,
       active: group.active,
       description: group.description,
-      memberships: [],
+      memberships: group.memberships.map(transformMembershipData),
     }
   }
 
-  const transformMembershipData = (membership: any): Membership => {
-    return {
-      id: membership.id,
-      groupId: membership.group.id,
-      memberId: membership.member.id,
-      username: membership.member.username,
-      active: membership.active,
-      orders: [],
-      role: roleFromString(membership.role)!,
-      status: statusFromString(membership.status)!,
-    }
+  const transformMembershipData = (membership: any): Membership => ({
+    id: membership.id,
+    groupId: membership.group.id,
+    memberId: membership.member.id,
+    username: membership.member.username,
+    active: membership.active,
+    orders: membership.orders.map(transformOrderData),
+    role: roleFromString(membership.role)!,
+    status: statusFromString(membership.status)!,
+  })
+
+  const transformOrderData = (order: any): Order => ({
+    id: order.id,
+    side: order.side,
+    orderType: order.orderType,
+    price: order.price,
+    quantity: order.quantity,
+    stopPrice: order.stopPrice,
+    symbol: order.symbol,
+    lastTimestamp: order.lastTimeStamp,
+  })
+
+  let transformedGroup
+  let transformedMembership
+
+  if (getGroupData && getGroupData.group) {
+    transformedGroup = transformGroupData(getGroupData.group)
+  }
+  if (membershipData?.membership) {
+    transformedMembership = transformMembershipData(membershipData.membership)
   }
 
   return (
@@ -55,13 +75,10 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
       <Helmet title="Groups" />
       {(getGroupLoading || membershipLoading) && <Spin />}
       {getGroupError && <strong>No access to group {getGroupError.message}</strong>}
-      {getGroupData && membershipData && getGroupData.group && membershipData?.membership ? (
+      {transformedGroup && transformedMembership ? (
         <>
-          <GroupDetailHeader className="mb-3" group={transformGroupData(getGroupData.group)} />
-          <GroupDetailCard
-            group={transformGroupData(getGroupData.group)}
-            membership={transformMembershipData(membershipData.membership)}
-          />
+          <GroupDetailHeader className="mb-3" group={transformedGroup} />
+          <GroupDetailCard group={transformedGroup} myMembership={transformedMembership} />
         </>
       ) : (
         <strong>No access to group</strong>

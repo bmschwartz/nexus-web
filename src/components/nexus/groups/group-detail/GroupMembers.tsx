@@ -2,7 +2,8 @@ import React, { FC } from 'react'
 import { Table } from 'antd'
 
 import { history } from 'index'
-import { Membership, MembershipRole } from 'types/membership'
+import { Group } from 'types/group'
+import { MembershipRole } from 'types/membership'
 
 /* eslint-disable */
 import {
@@ -23,12 +24,6 @@ const onRow = (row: GroupMembershipRow) => {
 
 const columns = [
   {
-    title: 'Active',
-    dataIndex: 'active',
-    key: 'active',
-    render: (active: boolean) => badgeForIsActiveMember(active),
-  },
-  {
     title: 'Username',
     dataIndex: 'username',
     key: 'username',
@@ -40,6 +35,12 @@ const columns = [
     ),
   },
   {
+    title: 'Active',
+    dataIndex: 'active',
+    key: 'active',
+    render: (active: boolean) => badgeForIsActiveMember(active),
+  },
+  {
     title: 'Role',
     dataIndex: 'role',
     key: 'role',
@@ -48,11 +49,11 @@ const columns = [
 ]
 
 interface GroupMembersProps {
-  memberships: Membership[]
+  group: Group
 }
 
-export const GroupMembers: FC<GroupMembersProps> = ({ memberships }) => {
-  const tableData: GroupMembershipRow[] = createGroupMembersTableData(memberships)
+export const GroupMembers: FC<GroupMembersProps> = ({ group }) => {
+  const tableData: GroupMembershipRow[] = createGroupMembersTableData(group.memberships)
 
   return (
     <div className="card">
