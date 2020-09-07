@@ -64,7 +64,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
           />
         </>
       ) : (
-        <strong>Error loading</strong>
+        <strong>Error loading group</strong>
       )}
     </div>
   )
