@@ -8,7 +8,6 @@ const mapStateToProps = ({ user, dispatch }) => ({ user, dispatch })
 
 const Register = ({ dispatch, user }) => {
   const onFinish = values => {
-    console.log(values)
     dispatch({
       type: 'user/REGISTER',
       payload: values,

@@ -146,7 +146,7 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
                 <strong>General</strong>
               </Divider>
               <Form.Item name="name" label="Group Name">
-                <Input name="name" placeholder="Enter Group Name" onError={console.log} />
+                <Input name="name" placeholder="Enter Group Name" />
               </Form.Item>
               <Form.Item name="description" label="Description">
                 <Input.TextArea name="description" placeholder="Enter Description..." />

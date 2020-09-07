@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
 import { Table } from 'antd'
 import { Link } from 'react-router-dom'
-import { TablePaginationConfig } from 'antd/lib/table'
-import { SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface'
+// import { TablePaginationConfig } from 'antd/lib/table'
+// import { SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface'
 
+import { history } from 'index'
 import { Group } from 'types/group'
 import { Membership, MembershipRole } from 'types/membership'
 
@@ -20,6 +21,14 @@ import {
 interface GroupTableProps {
   groups: Group[]
   memberships: Membership[]
+}
+
+const onRow = (row: GroupTableItem) => {
+  return {
+    onClick: () => {
+      history.push(`/groups/${row.id}`)
+    },
+  }
 }
 
 const columns = [
@@ -59,14 +68,14 @@ const columns = [
 const GroupTable: FC<GroupTableProps> = ({ groups, memberships }) => {
   const mergedTableData: GroupTableItem[] = createGroupTableData(groups, memberships)
 
-  const handleTableChange = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, React.ReactText[] | null>,
-    sorter: SorterResult<GroupTableItem> | SorterResult<GroupTableItem>[],
-    extra: TableCurrentDataSource<any>,
-  ) => {
-    console.log(pagination, filters, sorter, extra)
-  }
+  // const handleTableChange = (
+  //   pagination: TablePaginationConfig,
+  //   filters: Record<string, React.ReactText[] | null>,
+  //   sorter: SorterResult<GroupTableItem> | SorterResult<GroupTableItem>[],
+  //   extra: TableCurrentDataSource<any>,
+  // ) => {
+  //   console.log(pagination, filters, sorter, extra)
+  // }
 
   return (
     <div className="card">
@@ -84,9 +93,10 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships }) => {
         <div className="text-nowrap">
           <Table
             rowKey="id"
+            onRow={onRow}
             columns={columns}
             dataSource={mergedTableData}
-            onChange={handleTableChange}
+            // onChange={handleTableChange}
           />
         </div>
       </div>
