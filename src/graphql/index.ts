@@ -49,6 +49,8 @@ export type Group = {
   active: Scalars['Boolean']
   description: Scalars['String']
   memberships: Array<GroupMembership>
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
 }
 
 export type GroupExistsInput = {
@@ -67,6 +69,8 @@ export type GroupMembership = {
   active: Scalars['Boolean']
   role: MembershipRole
   status: MembershipStatus
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
   orders: Array<Order>
 }
 
@@ -131,6 +135,8 @@ export type UpdateMembershipStatusInput = {
 export type BinanceCurrency = {
   __typename?: 'BinanceCurrency'
   id: Scalars['ID']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
   symbol: Scalars['String']
   lastPrice?: Maybe<Scalars['Float']>
   openPrice?: Maybe<Scalars['Float']>
@@ -143,6 +149,8 @@ export type BinanceCurrency = {
 export type BitmexCurrency = {
   __typename?: 'BitmexCurrency'
   id: Scalars['ID']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
   symbol: Scalars['String']
   underlying: Scalars['String']
   active: Scalars['Boolean']
@@ -174,6 +182,7 @@ export type Order = {
   __typename?: 'Order'
   id: Scalars['ID']
   createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
   membership: GroupMembership
   orderSet: OrderSet
   side?: Maybe<OrderSide>
@@ -189,6 +198,7 @@ export type OrderSet = {
   __typename?: 'OrderSet'
   id: Scalars['ID']
   createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
   description: Scalars['String']
   orders: Array<Order>
   orderSide?: Maybe<OrderSide>
@@ -238,6 +248,8 @@ export type SignupUserInput = {
 export type User = {
   __typename?: 'User'
   id: Scalars['ID']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
   email: Scalars['String']
   username: Scalars['String']
   admin: Scalars['Boolean']
@@ -382,13 +394,13 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
 > & {
     member: { __typename?: 'User' } & Pick<User, 'id' | 'username'>
     group: { __typename?: 'Group' } & Pick<Group, 'id' | 'name'>
-    orders: Array<
-      { __typename?: 'Order' } & Pick<
-        Order,
-        'id' | 'createdAt' | 'price' | 'quantity' | 'stopPrice' | 'symbol' | 'orderType'
-      >
-    >
+    orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment>
   }
+
+export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
+  Order,
+  'id' | 'createdAt' | 'price' | 'quantity' | 'stopPrice' | 'symbol' | 'orderType'
+>
 
 export type CreateGroupMutationVariables = Exact<{
   input: CreateGroupInput
@@ -478,6 +490,17 @@ export const GroupDetailsFragmentDoc = gql`
     active
   }
 `
+export const OrderDetailsFragmentDoc = gql`
+  fragment OrderDetails on Order {
+    id
+    createdAt
+    price
+    quantity
+    stopPrice
+    symbol
+    orderType
+  }
+`
 export const GroupMembershipDetailsFragmentDoc = gql`
   fragment GroupMembershipDetails on GroupMembership {
     id
@@ -493,15 +516,10 @@ export const GroupMembershipDetailsFragmentDoc = gql`
       name
     }
     orders {
-      id
-      createdAt
-      price
-      quantity
-      stopPrice
-      symbol
-      orderType
+      ...OrderDetails
     }
   }
+  ${OrderDetailsFragmentDoc}
 `
 export const CreateGroupDocument = gql`
   mutation CreateGroup($input: CreateGroupInput!) {
