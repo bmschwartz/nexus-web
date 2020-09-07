@@ -54,7 +54,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     <div>
       <Helmet title="Groups" />
       {(getGroupLoading || membershipLoading) && <Spin />}
-      {getGroupError && <strong>Error loading group {getGroupError.message}</strong>}
+      {getGroupError && <strong>No access to group {getGroupError.message}</strong>}
       {getGroupData && membershipData && getGroupData.group && membershipData?.membership ? (
         <>
           <GroupDetailHeader className="mb-3" group={transformGroupData(getGroupData.group)} />
@@ -64,7 +64,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
           />
         </>
       ) : (
-        <strong>Error loading group</strong>
+        <strong>No access to group</strong>
       )}
     </div>
   )
