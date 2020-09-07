@@ -9,7 +9,7 @@ interface GroupDetailHeaderProps {
 export const GroupDetailHeader: FC<GroupDetailHeaderProps> = ({ className, group }) => {
   return (
     <div className={className}>
-      <strong>{group.name}</strong>
+      <h4>{group.name.toUpperCase()}</h4>
     </div>
   )
 }

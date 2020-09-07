@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import GroupTable from 'components/nexus/groups/GroupTable'
+import GroupTable from 'components/nexus/groups/group-table/GroupTable'
 import { Helmet } from 'react-helmet'
 
 import { Group } from 'types/group'

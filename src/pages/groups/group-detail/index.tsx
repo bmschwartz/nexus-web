@@ -5,8 +5,8 @@ import { Spin } from 'antd'
 import { Group } from 'types/group'
 /* eslint-disable */
 import { useGetGroupQuery, useGetMembershipQuery } from '../../../graphql/index'
-import { GroupDetailHeader } from 'components/nexus/groups/GroupDetailHeader'
-import { GroupDetailCard } from 'components/nexus/groups/GroupDetailCard'
+import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
+import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
 import { Membership, roleFromString, statusFromString } from 'types/membership'
 /* eslint-enable */
 

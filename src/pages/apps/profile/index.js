@@ -44,7 +44,7 @@ const AppsProfile = () => {
         <div className="col-xl-8 col-lg-12">
           <div className="card">
             <div className="card-header card-header-flex flex-column">
-              <div className="d-flex flex-wrap border-bottom pt-3 pb-4 mb-3">
+              {/* <div className="d-flex flex-wrap border-bottom pt-3 pb-4 mb-3">
                 <div className="mr-5">
                   <div className="text-dark font-size-18 font-weight-bold">David Beckham</div>
                   <div className="text-gray-6">@david100</div>
@@ -57,7 +57,7 @@ const AppsProfile = () => {
                   <div className="text-dark font-size-18 font-weight-bold">17,256</div>
                   <div className="text-gray-6">Followers</div>
                 </div>
-              </div>
+              </div> */}
               <Tabs activeKey={tabKey} className="mr-auto kit-tabs-bold" onChange={changeTab}>
                 <TabPane tab="Agent Wall" key="1" />
                 <TabPane tab="Messages" key="2" />
