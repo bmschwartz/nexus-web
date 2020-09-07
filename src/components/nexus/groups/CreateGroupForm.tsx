@@ -60,7 +60,6 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
             if (!address || !currentPayoutCurrency) {
               return false
             }
-            console.log(currentPayoutCurrency)
             return validateAddress(address, currentPayoutCurrency)
           }),
         otherwise: Yup.string()

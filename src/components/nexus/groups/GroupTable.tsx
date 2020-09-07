@@ -35,7 +35,7 @@ const columns = [
     key: 'name',
     sorter: (a: GroupTableItem, b: GroupTableItem) => (a.name > b.name ? -1 : 1),
     render: (text: string) => (
-      <a className="btn btn-md btn-light" href="#" onClick={e => e.preventDefault()}>
+      <a className="btn btn-md btn-light" href="#">
         {text}
       </a>
     ),

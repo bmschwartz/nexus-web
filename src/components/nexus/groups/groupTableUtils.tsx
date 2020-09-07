@@ -43,7 +43,6 @@ export const createGroupTableData = (
       ...membership,
     }
   })
-  console.log(groupTableItems)
   return groupTableItems
 }
 
@@ -71,7 +70,6 @@ export const badgeForIsActiveGroup = (active: boolean) => {
 }
 
 export const badgeForRole = ({ memberRole: role }: GroupTableItem) => {
-  console.log(role)
   const badge: Badge = {
     style: '',
     text: '',
@@ -101,7 +99,6 @@ export const badgeForStatus = ({ memberStatus: status }: GroupTableItem) => {
     style: '',
     text: '',
   }
-  console.log(status)
   switch (status) {
     case MembershipStatus.Approved:
       badge.style = 'badge-success'
