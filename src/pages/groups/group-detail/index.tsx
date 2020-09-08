@@ -22,9 +22,11 @@ interface RouteParams {
 const GroupDetailPage: FC<GroupDetailProps> = () => {
   const { groupId }: RouteParams = useParams()
   const { data: getGroupData, loading: getGroupLoading, error: getGroupError } = useGetGroupQuery({
+    fetchPolicy: 'network-only',
     variables: { input: { groupId } },
   })
   const { data: membershipData, loading: membershipLoading } = useGetMembershipQuery({
+    fetchPolicy: 'network-only',
     variables: { input: { groupId } },
   })
 

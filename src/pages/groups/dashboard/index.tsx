@@ -11,8 +11,9 @@ interface GroupsDashboardProps {
   children?: ReactNode
 }
 const GroupsDashboard: FC<GroupsDashboardProps> = () => {
-  const { data: allGroupsData } = useGetAllGroupsQuery()
+  const { data: allGroupsData } = useGetAllGroupsQuery({ fetchPolicy: 'network-only' })
   const { data: membershipData } = useMyMembershipsQuery({
+    fetchPolicy: 'network-only',
     variables: { input: { roles: null, statuses: null } },
   })
 
