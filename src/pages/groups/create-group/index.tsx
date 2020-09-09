@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import { Helmet } from 'react-helmet'
-import CreateGroupForm from 'components/nexus/groups/CreateGroupForm'
+import CreateGroupForm from 'components/nexus/groups/create-group/CreateGroupForm'
 
 interface CreateGroupPageProps {
   children?: ReactNode
