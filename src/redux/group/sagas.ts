@@ -31,6 +31,14 @@ export function* CREATE_GROUP({ payload }: { payload: CreateGroupState }) {
         },
       },
     })
+    yield put({
+      type: 'group/SET_GROUP_DETAIL_STATE',
+      payload: {
+        groupDetail: {
+          groupId,
+        },
+      },
+    })
     yield history.push(`/groups/${groupId}`)
     notification.success({
       message: 'Created Group',
@@ -53,6 +61,12 @@ export function* CREATE_GROUP({ payload }: { payload: CreateGroupState }) {
   }
 }
 
+// export function* SET_GROUP_DETAIL_STATE({ payload }: { payload: GroupDetailState }) {
+export function* SET_GROUP_DETAIL_STATE(a: any) {
+  yield call(console.log, a)
+}
+
 export default function* rootSaga() {
   yield all([takeEvery(actions.CREATE_GROUP, CREATE_GROUP)])
+  yield all([takeEvery(actions.SET_GROUP_DETAIL_STATE, SET_GROUP_DETAIL_STATE)])
 }

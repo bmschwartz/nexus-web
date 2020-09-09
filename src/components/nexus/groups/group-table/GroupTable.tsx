@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { Table } from 'antd'
+import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 // import { TablePaginationConfig } from 'antd/lib/table'
 // import { SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface'
@@ -19,15 +20,16 @@ import {
 /* eslint-enable */
 
 interface GroupTableProps {
+  dispatch: any
+  group: any
   groups: Group[]
   memberships: Membership[]
 }
 
-const onRow = (row: GroupTableItem) => {
+const mapStateToProps = ({ group, dispatch }: any) => {
   return {
-    onClick: () => {
-      history.push(`/groups/${row.id}`)
-    },
+    group,
+    dispatch,
   }
 }
 
@@ -65,7 +67,7 @@ const columns = [
   },
 ]
 
-const GroupTable: FC<GroupTableProps> = ({ groups, memberships }) => {
+const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
   const mergedTableData: GroupTableItem[] = createGroupTableData(groups, memberships)
 
   // const handleTableChange = (
@@ -76,6 +78,22 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships }) => {
   // ) => {
   //   console.log(pagination, filters, sorter, extra)
   // }
+
+  const onRow = (row: GroupTableItem) => {
+    return {
+      onClick: () => {
+        dispatch({
+          type: 'group/SET_GROUP_DETAIL_STATE',
+          payload: {
+            groupDetail: {
+              groupId: row.id,
+            },
+          },
+        })
+        history.push(`/groups/${row.id}`)
+      },
+    }
+  }
 
   return (
     <div className="card">
@@ -104,4 +122,4 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships }) => {
   )
 }
 
-export default GroupTable
+export default connect(mapStateToProps)(GroupTable)

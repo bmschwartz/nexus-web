@@ -8,7 +8,8 @@ import ReactDOM from 'react-dom'
 import { createBrowserHistory } from 'history'
 import * as dotenv from 'dotenv'
 import { ApolloProvider } from '@apollo/client'
-import { createStore, applyMiddleware, compose } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
+import { composeWithDevTools } from 'redux-devtools-extension'
 import { Provider } from 'react-redux'
 // import { logger } from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
@@ -34,7 +35,7 @@ const middlewares = [sagaMiddleware, routeMiddleware]
 // if (process.env.NODE_ENV === 'development') {
 //   middlewares.push(logger)
 // }
-const store = createStore(reducers(history), compose(applyMiddleware(...middlewares)))
+const store = createStore(reducers(history), composeWithDevTools(applyMiddleware(...middlewares)))
 sagaMiddleware.run(sagas)
 
 ReactDOM.render(

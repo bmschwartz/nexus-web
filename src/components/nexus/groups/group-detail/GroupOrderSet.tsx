@@ -1,31 +1,31 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { Group } from 'types/group'
 import { OrderSetTable } from 'components/nexus/order-sets/OrderSetTable'
 
 interface GroupOrderSetsProps {
   group: Group
+  tabState: OrderSetTabState
+  setTabState: (tabState: OrderSetTabState) => void
 }
 
-enum OrderSetPageState {
-  ORDER_SET_TABLE,
-  ORDER_SET_CREATE,
-  ORDER_SET_REVIEW,
+export enum OrderSetTabState {
+  VIEW_ALL,
+  CREATE,
+  VIEW_DETAIL,
 }
 
-export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ group }) => {
-  const [pageState, setPageState] = useState<OrderSetPageState>(OrderSetPageState.ORDER_SET_TABLE)
-
-  console.log(`group id: ${group.id}`)
-
+export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, setTabState }) => {
   const onClickCreateOrderSet = () => {
-    setPageState(OrderSetPageState.ORDER_SET_CREATE)
+    setTabState(OrderSetTabState.CREATE)
   }
 
   return (
     <div className="card">
-      {pageState === OrderSetPageState.ORDER_SET_TABLE && (
+      {tabState === OrderSetTabState.VIEW_ALL && (
         <OrderSetTable onClickCreate={onClickCreateOrderSet} />
       )}
+      {tabState === OrderSetTabState.CREATE && <div>Create order set</div>}
+      {tabState === OrderSetTabState.VIEW_DETAIL && <div>View orderset detail</div>}
     </div>
   )
 }

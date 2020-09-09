@@ -6,7 +6,7 @@ import { Tabs } from 'antd'
 /* eslint-disable */
 import { availableTabs, Tab } from './groupTabs'
 import { GroupDashboard } from './GroupDashboard'
-import { GroupOrderSets } from './GroupOrderSet'
+import { GroupOrderSets, OrderSetTabState } from './GroupOrderSet'
 import { GroupPositions } from './GroupPositions'
 import { GroupSettings } from './GroupSettings'
 import { MemberDashboard } from './MemberDashboard'
@@ -26,6 +26,9 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
   const menuTabs: Tab[] = availableTabs(myMembership.role)
 
   const [tabKey, setTabKey] = useState<string>(menuTabs[0].key)
+  const [groupOrdersTabState, setGroupOrdersTabState] = useState<OrderSetTabState>(
+    OrderSetTabState.VIEW_ALL,
+  )
 
   const changeTab = (key: string): void => {
     setTabKey(key)
@@ -52,7 +55,13 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
             {/* Group tabs */}
             {tabKey === 'groupDashboard' && <GroupDashboard group={group} />}
             {tabKey === 'groupMembers' && <GroupMembers group={group} />}
-            {tabKey === 'groupOrders' && <GroupOrderSets group={group} />}
+            {tabKey === 'groupOrders' && (
+              <GroupOrderSets
+                group={group}
+                tabState={groupOrdersTabState}
+                setTabState={setGroupOrdersTabState}
+              />
+            )}
             {tabKey === 'groupPositions' && <GroupPositions group={group} />}
             {tabKey === 'groupProfile' && <GroupProfile group={group} />}
             {tabKey === 'groupSettings' && <GroupSettings group={group} />}
