@@ -20,11 +20,6 @@ export const availableTabs = (userRole: MembershipRole): Tab[] => {
       requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
     },
     {
-      key: 'groupMembers',
-      name: 'Members',
-      requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
-    },
-    {
       key: 'groupOrders',
       name: 'Orders',
       requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
@@ -32,6 +27,11 @@ export const availableTabs = (userRole: MembershipRole): Tab[] => {
     {
       key: 'groupPositions',
       name: 'Positions',
+      requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
+    },
+    {
+      key: 'groupMembers',
+      name: 'Members',
       requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
     },
     {
