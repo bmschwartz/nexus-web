@@ -91,10 +91,12 @@ const groupIdChanged = (state: GroupState, payload: any): boolean => {
   const {
     groupDetail: { groupId: originalGroupId },
   } = state
-  const {
-    groupDetail: { groupId: newGroupId },
-  } = payload
-  return originalGroupId !== newGroupId
+
+  if (!payload || !payload.groupDetail) {
+    return false
+  }
+
+  return originalGroupId !== payload.groupDetail.groupId
 }
 
 export default function groupReducer(state: GroupState = initialState, action: any) {

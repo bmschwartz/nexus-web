@@ -21,17 +21,13 @@ import {
 
 interface GroupTableProps {
   dispatch: any
-  group: any
   groups: Group[]
   memberships: Membership[]
 }
 
-const mapStateToProps = ({ group, dispatch }: any) => {
-  return {
-    group,
-    dispatch,
-  }
-}
+const mapStateToProps = ({ dispatch }: any) => ({
+  dispatch,
+})
 
 const columns = [
   {
@@ -69,15 +65,6 @@ const columns = [
 
 const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
   const mergedTableData: GroupTableItem[] = createGroupTableData(groups, memberships)
-
-  // const handleTableChange = (
-  //   pagination: TablePaginationConfig,
-  //   filters: Record<string, React.ReactText[] | null>,
-  //   sorter: SorterResult<GroupTableItem> | SorterResult<GroupTableItem>[],
-  //   extra: TableCurrentDataSource<any>,
-  // ) => {
-  //   console.log(pagination, filters, sorter, extra)
-  // }
 
   const onRow = (row: GroupTableItem) => {
     return {
