@@ -1,28 +1,30 @@
 import React, { FC } from 'react'
-import { Table, Button } from 'antd'
+import { Table, Button, PageHeader } from 'antd'
 
 /* eslint-disable */
 import { OrderSetTableColumns, OrderSetTableRow } from './orderSetTableUtils'
 /* eslint-enable */
 
-const onRow = (row: OrderSetTableRow) => {
-  return {
-    onClick: () => {
-      console.log(`clicked order set ${row.id}`)
-    },
-  }
-}
-
 interface OrderSetTableProps {
   onClickCreate: () => void
+  onClickOrderSet: (orderSetId: String) => void
 }
 
-export const OrderSetTable: FC<OrderSetTableProps> = ({ onClickCreate }) => {
+export const OrderSetTable: FC<OrderSetTableProps> = ({ onClickCreate, onClickOrderSet }) => {
+  const onRow = (row: OrderSetTableRow) => {
+    return {
+      onClick: () => {
+        console.log(`clicked order set ${row.id}`)
+        onClickOrderSet(row.id)
+      },
+    }
+  }
+
   return (
     <>
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
-          <h5 className="mb-0">Order Sets</h5>
+          <PageHeader className="site-page-header" title="Order Sets" backIcon={false} />
         </div>
         <div className="d-flex flex-column justify-content-center">
           <Button className="btn btn-primary" onClick={onClickCreate}>

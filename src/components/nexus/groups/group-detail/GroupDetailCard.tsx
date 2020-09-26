@@ -52,7 +52,7 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
             {tabKey === 'memberPositions' && <MemberPositions membership={myMembership} />}
             {tabKey === 'memberSettings' && <MemberSettings membership={myMembership} />}
 
-            {/* Group tabs */}
+            {/* Group Admin/Trader tabs */}
             {tabKey === 'groupDashboard' && <GroupDashboard group={group} />}
             {tabKey === 'groupMembers' && <GroupMembers group={group} />}
             {tabKey === 'groupOrders' && (

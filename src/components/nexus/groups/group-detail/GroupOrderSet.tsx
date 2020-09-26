@@ -1,6 +1,8 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { Group } from 'types/group'
 import { OrderSetTable } from 'components/nexus/order-sets/OrderSetTable'
+import CreateOrderSetForm from 'components/nexus/order-sets/CreateOrderSetForm'
+import { OrderSetDetail } from 'components/nexus/order-sets/OrderSetDetail'
 
 interface GroupOrderSetsProps {
   group: Group
@@ -15,17 +17,27 @@ export enum OrderSetTabState {
 }
 
 export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, setTabState }) => {
+  const [selectedOrderSetId, setSelectedOrderSetId] = useState<String>()
+
   const onClickCreateOrderSet = () => {
     setTabState(OrderSetTabState.CREATE)
+  }
+  const onClickBack = () => {
+    setTabState(OrderSetTabState.VIEW_ALL)
+  }
+  const onClickOrderSet = (orderSetId: String) => {
+    setSelectedOrderSetId(orderSetId)
   }
 
   return (
     <div className="card">
       {tabState === OrderSetTabState.VIEW_ALL && (
-        <OrderSetTable onClickCreate={onClickCreateOrderSet} />
+        <OrderSetTable onClickCreate={onClickCreateOrderSet} onClickOrderSet={onClickOrderSet} />
       )}
-      {tabState === OrderSetTabState.CREATE && <div>Create order set</div>}
-      {tabState === OrderSetTabState.VIEW_DETAIL && <div>View orderset detail</div>}
+      {tabState === OrderSetTabState.CREATE && <CreateOrderSetForm onClickBack={onClickBack} />}
+      {tabState === OrderSetTabState.VIEW_DETAIL && (
+        <OrderSetDetail onClickBack={onClickBack} orderSetId={selectedOrderSetId} />
+      )}
     </div>
   )
 }
