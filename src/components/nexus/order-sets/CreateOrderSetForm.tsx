@@ -11,10 +11,15 @@ import { Exchange } from './createOrderFormUtils'
 /* eslint-enable */
 
 interface CreateOrderSetFormProps {
+  groupId: String
   onClickBack: () => void
   dispatch: any
 }
 const mapStateToProps = ({ dispatch }: any) => ({ dispatch })
+
+const getOverviewText = ({ side, symbol, price, members, percent, exchange }: any): String => {
+  return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${members.length} members`
+}
 
 const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch }) => {
   const CreateOrderSetSchema = Yup.object().shape({
@@ -45,12 +50,12 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch
           .notRequired(),
       }),
     percent: Yup.number()
-      .label('Percent')
+      .label('Balance Percent')
       .positive()
       .integer()
       .max(100)
       .required(),
-    users: Yup.array().required(),
+    members: Yup.array().required(),
   })
   const formItemLayout = {
     labelCol: {
@@ -76,8 +81,9 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch
           symbol: 'BTCUSD',
           side: Object.values(OrderSide)[0],
           type: Object.values(OrderType)[0],
-          price: 0.0,
           percent: 5,
+          price: 0,
+          members: [],
         }}
         validationSchema={CreateOrderSetSchema}
         onSubmit={values => {
@@ -87,7 +93,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch
           })
         }}
       >
-        {({ handleChange }) => (
+        {({ values, handleChange }) => (
           <div className="card">
             <div className="card-body">
               <Form {...formItemLayout} labelAlign="left">
@@ -133,13 +139,15 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch
                   <Input
                     name="price"
                     type="number"
+                    min={0}
+                    disabled={values.type === OrderType.MARKET}
                     style={{ width: 300 }}
                     placeholder="0.00"
                     addonBefore="$"
                   />
                 </Form.Item>
 
-                <Form.Item name="percent" label="Percent" className="mb-3">
+                <Form.Item name="percent" label="Balance Percent" className="mb-3">
                   <Input
                     name="percent"
                     min={0}
@@ -151,6 +159,22 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch
                   />
                 </Form.Item>
 
+                <Form.Item name="members" label="Members" className="mb-3">
+                  <Transfer
+                    name="members"
+                    showSearch
+                    showSelectAll
+                    pagination
+                    titles={['', 'In Trade']}
+                    listStyle={{
+                      width: 350,
+                      height: 350,
+                    }}
+                    dataSource={[]}
+                  />
+                </Form.Item>
+
+                <p>Overview: {getOverviewText(values)}</p>
                 <SubmitButton disabled={false}>Submit</SubmitButton>
               </Form>
             </div>

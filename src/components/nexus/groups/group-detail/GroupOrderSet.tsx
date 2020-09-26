@@ -16,7 +16,7 @@ export enum OrderSetTabState {
   VIEW_DETAIL,
 }
 
-export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, setTabState }) => {
+export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTabState }) => {
   const [selectedOrderSetId, setSelectedOrderSetId] = useState<String>()
 
   const onClickCreateOrderSet = () => {
@@ -34,7 +34,9 @@ export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, setTabState 
       {tabState === OrderSetTabState.VIEW_ALL && (
         <OrderSetTable onClickCreate={onClickCreateOrderSet} onClickOrderSet={onClickOrderSet} />
       )}
-      {tabState === OrderSetTabState.CREATE && <CreateOrderSetForm onClickBack={onClickBack} />}
+      {tabState === OrderSetTabState.CREATE && (
+        <CreateOrderSetForm groupId={group.id} onClickBack={onClickBack} />
+      )}
       {tabState === OrderSetTabState.VIEW_DETAIL && (
         <OrderSetDetail onClickBack={onClickBack} orderSetId={selectedOrderSetId} />
       )}
