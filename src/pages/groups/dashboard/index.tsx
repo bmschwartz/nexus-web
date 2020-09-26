@@ -43,9 +43,6 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
   return (
     <div>
       <Helmet title="Groups" />
-      <div className="cui__utils__heading">
-        <strong>Groups</strong>
-      </div>
       {allGroupsData?.allGroups && membershipData?.myMemberships && (
         <GroupTable
           groups={transformGroups(allGroupsData.allGroups)}

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Table } from 'antd'
+import { PageHeader, Table } from 'antd'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 // import { TablePaginationConfig } from 'antd/lib/table'
@@ -86,7 +86,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
     <div className="card">
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
-          <h5 className="mb-0">Groups</h5>
+          <PageHeader className="site-page-header" title="Groups" />
         </div>
         <div className="d-flex flex-column justify-content-center">
           <Link className="btn btn-primary" to="/groups/create">

@@ -6,20 +6,17 @@ export enum Exchange {
 interface ExchangeMetadata {
   name: String
   fields: String[]
-  symbols: String[]
 }
 
 const sharedFields = ['symbol', 'side', 'type', 'price', 'percent', 'leverage', 'stopLoss']
 
-export const EXCHANGE_METADATA: ExchangeMetadata[] = [
-  {
+export const EXCHANGE_METADATA: { [key in Exchange]: ExchangeMetadata } = {
+  [Exchange.BITMEX]: {
     name: Exchange.BITMEX,
-    fields: [...sharedFields, 'trailingStopLoss'],
-    symbols: ['BTCUSD', 'ETHUSD', 'LTCUSD'],
+    fields: [],
   },
-  {
+  [Exchange.BINANCE]: {
     name: Exchange.BINANCE,
     fields: [...sharedFields],
-    symbols: ['BTCUSD', 'ETHUSD', 'LTCUSD', 'BCHUSD'],
   },
-]
+}
