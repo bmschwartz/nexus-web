@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { Formik } from 'formik'
 import { Form, Input, Select, SubmitButton, Transfer } from 'formik-antd'
 import { PageHeader } from 'antd'
+import { TransferItem } from 'antd/lib/transfer'
+import TextArea from 'antd/lib/input/TextArea'
 
 /* Local */
 import { OrderSide, OrderType } from 'types/order'
@@ -12,7 +14,6 @@ import { Group } from 'types/group'
 /* eslint-disable */
 import { getCreateOrderSetSchema } from './createOrderFormUtils'
 import { Membership } from 'types/membership'
-import { TransferItem } from 'antd/lib/transfer'
 /* eslint-enable */
 
 interface CreateOrderSetFormProps {
@@ -25,8 +26,15 @@ interface CreateOrderSetFormProps {
 }
 const mapStateToProps = ({ dispatch, orderSet }: any) => ({ orderSet, dispatch })
 
-const getOverviewText = ({ side, symbol, price, members, percent, exchange }: any): String => {
-  return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${members.length} members`
+const getOverviewText = ({
+  side,
+  symbol,
+  price,
+  exchangeAccountIds,
+  percent,
+  exchange,
+}: any): String => {
+  return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${exchangeAccountIds.length} members`
 }
 
 const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
@@ -79,13 +87,16 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           type: Object.values(OrderType)[0],
           percent: 5,
           price: 0,
-          members: [],
+          exchangeAccountIds: [],
         }}
         validationSchema={CreateOrderSetSchema}
         onSubmit={values => {
           dispatch({
             type: 'orderSet/CREATE_ORDER_SET',
-            payload: values,
+            payload: {
+              groupId: group.id,
+              ...values,
+            },
           })
         }}
       >
@@ -96,6 +107,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                 <Form.Item name="exchange" label="Exchange">
                   <Select
                     name="exchange"
+                    size="large"
                     style={{ width: 120 }}
                     onChange={e => {
                       handleChange(e)
@@ -111,7 +123,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                 </Form.Item>
 
                 <Form.Item name="symbol" label="Symbol" className="mb-3">
-                  <Select name="symbol" style={{ width: 120 }} onChange={handleChange}>
+                  <Select name="symbol" style={{ width: 120 }} size="large" onChange={handleChange}>
                     <Select.Option value="BTCUSD">BTCUSD</Select.Option>
                     <Select.Option value="ETHUSD">ETHUSD</Select.Option>
                     <Select.Option value="LTCUSD">LTCUSD</Select.Option>
@@ -119,7 +131,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                 </Form.Item>
 
                 <Form.Item name="side" label="Side" className="mb-3">
-                  <Select name="side" style={{ width: 120 }} onChange={handleChange}>
+                  <Select name="side" style={{ width: 120 }} size="large" onChange={handleChange}>
                     {Object.values(OrderSide).map(side => (
                       <Select.Option key={side} value={side}>
                         {side}
@@ -129,7 +141,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                 </Form.Item>
 
                 <Form.Item name="type" label="Type" className="mb-3">
-                  <Select name="type" style={{ width: 120 }} onChange={handleChange}>
+                  <Select name="type" style={{ width: 120 }} size="large" onChange={handleChange}>
                     {Object.values(OrderType).map(type => (
                       <Select.Option key={type} value={type}>
                         {type}
@@ -143,6 +155,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                     name="price"
                     type="number"
                     min={0}
+                    size="large"
                     disabled={values.type === OrderType.MARKET}
                     style={{ width: 300 }}
                     placeholder="0.00"
@@ -155,6 +168,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                     name="percent"
                     min={0}
                     max={100}
+                    size="large"
                     style={{ width: 120 }}
                     type="number"
                     placeholder="5"
@@ -162,9 +176,13 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   />
                 </Form.Item>
 
-                <Form.Item name="members" label="Members" className="mb-3">
+                <Form.Item name="description" label="Description" className="mb-3">
+                  <TextArea name="description" rows={4} placeholder="Description (optional)" />
+                </Form.Item>
+
+                <Form.Item name="exchangeAccountIds" label="Members" className="mb-3">
                   <Transfer
-                    name="members"
+                    name="exchangeAccountIds"
                     showSearch
                     showSelectAll
                     pagination

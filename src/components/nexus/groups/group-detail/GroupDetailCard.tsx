@@ -39,7 +39,12 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
       <div className="col-xl-12 col-lg-12">
         <div className="card">
           <div className="card-header card-header-flex flex-column">
-            <Tabs activeKey={tabKey} className="mr-auto kit-tabs-bold" onChange={changeTab}>
+            <Tabs
+              activeKey={tabKey}
+              size="large"
+              className="mr-auto kit-tabs-bold"
+              onChange={changeTab}
+            >
               {menuTabs.map(({ key, name }: Tab) => {
                 return <Tabs.TabPane key={key} tab={name} />
               })}
