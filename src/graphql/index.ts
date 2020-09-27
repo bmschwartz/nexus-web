@@ -417,7 +417,7 @@ export type MutationSignupUserArgs = {
 
 export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } & Pick<
   ExchangeAccount,
-  'id' | 'active' | 'exchange' | 'apiKey' | 'apiSecret'
+  'id' | 'active' | 'exchange'
 >
 
 export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
@@ -432,6 +432,7 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
     member: { __typename?: 'User' } & Pick<User, 'id' | 'username'>
     group: { __typename?: 'Group' } & Pick<Group, 'id' | 'name'>
     orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment>
+    exchangeAccounts: Array<{ __typename?: 'ExchangeAccount' } & ExchangeAccountDetailsFragment>
   }
 
 export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
@@ -522,15 +523,6 @@ export type MyMembershipsQuery = { __typename?: 'Query' } & {
   >
 }
 
-export const ExchangeAccountDetailsFragmentDoc = gql`
-  fragment ExchangeAccountDetails on ExchangeAccount {
-    id
-    active
-    exchange
-    apiKey
-    apiSecret
-  }
-`
 export const GroupDetailsFragmentDoc = gql`
   fragment GroupDetails on Group {
     id
@@ -550,6 +542,13 @@ export const OrderDetailsFragmentDoc = gql`
     orderType
   }
 `
+export const ExchangeAccountDetailsFragmentDoc = gql`
+  fragment ExchangeAccountDetails on ExchangeAccount {
+    id
+    active
+    exchange
+  }
+`
 export const GroupMembershipDetailsFragmentDoc = gql`
   fragment GroupMembershipDetails on GroupMembership {
     id
@@ -567,8 +566,12 @@ export const GroupMembershipDetailsFragmentDoc = gql`
     orders {
       ...OrderDetails
     }
+    exchangeAccounts {
+      ...ExchangeAccountDetails
+    }
   }
   ${OrderDetailsFragmentDoc}
+  ${ExchangeAccountDetailsFragmentDoc}
 `
 export const CreateGroupDocument = gql`
   mutation CreateGroup($input: CreateGroupInput!) {

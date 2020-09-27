@@ -7,6 +7,4 @@ export interface ExchangeAccount {
   id: string
   active: boolean
   exchange: Exchange
-  apiKey: string
-  apiSecret: string
 }

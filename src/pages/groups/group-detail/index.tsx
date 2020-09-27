@@ -48,7 +48,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     active: membership.active,
     orders: membership.orders.map(transformOrderData),
     role: roleFromString(membership.role)!,
-    exchangeAccounts: [],
+    exchangeAccounts: membership.exchangeAccounts,
     status: statusFromString(membership.status)!,
   })
 
