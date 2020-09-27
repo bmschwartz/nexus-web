@@ -5,6 +5,7 @@ import menu from './menu/reducers'
 import settings from './settings/reducers'
 /* eslint-disable */
 import group from './group/reducers'
+import orderSet from './orderSet/reducers'
 /* eslint-enable */
 
 export default history =>
@@ -13,5 +14,6 @@ export default history =>
     user,
     menu,
     group,
+    orderSet,
     settings,
   })
