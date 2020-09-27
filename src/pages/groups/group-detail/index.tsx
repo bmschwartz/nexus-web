@@ -48,6 +48,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     active: membership.active,
     orders: membership.orders.map(transformOrderData),
     role: roleFromString(membership.role)!,
+    exchangeAccounts: [],
     status: statusFromString(membership.status)!,
   })
 
@@ -83,6 +84,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
           <GroupDetailCard group={transformedGroup} myMembership={transformedMembership} />
         </>
       ) : (
+        /* eslint-disable-next-line */
         <strong>No access to group</strong>
       )}
     </div>

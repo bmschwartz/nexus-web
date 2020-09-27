@@ -72,6 +72,7 @@ export type GroupMembership = {
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   orders: Array<Order>
+  exchangeAccounts: Array<ExchangeAccount>
 }
 
 export type GroupMembersInput = {
@@ -164,14 +165,40 @@ export type CancelOrderInput = {
   orderId: Scalars['String']
 }
 
+export type CreateExchangeAccountInput = {
+  exchange: Exchange
+  membershipId: Scalars['ID']
+  apiKey: Scalars['String']
+  apiSecret: Scalars['String']
+}
+
 export type CreateOrderSetInput = {
   groupId: Scalars['ID']
+  symbol: Scalars['String']
+  exchange: Exchange
   description?: Maybe<Scalars['String']>
   side: OrderSide
   orderType: OrderType
   price?: Maybe<Scalars['Float']>
   stopPrice?: Maybe<Scalars['Float']>
   percent?: Maybe<Scalars['Float']>
+}
+
+export enum Exchange {
+  Binance = 'BINANCE',
+  Bitmex = 'BITMEX',
+}
+
+export type ExchangeAccount = {
+  __typename?: 'ExchangeAccount'
+  id: Scalars['ID']
+  active: Scalars['Boolean']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+  exchange: Exchange
+  membership: GroupMembership
+  apiKey: Scalars['String']
+  apiSecret: Scalars['String']
 }
 
 export type GroupOrderSetsInput = {
@@ -319,6 +346,7 @@ export type Mutation = {
   createOrderSet?: Maybe<OrderSet>
   updateOrderSet?: Maybe<OrderSet>
   cancelOrder?: Maybe<Order>
+  createExchangeAccount?: Maybe<ExchangeAccount>
   loginUser: AuthPayload
   signupUser: AuthPayload
 }
@@ -375,6 +403,10 @@ export type MutationCancelOrderArgs = {
   input: CancelOrderInput
 }
 
+export type MutationCreateExchangeAccountArgs = {
+  input: CreateExchangeAccountInput
+}
+
 export type MutationLoginUserArgs = {
   input: LoginUserInput
 }
@@ -382,6 +414,11 @@ export type MutationLoginUserArgs = {
 export type MutationSignupUserArgs = {
   input: SignupUserInput
 }
+
+export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } & Pick<
+  ExchangeAccount,
+  'id' | 'active' | 'exchange' | 'apiKey' | 'apiSecret'
+>
 
 export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
   Group,
@@ -477,11 +514,23 @@ export type MyMembershipsQuery = { __typename?: 'Query' } & {
       > & {
           member: { __typename?: 'User' } & Pick<User, 'id'>
           group: { __typename?: 'Group' } & GroupDetailsFragment
+          exchangeAccounts: Array<
+            { __typename?: 'ExchangeAccount' } & ExchangeAccountDetailsFragment
+          >
         }
     >
   >
 }
 
+export const ExchangeAccountDetailsFragmentDoc = gql`
+  fragment ExchangeAccountDetails on ExchangeAccount {
+    id
+    active
+    exchange
+    apiKey
+    apiSecret
+  }
+`
 export const GroupDetailsFragmentDoc = gql`
   fragment GroupDetails on Group {
     id
@@ -876,9 +925,13 @@ export const MyMembershipsDocument = gql`
       group {
         ...GroupDetails
       }
+      exchangeAccounts {
+        ...ExchangeAccountDetails
+      }
     }
   }
   ${GroupDetailsFragmentDoc}
+  ${ExchangeAccountDetailsFragmentDoc}
 `
 
 /**

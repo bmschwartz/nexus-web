@@ -14,4 +14,7 @@ fragment GroupMembershipDetails on GroupMembership {
   orders {
     ...OrderDetails
   }
+  exchangeAccounts {
+    ...ExchangeAccountDetails
+  }
 }

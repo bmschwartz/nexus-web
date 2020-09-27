@@ -10,5 +10,8 @@ query MyMemberships($input: MyMembershipsInput!) {
     group {
       ...GroupDetails
     }
+    exchangeAccounts {
+      ...ExchangeAccountDetails
+    }
   }
 }
