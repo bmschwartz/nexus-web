@@ -18,15 +18,23 @@ import { TransferItem } from 'antd/lib/transfer'
 interface CreateOrderSetFormProps {
   group: Group
   onClickBack: () => void
+
+  // redux
+  orderSet: any
   dispatch: any
 }
-const mapStateToProps = ({ dispatch }: any) => ({ dispatch })
+const mapStateToProps = ({ dispatch, orderSet }: any) => ({ orderSet, dispatch })
 
 const getOverviewText = ({ side, symbol, price, members, percent, exchange }: any): String => {
   return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${members.length} members`
 }
 
-const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ group, onClickBack, dispatch }) => {
+const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
+  group,
+  onClickBack,
+  orderSet,
+  dispatch,
+}) => {
   const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
 
   const CreateOrderSetSchema = getCreateOrderSetSchema()
@@ -76,7 +84,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ group, onClickBack, d
         validationSchema={CreateOrderSetSchema}
         onSubmit={values => {
           dispatch({
-            type: 'group/CREATE_ORDER_SET',
+            type: 'orderSet/CREATE_ORDER_SET',
             payload: values,
           })
         }}
@@ -185,7 +193,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ group, onClickBack, d
                 </Form.Item>
 
                 <p>Overview: {getOverviewText(values)}</p>
-                <SubmitButton disabled={false}>Submit</SubmitButton>
+                <SubmitButton disabled={orderSet.createOrderSet.submitting}>Submit</SubmitButton>
               </Form>
             </div>
           </div>

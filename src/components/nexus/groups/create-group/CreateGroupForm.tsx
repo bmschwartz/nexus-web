@@ -11,6 +11,7 @@ import { groupExists } from 'services/apollo/group'
 const validPayoutCurrencies = ['BTC', 'ETH', 'LTC']
 
 interface CreateGroupFormProps {
+  // redux
   group: any
   dispatch: any
 }

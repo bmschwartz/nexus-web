@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { Exchange } from 'types/exchange'
-import { Membership } from 'types/membership'
 import { OrderSide, OrderType } from 'types/order'
 import actions from './actions'
 /* eslint-enable */
@@ -17,7 +16,7 @@ export interface CreateOrderSetState {
   type: OrderType
   percent: number
   price: number
-  members: Membership[]
+  exchangeAccountIds: string[]
   submitting: boolean
 }
 
@@ -31,19 +30,19 @@ const initialOrderSetDetailState = {
 
 export const initialState: OrderSetState = {
   createOrderSet: {
-    exchange: '',
+    exchange: Exchange.BITMEX,
     symbol: '',
-    side: '',
-    type: '',
+    side: OrderSide.BUY,
+    type: OrderType.MARKET,
     percent: 0,
     price: 0,
-    members: [],
+    exchangeAccountIds: [],
     submitting: false,
   },
   orderSetDetail: initialOrderSetDetailState,
 }
 
-export default function groupReducer(state: OrderSetState = initialState, action: any) {
+export default function orderSetReducer(state: OrderSetState = initialState, action: any) {
   switch (action.type) {
     case actions.SET_CREATE_ORDER_SET_STATE:
       return { ...state, ...action.payload }
