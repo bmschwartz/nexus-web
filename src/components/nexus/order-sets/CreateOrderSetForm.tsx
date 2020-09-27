@@ -1,17 +1,22 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { connect } from 'react-redux'
 import { Formik } from 'formik'
 import { Form, Input, Select, SubmitButton, Transfer } from 'formik-antd'
-import * as Yup from 'yup'
 import { PageHeader } from 'antd'
+
+/* Local */
 import { OrderSide, OrderType } from 'types/order'
+import { Exchange } from 'types/exchange'
+import { Group } from 'types/group'
 
 /* eslint-disable */
-import { Exchange } from './createOrderFormUtils'
+import { getCreateOrderSetSchema } from './createOrderFormUtils'
+import { Membership } from 'types/membership'
+import { TransferItem } from 'antd/lib/transfer'
 /* eslint-enable */
 
 interface CreateOrderSetFormProps {
-  groupId: String
+  group: Group
   onClickBack: () => void
   dispatch: any
 }
@@ -21,42 +26,10 @@ const getOverviewText = ({ side, symbol, price, members, percent, exchange }: an
   return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${members.length} members`
 }
 
-const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch }) => {
-  const CreateOrderSetSchema = Yup.object().shape({
-    exchange: Yup.string()
-      .label('Exchange')
-      .oneOf(Object.values(Exchange))
-      .required(),
-    symbol: Yup.string()
-      .label('Symbol')
-      .required(),
-    side: Yup.string()
-      .label('Side')
-      .oneOf(Object.values(OrderSide))
-      .required(),
-    type: Yup.string()
-      .label('Type')
-      .oneOf(Object.values(OrderType))
-      .required(),
-    price: Yup.number()
-      .label('Price')
-      .when('side', {
-        is: OrderType.LIMIT,
-        then: Yup.number()
-          .positive()
-          .required(),
-        otherwise: Yup.number()
-          .nullable()
-          .notRequired(),
-      }),
-    percent: Yup.number()
-      .label('Balance Percent')
-      .positive()
-      .integer()
-      .max(100)
-      .required(),
-    members: Yup.array().required(),
-  })
+const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ group, onClickBack, dispatch }) => {
+  const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
+
+  const CreateOrderSetSchema = getCreateOrderSetSchema()
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -66,6 +39,21 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch
       xs: { span: 24 },
       sm: { span: 12 },
     },
+  }
+
+  const createTransferData = (exchange: Exchange): TransferItem[] => {
+    const data = group.memberships.map((membership: Membership) => {
+      const accountsExchages = membership.exchangeAccounts
+        ? membership.exchangeAccounts.map(account => account.exchange.toLowerCase())
+        : []
+      return {
+        key: membership.id,
+        title: membership.username,
+        disabled: !accountsExchages.includes(exchange.toLowerCase()),
+      }
+    })
+
+    return data
   }
 
   return (
@@ -98,7 +86,14 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch
             <div className="card-body">
               <Form {...formItemLayout} labelAlign="left">
                 <Form.Item name="exchange" label="Exchange">
-                  <Select name="exchange" style={{ width: 120 }} onChange={handleChange}>
+                  <Select
+                    name="exchange"
+                    style={{ width: 120 }}
+                    onChange={e => {
+                      handleChange(e)
+                      setSelectedAccountKeys([])
+                    }}
+                  >
                     {Object.values(Exchange).map(exchange => (
                       <Select.Option key={exchange} value={exchange}>
                         {exchange}
@@ -165,12 +160,27 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ onClickBack, dispatch
                     showSearch
                     showSelectAll
                     pagination
+                    targetKeys={selectedAccountKeys}
                     titles={['', 'In Trade']}
                     listStyle={{
                       width: 350,
                       height: 350,
                     }}
-                    dataSource={[]}
+                    dataSource={createTransferData(values.exchange)}
+                    render={item =>
+                      item.disabled ? `${item.title} (No account)` : `${item.title}`
+                    }
+                    onChange={(keys, direction, moveKeys) => {
+                      if (direction === 'right') {
+                        // extend selected keys with new keys
+                        setSelectedAccountKeys([...selectedAccountKeys, ...moveKeys])
+                      } else if (direction === 'left') {
+                        // remove keys from selected keys
+                        setSelectedAccountKeys([
+                          ...selectedAccountKeys.filter(k => !moveKeys.includes(k)),
+                        ])
+                      }
+                    }}
                   />
                 </Form.Item>
 

@@ -1,7 +1,8 @@
-export enum Exchange {
-  BITMEX = 'Bitmex',
-  BINANCE = 'Binance',
-}
+import * as Yup from 'yup'
+
+/* Local */
+import { Exchange } from 'types/exchange'
+import { OrderSide, OrderType } from 'types/order'
 
 interface ExchangeMetadata {
   name: String
@@ -19,4 +20,42 @@ export const EXCHANGE_METADATA: { [key in Exchange]: ExchangeMetadata } = {
     name: Exchange.BINANCE,
     fields: [...sharedFields],
   },
+}
+
+export const getCreateOrderSetSchema = () => {
+  return Yup.object().shape({
+    exchange: Yup.string()
+      .label('Exchange')
+      .oneOf(Object.values(Exchange))
+      .required(),
+    symbol: Yup.string()
+      .label('Symbol')
+      .required(),
+    side: Yup.string()
+      .label('Side')
+      .oneOf(Object.values(OrderSide))
+      .required(),
+    type: Yup.string()
+      .label('Type')
+      .oneOf(Object.values(OrderType))
+      .required(),
+    price: Yup.number()
+      .label('Price')
+      .when('side', {
+        is: OrderType.LIMIT,
+        then: Yup.number()
+          .positive()
+          .required(),
+        otherwise: Yup.number()
+          .nullable()
+          .notRequired(),
+      }),
+    percent: Yup.number()
+      .label('Balance Percent')
+      .positive()
+      .integer()
+      .max(100)
+      .required(),
+    members: Yup.array().required(),
+  })
 }
