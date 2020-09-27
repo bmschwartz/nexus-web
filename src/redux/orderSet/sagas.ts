@@ -2,10 +2,10 @@ import { all, takeEvery, put } from 'redux-saga/effects'
 
 /* eslint-disable */
 import actions from './actions'
-import { CreateOrderSetState } from './reducers'
+import { CreateOrderSetPayload } from './reducers'
 /* eslint-enable */
 
-export function* CREATE_ORDER_SET({ payload }: { payload: CreateOrderSetState }) {
+export function* CREATE_ORDER_SET({ payload }: { payload: CreateOrderSetPayload }) {
   yield put({
     type: 'orderSet/SET_CREATE_ORDER_SET_STATE',
     payload: {
