@@ -174,6 +174,7 @@ export type CreateExchangeAccountInput = {
 
 export type CreateOrderSetInput = {
   groupId: Scalars['ID']
+  exchangeAccountIds: Array<Scalars['ID']>
   symbol: Scalars['String']
   exchange: Exchange
   description?: Maybe<Scalars['String']>
@@ -470,6 +471,37 @@ export type GetAllGroupsQuery = { __typename?: 'Query' } & {
   allGroups: Array<{ __typename?: 'Group' } & GroupDetailsFragment>
 }
 
+export type GetCurrenciesQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetCurrenciesQuery = { __typename?: 'Query' } & {
+  bitmexCurrencies: Array<
+    { __typename?: 'BitmexCurrency' } & Pick<
+      BitmexCurrency,
+      | 'id'
+      | 'symbol'
+      | 'underlying'
+      | 'active'
+      | 'fractionalDigits'
+      | 'lastPrice'
+      | 'markPrice'
+      | 'tickSize'
+    >
+  >
+  binanceCurrencies: Array<
+    { __typename?: 'BinanceCurrency' } & Pick<
+      BinanceCurrency,
+      | 'id'
+      | 'symbol'
+      | 'lastPrice'
+      | 'openPrice'
+      | 'highPrice'
+      | 'lowPrice'
+      | 'priceChange'
+      | 'priceChangePercent'
+    >
+  >
+}
+
 export type GetGroupQueryVariables = Exact<{
   input: GroupInput
 }>
@@ -747,6 +779,68 @@ export type GetAllGroupsLazyQueryHookResult = ReturnType<typeof useGetAllGroupsL
 export type GetAllGroupsQueryResult = Apollo.QueryResult<
   GetAllGroupsQuery,
   GetAllGroupsQueryVariables
+>
+export const GetCurrenciesDocument = gql`
+  query GetCurrencies {
+    bitmexCurrencies {
+      id
+      symbol
+      underlying
+      active
+      fractionalDigits
+      lastPrice
+      markPrice
+      tickSize
+    }
+    binanceCurrencies {
+      id
+      symbol
+      lastPrice
+      openPrice
+      highPrice
+      lowPrice
+      priceChange
+      priceChangePercent
+    }
+  }
+`
+
+/**
+ * __useGetCurrenciesQuery__
+ *
+ * To run a query within a React component, call `useGetCurrenciesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrenciesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrenciesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCurrenciesQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetCurrenciesQuery, GetCurrenciesQueryVariables>,
+) {
+  return Apollo.useQuery<GetCurrenciesQuery, GetCurrenciesQueryVariables>(
+    GetCurrenciesDocument,
+    baseOptions,
+  )
+}
+export function useGetCurrenciesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetCurrenciesQuery, GetCurrenciesQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetCurrenciesQuery, GetCurrenciesQueryVariables>(
+    GetCurrenciesDocument,
+    baseOptions,
+  )
+}
+export type GetCurrenciesQueryHookResult = ReturnType<typeof useGetCurrenciesQuery>
+export type GetCurrenciesLazyQueryHookResult = ReturnType<typeof useGetCurrenciesLazyQuery>
+export type GetCurrenciesQueryResult = Apollo.QueryResult<
+  GetCurrenciesQuery,
+  GetCurrenciesQueryVariables
 >
 export const GetGroupDocument = gql`
   query GetGroup($input: GroupInput!) {

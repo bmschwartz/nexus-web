@@ -1,0 +1,23 @@
+query GetCurrencies {
+  bitmexCurrencies {
+    id
+    symbol
+    underlying
+    active
+    fractionalDigits
+    lastPrice
+    markPrice
+    tickSize
+  }
+
+  binanceCurrencies {
+    id
+    symbol
+    lastPrice
+    openPrice
+    highPrice
+    lowPrice
+    priceChange
+    priceChangePercent
+  }
+}
