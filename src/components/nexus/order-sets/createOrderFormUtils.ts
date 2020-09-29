@@ -60,8 +60,6 @@ export const getCreateOrderSetSchema = () => {
       .label('Description')
       .max(500)
       .optional(),
-    exchangeAccountIds: Yup.array()
-      .label('Members')
-      .required(),
+    exchangeAccountIds: Yup.array().label('Members'),
   })
 }
