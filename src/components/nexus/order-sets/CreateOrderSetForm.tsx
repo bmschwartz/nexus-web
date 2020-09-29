@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { connect } from 'react-redux'
 import { Formik } from 'formik'
 import { Form, Input, Select, SubmitButton, Transfer } from 'formik-antd'
-import { PageHeader } from 'antd'
+import { Modal, PageHeader } from 'antd'
 import { TransferItem } from 'antd/lib/transfer'
 import TextArea from 'antd/lib/input/TextArea'
 
@@ -10,10 +10,11 @@ import TextArea from 'antd/lib/input/TextArea'
 import { OrderSide, OrderType } from 'types/order'
 import { Exchange } from 'types/exchange'
 import { Group } from 'types/group'
+import { Membership } from 'types/membership'
 
 /* eslint-disable */
 import { getCreateOrderSetSchema } from './createOrderFormUtils'
-import { Membership } from 'types/membership'
+import { useGetCurrenciesQuery } from '../../../graphql/index'
 /* eslint-enable */
 
 interface CreateOrderSetFormProps {
@@ -43,8 +44,10 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   orderSet,
   dispatch,
 }) => {
+  const { data: currencyData } = useGetCurrenciesQuery()
   const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
 
+  console.log(currencyData)
   const CreateOrderSetSchema = getCreateOrderSetSchema()
   const formItemLayout = {
     labelCol: {
@@ -72,6 +75,13 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
     return data
   }
 
+  const handleNoMembersSelected = () => {
+    Modal.error({
+      title: 'Select Members',
+      content: 'Select one or more members for order',
+    })
+  }
+
   return (
     <>
       <div className="card-header card-header-flex">
@@ -90,7 +100,12 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           exchangeAccountIds: [],
         }}
         validationSchema={CreateOrderSetSchema}
-        onSubmit={values => {
+        onSubmit={(values, { setSubmitting }) => {
+          if (values.exchangeAccountIds.length === 0) {
+            setSubmitting(false)
+            handleNoMembersSelected()
+            return
+          }
           dispatch({
             type: 'orderSet/CREATE_ORDER_SET',
             payload: {
