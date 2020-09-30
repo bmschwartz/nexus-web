@@ -13,7 +13,7 @@ import { Group } from 'types/group'
 import { Membership } from 'types/membership'
 
 /* eslint-disable */
-import { getCreateOrderSetSchema } from './createOrderFormUtils'
+import { extractCurrencyData, getCreateOrderSetSchema } from './createOrderFormUtils'
 import { useGetCurrenciesQuery } from '../../../graphql/index'
 /* eslint-enable */
 
@@ -44,11 +44,11 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   orderSet,
   dispatch,
 }) => {
-  const { data: currencyData } = useGetCurrenciesQuery()
+  const { data } = useGetCurrenciesQuery()
   const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
 
-  console.log(currencyData)
-  const CreateOrderSetSchema = getCreateOrderSetSchema()
+  const currencyData = extractCurrencyData(data)
+  const CreateOrderSetSchema = getCreateOrderSetSchema(currencyData)
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -61,7 +61,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   }
 
   const createTransferData = (exchange: Exchange): TransferItem[] => {
-    const data = group.memberships.map((membership: Membership) => {
+    const transferData = group.memberships.map((membership: Membership) => {
       const accountsExchages = membership.exchangeAccounts
         ? membership.exchangeAccounts.map(account => account.exchange.toLowerCase())
         : []
@@ -72,7 +72,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
       }
     })
 
-    return data
+    return transferData
   }
 
   const handleNoMembersSelected = () => {

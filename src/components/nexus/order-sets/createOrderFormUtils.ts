@@ -3,10 +3,17 @@ import * as Yup from 'yup'
 /* Local */
 import { Exchange } from 'types/exchange'
 import { OrderSide, OrderType } from 'types/order'
+import { GetCurrenciesQuery } from 'graphql'
 
 interface ExchangeMetadata {
   name: String
   fields: String[]
+}
+
+export interface ICurrencyData {
+  exchanges: string[]
+  bitmexCurrencies: any[]
+  binanceCurrencies: any[]
 }
 
 const sharedFields = ['symbol', 'side', 'type', 'price', 'percent', 'leverage', 'stopLoss']
@@ -22,11 +29,12 @@ export const EXCHANGE_METADATA: { [key in Exchange]: ExchangeMetadata } = {
   },
 }
 
-export const getCreateOrderSetSchema = () => {
+export const getCreateOrderSetSchema = (currencyData: ICurrencyData) => {
+  // const binanceSymbols = currencyData.binanceCurrencies.map()
   return Yup.object().shape({
     exchange: Yup.string()
       .label('Exchange')
-      .oneOf(Object.values(Exchange))
+      .oneOf(currencyData.exchanges)
       .required(),
     symbol: Yup.string()
       .label('Symbol')
@@ -62,4 +70,15 @@ export const getCreateOrderSetSchema = () => {
       .optional(),
     exchangeAccountIds: Yup.array().label('Members'),
   })
+}
+
+export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined): ICurrencyData {
+  if (currencyInfo) {
+    console.log(currencyInfo)
+  }
+  return {
+    bitmexCurrencies: [],
+    binanceCurrencies: [],
+    exchanges: [Exchange.BITMEX, Exchange.BINANCE],
+  }
 }

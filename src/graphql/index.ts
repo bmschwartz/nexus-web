@@ -139,12 +139,39 @@ export type BinanceCurrency = {
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   symbol: Scalars['String']
+  status: BinanceSymbolStatus
   lastPrice?: Maybe<Scalars['Float']>
   openPrice?: Maybe<Scalars['Float']>
   highPrice?: Maybe<Scalars['Float']>
   lowPrice?: Maybe<Scalars['Float']>
   priceChange?: Maybe<Scalars['Float']>
   priceChangePercent?: Maybe<Scalars['Float']>
+  minPrice: Scalars['String']
+  maxPrice: Scalars['String']
+  tickSize: Scalars['String']
+  baseAsset: Scalars['String']
+  quoteAsset: Scalars['String']
+  baseAssetPrecision: Scalars['Int']
+  quotePrecision: Scalars['Int']
+  quoteAssetPrecision: Scalars['Int']
+  baseCommissionPrecision: Scalars['Int']
+  quoteCommissionPrecision: Scalars['Int']
+  allowsLimit: Scalars['Boolean']
+  allowsMarket: Scalars['Boolean']
+  allowsStopLoss: Scalars['Boolean']
+  allowsStopLossLimit: Scalars['Boolean']
+  allowsTakeProfit: Scalars['Boolean']
+  allowsTakeProfitLimit: Scalars['Boolean']
+}
+
+export enum BinanceSymbolStatus {
+  AuctionMatch = 'AUCTION_MATCH',
+  Break = 'BREAK',
+  EndOfDay = 'END_OF_DAY',
+  Halt = 'HALT',
+  PostTrading = 'POST_TRADING',
+  PreTrading = 'PRE_TRADING',
+  Trading = 'TRADING',
 }
 
 export type BitmexCurrency = {
@@ -492,12 +519,29 @@ export type GetCurrenciesQuery = { __typename?: 'Query' } & {
       BinanceCurrency,
       | 'id'
       | 'symbol'
+      | 'status'
       | 'lastPrice'
       | 'openPrice'
       | 'highPrice'
       | 'lowPrice'
+      | 'minPrice'
+      | 'maxPrice'
+      | 'tickSize'
       | 'priceChange'
       | 'priceChangePercent'
+      | 'baseAsset'
+      | 'quoteAsset'
+      | 'baseAssetPrecision'
+      | 'quotePrecision'
+      | 'quoteAssetPrecision'
+      | 'baseCommissionPrecision'
+      | 'quoteCommissionPrecision'
+      | 'allowsLimit'
+      | 'allowsMarket'
+      | 'allowsStopLoss'
+      | 'allowsStopLossLimit'
+      | 'allowsTakeProfit'
+      | 'allowsTakeProfitLimit'
     >
   >
 }
@@ -795,12 +839,29 @@ export const GetCurrenciesDocument = gql`
     binanceCurrencies {
       id
       symbol
+      status
       lastPrice
       openPrice
       highPrice
       lowPrice
+      minPrice
+      maxPrice
+      tickSize
       priceChange
       priceChangePercent
+      baseAsset
+      quoteAsset
+      baseAssetPrecision
+      quotePrecision
+      quoteAssetPrecision
+      baseCommissionPrecision
+      quoteCommissionPrecision
+      allowsLimit
+      allowsMarket
+      allowsStopLoss
+      allowsStopLossLimit
+      allowsTakeProfit
+      allowsTakeProfitLimit
     }
   }
 `
