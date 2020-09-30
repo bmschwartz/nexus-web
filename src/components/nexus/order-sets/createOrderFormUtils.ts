@@ -42,9 +42,14 @@ export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined
 
   if (currencyInfo) {
     binanceCurrencies = currencyInfo.binanceCurrencies.reduce(
-      (acc, { symbol, ...otherInfo }) => ({
+      (acc, { symbol, minPrice, maxPrice, tickSize, ...otherInfo }) => ({
         ...acc,
-        [symbol]: otherInfo,
+        [symbol]: {
+          minPrice: Number(minPrice),
+          maxPrice: Number(maxPrice),
+          tickSize: Number(tickSize),
+          ...otherInfo,
+        },
       }),
       {},
     )
@@ -62,6 +67,42 @@ export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined
     Bitmex: bitmexCurrencies,
     Binance: binanceCurrencies,
   }
+}
+
+function getSymbolPriceInfo(currencyInfo: ICurrencyMap, exchange: Exchange, symbol: string) {
+  const defaultPriceInfo = {
+    minPrice: 0,
+    maxPrice: 1,
+    tickSize: 0.1,
+  }
+  if (!symbol) {
+    return defaultPriceInfo
+  }
+  switch (exchange) {
+    case Exchange.BINANCE: {
+      const { minPrice, maxPrice, tickSize } = currencyInfo.Binance[symbol]
+      return {
+        minPrice,
+        maxPrice,
+        tickSize,
+      }
+    }
+    case Exchange.BITMEX:
+    default:
+      return defaultPriceInfo
+  }
+}
+
+export function getMinPrice(currencyInfo: ICurrencyMap, exchange: Exchange, symbol: string) {
+  return getSymbolPriceInfo(currencyInfo, exchange, symbol).minPrice
+}
+
+export function getMaxPrice(currencyInfo: ICurrencyMap, exchange: Exchange, symbol: string) {
+  return getSymbolPriceInfo(currencyInfo, exchange, symbol).maxPrice
+}
+
+export function getPriceTickSize(currencyInfo: ICurrencyMap, exchange: Exchange, symbol: string) {
+  return getSymbolPriceInfo(currencyInfo, exchange, symbol).tickSize
 }
 
 export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {

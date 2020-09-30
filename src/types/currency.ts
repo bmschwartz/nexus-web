@@ -10,9 +10,9 @@ export interface IBinanceCurrency {
   lowPrice?: number
   priceChange?: number
   priceChangePercent?: number
-  minPrice: string
-  maxPrice: string
-  tickSize: string
+  minPrice: number
+  maxPrice: number
+  tickSize: number
   baseAsset: string
   quoteAsset: string
   baseAssetPrecision: number
@@ -37,4 +37,6 @@ export interface IBitmexCurrency {
   lastPrice: number
   markPrice: number
   tickSize: number
+  minPrice: number
+  maxPrice: number
 }

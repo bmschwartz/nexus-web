@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { connect } from 'react-redux'
 import { Formik } from 'formik'
-import { Form, Input, Select, SubmitButton, Transfer } from 'formik-antd'
+import { Form, Input, InputNumber, Select, SubmitButton, Transfer } from 'formik-antd'
 import { Modal, PageHeader, Spin } from 'antd'
 import { TransferItem } from 'antd/lib/transfer'
 import TextArea from 'antd/lib/input/TextArea'
@@ -13,7 +13,13 @@ import { Group } from 'types/group'
 import { Membership } from 'types/membership'
 
 /* eslint-disable */
-import { extractCurrencyData, getCreateOrderSetSchema } from './createOrderFormUtils'
+import {
+  extractCurrencyData,
+  getCreateOrderSetSchema,
+  getMaxPrice,
+  getMinPrice,
+  getPriceTickSize,
+} from './createOrderFormUtils'
 import { useGetCurrenciesQuery } from '../../../graphql/index'
 /* eslint-enable */
 
@@ -87,7 +93,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   }
 
   return (
-    <>
+    <Spin spinning={orderSet.createOrderSet.submitting} tip="Submitting Order...">
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Create Order Set" onBack={onClickBack} />
@@ -96,7 +102,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
       <Formik
         initialValues={{
           exchange: currencyData?.exchanges[0],
-          symbol: undefined,
+          symbol: '',
           side: OrderSide.BUY,
           type: OrderType.LIMIT,
           percent: 5,
@@ -151,7 +157,13 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                       name="symbol"
                       style={{ width: 200 }}
                       size="large"
-                      onChange={handleChange}
+                      onChange={e => {
+                        handleChange(e)
+                        setFieldValue(
+                          'price',
+                          getMinPrice(currencyData, values.exchange, values.symbol),
+                        )
+                      }}
                     >
                       {currencyData &&
                         Object.keys(currencyData[values.exchange])
@@ -185,15 +197,16 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   </Form.Item>
 
                   <Form.Item name="price" label="Price" className="mb-3">
-                    <Input
+                    <InputNumber
                       name="price"
-                      type="number"
-                      min={0}
+                      min={getMinPrice(currencyData, values.exchange, values.symbol)}
+                      max={getMaxPrice(currencyData, values.exchange, values.symbol)}
+                      step={getPriceTickSize(currencyData, values.exchange, values.symbol)}
                       size="large"
+                      onChange={val => setFieldValue('price', val, true)}
                       disabled={values.type === OrderType.MARKET}
                       style={{ width: 300 }}
                       placeholder="0.00"
-                      addonBefore="$"
                     />
                   </Form.Item>
 
@@ -207,6 +220,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                       type="number"
                       placeholder="5"
                       addonAfter="%"
+                      onChange={handleChange}
                     />
                   </Form.Item>
 
@@ -252,7 +266,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           </div>
         )}
       </Formik>
-    </>
+    </Spin>
   )
 }
 
