@@ -3,6 +3,7 @@ import * as Yup from 'yup'
 /* Local */
 import { Exchange } from 'types/exchange'
 import { OrderSide, OrderType } from 'types/order'
+import { IBinanceCurrency, IBitmexCurrency } from 'types/currency'
 import { GetCurrenciesQuery } from 'graphql'
 
 interface ExchangeMetadata {
@@ -10,10 +11,14 @@ interface ExchangeMetadata {
   fields: String[]
 }
 
-export interface ICurrencyData {
-  exchanges: string[]
-  bitmexCurrencies: any[]
-  binanceCurrencies: any[]
+export interface ICurrencyMap {
+  exchanges: Exchange[]
+  [Exchange.BITMEX]: {
+    [key: string]: IBitmexCurrency
+  }
+  [Exchange.BINANCE]: {
+    [key: string]: IBinanceCurrency
+  }
 }
 
 const sharedFields = ['symbol', 'side', 'type', 'price', 'percent', 'leverage', 'stopLoss']
@@ -29,8 +34,37 @@ export const EXCHANGE_METADATA: { [key in Exchange]: ExchangeMetadata } = {
   },
 }
 
-export const getCreateOrderSetSchema = (currencyData: ICurrencyData) => {
-  // const binanceSymbols = currencyData.binanceCurrencies.map()
+export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined): ICurrencyMap {
+  const exchanges = [Exchange.BITMEX, Exchange.BINANCE]
+
+  let bitmexCurrencies = {}
+  let binanceCurrencies = {}
+
+  if (currencyInfo) {
+    binanceCurrencies = currencyInfo.binanceCurrencies.reduce(
+      (acc, { symbol, ...otherInfo }) => ({
+        ...acc,
+        [symbol]: otherInfo,
+      }),
+      {},
+    )
+    bitmexCurrencies = currencyInfo.bitmexCurrencies.reduce(
+      (acc, { symbol, ...otherInfo }) => ({
+        ...acc,
+        [symbol]: otherInfo,
+      }),
+      {},
+    )
+  }
+
+  return {
+    exchanges,
+    Bitmex: bitmexCurrencies,
+    Binance: binanceCurrencies,
+  }
+}
+
+export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {
   return Yup.object().shape({
     exchange: Yup.string()
       .label('Exchange')
@@ -70,15 +104,4 @@ export const getCreateOrderSetSchema = (currencyData: ICurrencyData) => {
       .optional(),
     exchangeAccountIds: Yup.array().label('Members'),
   })
-}
-
-export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined): ICurrencyData {
-  if (currencyInfo) {
-    console.log(currencyInfo)
-  }
-  return {
-    bitmexCurrencies: [],
-    binanceCurrencies: [],
-    exchanges: [Exchange.BITMEX, Exchange.BINANCE],
-  }
 }
