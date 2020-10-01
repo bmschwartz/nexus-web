@@ -51,6 +51,7 @@ export type Group = {
   memberships: Array<GroupMembership>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+  orderSets: Array<OrderSet>
 }
 
 export type GroupExistsInput = {
@@ -229,10 +230,6 @@ export type ExchangeAccount = {
   apiSecret: Scalars['String']
 }
 
-export type GroupOrderSetsInput = {
-  groupId: Scalars['ID']
-}
-
 export type Order = {
   __typename?: 'Order'
   id: Scalars['ID']
@@ -252,15 +249,17 @@ export type Order = {
 export type OrderSet = {
   __typename?: 'OrderSet'
   id: Scalars['ID']
+  exchange: Exchange
+  symbol: Scalars['String']
+  price?: Maybe<Scalars['Float']>
+  side: OrderSide
+  orderType: OrderType
+  orders: Array<Order>
+  percent: Scalars['Float']
+  stopPrice?: Maybe<Scalars['Float']>
+  description: Scalars['String']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-  description: Scalars['String']
-  orders: Array<Order>
-  orderSide?: Maybe<OrderSide>
-  orderType?: Maybe<OrderType>
-  percent: Scalars['Float']
-  price?: Maybe<Scalars['Float']>
-  stopPrice?: Maybe<Scalars['Float']>
 }
 
 export type OrderSetInput = {
@@ -321,7 +320,6 @@ export type Query = {
   groupMembers?: Maybe<Array<GroupMembership>>
   membershipRequests?: Maybe<Array<GroupMembership>>
   orderSet?: Maybe<OrderSet>
-  groupOrderSets?: Maybe<Array<OrderSet>>
   binanceCurrencies: Array<BinanceCurrency>
   bitmexCurrencies: Array<BitmexCurrency>
   me?: Maybe<User>
@@ -353,10 +351,6 @@ export type QueryMembershipRequestsArgs = {
 
 export type QueryOrderSetArgs = {
   input: OrderSetInput
-}
-
-export type QueryGroupOrderSetsArgs = {
-  input: GroupOrderSetsInput
 }
 
 export type Mutation = {
@@ -563,6 +557,31 @@ export type GetGroupQuery = { __typename?: 'Query' } & {
     { __typename?: 'Group' } & {
       memberships: Array<{ __typename?: 'GroupMembership' } & GroupMembershipDetailsFragment>
     } & GroupDetailsFragment
+  >
+}
+
+export type GetGroupOrderSetsQueryVariables = Exact<{
+  input: GroupInput
+}>
+
+export type GetGroupOrderSetsQuery = { __typename?: 'Query' } & {
+  group?: Maybe<
+    { __typename?: 'Group' } & {
+      orderSets: Array<
+        { __typename?: 'OrderSet' } & Pick<
+          OrderSet,
+          | 'id'
+          | 'symbol'
+          | 'price'
+          | 'side'
+          | 'percent'
+          | 'exchange'
+          | 'orderType'
+          | 'description'
+          | 'createdAt'
+        >
+      >
+    }
   >
 }
 
@@ -996,6 +1015,65 @@ export function useGetGroupLazyQuery(
 export type GetGroupQueryHookResult = ReturnType<typeof useGetGroupQuery>
 export type GetGroupLazyQueryHookResult = ReturnType<typeof useGetGroupLazyQuery>
 export type GetGroupQueryResult = Apollo.QueryResult<GetGroupQuery, GetGroupQueryVariables>
+export const GetGroupOrderSetsDocument = gql`
+  query GetGroupOrderSets($input: GroupInput!) {
+    group(input: $input) {
+      orderSets {
+        id
+        symbol
+        price
+        side
+        percent
+        exchange
+        orderType
+        description
+        createdAt
+      }
+    }
+  }
+`
+
+/**
+ * __useGetGroupOrderSetsQuery__
+ *
+ * To run a query within a React component, call `useGetGroupOrderSetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGroupOrderSetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGroupOrderSetsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetGroupOrderSetsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetGroupOrderSetsQuery, GetGroupOrderSetsQueryVariables>,
+) {
+  return Apollo.useQuery<GetGroupOrderSetsQuery, GetGroupOrderSetsQueryVariables>(
+    GetGroupOrderSetsDocument,
+    baseOptions,
+  )
+}
+export function useGetGroupOrderSetsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGroupOrderSetsQuery,
+    GetGroupOrderSetsQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<GetGroupOrderSetsQuery, GetGroupOrderSetsQueryVariables>(
+    GetGroupOrderSetsDocument,
+    baseOptions,
+  )
+}
+export type GetGroupOrderSetsQueryHookResult = ReturnType<typeof useGetGroupOrderSetsQuery>
+export type GetGroupOrderSetsLazyQueryHookResult = ReturnType<typeof useGetGroupOrderSetsLazyQuery>
+export type GetGroupOrderSetsQueryResult = Apollo.QueryResult<
+  GetGroupOrderSetsQuery,
+  GetGroupOrderSetsQueryVariables
+>
 export const MeDocument = gql`
   query Me {
     me {
