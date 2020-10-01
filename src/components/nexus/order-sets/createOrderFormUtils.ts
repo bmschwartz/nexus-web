@@ -6,11 +6,6 @@ import { OrderSide, OrderType } from 'types/order'
 import { IBinanceCurrency, IBitmexCurrency } from 'types/currency'
 import { GetCurrenciesQuery } from 'graphql'
 
-interface ExchangeMetadata {
-  name: String
-  fields: String[]
-}
-
 export interface ICurrencyMap {
   exchanges: Exchange[]
   [Exchange.BITMEX]: {
