@@ -3,7 +3,7 @@ export enum Exchange {
   BINANCE = 'Binance',
 }
 
-export interface ExchangeAccount {
+export interface IExchangeAccount {
   id: string
   active: boolean
   exchange: Exchange

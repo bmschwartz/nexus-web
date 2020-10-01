@@ -1,11 +1,14 @@
-import { all, takeEvery, put } from 'redux-saga/effects'
+import { all, takeEvery, put, call } from 'redux-saga/effects'
+import { notification } from 'antd'
+import * as apollo from 'services/apollo'
 
 /* eslint-disable */
 import actions from './actions'
-import { CreateOrderSetPayload } from './reducers'
+import { ICreateOrderSetPayload } from './reducers'
+import { ICreateOrderSetResponse } from 'services/apollo/order'
 /* eslint-enable */
 
-export function* CREATE_ORDER_SET({ payload }: { payload: CreateOrderSetPayload }) {
+export function* CREATE_ORDER_SET({ payload }: { payload: ICreateOrderSetPayload }) {
   yield put({
     type: 'orderSet/SET_CREATE_ORDER_SET_STATE',
     payload: {
@@ -15,46 +18,41 @@ export function* CREATE_ORDER_SET({ payload }: { payload: CreateOrderSetPayload 
     },
   })
 
-  console.log(payload)
+  notification.success({
+    message: 'Created Order Set',
+    description: `${payload.symbol} on ${payload.exchange}`,
+  })
+  const { orderSetId, error }: ICreateOrderSetResponse = yield call(apollo.createOrderSet, payload)
 
-  // const { groupId, error }: CreateGroupResponse = yield call(apollo.createGroup, input)
-  // if (groupId) {
-  //   yield put({
-  //     type: 'group/SET_CREATE_GROUP_STATE',
-  //     payload: {
-  //       createGroup: {
-  //         submitting: false,
-  //       },
-  //     },
-  //   })
-  //   yield put({
-  //     type: 'group/SET_GROUP_DETAIL_STATE',
-  //     payload: {
-  //       groupDetail: {
-  //         groupId,
-  //       },
-  //     },
-  //   })
-  //   yield history.push(`/groups/${groupId}`)
-  //   notification.success({
-  //     message: 'Created Group',
-  //     description: `You created ${input.name}`,
-  //   })
-  // } else if (error) {
-  //   yield put({
-  //     type: 'group/SET_CREATE_GROUP_STATE',
-  //     payload: {
-  //       createGroup: {
-  //         ...initialGroupState.createGroup,
-  //       },
-  //     },
-  //   })
-  //   notification.error({
-  //     message: 'Login Error',
-  //     description: error,
-  //     duration: 3, // seconds
-  //   })
-  // }
+  yield put({
+    type: 'orderSet/SET_CREATE_ORDER_SET_STATE',
+    payload: {
+      createOrderSet: {
+        submitting: false,
+      },
+    },
+  })
+
+  if (orderSetId) {
+    yield put({
+      type: 'orderSet/SET_ORDER_SET_DETAIL_STATE',
+      payload: {
+        orderSetDetail: {
+          orderSetId,
+        },
+      },
+    })
+    notification.success({
+      message: 'Created Order Set',
+      description: `${payload.symbol} on ${payload.exchange}`,
+    })
+  } else if (error) {
+    notification.error({
+      message: 'Create Order Set Error',
+      description: error,
+      duration: 3, // seconds
+    })
+  }
 }
 
 export default function* rootSaga() {

@@ -21,7 +21,7 @@ export interface ICurrencyMap {
   }
 }
 
-const sharedFields = ['symbol', 'side', 'type', 'price', 'percent', 'leverage', 'stopLoss']
+const sharedFields = ['symbol', 'side', 'orderType', 'price', 'percent', 'leverage', 'stopLoss']
 
 export const EXCHANGE_METADATA: { [key in Exchange]: ExchangeMetadata } = {
   [Exchange.BITMEX]: {
@@ -118,7 +118,7 @@ export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {
       .label('Side')
       .oneOf(Object.values(OrderSide))
       .required(),
-    type: Yup.string()
+    orderType: Yup.string()
       .label('Type')
       .oneOf(Object.values(OrderType))
       .required(),

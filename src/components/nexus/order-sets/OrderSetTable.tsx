@@ -14,7 +14,6 @@ export const OrderSetTable: FC<OrderSetTableProps> = ({ onClickCreate, onClickOr
   const onRow = (row: OrderSetTableRow) => {
     return {
       onClick: () => {
-        console.log(`clicked order set ${row.id}`)
         onClickOrderSet(row.id)
       },
     }

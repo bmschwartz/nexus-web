@@ -104,7 +104,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           exchange: currencyData?.exchanges[0],
           symbol: '',
           side: OrderSide.BUY,
-          type: OrderType.LIMIT,
+          orderType: OrderType.LIMIT,
           percent: 5,
           price: 0,
           exchangeAccountIds: [],
@@ -116,6 +116,10 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
             handleNoMembersSelected()
             return
           }
+          console.log({
+            groupId: group.id,
+            ...values,
+          })
           dispatch({
             type: 'orderSet/CREATE_ORDER_SET',
             payload: {
@@ -186,8 +190,13 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                     </Select>
                   </Form.Item>
 
-                  <Form.Item name="type" label="Type" className="mb-3">
-                    <Select name="type" style={{ width: 120 }} size="large" onChange={handleChange}>
+                  <Form.Item name="orderType" label="Type" className="mb-3">
+                    <Select
+                      name="orderType"
+                      style={{ width: 120 }}
+                      size="large"
+                      onChange={handleChange}
+                    >
                       {Object.values(OrderType).map(type => (
                         <Select.Option key={type} value={type}>
                           {type}
@@ -204,7 +213,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                       step={getPriceTickSize(currencyData, values.exchange, values.symbol)}
                       size="large"
                       onChange={val => setFieldValue('price', val, true)}
-                      disabled={values.type === OrderType.MARKET}
+                      disabled={values.orderType === OrderType.MARKET}
                       style={{ width: 300 }}
                       placeholder="0.00"
                     />

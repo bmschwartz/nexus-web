@@ -476,6 +476,14 @@ export type CreateGroupMutation = { __typename?: 'Mutation' } & {
   createGroup?: Maybe<{ __typename?: 'Group' } & Pick<Group, 'id'>>
 }
 
+export type CreateOrderSetMutationVariables = Exact<{
+  input: CreateOrderSetInput
+}>
+
+export type CreateOrderSetMutation = { __typename?: 'Mutation' } & {
+  createOrderSet?: Maybe<{ __typename?: 'OrderSet' } & Pick<OrderSet, 'id'>>
+}
+
 export type UserLoginMutationVariables = Exact<{
   input: LoginUserInput
 }>
@@ -691,6 +699,49 @@ export type CreateGroupMutationResult = Apollo.MutationResult<CreateGroupMutatio
 export type CreateGroupMutationOptions = Apollo.BaseMutationOptions<
   CreateGroupMutation,
   CreateGroupMutationVariables
+>
+export const CreateOrderSetDocument = gql`
+  mutation CreateOrderSet($input: CreateOrderSetInput!) {
+    createOrderSet(input: $input) {
+      id
+    }
+  }
+`
+export type CreateOrderSetMutationFn = Apollo.MutationFunction<
+  CreateOrderSetMutation,
+  CreateOrderSetMutationVariables
+>
+
+/**
+ * __useCreateOrderSetMutation__
+ *
+ * To run a mutation, you first call `useCreateOrderSetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrderSetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrderSetMutation, { data, loading, error }] = useCreateOrderSetMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateOrderSetMutation(
+  baseOptions?: Apollo.MutationHookOptions<CreateOrderSetMutation, CreateOrderSetMutationVariables>,
+) {
+  return Apollo.useMutation<CreateOrderSetMutation, CreateOrderSetMutationVariables>(
+    CreateOrderSetDocument,
+    baseOptions,
+  )
+}
+export type CreateOrderSetMutationHookResult = ReturnType<typeof useCreateOrderSetMutation>
+export type CreateOrderSetMutationResult = Apollo.MutationResult<CreateOrderSetMutation>
+export type CreateOrderSetMutationOptions = Apollo.BaseMutationOptions<
+  CreateOrderSetMutation,
+  CreateOrderSetMutationVariables
 >
 export const UserLoginDocument = gql`
   mutation UserLogin($input: LoginUserInput!) {

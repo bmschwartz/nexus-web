@@ -8,7 +8,7 @@ import { useGetGroupQuery, useGetMembershipQuery } from '../../../graphql/index'
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
 import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
 import { Membership, roleFromString, statusFromString } from 'types/membership'
-import { Order } from 'types/order'
+import { IOrder } from 'types/order'
 /* eslint-enable */
 
 interface GroupDetailProps {
@@ -52,7 +52,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     status: statusFromString(membership.status)!,
   })
 
-  const transformOrderData = (order: any): Order => ({
+  const transformOrderData = (order: any): IOrder => ({
     id: order.id,
     side: order.side,
     orderType: order.orderType,

@@ -8,7 +8,7 @@ export enum OrderType {
   LIMIT = 'Limit',
 }
 
-export interface Order {
+export interface IOrder {
   id: string
   side: OrderSide
   orderType: OrderType

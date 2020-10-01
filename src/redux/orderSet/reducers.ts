@@ -4,27 +4,29 @@ import { OrderSide, OrderType } from 'types/order'
 import actions from './actions'
 /* eslint-enable */
 
-export interface OrderSetState {
-  orderSetDetail: OrderSetDetailState
-  createOrderSet: CreateOrderSetState
+export interface IOrderSetState {
+  orderSetDetail: IOrderSetDetailState
+  createOrderSet: ICreateOrderSetState
 }
 
-export interface CreateOrderSetState {
+export interface ICreateOrderSetState {
   submitting: boolean
 }
 
-export interface CreateOrderSetPayload {
+export interface ICreateOrderSetPayload {
+  groupId: string
   exchange: Exchange
   symbol: string
-  side: OrderSide
-  type: OrderType
+  price?: number
   percent: number
-  price: number
-  groupId: string
+  side: OrderSide
+  orderType: OrderType
+  stopPrice?: number
+  description?: string
   exchangeAccountIds: string[]
 }
 
-export interface OrderSetDetailState {
+export interface IOrderSetDetailState {
   orderSetId: String | null
 }
 
@@ -32,14 +34,14 @@ const initialOrderSetDetailState = {
   orderSetId: null,
 }
 
-export const initialState: OrderSetState = {
+export const initialState: IOrderSetState = {
   createOrderSet: {
     submitting: false,
   },
   orderSetDetail: initialOrderSetDetailState,
 }
 
-export default function orderSetReducer(state: OrderSetState = initialState, action: any) {
+export default function orderSetReducer(state: IOrderSetState = initialState, action: any) {
   switch (action.type) {
     case actions.SET_CREATE_ORDER_SET_STATE:
       return { ...state, ...action.payload }
