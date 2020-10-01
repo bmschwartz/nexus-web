@@ -21,19 +21,6 @@ export interface ICurrencyMap {
   }
 }
 
-const sharedFields = ['symbol', 'side', 'orderType', 'price', 'percent', 'leverage', 'stopLoss']
-
-export const EXCHANGE_METADATA: { [key in Exchange]: ExchangeMetadata } = {
-  [Exchange.BITMEX]: {
-    name: Exchange.BITMEX,
-    fields: [],
-  },
-  [Exchange.BINANCE]: {
-    name: Exchange.BINANCE,
-    fields: [...sharedFields],
-  },
-}
-
 export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined): ICurrencyMap {
   const exchanges = [Exchange.BITMEX, Exchange.BINANCE]
 
