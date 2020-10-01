@@ -35,7 +35,7 @@ export const OrderSetTableColumns = [
   },
   {
     title: 'Type',
-    dataIndex: 'type',
+    dataIndex: 'orderType',
     key: 'orderType',
   },
   {

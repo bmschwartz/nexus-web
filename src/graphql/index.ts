@@ -257,7 +257,7 @@ export type OrderSet = {
   orders: Array<Order>
   percent: Scalars['Float']
   stopPrice?: Maybe<Scalars['Float']>
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
