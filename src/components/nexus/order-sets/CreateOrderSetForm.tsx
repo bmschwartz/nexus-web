@@ -1,8 +1,7 @@
 import React, { FC, useState } from 'react'
-import { connect } from 'react-redux'
 import { Formik } from 'formik'
 import { Form, Input, InputNumber, Select, SubmitButton, Transfer } from 'formik-antd'
-import { Modal, PageHeader, Spin } from 'antd'
+import { Modal, notification, PageHeader, Spin } from 'antd'
 import { TransferItem } from 'antd/lib/transfer'
 import TextArea from 'antd/lib/input/TextArea'
 
@@ -20,18 +19,16 @@ import {
   getMinPrice,
   getPriceTickSize,
 } from './createOrderFormUtils'
+import * as apollo from 'services/apollo'
+import { ICreateOrderSetResponse } from 'services/apollo/order'
 import { useGetCurrenciesQuery } from '../../../graphql/index'
 /* eslint-enable */
 
 interface CreateOrderSetFormProps {
   group: Group
+  onCreated: () => void
   onClickBack: () => void
-
-  // redux
-  orderSet: any
-  dispatch: any
 }
-const mapStateToProps = ({ dispatch, orderSet }: any) => ({ orderSet, dispatch })
 
 const getOverviewText = ({
   side,
@@ -44,13 +41,9 @@ const getOverviewText = ({
   return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${exchangeAccountIds.length} members`
 }
 
-const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
-  group,
-  onClickBack,
-  orderSet,
-  dispatch,
-}) => {
+const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ group, onClickBack, onCreated }) => {
   const { data } = useGetCurrenciesQuery()
+  const [submittingOrder, setSubmittingOrder] = useState<boolean>(false)
   const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
 
   const currencyData = extractCurrencyData(data)
@@ -93,7 +86,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   }
 
   return (
-    <Spin spinning={orderSet.createOrderSet.submitting} tip="Submitting Order...">
+    <Spin spinning={submittingOrder} tip="Submitting Order...">
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Create Order Set" onBack={onClickBack} />
@@ -110,23 +103,33 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           exchangeAccountIds: [],
         }}
         validationSchema={CreateOrderSetSchema}
-        onSubmit={(values, { setSubmitting }) => {
+        onSubmit={async (values, { setSubmitting }) => {
           if (values.exchangeAccountIds.length === 0) {
             setSubmitting(false)
             handleNoMembersSelected()
             return
           }
-          console.log({
+
+          setSubmittingOrder(true)
+          const { orderSetId, error }: ICreateOrderSetResponse = await apollo.createOrderSet({
             groupId: group.id,
             ...values,
           })
-          dispatch({
-            type: 'orderSet/CREATE_ORDER_SET',
-            payload: {
-              groupId: group.id,
-              ...values,
-            },
-          })
+          setSubmittingOrder(false)
+
+          if (orderSetId) {
+            notification.success({
+              message: 'Created Order Set',
+              description: `${values.symbol} on ${values.exchange}`,
+            })
+            onCreated()
+          } else {
+            notification.error({
+              message: 'Create Order Set Error',
+              description: error,
+              duration: 3, // seconds
+            })
+          }
         }}
       >
         {({ values, handleChange, setFieldValue }) => (
@@ -268,7 +271,7 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   </Form.Item>
 
                   <p>Overview: {getOverviewText(values)}</p>
-                  <SubmitButton disabled={orderSet.createOrderSet.submitting}>Submit</SubmitButton>
+                  <SubmitButton disabled={submittingOrder}>Submit</SubmitButton>
                 </Form>
               </Spin>
             </div>
@@ -279,4 +282,4 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   )
 }
 
-export default connect(mapStateToProps)(CreateOrderSetForm)
+export default CreateOrderSetForm

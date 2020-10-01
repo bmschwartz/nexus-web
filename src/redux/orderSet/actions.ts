@@ -1,7 +1,0 @@
-const actions: any = {
-  CREATE_ORDER_SET: 'orderSet/CREATE_ORDER_SET',
-  SET_ORDER_SET_DETAIL_STATE: 'orderSet/SET_ORDER_SET_DETAIL_STATE',
-  SET_CREATE_ORDER_SET_STATE: 'orderSet/SET_CREATE_ORDER_SET_STATE',
-}
-
-export default actions

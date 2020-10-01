@@ -28,6 +28,9 @@ export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTa
   const onClickOrderSet = (orderSetId: String) => {
     setSelectedOrderSetId(orderSetId)
   }
+  const onOrderSetCreated = () => {
+    setTabState(OrderSetTabState.VIEW_ALL)
+  }
 
   return (
     <div className="card">
@@ -35,7 +38,7 @@ export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTa
         <OrderSetTable onClickCreate={onClickCreateOrderSet} onClickOrderSet={onClickOrderSet} />
       )}
       {tabState === OrderSetTabState.CREATE && (
-        <CreateOrderSetForm group={group} onClickBack={onClickBack} />
+        <CreateOrderSetForm group={group} onClickBack={onClickBack} onCreated={onOrderSetCreated} />
       )}
       {tabState === OrderSetTabState.VIEW_DETAIL && (
         <OrderSetDetail onClickBack={onClickBack} orderSetId={selectedOrderSetId} />
