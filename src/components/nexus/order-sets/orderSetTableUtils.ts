@@ -1,12 +1,14 @@
-import { OrderSide, OrderType } from 'types/order'
+import { GetGroupOrderSetsQuery } from 'graphql'
+import { convertToLocalExchange, Exchange } from 'types/exchange'
+import { convertToLocalOrderSide, convertToLocalOrderType, OrderSide, OrderType } from 'types/order'
 
 export interface OrderSetTableRow {
   id: String
   exchange: String
   symbol: String
   side: OrderSide
-  type: OrderType
-  price?: Number
+  orderType: OrderType
+  price: String
   date: String
 }
 
@@ -34,7 +36,7 @@ export const OrderSetTableColumns = [
   {
     title: 'Type',
     dataIndex: 'type',
-    key: 'type',
+    key: 'orderType',
   },
   {
     title: 'Price',
@@ -47,3 +49,37 @@ export const OrderSetTableColumns = [
     key: 'date',
   },
 ]
+
+export interface OrderSetTableItem {
+  id: string
+  exchange: Exchange
+  symbol: string
+  side: OrderSide
+  orderType: OrderType
+  price: string
+  date: string
+}
+
+export const createOrderSetTableData = (
+  orderSets: GetGroupOrderSetsQuery | undefined,
+): OrderSetTableItem[] => {
+  if (!orderSets?.group?.orderSets) {
+    return []
+  }
+
+  const orderSetTableItems: OrderSetTableItem[] = orderSets.group.orderSets.map(orderSet => {
+    console.log(orderSet)
+    const { id, symbol, price, exchange, side, orderType, createdAt } = orderSet
+    return {
+      id,
+      price: String(price) ?? '',
+      symbol,
+      exchange: convertToLocalExchange(exchange),
+      side: convertToLocalOrderSide(side),
+      orderType: convertToLocalOrderType(orderType),
+      date: createdAt,
+    }
+  })
+
+  return orderSetTableItems
+}

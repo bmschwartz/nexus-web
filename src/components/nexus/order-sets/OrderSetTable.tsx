@@ -1,16 +1,34 @@
 import React, { FC } from 'react'
-import { Table, Button, PageHeader } from 'antd'
+import { Table, Button, PageHeader, Spin } from 'antd'
 
 /* eslint-disable */
-import { OrderSetTableColumns, OrderSetTableRow } from './orderSetTableUtils'
+import {
+  createOrderSetTableData,
+  OrderSetTableColumns,
+  OrderSetTableItem,
+  OrderSetTableRow,
+} from './orderSetTableUtils'
+import { useGetGroupOrderSetsQuery } from '../../../graphql'
 /* eslint-enable */
 
 interface OrderSetTableProps {
+  groupId: string
   onClickCreate: () => void
   onClickOrderSet: (orderSetId: String) => void
 }
 
-export const OrderSetTable: FC<OrderSetTableProps> = ({ onClickCreate, onClickOrderSet }) => {
+export const OrderSetTable: FC<OrderSetTableProps> = ({
+  onClickCreate,
+  onClickOrderSet,
+  groupId,
+}) => {
+  const { data: groupOrderSetsData, loading: fetchingGroupOrderSets } = useGetGroupOrderSetsQuery({
+    fetchPolicy: 'network-only',
+    variables: { input: { groupId } },
+  })
+
+  const orderSetTableData: OrderSetTableItem[] = createOrderSetTableData(groupOrderSetsData)
+
   const onRow = (row: OrderSetTableRow) => {
     return {
       onClick: () => {
@@ -33,13 +51,15 @@ export const OrderSetTable: FC<OrderSetTableProps> = ({ onClickCreate, onClickOr
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Table
-            rowKey="id"
-            onRow={onRow}
-            columns={OrderSetTableColumns}
-            dataSource={[]}
-            // onChange={handleTableChange}
-          />
+          <Spin spinning={fetchingGroupOrderSets}>
+            <Table
+              rowKey="id"
+              onRow={onRow}
+              columns={OrderSetTableColumns}
+              dataSource={orderSetTableData}
+              // onChange={handleTableChange}
+            />
+          </Spin>
         </div>
       </div>
     </>

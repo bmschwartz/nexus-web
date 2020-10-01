@@ -35,7 +35,11 @@ export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTa
   return (
     <div className="card">
       {tabState === OrderSetTabState.VIEW_ALL && (
-        <OrderSetTable onClickCreate={onClickCreateOrderSet} onClickOrderSet={onClickOrderSet} />
+        <OrderSetTable
+          groupId={group.id}
+          onClickCreate={onClickCreateOrderSet}
+          onClickOrderSet={onClickOrderSet}
+        />
       )}
       {tabState === OrderSetTabState.CREATE && (
         <CreateOrderSetForm group={group} onClickBack={onClickBack} onCreated={onOrderSetCreated} />
