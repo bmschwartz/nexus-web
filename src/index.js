@@ -10,7 +10,7 @@ import * as dotenv from 'dotenv'
 import { ApolloProvider } from '@apollo/client'
 import { createStore, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
-import { Provider } from 'react-redux'
+import { Provider as ReduxProvider } from 'react-redux'
 // import { logger } from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
 import { routerMiddleware } from 'connected-react-router'
@@ -40,11 +40,11 @@ sagaMiddleware.run(sagas)
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <Provider store={store}>
+    <ReduxProvider store={store}>
       <Localization>
         <Router history={history} />
       </Localization>
-    </Provider>
+    </ReduxProvider>
   </ApolloProvider>,
   document.getElementById('root'),
 )

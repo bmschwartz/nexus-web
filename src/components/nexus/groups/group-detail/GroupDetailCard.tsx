@@ -15,6 +15,7 @@ import { MemberOrders } from './MemberOrders'
 import { MemberSettings } from './MemberSettings'
 import { GroupProfile } from './GroupProfile'
 import { GroupMembers } from './GroupMembers'
+import { StringParam, useQueryParam, withDefault } from 'use-query-params'
 /* eslint-enable */
 
 interface GroupDetailCardProps {
@@ -25,7 +26,8 @@ interface GroupDetailCardProps {
 export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership }) => {
   const menuTabs: Tab[] = availableTabs(myMembership.role)
 
-  const [tabKey, setTabKey] = useState<string>(menuTabs[0].key)
+  const [tabKey, setTabKey] = useQueryParam('tab', withDefault(StringParam, menuTabs[0].key))
+
   const [groupOrdersTabState, setGroupOrdersTabState] = useState<OrderSetTabState>(
     OrderSetTabState.VIEW_ALL,
   )
