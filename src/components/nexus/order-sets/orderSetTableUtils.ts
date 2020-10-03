@@ -3,13 +3,13 @@ import { convertToLocalExchange, Exchange } from 'types/exchange'
 import { convertToLocalOrderSide, convertToLocalOrderType, OrderSide, OrderType } from 'types/order'
 
 export interface OrderSetTableRow {
-  id: String
-  exchange: String
-  symbol: String
+  id: string
+  exchange: string
+  symbol: string
   side: OrderSide
   orderType: OrderType
-  price: String
-  date: String
+  price: string
+  date: string
 }
 
 export interface OrderSetTableItem {

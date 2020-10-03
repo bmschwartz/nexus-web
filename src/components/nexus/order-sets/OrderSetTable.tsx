@@ -9,7 +9,7 @@ import { useGetGroupOrderSetsQuery } from '../../../graphql'
 interface OrderSetTableProps {
   groupId: string
   onClickCreate: () => void
-  onClickOrderSet: (orderSetId: String) => void
+  onClickOrderSet: (orderSetId: string) => void
 }
 
 const OrderSetTableColumns = [
