@@ -1,5 +1,6 @@
 query GetGroupOrderSets($input: GroupInput!, $limit: Int, $offset: Int) {
   group(input: $input) {
+    id
     orderSets(limit: $limit, offset: $offset) {
       totalCount
       orderSets {

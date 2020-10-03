@@ -1,7 +1,16 @@
 query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSetInput!) {
   group(input: $groupInput) {
+    id
     orderSet(input: $orderSetInput) {
       ...OrderSetDetails
+      orders {
+        ...OrderDetails
+        membership {
+          member {
+            username
+          }
+        }
+      }
     }
   }
 }

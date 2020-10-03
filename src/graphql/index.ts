@@ -475,18 +475,27 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
 
 export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
   Order,
-  'id' | 'createdAt' | 'price' | 'quantity' | 'stopPrice' | 'symbol' | 'orderType'
+  | 'id'
+  | 'price'
+  | 'side'
+  | 'symbol'
+  | 'quantity'
+  | 'stopPrice'
+  | 'orderType'
+  | 'createdAt'
+  | 'updatedAt'
 >
 
 export type OrderSetDetailsFragment = { __typename?: 'OrderSet' } & Pick<
   OrderSet,
   | 'id'
+  | 'exchange'
   | 'symbol'
   | 'price'
   | 'side'
-  | 'percent'
-  | 'exchange'
   | 'orderType'
+  | 'percent'
+  | 'stopPrice'
   | 'description'
   | 'createdAt'
 >
@@ -596,9 +605,19 @@ export type GetGroupOrderSetDetailsQueryVariables = Exact<{
 
 export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
   group?: Maybe<
-    { __typename?: 'Group' } & {
-      orderSet?: Maybe<{ __typename?: 'OrderSet' } & OrderSetDetailsFragment>
-    }
+    { __typename?: 'Group' } & Pick<Group, 'id'> & {
+        orderSet?: Maybe<
+          { __typename?: 'OrderSet' } & {
+            orders: Array<
+              { __typename?: 'Order' } & {
+                membership: { __typename?: 'GroupMembership' } & {
+                  member: { __typename?: 'User' } & Pick<User, 'username'>
+                }
+              } & OrderDetailsFragment
+            >
+          } & OrderSetDetailsFragment
+        >
+      }
   >
 }
 
@@ -610,11 +629,11 @@ export type GetGroupOrderSetsQueryVariables = Exact<{
 
 export type GetGroupOrderSetsQuery = { __typename?: 'Query' } & {
   group?: Maybe<
-    { __typename?: 'Group' } & {
-      orderSets: { __typename?: 'GroupOrderSets' } & Pick<GroupOrderSets, 'totalCount'> & {
-          orderSets: Array<{ __typename?: 'OrderSet' } & OrderSetDetailsFragment>
-        }
-    }
+    { __typename?: 'Group' } & Pick<Group, 'id'> & {
+        orderSets: { __typename?: 'GroupOrderSets' } & Pick<GroupOrderSets, 'totalCount'> & {
+            orderSets: Array<{ __typename?: 'OrderSet' } & OrderSetDetailsFragment>
+          }
+      }
   >
 }
 
@@ -670,12 +689,14 @@ export const GroupDetailsFragmentDoc = gql`
 export const OrderDetailsFragmentDoc = gql`
   fragment OrderDetails on Order {
     id
-    createdAt
     price
+    side
+    symbol
     quantity
     stopPrice
-    symbol
     orderType
+    createdAt
+    updatedAt
   }
 `
 export const ExchangeAccountDetailsFragmentDoc = gql`
@@ -712,12 +733,13 @@ export const GroupMembershipDetailsFragmentDoc = gql`
 export const OrderSetDetailsFragmentDoc = gql`
   fragment OrderSetDetails on OrderSet {
     id
+    exchange
     symbol
     price
     side
-    percent
-    exchange
     orderType
+    percent
+    stopPrice
     description
     createdAt
   }
@@ -1064,12 +1086,22 @@ export type GetGroupQueryResult = Apollo.QueryResult<GetGroupQuery, GetGroupQuer
 export const GetGroupOrderSetDetailsDocument = gql`
   query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSetInput!) {
     group(input: $groupInput) {
+      id
       orderSet(input: $orderSetInput) {
         ...OrderSetDetails
+        orders {
+          ...OrderDetails
+          membership {
+            member {
+              username
+            }
+          }
+        }
       }
     }
   }
   ${OrderSetDetailsFragmentDoc}
+  ${OrderDetailsFragmentDoc}
 `
 
 /**
@@ -1124,6 +1156,7 @@ export type GetGroupOrderSetDetailsQueryResult = Apollo.QueryResult<
 export const GetGroupOrderSetsDocument = gql`
   query GetGroupOrderSets($input: GroupInput!, $limit: Int, $offset: Int) {
     group(input: $input) {
+      id
       orderSets(limit: $limit, offset: $offset) {
         totalCount
         orderSets {

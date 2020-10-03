@@ -1,11 +1,12 @@
 fragment OrderSetDetails on OrderSet {
   id
+  exchange
   symbol
   price
   side
-  percent
-  exchange
   orderType
+  percent
+  stopPrice
   description
   createdAt
 }

@@ -1,9 +1,11 @@
 fragment OrderDetails on Order {
   id
-  createdAt
   price
+  side
+  symbol
   quantity
   stopPrice
-  symbol
   orderType
+  createdAt
+  updatedAt
 }
