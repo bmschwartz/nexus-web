@@ -17,7 +17,7 @@ export enum OrderSetTabState {
 }
 
 export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTabState }) => {
-  const [selectedOrderSetId, setSelectedOrderSetId] = useState<String>()
+  const [selectedOrderSetId, setSelectedOrderSetId] = useState<string>()
 
   const onClickCreateOrderSet = () => {
     setTabState(OrderSetTabState.CREATE)
@@ -25,7 +25,7 @@ export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTa
   const onClickBack = () => {
     setTabState(OrderSetTabState.VIEW_ALL)
   }
-  const onClickOrderSet = (orderSetId: String) => {
+  const onClickOrderSet = (orderSetId: string) => {
     setSelectedOrderSetId(orderSetId)
     setTabState(OrderSetTabState.VIEW_DETAIL)
   }
@@ -45,8 +45,12 @@ export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTa
       {tabState === OrderSetTabState.CREATE && (
         <CreateOrderSetForm group={group} onClickBack={onClickBack} onCreated={onOrderSetCreated} />
       )}
-      {tabState === OrderSetTabState.VIEW_DETAIL && (
-        <OrderSetDetail onClickBack={onClickBack} orderSetId={selectedOrderSetId} />
+      {tabState === OrderSetTabState.VIEW_DETAIL && selectedOrderSetId && (
+        <OrderSetDetail
+          groupId={group.id}
+          onClickBack={onClickBack}
+          orderSetId={selectedOrderSetId}
+        />
       )}
     </div>
   )
