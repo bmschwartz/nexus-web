@@ -33,9 +33,16 @@ export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTa
     setTabState(OrderSetTabState.VIEW_ALL)
   }
 
+  function shouldShowViewAll() {
+    return (
+      tabState === OrderSetTabState.VIEW_ALL ||
+      (tabState === OrderSetTabState.VIEW_DETAIL && !selectedOrderSetId)
+    )
+  }
+
   return (
     <div className="card">
-      {tabState === OrderSetTabState.VIEW_ALL && (
+      {shouldShowViewAll() && (
         <OrderSetTable
           groupId={group.id}
           onClickCreate={onClickCreateOrderSet}

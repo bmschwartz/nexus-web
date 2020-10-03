@@ -12,7 +12,7 @@ interface OrderSetTableProps {
   onClickOrderSet: (orderSetId: string) => void
 }
 
-const OrderSetTableColumns = [
+const orderSetTableColumns = [
   {
     title: 'ID',
     dataIndex: 'id',
@@ -110,7 +110,7 @@ export const OrderSetTable: FC<OrderSetTableProps> = ({
             <Table
               rowKey="id"
               onRow={onRow}
-              columns={OrderSetTableColumns}
+              columns={orderSetTableColumns}
               dataSource={orderSetTableData}
               pagination={{
                 defaultCurrent: 1,
