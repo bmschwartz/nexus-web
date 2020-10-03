@@ -51,7 +51,12 @@ export type Group = {
   memberships: Array<GroupMembership>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-  orderSets: Array<OrderSet>
+  orderSets: GroupOrderSets
+}
+
+export type GroupOrderSetsArgs = {
+  limit?: Maybe<Scalars['Int']>
+  offset?: Maybe<Scalars['Int']>
 }
 
 export type GroupExistsInput = {
@@ -228,6 +233,12 @@ export type ExchangeAccount = {
   membership: GroupMembership
   apiKey: Scalars['String']
   apiSecret: Scalars['String']
+}
+
+export type GroupOrderSets = {
+  __typename?: 'GroupOrderSets'
+  orderSets: Array<OrderSet>
+  totalCount: Scalars['Int']
 }
 
 export type Order = {
@@ -562,25 +573,29 @@ export type GetGroupQuery = { __typename?: 'Query' } & {
 
 export type GetGroupOrderSetsQueryVariables = Exact<{
   input: GroupInput
+  limit?: Maybe<Scalars['Int']>
+  offset?: Maybe<Scalars['Int']>
 }>
 
 export type GetGroupOrderSetsQuery = { __typename?: 'Query' } & {
   group?: Maybe<
     { __typename?: 'Group' } & {
-      orderSets: Array<
-        { __typename?: 'OrderSet' } & Pick<
-          OrderSet,
-          | 'id'
-          | 'symbol'
-          | 'price'
-          | 'side'
-          | 'percent'
-          | 'exchange'
-          | 'orderType'
-          | 'description'
-          | 'createdAt'
-        >
-      >
+      orderSets: { __typename?: 'GroupOrderSets' } & Pick<GroupOrderSets, 'totalCount'> & {
+          orderSets: Array<
+            { __typename?: 'OrderSet' } & Pick<
+              OrderSet,
+              | 'id'
+              | 'symbol'
+              | 'price'
+              | 'side'
+              | 'percent'
+              | 'exchange'
+              | 'orderType'
+              | 'description'
+              | 'createdAt'
+            >
+          >
+        }
     }
   >
 }
@@ -1016,18 +1031,21 @@ export type GetGroupQueryHookResult = ReturnType<typeof useGetGroupQuery>
 export type GetGroupLazyQueryHookResult = ReturnType<typeof useGetGroupLazyQuery>
 export type GetGroupQueryResult = Apollo.QueryResult<GetGroupQuery, GetGroupQueryVariables>
 export const GetGroupOrderSetsDocument = gql`
-  query GetGroupOrderSets($input: GroupInput!) {
+  query GetGroupOrderSets($input: GroupInput!, $limit: Int, $offset: Int) {
     group(input: $input) {
-      orderSets {
-        id
-        symbol
-        price
-        side
-        percent
-        exchange
-        orderType
-        description
-        createdAt
+      orderSets(limit: $limit, offset: $offset) {
+        totalCount
+        orderSets {
+          id
+          symbol
+          price
+          side
+          percent
+          exchange
+          orderType
+          description
+          createdAt
+        }
       }
     }
   }
@@ -1046,6 +1064,8 @@ export const GetGroupOrderSetsDocument = gql`
  * const { data, loading, error } = useGetGroupOrderSetsQuery({
  *   variables: {
  *      input: // value for 'input'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */

@@ -61,14 +61,17 @@ export interface OrderSetTableItem {
 }
 
 export const createOrderSetTableData = (
-  orderSets: GetGroupOrderSetsQuery | undefined,
+  orderSetResponse: GetGroupOrderSetsQuery | undefined,
 ): OrderSetTableItem[] => {
-  if (!orderSets?.group?.orderSets) {
+  if (!orderSetResponse?.group) {
     return []
   }
 
-  const orderSetTableItems: OrderSetTableItem[] = orderSets.group.orderSets.map(orderSet => {
-    console.log(orderSet)
+  const {
+    orderSets: { orderSets },
+  } = orderSetResponse.group
+
+  const orderSetTableItems: OrderSetTableItem[] = orderSets.map(orderSet => {
     const { id, symbol, price, exchange, side, orderType, createdAt } = orderSet
     return {
       id,

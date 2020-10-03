@@ -17,16 +17,37 @@ interface OrderSetTableProps {
   onClickOrderSet: (orderSetId: String) => void
 }
 
+const PAGE_SIZE = 10
+
 export const OrderSetTable: FC<OrderSetTableProps> = ({
   onClickCreate,
   onClickOrderSet,
   groupId,
 }) => {
-  const { data: groupOrderSetsData, loading: fetchingGroupOrderSets } = useGetGroupOrderSetsQuery({
-    fetchPolicy: 'network-only',
-    variables: { input: { groupId } },
+  const onChangePage = (page: number, pageSize?: number) => {
+    const offset = pageSize ? pageSize * (page - 1) : 0
+    fetchMore({
+      variables: { offset },
+      updateQuery: (prev, result) => {
+        if (!result) {
+          return prev
+        }
+        return { ...result.fetchMoreResult }
+      },
+    })
+  }
+
+  const {
+    data: groupOrderSetsData,
+    loading: fetchingGroupOrderSets,
+    fetchMore,
+  } = useGetGroupOrderSetsQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: { input: { groupId }, limit: PAGE_SIZE },
+    notifyOnNetworkStatusChange: true,
   })
 
+  const totalCount = groupOrderSetsData?.group?.orderSets.totalCount
   const orderSetTableData: OrderSetTableItem[] = createOrderSetTableData(groupOrderSetsData)
 
   const onRow = (row: OrderSetTableRow) => {
@@ -57,6 +78,12 @@ export const OrderSetTable: FC<OrderSetTableProps> = ({
               onRow={onRow}
               columns={OrderSetTableColumns}
               dataSource={orderSetTableData}
+              pagination={{
+                defaultCurrent: 1,
+                defaultPageSize: PAGE_SIZE,
+                total: totalCount,
+                onChange: onChangePage,
+              }}
               // onChange={handleTableChange}
             />
           </Spin>
