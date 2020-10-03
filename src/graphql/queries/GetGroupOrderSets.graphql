@@ -3,15 +3,7 @@ query GetGroupOrderSets($input: GroupInput!, $limit: Int, $offset: Int) {
     orderSets(limit: $limit, offset: $offset) {
       totalCount
       orderSets {
-        id
-        symbol
-        price
-        side
-        percent
-        exchange
-        orderType
-        description
-        createdAt
+        ...OrderSetDetails
       }
     }
   }

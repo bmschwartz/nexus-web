@@ -52,11 +52,16 @@ export type Group = {
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   orderSets: GroupOrderSets
+  orderSet?: Maybe<OrderSet>
 }
 
 export type GroupOrderSetsArgs = {
   limit?: Maybe<Scalars['Int']>
   offset?: Maybe<Scalars['Int']>
+}
+
+export type GroupOrderSetArgs = {
+  input: OrderSetInput
 }
 
 export type GroupExistsInput = {
@@ -473,6 +478,19 @@ export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
   'id' | 'createdAt' | 'price' | 'quantity' | 'stopPrice' | 'symbol' | 'orderType'
 >
 
+export type OrderSetDetailsFragment = { __typename?: 'OrderSet' } & Pick<
+  OrderSet,
+  | 'id'
+  | 'symbol'
+  | 'price'
+  | 'side'
+  | 'percent'
+  | 'exchange'
+  | 'orderType'
+  | 'description'
+  | 'createdAt'
+>
+
 export type CreateGroupMutationVariables = Exact<{
   input: CreateGroupInput
 }>
@@ -571,6 +589,19 @@ export type GetGroupQuery = { __typename?: 'Query' } & {
   >
 }
 
+export type GetGroupOrderSetDetailsQueryVariables = Exact<{
+  groupInput: GroupInput
+  orderSetInput: OrderSetInput
+}>
+
+export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
+  group?: Maybe<
+    { __typename?: 'Group' } & {
+      orderSet?: Maybe<{ __typename?: 'OrderSet' } & OrderSetDetailsFragment>
+    }
+  >
+}
+
 export type GetGroupOrderSetsQueryVariables = Exact<{
   input: GroupInput
   limit?: Maybe<Scalars['Int']>
@@ -581,20 +612,7 @@ export type GetGroupOrderSetsQuery = { __typename?: 'Query' } & {
   group?: Maybe<
     { __typename?: 'Group' } & {
       orderSets: { __typename?: 'GroupOrderSets' } & Pick<GroupOrderSets, 'totalCount'> & {
-          orderSets: Array<
-            { __typename?: 'OrderSet' } & Pick<
-              OrderSet,
-              | 'id'
-              | 'symbol'
-              | 'price'
-              | 'side'
-              | 'percent'
-              | 'exchange'
-              | 'orderType'
-              | 'description'
-              | 'createdAt'
-            >
-          >
+          orderSets: Array<{ __typename?: 'OrderSet' } & OrderSetDetailsFragment>
         }
     }
   >
@@ -690,6 +708,19 @@ export const GroupMembershipDetailsFragmentDoc = gql`
   }
   ${OrderDetailsFragmentDoc}
   ${ExchangeAccountDetailsFragmentDoc}
+`
+export const OrderSetDetailsFragmentDoc = gql`
+  fragment OrderSetDetails on OrderSet {
+    id
+    symbol
+    price
+    side
+    percent
+    exchange
+    orderType
+    description
+    createdAt
+  }
 `
 export const CreateGroupDocument = gql`
   mutation CreateGroup($input: CreateGroupInput!) {
@@ -1030,25 +1061,78 @@ export function useGetGroupLazyQuery(
 export type GetGroupQueryHookResult = ReturnType<typeof useGetGroupQuery>
 export type GetGroupLazyQueryHookResult = ReturnType<typeof useGetGroupLazyQuery>
 export type GetGroupQueryResult = Apollo.QueryResult<GetGroupQuery, GetGroupQueryVariables>
+export const GetGroupOrderSetDetailsDocument = gql`
+  query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSetInput!) {
+    group(input: $groupInput) {
+      orderSet(input: $orderSetInput) {
+        ...OrderSetDetails
+      }
+    }
+  }
+  ${OrderSetDetailsFragmentDoc}
+`
+
+/**
+ * __useGetGroupOrderSetDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetGroupOrderSetDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGroupOrderSetDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGroupOrderSetDetailsQuery({
+ *   variables: {
+ *      groupInput: // value for 'groupInput'
+ *      orderSetInput: // value for 'orderSetInput'
+ *   },
+ * });
+ */
+export function useGetGroupOrderSetDetailsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetGroupOrderSetDetailsQuery,
+    GetGroupOrderSetDetailsQueryVariables
+  >,
+) {
+  return Apollo.useQuery<GetGroupOrderSetDetailsQuery, GetGroupOrderSetDetailsQueryVariables>(
+    GetGroupOrderSetDetailsDocument,
+    baseOptions,
+  )
+}
+export function useGetGroupOrderSetDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGroupOrderSetDetailsQuery,
+    GetGroupOrderSetDetailsQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<GetGroupOrderSetDetailsQuery, GetGroupOrderSetDetailsQueryVariables>(
+    GetGroupOrderSetDetailsDocument,
+    baseOptions,
+  )
+}
+export type GetGroupOrderSetDetailsQueryHookResult = ReturnType<
+  typeof useGetGroupOrderSetDetailsQuery
+>
+export type GetGroupOrderSetDetailsLazyQueryHookResult = ReturnType<
+  typeof useGetGroupOrderSetDetailsLazyQuery
+>
+export type GetGroupOrderSetDetailsQueryResult = Apollo.QueryResult<
+  GetGroupOrderSetDetailsQuery,
+  GetGroupOrderSetDetailsQueryVariables
+>
 export const GetGroupOrderSetsDocument = gql`
   query GetGroupOrderSets($input: GroupInput!, $limit: Int, $offset: Int) {
     group(input: $input) {
       orderSets(limit: $limit, offset: $offset) {
         totalCount
         orderSets {
-          id
-          symbol
-          price
-          side
-          percent
-          exchange
-          orderType
-          description
-          createdAt
+          ...OrderSetDetails
         }
       }
     }
   }
+  ${OrderSetDetailsFragmentDoc}
 `
 
 /**

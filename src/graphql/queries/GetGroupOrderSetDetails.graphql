@@ -1,0 +1,7 @@
+query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSetInput!) {
+  group(input: $groupInput) {
+    orderSet(input: $orderSetInput) {
+      ...OrderSetDetails
+    }
+  }
+}

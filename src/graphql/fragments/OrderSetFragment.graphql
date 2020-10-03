@@ -1,0 +1,11 @@
+fragment OrderSetDetails on OrderSet {
+  id
+  symbol
+  price
+  side
+  percent
+  exchange
+  orderType
+  description
+  createdAt
+}

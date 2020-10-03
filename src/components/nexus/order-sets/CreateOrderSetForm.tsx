@@ -133,148 +133,146 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ group, onClickBack, o
         }}
       >
         {({ values, handleChange, setFieldValue }) => (
-          <div className="card">
-            <div className="card-body">
-              <Spin spinning={!currencyData}>
-                <Form {...formItemLayout} labelAlign="left">
-                  <Form.Item name="exchange" label="Exchange">
-                    <Select
-                      name="exchange"
-                      size="large"
-                      style={{ width: 120 }}
-                      onChange={e => {
-                        handleChange(e)
-                        setSelectedAccountKeys([])
-                        setFieldValue('symbol', '')
-                      }}
-                    >
-                      {currencyData &&
-                        currencyData.exchanges.map(exchange => (
-                          <Select.Option key={exchange} value={exchange}>
-                            {exchange}
+          <div className="card-body">
+            <Spin spinning={!currencyData}>
+              <Form {...formItemLayout} labelAlign="left">
+                <Form.Item name="exchange" label="Exchange">
+                  <Select
+                    name="exchange"
+                    size="large"
+                    style={{ width: 120 }}
+                    onChange={e => {
+                      handleChange(e)
+                      setSelectedAccountKeys([])
+                      setFieldValue('symbol', '')
+                    }}
+                  >
+                    {currencyData &&
+                      currencyData.exchanges.map(exchange => (
+                        <Select.Option key={exchange} value={exchange}>
+                          {exchange}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+
+                <Form.Item name="symbol" label="Symbol" className="mb-3">
+                  <Select
+                    showSearch
+                    placeholder="Search Symbol..."
+                    name="symbol"
+                    style={{ width: 200 }}
+                    size="large"
+                    onChange={e => {
+                      handleChange(e)
+                      setFieldValue(
+                        'price',
+                        getMinPrice(currencyData, values.exchange, values.symbol),
+                      )
+                    }}
+                  >
+                    {currencyData &&
+                      Object.keys(currencyData[values.exchange])
+                        .sort()
+                        .map(symbol => (
+                          <Select.Option key={symbol} value={symbol}>
+                            {symbol}
                           </Select.Option>
                         ))}
-                    </Select>
-                  </Form.Item>
+                  </Select>
+                </Form.Item>
 
-                  <Form.Item name="symbol" label="Symbol" className="mb-3">
-                    <Select
-                      showSearch
-                      placeholder="Search Symbol..."
-                      name="symbol"
-                      style={{ width: 200 }}
-                      size="large"
-                      onChange={e => {
-                        handleChange(e)
-                        setFieldValue(
-                          'price',
-                          getMinPrice(currencyData, values.exchange, values.symbol),
-                        )
-                      }}
-                    >
-                      {currencyData &&
-                        Object.keys(currencyData[values.exchange])
-                          .sort()
-                          .map(symbol => (
-                            <Select.Option key={symbol} value={symbol}>
-                              {symbol}
-                            </Select.Option>
-                          ))}
-                    </Select>
-                  </Form.Item>
+                <Form.Item name="side" label="Side" className="mb-3">
+                  <Select name="side" style={{ width: 120 }} size="large" onChange={handleChange}>
+                    {Object.values(OrderSide).map(side => (
+                      <Select.Option key={side} value={side}>
+                        {side}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
 
-                  <Form.Item name="side" label="Side" className="mb-3">
-                    <Select name="side" style={{ width: 120 }} size="large" onChange={handleChange}>
-                      {Object.values(OrderSide).map(side => (
-                        <Select.Option key={side} value={side}>
-                          {side}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
+                <Form.Item name="orderType" label="Type" className="mb-3">
+                  <Select
+                    name="orderType"
+                    style={{ width: 120 }}
+                    size="large"
+                    onChange={handleChange}
+                  >
+                    {Object.values(OrderType).map(type => (
+                      <Select.Option key={type} value={type}>
+                        {type}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
 
-                  <Form.Item name="orderType" label="Type" className="mb-3">
-                    <Select
-                      name="orderType"
-                      style={{ width: 120 }}
-                      size="large"
-                      onChange={handleChange}
-                    >
-                      {Object.values(OrderType).map(type => (
-                        <Select.Option key={type} value={type}>
-                          {type}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
+                <Form.Item name="price" label="Price" className="mb-3">
+                  <InputNumber
+                    name="price"
+                    min={getMinPrice(currencyData, values.exchange, values.symbol)}
+                    max={getMaxPrice(currencyData, values.exchange, values.symbol)}
+                    step={getPriceTickSize(currencyData, values.exchange, values.symbol)}
+                    size="large"
+                    onChange={val => setFieldValue('price', val, true)}
+                    disabled={values.orderType === OrderType.MARKET}
+                    style={{ width: 300 }}
+                    placeholder="0.00"
+                  />
+                </Form.Item>
 
-                  <Form.Item name="price" label="Price" className="mb-3">
-                    <InputNumber
-                      name="price"
-                      min={getMinPrice(currencyData, values.exchange, values.symbol)}
-                      max={getMaxPrice(currencyData, values.exchange, values.symbol)}
-                      step={getPriceTickSize(currencyData, values.exchange, values.symbol)}
-                      size="large"
-                      onChange={val => setFieldValue('price', val, true)}
-                      disabled={values.orderType === OrderType.MARKET}
-                      style={{ width: 300 }}
-                      placeholder="0.00"
-                    />
-                  </Form.Item>
+                <Form.Item name="percent" label="Balance Percent" className="mb-3">
+                  <Input
+                    name="percent"
+                    min={0}
+                    max={100}
+                    size="large"
+                    style={{ width: 120 }}
+                    type="number"
+                    placeholder="5"
+                    addonAfter="%"
+                    onChange={handleChange}
+                  />
+                </Form.Item>
 
-                  <Form.Item name="percent" label="Balance Percent" className="mb-3">
-                    <Input
-                      name="percent"
-                      min={0}
-                      max={100}
-                      size="large"
-                      style={{ width: 120 }}
-                      type="number"
-                      placeholder="5"
-                      addonAfter="%"
-                      onChange={handleChange}
-                    />
-                  </Form.Item>
+                <Form.Item name="description" label="Description" className="mb-3">
+                  <TextArea name="description" rows={4} placeholder="Description (optional)" />
+                </Form.Item>
 
-                  <Form.Item name="description" label="Description" className="mb-3">
-                    <TextArea name="description" rows={4} placeholder="Description (optional)" />
-                  </Form.Item>
-
-                  <Form.Item name="exchangeAccountIds" label="Members" className="mb-3">
-                    <Transfer
-                      name="exchangeAccountIds"
-                      showSearch
-                      showSelectAll
-                      pagination
-                      targetKeys={selectedAccountKeys}
-                      titles={['', 'In Trade']}
-                      listStyle={{
-                        width: 350,
-                        height: 350,
-                      }}
-                      dataSource={createTransferData(values.exchange)}
-                      render={item =>
-                        item.disabled ? `${item.title} (No account)` : `${item.title}`
+                <Form.Item name="exchangeAccountIds" label="Members" className="mb-3">
+                  <Transfer
+                    name="exchangeAccountIds"
+                    showSearch
+                    showSelectAll
+                    pagination
+                    targetKeys={selectedAccountKeys}
+                    titles={['', 'In Trade']}
+                    listStyle={{
+                      width: 350,
+                      height: 350,
+                    }}
+                    dataSource={createTransferData(values.exchange)}
+                    render={item =>
+                      item.disabled ? `${item.title} (No account)` : `${item.title}`
+                    }
+                    onChange={(keys, direction, moveKeys) => {
+                      if (direction === 'right') {
+                        // extend selected keys with new keys
+                        setSelectedAccountKeys([...selectedAccountKeys, ...moveKeys])
+                      } else if (direction === 'left') {
+                        // remove keys from selected keys
+                        setSelectedAccountKeys([
+                          ...selectedAccountKeys.filter(k => !moveKeys.includes(k)),
+                        ])
                       }
-                      onChange={(keys, direction, moveKeys) => {
-                        if (direction === 'right') {
-                          // extend selected keys with new keys
-                          setSelectedAccountKeys([...selectedAccountKeys, ...moveKeys])
-                        } else if (direction === 'left') {
-                          // remove keys from selected keys
-                          setSelectedAccountKeys([
-                            ...selectedAccountKeys.filter(k => !moveKeys.includes(k)),
-                          ])
-                        }
-                      }}
-                    />
-                  </Form.Item>
+                    }}
+                  />
+                </Form.Item>
 
-                  <p>Overview: {getOverviewText(values)}</p>
-                  <SubmitButton disabled={submittingOrder}>Submit</SubmitButton>
-                </Form>
-              </Spin>
-            </div>
+                <p>Overview: {getOverviewText(values)}</p>
+                <SubmitButton disabled={submittingOrder}>Submit</SubmitButton>
+              </Form>
+            </Spin>
           </div>
         )}
       </Formik>

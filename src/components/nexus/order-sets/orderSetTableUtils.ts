@@ -12,39 +12,6 @@ export interface OrderSetTableRow {
   date: String
 }
 
-export const OrderSetTableColumns = [
-  {
-    title: 'Symbol',
-    dataIndex: 'symbol',
-    key: 'symbol',
-  },
-  {
-    title: 'Exchange',
-    dataIndex: 'exchange',
-    key: 'exchange',
-  },
-  {
-    title: 'Side',
-    dataIndex: 'side',
-    key: 'side',
-  },
-  {
-    title: 'Type',
-    dataIndex: 'orderType',
-    key: 'orderType',
-  },
-  {
-    title: 'Price',
-    dataIndex: 'price',
-    key: 'price',
-  },
-  {
-    title: 'Date',
-    dataIndex: 'date',
-    key: 'date',
-  },
-]
-
 export interface OrderSetTableItem {
   id: string
   exchange: Exchange

@@ -27,6 +27,7 @@ export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTa
   }
   const onClickOrderSet = (orderSetId: String) => {
     setSelectedOrderSetId(orderSetId)
+    setTabState(OrderSetTabState.VIEW_DETAIL)
   }
   const onOrderSetCreated = () => {
     setTabState(OrderSetTabState.VIEW_ALL)

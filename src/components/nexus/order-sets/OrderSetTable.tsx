@@ -2,12 +2,7 @@ import React, { FC } from 'react'
 import { Table, Button, PageHeader, Spin } from 'antd'
 
 /* eslint-disable */
-import {
-  createOrderSetTableData,
-  OrderSetTableColumns,
-  OrderSetTableItem,
-  OrderSetTableRow,
-} from './orderSetTableUtils'
+import { createOrderSetTableData, OrderSetTableItem, OrderSetTableRow } from './orderSetTableUtils'
 import { useGetGroupOrderSetsQuery } from '../../../graphql'
 /* eslint-enable */
 
@@ -16,6 +11,45 @@ interface OrderSetTableProps {
   onClickCreate: () => void
   onClickOrderSet: (orderSetId: String) => void
 }
+
+const OrderSetTableColumns = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id',
+    render: (text: string) => <Button type="link">{text}</Button>,
+  },
+  {
+    title: 'Exchange',
+    dataIndex: 'exchange',
+    key: 'exchange',
+  },
+  {
+    title: 'Symbol',
+    dataIndex: 'symbol',
+    key: 'symbol',
+  },
+  {
+    title: 'Side',
+    dataIndex: 'side',
+    key: 'side',
+  },
+  {
+    title: 'Type',
+    dataIndex: 'orderType',
+    key: 'orderType',
+  },
+  {
+    title: 'Price',
+    dataIndex: 'price',
+    key: 'price',
+  },
+  {
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
+  },
+]
 
 const PAGE_SIZE = 10
 
