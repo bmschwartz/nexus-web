@@ -1,23 +1,40 @@
 import React, { FC } from 'react'
-import { Button } from 'antd'
+import { PageHeader, Spin } from 'antd'
 
 /* eslint-disable */
+import { useGetGroupOrderSetDetailsQuery } from '../../../graphql'
 /* eslint-enable */
 
 interface OrderSetDetailProps {
-  orderSetId?: String
+  groupId: string
+  orderSetId: string
   onClickBack: () => void
 }
 
-export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, orderSetId }) => {
+export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, orderSetId }) => {
+  console.log(groupId, orderSetId)
+  const { data, loading } = useGetGroupOrderSetDetailsQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      groupInput: { groupId },
+      orderSetInput: { id: orderSetId },
+    },
+  })
+
+  console.log(data?.group?.orderSet)
+
   return (
     <>
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
-          <h5 className="mb-0">Order Set Detail: {`${orderSetId}`}</h5>
-          <Button onClick={onClickBack}>Back</Button>
+          <PageHeader className="site-page-header" title="Order Set Detail" onBack={onClickBack} />
         </div>
       </div>
+      <Spin spinning={loading} tip="Fetching Order Set...">
+        <div className="card-body">
+          <div className="text-nowrap">Hey!</div>
+        </div>
+      </Spin>
     </>
   )
 }
