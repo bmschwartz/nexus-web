@@ -83,6 +83,7 @@ export const OrderSetTable: FC<OrderSetTableProps> = ({
                 defaultPageSize: PAGE_SIZE,
                 total: totalCount,
                 onChange: onChangePage,
+                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
               // onChange={handleTableChange}
             />
