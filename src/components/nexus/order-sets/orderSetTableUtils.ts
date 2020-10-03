@@ -14,19 +14,14 @@ export interface OrderSetTableRow {
 
 export const OrderSetTableColumns = [
   {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
+    title: 'Symbol',
+    dataIndex: 'symbol',
+    key: 'symbol',
   },
   {
     title: 'Exchange',
     dataIndex: 'exchange',
     key: 'exchange',
-  },
-  {
-    title: 'Symbol',
-    dataIndex: 'symbol',
-    key: 'symbol',
   },
   {
     title: 'Side',
