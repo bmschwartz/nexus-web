@@ -82,7 +82,6 @@ export type GroupMembership = {
   status: MembershipStatus
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-  orders: Array<Order>
   exchangeAccounts: Array<ExchangeAccount>
 }
 
@@ -238,6 +237,7 @@ export type ExchangeAccount = {
   membership: GroupMembership
   apiKey: Scalars['String']
   apiSecret: Scalars['String']
+  orders: Array<Order>
 }
 
 export type GroupOrderSets = {
@@ -456,7 +456,9 @@ export type MutationSignupUserArgs = {
 export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } & Pick<
   ExchangeAccount,
   'id' | 'active' | 'exchange'
->
+> & {
+    orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment>
+  }
 
 export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
   Group,
@@ -469,7 +471,6 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
 > & {
     member: { __typename?: 'User' } & Pick<User, 'id' | 'username'>
     group: { __typename?: 'Group' } & Pick<Group, 'id' | 'name'>
-    orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment>
     exchangeAccounts: Array<{ __typename?: 'ExchangeAccount' } & ExchangeAccountDetailsFragment>
   }
 
@@ -704,7 +705,11 @@ export const ExchangeAccountDetailsFragmentDoc = gql`
     id
     active
     exchange
+    orders {
+      ...OrderDetails
+    }
   }
+  ${OrderDetailsFragmentDoc}
 `
 export const GroupMembershipDetailsFragmentDoc = gql`
   fragment GroupMembershipDetails on GroupMembership {
@@ -720,14 +725,10 @@ export const GroupMembershipDetailsFragmentDoc = gql`
       id
       name
     }
-    orders {
-      ...OrderDetails
-    }
     exchangeAccounts {
       ...ExchangeAccountDetails
     }
   }
-  ${OrderDetailsFragmentDoc}
   ${ExchangeAccountDetailsFragmentDoc}
 `
 export const OrderSetDetailsFragmentDoc = gql`

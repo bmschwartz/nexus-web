@@ -8,7 +8,8 @@ import { useGetGroupQuery, useGetMembershipQuery } from '../../../graphql/index'
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
 import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
 import { Membership, roleFromString, statusFromString } from 'types/membership'
-import { IOrder } from 'types/order'
+import { Order } from 'types/order'
+import { ExchangeAccount } from 'types/exchange'
 /* eslint-enable */
 
 interface GroupDetailProps {
@@ -46,13 +47,12 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     memberId: membership.member.id,
     username: membership.member.username,
     active: membership.active,
-    orders: membership.orders.map(transformOrderData),
     role: roleFromString(membership.role)!,
-    exchangeAccounts: membership.exchangeAccounts,
+    exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),
     status: statusFromString(membership.status)!,
   })
 
-  const transformOrderData = (order: any): IOrder => ({
+  const transformOrderData = (order: any): Order => ({
     id: order.id,
     side: order.side,
     orderType: order.orderType,
@@ -61,6 +61,13 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     stopPrice: order.stopPrice,
     symbol: order.symbol,
     lastTimestamp: order.lastTimeStamp,
+  })
+
+  const transformExchangeAccount = (exchangeAccount: any): ExchangeAccount => ({
+    id: exchangeAccount.id,
+    active: exchangeAccount.active,
+    exchange: exchangeAccount.exchange,
+    orders: exchangeAccount.orders.map(transformOrderData),
   })
 
   let transformedGroup

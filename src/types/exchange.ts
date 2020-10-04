@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { Exchange as RemoteExchange } from '../graphql'
+import { Order } from './order'
 /* eslint-enable */
 
 export enum Exchange {
@@ -7,10 +8,11 @@ export enum Exchange {
   BINANCE = 'Binance',
 }
 
-export interface IExchangeAccount {
+export interface ExchangeAccount {
   id: string
   active: boolean
   exchange: Exchange
+  orders: Order[]
 }
 
 export function convertToLocalExchange(exchange: RemoteExchange): Exchange {

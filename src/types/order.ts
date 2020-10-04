@@ -13,7 +13,7 @@ export enum OrderType {
   LIMIT = 'Limit',
 }
 
-export interface IOrder {
+export interface Order {
   id: string
   side: OrderSide
   orderType: OrderType
@@ -24,7 +24,7 @@ export interface IOrder {
   lastTimestamp: string
 }
 
-export interface IOrderSet {
+export interface OrderSet {
   id: string
   exchange: Exchange
   price?: number

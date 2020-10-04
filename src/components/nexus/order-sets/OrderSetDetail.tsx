@@ -24,12 +24,12 @@ const OrdersTableColumns = [
   },
 ]
 
-interface IOrderTableRow {
+interface OrderTableRow {
   id: string
   username: string
 }
 
-function transformOrdersData(ordersData: any[]): IOrderTableRow[] {
+function transformOrdersData(ordersData: any[]): OrderTableRow[] {
   return ordersData.map(order => ({
     id: order.id,
     username: order.membership.member.username,

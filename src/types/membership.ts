@@ -1,6 +1,5 @@
 /* eslint-disable */
-import { IOrder } from './order'
-import { IExchangeAccount } from './exchange'
+import { ExchangeAccount } from './exchange'
 
 export interface Membership {
   id: string
@@ -8,8 +7,7 @@ export interface Membership {
   memberId: string
   username: string
   active: boolean
-  orders: IOrder[]
-  exchangeAccounts: IExchangeAccount[]
+  exchangeAccounts: ExchangeAccount[]
   role: MembershipRole
   status: MembershipStatus
 }

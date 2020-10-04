@@ -2,4 +2,7 @@ fragment ExchangeAccountDetails on ExchangeAccount {
   id
   active
   exchange
+  orders {
+    ...OrderDetails
+  }
 }
