@@ -338,6 +338,7 @@ export type Query = {
   orderSet?: Maybe<OrderSet>
   binanceCurrencies: Array<BinanceCurrency>
   bitmexCurrencies: Array<BitmexCurrency>
+  exchanges: Array<Exchange>
   me?: Maybe<User>
 }
 
@@ -586,6 +587,10 @@ export type GetCurrenciesQuery = { __typename?: 'Query' } & {
     >
   >
 }
+
+export type GetExchangesQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetExchangesQuery = { __typename?: 'Query' } & Pick<Query, 'exchanges'>
 
 export type GetGroupQueryVariables = Exact<{
   input: GroupInput
@@ -1041,6 +1046,49 @@ export type GetCurrenciesLazyQueryHookResult = ReturnType<typeof useGetCurrencie
 export type GetCurrenciesQueryResult = Apollo.QueryResult<
   GetCurrenciesQuery,
   GetCurrenciesQueryVariables
+>
+export const GetExchangesDocument = gql`
+  query GetExchanges {
+    exchanges
+  }
+`
+
+/**
+ * __useGetExchangesQuery__
+ *
+ * To run a query within a React component, call `useGetExchangesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetExchangesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetExchangesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetExchangesQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetExchangesQuery, GetExchangesQueryVariables>,
+) {
+  return Apollo.useQuery<GetExchangesQuery, GetExchangesQueryVariables>(
+    GetExchangesDocument,
+    baseOptions,
+  )
+}
+export function useGetExchangesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetExchangesQuery, GetExchangesQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetExchangesQuery, GetExchangesQueryVariables>(
+    GetExchangesDocument,
+    baseOptions,
+  )
+}
+export type GetExchangesQueryHookResult = ReturnType<typeof useGetExchangesQuery>
+export type GetExchangesLazyQueryHookResult = ReturnType<typeof useGetExchangesLazyQuery>
+export type GetExchangesQueryResult = Apollo.QueryResult<
+  GetExchangesQuery,
+  GetExchangesQueryVariables
 >
 export const GetGroupDocument = gql`
   query GetGroup($input: GroupInput!) {
