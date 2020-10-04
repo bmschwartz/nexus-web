@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { Table, Button, PageHeader, Spin } from 'antd'
 
 /* eslint-disable */
-import { createOrderSetTableData, OrderSetTableItem, OrderSetTableRow } from './orderSetTableUtils'
+import { createOrderSetTableData, OrderSetTableItem } from './orderSetTableUtils'
 import { useGetGroupOrderSetsQuery } from '../../../graphql'
 /* eslint-enable */
 
@@ -84,7 +84,7 @@ export const OrderSetTable: FC<OrderSetTableProps> = ({
   const totalCount = groupOrderSetsData?.group?.orderSets.totalCount
   const orderSetTableData: OrderSetTableItem[] = createOrderSetTableData(groupOrderSetsData)
 
-  const onRow = (row: OrderSetTableRow) => {
+  const onRow = (row: OrderSetTableItem) => {
     return {
       onClick: () => {
         onClickOrderSet(row.id)

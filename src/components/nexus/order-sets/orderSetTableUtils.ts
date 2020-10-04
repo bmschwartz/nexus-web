@@ -2,16 +2,6 @@ import { GetGroupOrderSetsQuery } from 'graphql'
 import { convertToLocalExchange, Exchange } from 'types/exchange'
 import { convertToLocalOrderSide, convertToLocalOrderType, OrderSide, OrderType } from 'types/order'
 
-export interface OrderSetTableRow {
-  id: string
-  exchange: string
-  symbol: string
-  side: OrderSide
-  orderType: OrderType
-  price: string
-  date: string
-}
-
 export interface OrderSetTableItem {
   id: string
   exchange: Exchange

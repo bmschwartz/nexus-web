@@ -41,7 +41,11 @@ const getOverviewText = ({
   return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${exchangeAccountIds.length} members`
 }
 
-const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ group, onClickBack, onCreated }) => {
+export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
+  group,
+  onClickBack,
+  onCreated,
+}) => {
   const { data } = useGetCurrenciesQuery()
   const [submittingOrder, setSubmittingOrder] = useState<boolean>(false)
   const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
@@ -279,5 +283,3 @@ const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({ group, onClickBack, o
     </Spin>
   )
 }
-
-export default CreateOrderSetForm

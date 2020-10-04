@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { Group } from 'types/group'
 import { OrderSetTable } from 'components/nexus/order-sets/OrderSetTable'
-import CreateOrderSetForm from 'components/nexus/order-sets/CreateOrderSetForm'
+import { CreateOrderSetForm } from 'components/nexus/order-sets/CreateOrderSetForm'
 import { OrderSetDetail } from 'components/nexus/order-sets/OrderSetDetail'
 
 interface GroupOrderSetsProps {

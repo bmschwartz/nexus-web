@@ -12,7 +12,7 @@ import { GroupSettings } from './GroupSettings'
 import { MemberDashboard } from './MemberDashboard'
 import { MemberPositions } from './MemberPositions'
 import { MemberOrders } from './MemberOrders'
-import { MemberSettings } from './MemberSettings'
+import { MemberSettings, MemberSettingsTabState } from './MemberSettings'
 import { GroupProfile } from './GroupProfile'
 import { GroupMembers } from './GroupMembers'
 import { StringParam, useQueryParam, withDefault } from 'use-query-params'
@@ -25,11 +25,16 @@ interface GroupDetailCardProps {
 
 export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership }) => {
   const menuTabs: Tab[] = availableTabs(myMembership.role)
+  const accessibleTabKeys = menuTabs.map(menuTab => menuTab.key)
 
   const [tabKey, setTabKey] = useQueryParam('tab', withDefault(StringParam, menuTabs[0].key))
 
   const [groupOrdersTabState, setGroupOrdersTabState] = useState<OrderSetTabState>(
     OrderSetTabState.VIEW_ALL,
+  )
+
+  const [memberSettingsTabState, setMemberSettingsTabState] = useState<MemberSettingsTabState>(
+    MemberSettingsTabState.VIEW_ALL,
   )
 
   const changeTab = (key: string): void => {
@@ -48,25 +53,37 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
             </Tabs>
           </div>
           <div className="card-body">
-            {/* Member tabs */}
-            {tabKey === 'memberDashboard' && <MemberDashboard membership={myMembership} />}
-            {tabKey === 'memberOrders' && <MemberOrders membership={myMembership} />}
-            {tabKey === 'memberPositions' && <MemberPositions membership={myMembership} />}
-            {tabKey === 'memberSettings' && <MemberSettings membership={myMembership} />}
+            {!accessibleTabKeys.includes(tabKey) ? (
+              <p>No access!</p>
+            ) : (
+              <>
+                {/* Member tabs */}
+                {tabKey === 'memberDashboard' && <MemberDashboard membership={myMembership} />}
+                {tabKey === 'memberOrders' && <MemberOrders membership={myMembership} />}
+                {tabKey === 'memberPositions' && <MemberPositions membership={myMembership} />}
+                {tabKey === 'memberSettings' && (
+                  <MemberSettings
+                    membership={myMembership}
+                    tabState={memberSettingsTabState}
+                    setTabState={setMemberSettingsTabState}
+                  />
+                )}
 
-            {/* Group Admin/Trader tabs */}
-            {tabKey === 'groupDashboard' && <GroupDashboard group={group} />}
-            {tabKey === 'groupMembers' && <GroupMembers group={group} />}
-            {tabKey === 'groupOrders' && (
-              <GroupOrderSets
-                group={group}
-                tabState={groupOrdersTabState}
-                setTabState={setGroupOrdersTabState}
-              />
+                {/* Group Admin/Trader tabs */}
+                {tabKey === 'groupDashboard' && <GroupDashboard group={group} />}
+                {tabKey === 'groupMembers' && <GroupMembers group={group} />}
+                {tabKey === 'groupOrders' && (
+                  <GroupOrderSets
+                    group={group}
+                    tabState={groupOrdersTabState}
+                    setTabState={setGroupOrdersTabState}
+                  />
+                )}
+                {tabKey === 'groupPositions' && <GroupPositions group={group} />}
+                {tabKey === 'groupProfile' && <GroupProfile group={group} />}
+                {tabKey === 'groupSettings' && <GroupSettings group={group} />}
+              </>
             )}
-            {tabKey === 'groupPositions' && <GroupPositions group={group} />}
-            {tabKey === 'groupProfile' && <GroupProfile group={group} />}
-            {tabKey === 'groupSettings' && <GroupSettings group={group} />}
           </div>
         </div>
       </div>
