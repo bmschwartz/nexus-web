@@ -4,6 +4,7 @@ import { Membership, MembershipStatus } from 'types/membership'
 /* eslint-disable */
 import { MembershipInfo } from './MembershipInfo'
 import { ExchangeAccountTable } from 'components/nexus/exchange-accounts/ExchangeAccountTable'
+import { CreateExchangeAccountForm } from 'components/nexus/exchange-accounts/CreateExchangeAccountForm'
 /* eslint-enable */
 
 interface MemberSettingsProps {
@@ -19,22 +20,23 @@ export enum MemberSettingsTabState {
 }
 
 export const MemberSettings: FC<MemberSettingsProps> = ({ membership, tabState, setTabState }) => {
-  const [selectedExchangeAccountId, setSelectedOrderSetId] = useState<string>()
+  const [selectedExchangeAccountId, setSelectedExchangeAccountId] = useState<string>()
 
-  // const onClickBack = () => {
-  //   setTabState(MemberSettingsTabState.VIEW_ALL)
-  // }
-
-  const onClickExchangeAccount = (orderSetId: string) => {
-    setSelectedOrderSetId(orderSetId)
-    setTabState(MemberSettingsTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT)
+  const onClickBack = () => {
+    setTabState(MemberSettingsTabState.VIEW_ALL)
   }
-  // const onExchangeAccountCreated = () => {
-  //   setTabState(MemberSettingsTabState.VIEW_ALL)
-  // }
+
+  const onExchangeAccountCreated = () => {
+    setTabState(MemberSettingsTabState.VIEW_ALL)
+  }
 
   const onClickCreateExchangeAccount = () => {
     setTabState(MemberSettingsTabState.CREATE_EXCHANGE_ACCOUNT)
+  }
+
+  const onClickExchangeAccount = (exchangeAccountId: string) => {
+    setSelectedExchangeAccountId(exchangeAccountId)
+    setTabState(MemberSettingsTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT)
   }
 
   function shouldShowViewAll() {
@@ -58,14 +60,17 @@ export const MemberSettings: FC<MemberSettingsProps> = ({ membership, tabState, 
           )}
         </>
       )}
-      {/* {tabState === MemberSettingsTabState.CREATE_EXCHANGE_ACCOUNT && (
-        <CreateOrderSetForm group={group} onClickBack={onClickBack} onCreated={onOrderSetCreated} />
-      )} */}
-      {/* {tabState === MemberSettingsTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT && selectedExchangeAccountId && (
-        <OrderSetDetail
-          groupId={group.id}
+      {tabState === MemberSettingsTabState.CREATE_EXCHANGE_ACCOUNT && (
+        <CreateExchangeAccountForm
+          membership={membership}
           onClickBack={onClickBack}
-          orderSetId={selectedExchangeAccountId}
+          onCreated={onExchangeAccountCreated}
+        />
+      )}
+      {/* {tabState === MemberSettingsTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT && selectedExchangeAccountId && (
+        <ExchangeAccountDetail
+          onClickBack={onClickBack}
+          exchangeAccountId={selectedExchangeAccountId}
         />
       )} */}
     </div>
