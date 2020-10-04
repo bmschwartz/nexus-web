@@ -20,7 +20,7 @@ import {
   getPriceTickSize,
 } from './createOrderFormUtils'
 import * as apollo from 'services/apollo'
-import { ICreateOrderSetResponse } from 'services/apollo/order'
+import { CreateOrderSetResponse } from 'services/apollo/order'
 import { useGetCurrenciesQuery } from '../../../graphql/index'
 /* eslint-enable */
 
@@ -115,7 +115,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           }
 
           setSubmittingOrder(true)
-          const { orderSetId, error }: ICreateOrderSetResponse = await apollo.createOrderSet({
+          const { orderSetId, error }: CreateOrderSetResponse = await apollo.createOrderSet({
             groupId: group.id,
             ...values,
           })

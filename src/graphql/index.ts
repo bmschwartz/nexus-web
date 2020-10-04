@@ -502,6 +502,14 @@ export type OrderSetDetailsFragment = { __typename?: 'OrderSet' } & Pick<
   | 'createdAt'
 >
 
+export type CreateExchangeAccountMutationVariables = Exact<{
+  input: CreateExchangeAccountInput
+}>
+
+export type CreateExchangeAccountMutation = { __typename?: 'Mutation' } & {
+  createExchangeAccount?: Maybe<{ __typename?: 'ExchangeAccount' } & Pick<ExchangeAccount, 'id'>>
+}
+
 export type CreateGroupMutationVariables = Exact<{
   input: CreateGroupInput
 }>
@@ -750,6 +758,56 @@ export const OrderSetDetailsFragmentDoc = gql`
     createdAt
   }
 `
+export const CreateExchangeAccountDocument = gql`
+  mutation CreateExchangeAccount($input: CreateExchangeAccountInput!) {
+    createExchangeAccount(input: $input) {
+      id
+    }
+  }
+`
+export type CreateExchangeAccountMutationFn = Apollo.MutationFunction<
+  CreateExchangeAccountMutation,
+  CreateExchangeAccountMutationVariables
+>
+
+/**
+ * __useCreateExchangeAccountMutation__
+ *
+ * To run a mutation, you first call `useCreateExchangeAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateExchangeAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createExchangeAccountMutation, { data, loading, error }] = useCreateExchangeAccountMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateExchangeAccountMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateExchangeAccountMutation,
+    CreateExchangeAccountMutationVariables
+  >,
+) {
+  return Apollo.useMutation<CreateExchangeAccountMutation, CreateExchangeAccountMutationVariables>(
+    CreateExchangeAccountDocument,
+    baseOptions,
+  )
+}
+export type CreateExchangeAccountMutationHookResult = ReturnType<
+  typeof useCreateExchangeAccountMutation
+>
+export type CreateExchangeAccountMutationResult = Apollo.MutationResult<
+  CreateExchangeAccountMutation
+>
+export type CreateExchangeAccountMutationOptions = Apollo.BaseMutationOptions<
+  CreateExchangeAccountMutation,
+  CreateExchangeAccountMutationVariables
+>
 export const CreateGroupDocument = gql`
   mutation CreateGroup($input: CreateGroupInput!) {
     createGroup(input: $input) {

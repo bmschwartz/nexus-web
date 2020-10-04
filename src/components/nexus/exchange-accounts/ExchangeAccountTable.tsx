@@ -39,7 +39,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
   onClickCreate,
   onClickExchangeAccount,
 }) => {
-  const orderSetTableData: ExchangeAccountTableItem[] = createExchangeAccountTableData(
+  const exchangeAccountData: ExchangeAccountTableItem[] = createExchangeAccountTableData(
     membership.exchangeAccounts,
   )
 
@@ -75,7 +75,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
             rowKey="id"
             onRow={onRow}
             columns={exchangeAccountTableColumns}
-            dataSource={orderSetTableData}
+            dataSource={exchangeAccountData}
             // onChange={handleTableChange}
           />
         </div>

@@ -37,7 +37,6 @@ function transformOrdersData(ordersData: any[]): OrderTableRow[] {
 }
 
 export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, orderSetId }) => {
-  console.log(groupId, orderSetId)
   const { data, loading } = useGetGroupOrderSetDetailsQuery({
     fetchPolicy: 'cache-and-network',
     variables: {

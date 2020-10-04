@@ -11,12 +11,12 @@ import { Exchange } from 'types/exchange'
 import { OrderSide, OrderType } from 'types/order'
 /* eslint-enable */
 
-export interface ICreateOrderSetResponse {
+export interface CreateOrderSetResponse {
   orderSetId?: string
   error?: string
 }
 
-export interface ICreateOrderSetInput {
+export interface CreateOrderSetInput {
   groupId: string
   exchange: Exchange
   symbol: string
@@ -30,8 +30,8 @@ export interface ICreateOrderSetInput {
 }
 
 export const createOrderSet = async (
-  input: ICreateOrderSetInput,
-): Promise<ICreateOrderSetResponse> => {
+  input: CreateOrderSetInput,
+): Promise<CreateOrderSetResponse> => {
   const { orderType, side, exchange, ...rest } = input
   const payload: RemoteCreateOrderSetInput = {
     side: convertOrderSide(side),
@@ -39,8 +39,6 @@ export const createOrderSet = async (
     orderType: convertOrderType(orderType),
     ...rest,
   }
-
-  console.log(payload)
 
   try {
     const { data } = await client.mutate({

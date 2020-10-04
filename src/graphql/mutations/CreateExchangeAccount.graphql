@@ -1,0 +1,5 @@
+mutation CreateExchangeAccount($input: CreateExchangeAccountInput!) {
+  createExchangeAccount(input: $input) {
+    id
+  }
+}
