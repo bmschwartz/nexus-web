@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { Membership, MembershipStatus } from 'types/membership'
 
 /* eslint-disable */
-import { MembershipInfo } from './MembershipInfo'
+import { SubscriptionInfo } from './SubscriptionInfo'
 import { ExchangeAccountTable } from 'components/nexus/exchange-accounts/ExchangeAccountTable'
 import { CreateExchangeAccountForm } from 'components/nexus/exchange-accounts/CreateExchangeAccountForm'
 /* eslint-enable */
@@ -50,7 +50,7 @@ export const MemberSettings: FC<MemberSettingsProps> = ({ membership, tabState, 
     <div>
       {shouldShowViewAll() && (
         <>
-          <MembershipInfo membership={membership} />
+          <SubscriptionInfo membership={membership} />
           {membership.status === MembershipStatus.Approved && (
             <ExchangeAccountTable
               membership={membership}
