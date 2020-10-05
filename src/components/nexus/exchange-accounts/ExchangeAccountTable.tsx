@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Table, Button, PageHeader } from 'antd'
+import { Table, Button, PageHeader, Spin } from 'antd'
 
 import { Membership } from 'types/membership'
 
@@ -8,6 +8,7 @@ import {
   createExchangeAccountTableData,
   ExchangeAccountTableItem,
 } from './exchangeAccountTableUtils'
+import { useGetExchangeAccountsQuery } from '../../../graphql'
 /* eslint-enable */
 
 const exchangeAccountTableColumns = [
@@ -23,8 +24,8 @@ const exchangeAccountTableColumns = [
   },
   {
     title: 'Orders',
-    dataIndex: 'orders',
-    key: 'orders',
+    dataIndex: 'orderCount',
+    key: 'orderCount',
   },
 ]
 
@@ -37,19 +38,19 @@ interface ExchangeAccountTableProps {
 export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
   membership,
   onClickCreate,
-  onClickExchangeAccount,
 }) => {
-  const exchangeAccountData: ExchangeAccountTableItem[] = createExchangeAccountTableData(
-    membership.exchangeAccounts,
-  )
+  const {
+    data: exchangeAccountsData,
+    loading: fetchingExchangeAccounts,
+  } = useGetExchangeAccountsQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: { input: { membershipId: membership.id } },
+    notifyOnNetworkStatusChange: true,
+  })
 
-  const onRow = (row: ExchangeAccountTableItem) => {
-    return {
-      onClick: () => {
-        onClickExchangeAccount(row.id)
-      },
-    }
-  }
+  const exchangeAccountsTableData: ExchangeAccountTableItem[] = createExchangeAccountTableData(
+    exchangeAccountsData?.exchangeAccounts,
+  )
 
   return (
     <div className="card">
@@ -71,13 +72,14 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Table
-            rowKey="id"
-            onRow={onRow}
-            columns={exchangeAccountTableColumns}
-            dataSource={exchangeAccountData}
-            // onChange={handleTableChange}
-          />
+          <Spin spinning={fetchingExchangeAccounts}>
+            <Table
+              rowKey="id"
+              columns={exchangeAccountTableColumns}
+              dataSource={exchangeAccountsTableData}
+              // onChange={handleTableChange}
+            />
+          </Spin>
         </div>
       </div>
     </div>

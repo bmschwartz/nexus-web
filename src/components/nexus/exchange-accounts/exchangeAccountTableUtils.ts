@@ -1,22 +1,26 @@
-import { Exchange, ExchangeAccount } from 'types/exchange'
+import { convertToLocalExchange, Exchange } from 'types/exchange'
 
 export interface ExchangeAccountTableItem {
   id: string
-  active: boolean
+  active: string
   exchange: Exchange
   orderCount: number
 }
 
 export const createExchangeAccountTableData = (
-  exchangeAccounts: ExchangeAccount[],
+  exchangeAccounts?: any[],
 ): ExchangeAccountTableItem[] => {
+  if (!exchangeAccounts) {
+    return []
+  }
+
   const exchangeAccountTableItems: ExchangeAccountTableItem[] = exchangeAccounts.map(
-    exchangeAccount => {
+    (exchangeAccount: any) => {
       const { id, active, exchange, orders } = exchangeAccount
       return {
         id,
-        active,
-        exchange,
+        active: active ? 'Yes' : 'No',
+        exchange: convertToLocalExchange(exchange),
         orderCount: orders.length,
       }
     },

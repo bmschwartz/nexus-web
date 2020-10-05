@@ -240,6 +240,10 @@ export type ExchangeAccount = {
   orders: Array<Order>
 }
 
+export type ExchangeAccountsInput = {
+  membershipId: Scalars['ID']
+}
+
 export type GroupOrderSets = {
   __typename?: 'GroupOrderSets'
   orderSets: Array<OrderSet>
@@ -338,7 +342,7 @@ export type Query = {
   orderSet?: Maybe<OrderSet>
   binanceCurrencies: Array<BinanceCurrency>
   bitmexCurrencies: Array<BitmexCurrency>
-  exchanges: Array<Exchange>
+  exchangeAccounts: Array<ExchangeAccount>
   me?: Maybe<User>
 }
 
@@ -368,6 +372,10 @@ export type QueryMembershipRequestsArgs = {
 
 export type QueryOrderSetArgs = {
   input: OrderSetInput
+}
+
+export type QueryExchangeAccountsArgs = {
+  input: ExchangeAccountsInput
 }
 
 export type Mutation = {
@@ -596,9 +604,13 @@ export type GetCurrenciesQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type GetExchangesQueryVariables = Exact<{ [key: string]: never }>
+export type GetExchangeAccountsQueryVariables = Exact<{
+  input: ExchangeAccountsInput
+}>
 
-export type GetExchangesQuery = { __typename?: 'Query' } & Pick<Query, 'exchanges'>
+export type GetExchangeAccountsQuery = { __typename?: 'Query' } & {
+  exchangeAccounts: Array<{ __typename?: 'ExchangeAccount' } & ExchangeAccountDetailsFragment>
+}
 
 export type GetGroupQueryVariables = Exact<{
   input: GroupInput
@@ -1105,48 +1117,60 @@ export type GetCurrenciesQueryResult = Apollo.QueryResult<
   GetCurrenciesQuery,
   GetCurrenciesQueryVariables
 >
-export const GetExchangesDocument = gql`
-  query GetExchanges {
-    exchanges
+export const GetExchangeAccountsDocument = gql`
+  query GetExchangeAccounts($input: ExchangeAccountsInput!) {
+    exchangeAccounts(input: $input) {
+      ...ExchangeAccountDetails
+    }
   }
+  ${ExchangeAccountDetailsFragmentDoc}
 `
 
 /**
- * __useGetExchangesQuery__
+ * __useGetExchangeAccountsQuery__
  *
- * To run a query within a React component, call `useGetExchangesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetExchangesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetExchangeAccountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetExchangeAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetExchangesQuery({
+ * const { data, loading, error } = useGetExchangeAccountsQuery({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetExchangesQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetExchangesQuery, GetExchangesQueryVariables>,
+export function useGetExchangeAccountsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetExchangeAccountsQuery,
+    GetExchangeAccountsQueryVariables
+  >,
 ) {
-  return Apollo.useQuery<GetExchangesQuery, GetExchangesQueryVariables>(
-    GetExchangesDocument,
+  return Apollo.useQuery<GetExchangeAccountsQuery, GetExchangeAccountsQueryVariables>(
+    GetExchangeAccountsDocument,
     baseOptions,
   )
 }
-export function useGetExchangesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetExchangesQuery, GetExchangesQueryVariables>,
+export function useGetExchangeAccountsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetExchangeAccountsQuery,
+    GetExchangeAccountsQueryVariables
+  >,
 ) {
-  return Apollo.useLazyQuery<GetExchangesQuery, GetExchangesQueryVariables>(
-    GetExchangesDocument,
+  return Apollo.useLazyQuery<GetExchangeAccountsQuery, GetExchangeAccountsQueryVariables>(
+    GetExchangeAccountsDocument,
     baseOptions,
   )
 }
-export type GetExchangesQueryHookResult = ReturnType<typeof useGetExchangesQuery>
-export type GetExchangesLazyQueryHookResult = ReturnType<typeof useGetExchangesLazyQuery>
-export type GetExchangesQueryResult = Apollo.QueryResult<
-  GetExchangesQuery,
-  GetExchangesQueryVariables
+export type GetExchangeAccountsQueryHookResult = ReturnType<typeof useGetExchangeAccountsQuery>
+export type GetExchangeAccountsLazyQueryHookResult = ReturnType<
+  typeof useGetExchangeAccountsLazyQuery
+>
+export type GetExchangeAccountsQueryResult = Apollo.QueryResult<
+  GetExchangeAccountsQuery,
+  GetExchangeAccountsQueryVariables
 >
 export const GetGroupDocument = gql`
   query GetGroup($input: GroupInput!) {

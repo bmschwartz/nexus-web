@@ -127,7 +127,7 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
                   />
                 </Form.Item>
 
-                <Form.Item name="percent" label="API Secret" className="mb-3">
+                <Form.Item name="apiSecret" label="API Secret" className="mb-3">
                   <Input
                     name="apiSecret"
                     size="large"
