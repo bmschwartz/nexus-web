@@ -222,6 +222,15 @@ export type CreateOrderSetInput = {
   percent?: Maybe<Scalars['Float']>
 }
 
+export type DeleteExchangeAccountInput = {
+  id: Scalars['ID']
+}
+
+export type DeleteExchangeAccountResult = {
+  __typename?: 'DeleteExchangeAccountResult'
+  success: Scalars['Boolean']
+}
+
 export enum Exchange {
   Binance = 'BINANCE',
   Bitmex = 'BITMEX',
@@ -394,6 +403,7 @@ export type Mutation = {
   updateOrderSet?: Maybe<OrderSet>
   cancelOrder?: Maybe<Order>
   createExchangeAccount?: Maybe<ExchangeAccount>
+  deleteExchangeAccount: DeleteExchangeAccountResult
   loginUser: AuthPayload
   signupUser: AuthPayload
 }
@@ -452,6 +462,10 @@ export type MutationCancelOrderArgs = {
 
 export type MutationCreateExchangeAccountArgs = {
   input: CreateExchangeAccountInput
+}
+
+export type MutationDeleteExchangeAccountArgs = {
+  input: DeleteExchangeAccountInput
 }
 
 export type MutationLoginUserArgs = {
@@ -532,6 +546,17 @@ export type CreateOrderSetMutationVariables = Exact<{
 
 export type CreateOrderSetMutation = { __typename?: 'Mutation' } & {
   createOrderSet?: Maybe<{ __typename?: 'OrderSet' } & Pick<OrderSet, 'id'>>
+}
+
+export type DeleteExchangeAccountMutationVariables = Exact<{
+  input: DeleteExchangeAccountInput
+}>
+
+export type DeleteExchangeAccountMutation = { __typename?: 'Mutation' } & {
+  deleteExchangeAccount: { __typename?: 'DeleteExchangeAccountResult' } & Pick<
+    DeleteExchangeAccountResult,
+    'success'
+  >
 }
 
 export type UserLoginMutationVariables = Exact<{
@@ -905,6 +930,56 @@ export type CreateOrderSetMutationResult = Apollo.MutationResult<CreateOrderSetM
 export type CreateOrderSetMutationOptions = Apollo.BaseMutationOptions<
   CreateOrderSetMutation,
   CreateOrderSetMutationVariables
+>
+export const DeleteExchangeAccountDocument = gql`
+  mutation DeleteExchangeAccount($input: DeleteExchangeAccountInput!) {
+    deleteExchangeAccount(input: $input) {
+      success
+    }
+  }
+`
+export type DeleteExchangeAccountMutationFn = Apollo.MutationFunction<
+  DeleteExchangeAccountMutation,
+  DeleteExchangeAccountMutationVariables
+>
+
+/**
+ * __useDeleteExchangeAccountMutation__
+ *
+ * To run a mutation, you first call `useDeleteExchangeAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteExchangeAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteExchangeAccountMutation, { data, loading, error }] = useDeleteExchangeAccountMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteExchangeAccountMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteExchangeAccountMutation,
+    DeleteExchangeAccountMutationVariables
+  >,
+) {
+  return Apollo.useMutation<DeleteExchangeAccountMutation, DeleteExchangeAccountMutationVariables>(
+    DeleteExchangeAccountDocument,
+    baseOptions,
+  )
+}
+export type DeleteExchangeAccountMutationHookResult = ReturnType<
+  typeof useDeleteExchangeAccountMutation
+>
+export type DeleteExchangeAccountMutationResult = Apollo.MutationResult<
+  DeleteExchangeAccountMutation
+>
+export type DeleteExchangeAccountMutationOptions = Apollo.BaseMutationOptions<
+  DeleteExchangeAccountMutation,
+  DeleteExchangeAccountMutationVariables
 >
 export const UserLoginDocument = gql`
   mutation UserLogin($input: LoginUserInput!) {
