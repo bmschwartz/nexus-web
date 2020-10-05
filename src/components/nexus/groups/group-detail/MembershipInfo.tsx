@@ -2,16 +2,16 @@ import { PageHeader } from 'antd'
 import React, { FC } from 'react'
 import { Membership } from 'types/membership'
 
-interface SubscriptionInfoProps {
+interface MembershipInfoProps {
   membership: Membership
 }
 
-export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
+export const MembershipInfo: FC<MembershipInfoProps> = ({ membership }) => {
   return (
     <div className="card">
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
-          <PageHeader className="site-page-header" title="Subscription" backIcon={false} />
+          <PageHeader className="site-page-header" title="Details" backIcon={false} />
         </div>
       </div>
       <div className="card-body">
