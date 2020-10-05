@@ -305,6 +305,15 @@ export enum OrderType {
   Limit = 'LIMIT',
 }
 
+export type ToggleExchangeAccountActiveInput = {
+  id: Scalars['ID']
+}
+
+export type ToggleExchangeAccountActiveResult = {
+  __typename?: 'ToggleExchangeAccountActiveResult'
+  success: Scalars['Boolean']
+}
+
 export type UpdateOrderSetInput = {
   orderSetId: Scalars['ID']
   description: Scalars['String']
@@ -404,6 +413,7 @@ export type Mutation = {
   cancelOrder?: Maybe<Order>
   createExchangeAccount?: Maybe<ExchangeAccount>
   deleteExchangeAccount: DeleteExchangeAccountResult
+  toggleExchangeAccountActive: ToggleExchangeAccountActiveResult
   loginUser: AuthPayload
   signupUser: AuthPayload
 }
@@ -466,6 +476,10 @@ export type MutationCreateExchangeAccountArgs = {
 
 export type MutationDeleteExchangeAccountArgs = {
   input: DeleteExchangeAccountInput
+}
+
+export type MutationToggleExchangeAccountActiveArgs = {
+  input: ToggleExchangeAccountActiveInput
 }
 
 export type MutationLoginUserArgs = {
@@ -555,6 +569,17 @@ export type DeleteExchangeAccountMutationVariables = Exact<{
 export type DeleteExchangeAccountMutation = { __typename?: 'Mutation' } & {
   deleteExchangeAccount: { __typename?: 'DeleteExchangeAccountResult' } & Pick<
     DeleteExchangeAccountResult,
+    'success'
+  >
+}
+
+export type ToggleExchangeAccountActiveMutationVariables = Exact<{
+  input: ToggleExchangeAccountActiveInput
+}>
+
+export type ToggleExchangeAccountActiveMutation = { __typename?: 'Mutation' } & {
+  toggleExchangeAccountActive: { __typename?: 'ToggleExchangeAccountActiveResult' } & Pick<
+    ToggleExchangeAccountActiveResult,
     'success'
   >
 }
@@ -980,6 +1005,56 @@ export type DeleteExchangeAccountMutationResult = Apollo.MutationResult<
 export type DeleteExchangeAccountMutationOptions = Apollo.BaseMutationOptions<
   DeleteExchangeAccountMutation,
   DeleteExchangeAccountMutationVariables
+>
+export const ToggleExchangeAccountActiveDocument = gql`
+  mutation ToggleExchangeAccountActive($input: ToggleExchangeAccountActiveInput!) {
+    toggleExchangeAccountActive(input: $input) {
+      success
+    }
+  }
+`
+export type ToggleExchangeAccountActiveMutationFn = Apollo.MutationFunction<
+  ToggleExchangeAccountActiveMutation,
+  ToggleExchangeAccountActiveMutationVariables
+>
+
+/**
+ * __useToggleExchangeAccountActiveMutation__
+ *
+ * To run a mutation, you first call `useToggleExchangeAccountActiveMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleExchangeAccountActiveMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleExchangeAccountActiveMutation, { data, loading, error }] = useToggleExchangeAccountActiveMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useToggleExchangeAccountActiveMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ToggleExchangeAccountActiveMutation,
+    ToggleExchangeAccountActiveMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    ToggleExchangeAccountActiveMutation,
+    ToggleExchangeAccountActiveMutationVariables
+  >(ToggleExchangeAccountActiveDocument, baseOptions)
+}
+export type ToggleExchangeAccountActiveMutationHookResult = ReturnType<
+  typeof useToggleExchangeAccountActiveMutation
+>
+export type ToggleExchangeAccountActiveMutationResult = Apollo.MutationResult<
+  ToggleExchangeAccountActiveMutation
+>
+export type ToggleExchangeAccountActiveMutationOptions = Apollo.BaseMutationOptions<
+  ToggleExchangeAccountActiveMutation,
+  ToggleExchangeAccountActiveMutationVariables
 >
 export const UserLoginDocument = gql`
   mutation UserLogin($input: LoginUserInput!) {

@@ -7,6 +7,7 @@ import {
   CreateExchangeAccountDocument,
   CreateExchangeAccountInput as RemoteCreateExchangeAccountInput,
   DeleteExchangeAccountDocument,
+  ToggleExchangeAccountActiveDocument,
 } from '../../graphql/index'
 /* eslint-enable */
 
@@ -31,11 +32,20 @@ export interface DeleteExchangeAccountInput {
   accountId: string
 }
 
+export interface ToggleExchangeAccountResponse {
+  success: boolean
+  error?: string
+}
+
+export interface ToggleExchangeAccountInput {
+  active: boolean
+  accountId: string
+}
+
 export const deleteExchangeAccount = async (
   input: DeleteExchangeAccountInput,
 ): Promise<DeleteExchangeAccountResponse> => {
   const { accountId } = input
-  console.log(`deleting account ${accountId}`)
   try {
     const { data } = await client.mutate({
       mutation: DeleteExchangeAccountDocument,
@@ -46,6 +56,28 @@ export const deleteExchangeAccount = async (
 
     if (!data) {
       return { error: 'Unable to delete the exchange account', success: false }
+    }
+
+    return { success: true }
+  } catch (error) {
+    return { error: error.message, success: false }
+  }
+}
+
+export const toggleExchangeAccountActive = async (
+  input: ToggleExchangeAccountInput,
+): Promise<ToggleExchangeAccountResponse> => {
+  const { accountId, active } = input
+  try {
+    const { data } = await client.mutate({
+      mutation: ToggleExchangeAccountActiveDocument,
+      variables: {
+        input: { id: accountId },
+      },
+    })
+
+    if (!data) {
+      return { error: `Unable to ${active ? 'disable' : 'enable'} the account`, success: false }
     }
 
     return { success: true }

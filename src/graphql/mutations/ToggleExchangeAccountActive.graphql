@@ -1,0 +1,5 @@
+mutation ToggleExchangeAccountActive($input: ToggleExchangeAccountActiveInput!) {
+  toggleExchangeAccountActive(input: $input) {
+    success
+  }
+}

@@ -2,7 +2,7 @@ import { convertToLocalExchange, Exchange } from 'types/exchange'
 
 export interface ExchangeAccountTableItem {
   id: string
-  active: string
+  active: boolean
   exchange: Exchange
   orderCount: number
 }
@@ -19,7 +19,7 @@ export const createExchangeAccountTableData = (
       const { id, active, exchange, orders } = exchangeAccount
       return {
         id,
-        active: active ? 'Yes' : 'No',
+        active,
         exchange: convertToLocalExchange(exchange),
         orderCount: orders.length,
       }

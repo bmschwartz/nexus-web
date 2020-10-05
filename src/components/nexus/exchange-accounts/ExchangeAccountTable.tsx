@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Table, Button, PageHeader, Spin, Modal, notification } from 'antd'
+import { Table, Button, PageHeader, Spin, Modal, notification, Switch } from 'antd'
 
 import { Membership } from 'types/membership'
 
@@ -32,6 +32,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     variables: { input: { membershipId: membership.id } },
     notifyOnNetworkStatusChange: true,
   })
+  const [togglingAccountActive, setTogglingAccountActive] = useState<boolean>(false)
   const [deletingExchangeAccount, setDeletingExchangeAccount] = useState<boolean>(false)
 
   const exchangeAccountsTableData: ExchangeAccountTableItem[] = createExchangeAccountTableData(
@@ -44,7 +45,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     Modal.confirm({
       title: `Deleting ${exchange} Account`,
       icon: <ExclamationCircleOutlined />,
-      content: 'Are you sure you to delete this exchange account?',
+      content: 'All exchange account history will be removed',
       okText: 'Delete',
       okType: 'danger',
       async onOk() {
@@ -56,11 +57,11 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
 
         if (success) {
           notification.success({
-            message: `Created ${exchange} Account`,
+            message: `Deleted ${exchange} Account`,
           })
         } else {
           notification.error({
-            message: `Error creating ${exchange} account`,
+            message: `Error deleting ${exchange} account`,
             description: error,
             duration: 3, // seconds
           })
@@ -72,16 +73,36 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     })
   }
 
+  const toggleExchangeAccountActive = async (row: ExchangeAccountTableItem) => {
+    const { id: accountId, exchange, active } = row
+
+    setTogglingAccountActive(true)
+    const { error, success } = await apollo.toggleExchangeAccountActive({ accountId, active })
+
+    if (!success) {
+      notification.error({
+        message: `${exchange} Account Error`,
+        description: error,
+        duration: 3, // seconds
+      })
+    }
+    setTogglingAccountActive(false)
+    await refetchExchangeAccounts()
+  }
+
   const exchangeAccountTableColumns = [
-    {
-      title: 'Exchange',
-      dataIndex: 'exchange',
-      key: 'exchange',
-    },
     {
       title: 'Active',
       dataIndex: 'active',
       key: 'active',
+      render: (_: string, record: ExchangeAccountTableItem) => (
+        <Switch checked={record.active} onClick={async () => toggleExchangeAccountActive(record)} />
+      ),
+    },
+    {
+      title: 'Exchange',
+      dataIndex: 'exchange',
+      key: 'exchange',
     },
     {
       title: 'Orders',
@@ -120,7 +141,9 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Spin spinning={fetchingExchangeAccounts || deletingExchangeAccount}>
+          <Spin
+            spinning={fetchingExchangeAccounts || deletingExchangeAccount || togglingAccountActive}
+          >
             <Table
               rowKey="id"
               columns={exchangeAccountTableColumns}
