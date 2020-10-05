@@ -6,6 +6,7 @@ import {
   Exchange as RemoteExchange,
   CreateExchangeAccountDocument,
   CreateExchangeAccountInput as RemoteCreateExchangeAccountInput,
+  DeleteExchangeAccountDocument,
 } from '../../graphql/index'
 /* eslint-enable */
 
@@ -19,6 +20,38 @@ export interface CreateExchangeAccountInput {
   membershipId: string
   apiKey: string
   apiSecret: string
+}
+
+export interface DeleteExchangeAccountResponse {
+  success: boolean
+  error?: string
+}
+
+export interface DeleteExchangeAccountInput {
+  accountId: string
+}
+
+export const deleteExchangeAccount = async (
+  input: DeleteExchangeAccountInput,
+): Promise<DeleteExchangeAccountResponse> => {
+  const { accountId } = input
+  console.log(`deleting account ${accountId}`)
+  try {
+    const { data } = await client.mutate({
+      mutation: DeleteExchangeAccountDocument,
+      variables: {
+        input: { id: accountId },
+      },
+    })
+
+    if (!data) {
+      return { error: 'Unable to delete the exchange account', success: false }
+    }
+
+    return { success: true }
+  } catch (error) {
+    return { error: error.message, success: false }
+  }
 }
 
 export const createExchangeAccount = async (

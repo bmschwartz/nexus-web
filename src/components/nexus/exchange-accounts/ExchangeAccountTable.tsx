@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
-import { Table, Button, PageHeader, Spin } from 'antd'
+import React, { FC, useState } from 'react'
+import { Table, Button, PageHeader, Spin, Modal, notification } from 'antd'
 
 import { Membership } from 'types/membership'
 
@@ -9,25 +9,9 @@ import {
   ExchangeAccountTableItem,
 } from './exchangeAccountTableUtils'
 import { useGetExchangeAccountsQuery } from '../../../graphql'
+import * as apollo from 'services/apollo'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 /* eslint-enable */
-
-const exchangeAccountTableColumns = [
-  {
-    title: 'Exchange',
-    dataIndex: 'exchange',
-    key: 'exchange',
-  },
-  {
-    title: 'Active',
-    dataIndex: 'active',
-    key: 'active',
-  },
-  {
-    title: 'Orders',
-    dataIndex: 'orderCount',
-    key: 'orderCount',
-  },
-]
 
 interface ExchangeAccountTableProps {
   membership: Membership
@@ -42,15 +26,79 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
   const {
     data: exchangeAccountsData,
     loading: fetchingExchangeAccounts,
+    refetch: refetchExchangeAccounts,
   } = useGetExchangeAccountsQuery({
     fetchPolicy: 'cache-and-network',
     variables: { input: { membershipId: membership.id } },
     notifyOnNetworkStatusChange: true,
   })
+  const [deletingExchangeAccount, setDeletingExchangeAccount] = useState<boolean>(false)
 
   const exchangeAccountsTableData: ExchangeAccountTableItem[] = createExchangeAccountTableData(
     exchangeAccountsData?.exchangeAccounts,
   )
+
+  const clickedDelete = async (row: ExchangeAccountTableItem) => {
+    const { id: accountId, exchange } = row
+
+    Modal.confirm({
+      title: `Deleting ${exchange} Account`,
+      icon: <ExclamationCircleOutlined />,
+      content: 'Are you sure you to delete this exchange account?',
+      okText: 'Delete',
+      okType: 'danger',
+      async onOk() {
+        setDeletingExchangeAccount(true)
+
+        const { error, success } = await apollo.deleteExchangeAccount({ accountId })
+
+        setDeletingExchangeAccount(false)
+
+        if (success) {
+          notification.success({
+            message: `Created ${exchange} Account`,
+          })
+        } else {
+          notification.error({
+            message: `Error creating ${exchange} account`,
+            description: error,
+            duration: 3, // seconds
+          })
+        }
+
+        await refetchExchangeAccounts()
+      },
+      onCancel() {},
+    })
+  }
+
+  const exchangeAccountTableColumns = [
+    {
+      title: 'Exchange',
+      dataIndex: 'exchange',
+      key: 'exchange',
+    },
+    {
+      title: 'Active',
+      dataIndex: 'active',
+      key: 'active',
+    },
+    {
+      title: 'Orders',
+      dataIndex: 'orderCount',
+      key: 'orderCount',
+    },
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      key: 'actions',
+      render: (_: string, record: ExchangeAccountTableItem) => (
+        <Button type="link" onClick={async () => clickedDelete(record)}>
+          Delete
+        </Button>
+      ),
+    },
+  ]
 
   return (
     <div className="card">
@@ -72,7 +120,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Spin spinning={fetchingExchangeAccounts}>
+          <Spin spinning={fetchingExchangeAccounts || deletingExchangeAccount}>
             <Table
               rowKey="id"
               columns={exchangeAccountTableColumns}

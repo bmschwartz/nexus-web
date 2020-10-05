@@ -7,4 +7,4 @@ export { currentAccount } from './user'
 
 export { createOrderSet } from './order'
 
-export { createExchangeAccount } from './exchangeAccount'
+export { createExchangeAccount, deleteExchangeAccount } from './exchangeAccount'
