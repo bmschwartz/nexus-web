@@ -45,7 +45,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     Modal.confirm({
       title: `Deleting ${exchange} Account`,
       icon: <ExclamationCircleOutlined />,
-      content: 'All exchange account history will be removed',
+      content: 'All exchange orders and positions will be removed',
       okText: 'Delete',
       okType: 'danger',
       async onOk() {
@@ -79,7 +79,14 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     setTogglingAccountActive(true)
     const { error, success } = await apollo.toggleExchangeAccountActive({ accountId, active })
 
-    if (!success) {
+    const newActiveState = !active
+
+    if (success) {
+      notification.success({
+        message: `${newActiveState ? 'Disabled' : 'Enabled'} ${exchange} Account`,
+        duration: 3, // seconds
+      })
+    } else {
       notification.error({
         message: `${exchange} Account Error`,
         description: error,
