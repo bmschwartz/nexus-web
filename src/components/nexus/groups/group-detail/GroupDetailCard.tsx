@@ -12,7 +12,8 @@ import { GroupSettings } from './GroupSettings'
 import { MemberDashboard } from './MemberDashboard'
 import { MemberPositions } from './MemberPositions'
 import { MemberOrders } from './MemberOrders'
-import { MemberSettings, MemberSettingsTabState } from './MemberSettings'
+import { MembershipTab, MembershipTabTabState } from './MembershipTab'
+import { MemberExchanges, MemberExchangesTabState } from './MemberExchanges'
 import { GroupProfile } from './GroupProfile'
 import { GroupMembers } from './GroupMembers'
 import { StringParam, useQueryParam, withDefault } from 'use-query-params'
@@ -32,9 +33,11 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
   const [groupOrdersTabState, setGroupOrdersTabState] = useState<OrderSetTabState>(
     OrderSetTabState.VIEW_ALL,
   )
-
-  const [memberSettingsTabState, setMemberSettingsTabState] = useState<MemberSettingsTabState>(
-    MemberSettingsTabState.VIEW_ALL,
+  const [membershipTabTabState, setMembershipTabTabState] = useState<MembershipTabTabState>(
+    MembershipTabTabState.VIEW_ALL,
+  )
+  const [memberExchangesTabState, setMemberExchangesTabState] = useState<MemberExchangesTabState>(
+    MemberExchangesTabState.VIEW_ALL,
   )
 
   const changeTab = (key: string): void => {
@@ -61,11 +64,18 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
                 {tabKey === 'memberDashboard' && <MemberDashboard membership={myMembership} />}
                 {tabKey === 'memberOrders' && <MemberOrders membership={myMembership} />}
                 {tabKey === 'memberPositions' && <MemberPositions membership={myMembership} />}
-                {tabKey === 'memberSettings' && (
-                  <MemberSettings
+                {tabKey === 'membershipTab' && (
+                  <MembershipTab
                     membership={myMembership}
-                    tabState={memberSettingsTabState}
-                    setTabState={setMemberSettingsTabState}
+                    tabState={membershipTabTabState}
+                    setTabState={setMembershipTabTabState}
+                  />
+                )}
+                {tabKey === 'memberExchanges' && (
+                  <MemberExchanges
+                    membership={myMembership}
+                    tabState={memberExchangesTabState}
+                    setTabState={setMemberExchangesTabState}
                   />
                 )}
 

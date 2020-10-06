@@ -2,47 +2,51 @@ import React, { FC, useState } from 'react'
 import { Membership, MembershipStatus } from 'types/membership'
 
 /* eslint-disable */
-import { MembershipInfo } from './MembershipInfo'
 import { ExchangeAccountTable } from 'components/nexus/exchange-accounts/ExchangeAccountTable'
 import { CreateExchangeAccountForm } from 'components/nexus/exchange-accounts/CreateExchangeAccountForm'
+import { ExchangeAccountDetail } from 'components/nexus/exchange-accounts/ExchangeAccountDetail'
 /* eslint-enable */
 
-interface MemberSettingsProps {
+interface MemberExchangesProps {
   membership: Membership
-  tabState: MemberSettingsTabState
-  setTabState: (tabState: MemberSettingsTabState) => void
+  tabState: MemberExchangesTabState
+  setTabState: (tabState: MemberExchangesTabState) => void
 }
 
-export enum MemberSettingsTabState {
+export enum MemberExchangesTabState {
   VIEW_ALL,
   CREATE_EXCHANGE_ACCOUNT,
   VIEW_DETAIL_EXCHANGE_ACCOUNT,
 }
 
-export const MemberSettings: FC<MemberSettingsProps> = ({ membership, tabState, setTabState }) => {
+export const MemberExchanges: FC<MemberExchangesProps> = ({
+  membership,
+  tabState,
+  setTabState,
+}) => {
   const [selectedExchangeAccountId, setSelectedExchangeAccountId] = useState<string>()
 
   const onClickBack = () => {
-    setTabState(MemberSettingsTabState.VIEW_ALL)
+    setTabState(MemberExchangesTabState.VIEW_ALL)
   }
 
   const onExchangeAccountCreated = () => {
-    setTabState(MemberSettingsTabState.VIEW_ALL)
+    setTabState(MemberExchangesTabState.VIEW_ALL)
   }
 
   const onClickCreateExchangeAccount = () => {
-    setTabState(MemberSettingsTabState.CREATE_EXCHANGE_ACCOUNT)
+    setTabState(MemberExchangesTabState.CREATE_EXCHANGE_ACCOUNT)
   }
 
   const onClickExchangeAccount = (exchangeAccountId: string) => {
     setSelectedExchangeAccountId(exchangeAccountId)
-    setTabState(MemberSettingsTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT)
+    setTabState(MemberExchangesTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT)
   }
 
   function shouldShowViewAll() {
     return (
-      tabState === MemberSettingsTabState.VIEW_ALL ||
-      (tabState === MemberSettingsTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT &&
+      tabState === MemberExchangesTabState.VIEW_ALL ||
+      (tabState === MemberExchangesTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT &&
         !selectedExchangeAccountId)
     )
   }
@@ -50,7 +54,6 @@ export const MemberSettings: FC<MemberSettingsProps> = ({ membership, tabState, 
     <div>
       {shouldShowViewAll() && (
         <>
-          <MembershipInfo membership={membership} />
           {membership.status === MembershipStatus.Approved && (
             <ExchangeAccountTable
               membership={membership}
@@ -60,19 +63,20 @@ export const MemberSettings: FC<MemberSettingsProps> = ({ membership, tabState, 
           )}
         </>
       )}
-      {tabState === MemberSettingsTabState.CREATE_EXCHANGE_ACCOUNT && (
+      {tabState === MemberExchangesTabState.CREATE_EXCHANGE_ACCOUNT && (
         <CreateExchangeAccountForm
           membership={membership}
           onClickBack={onClickBack}
           onCreated={onExchangeAccountCreated}
         />
       )}
-      {/* {tabState === MemberSettingsTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT && selectedExchangeAccountId && (
-        <ExchangeAccountDetail
-          onClickBack={onClickBack}
-          exchangeAccountId={selectedExchangeAccountId}
-        />
-      )} */}
+      {tabState === MemberExchangesTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT &&
+        selectedExchangeAccountId && (
+          <ExchangeAccountDetail
+            onClickBack={onClickBack}
+            exchangeAccountId={selectedExchangeAccountId}
+          />
+        )}
     </div>
   )
 }
