@@ -16,12 +16,15 @@ import { ExclamationCircleOutlined } from '@ant-design/icons'
 interface ExchangeAccountTableProps {
   membership: Membership
   onClickCreate: () => void
-  onClickExchangeAccount: (accountId: string) => void
+  onClickExchangeAccount: (accountId: string, exchange: string) => void
 }
+
+const DELETE_TEXT = 'Delete'
 
 export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
   membership,
   onClickCreate,
+  onClickExchangeAccount,
 }) => {
   const {
     data: exchangeAccountsData,
@@ -73,6 +76,17 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     })
   }
 
+  const onRow = (row: ExchangeAccountTableItem) => {
+    return {
+      onClick: (e: any) => {
+        if (e.target.outerText === DELETE_TEXT) {
+          return
+        }
+        onClickExchangeAccount(row.id, row.exchange)
+      },
+    }
+  }
+
   const toggleExchangeAccountActive = async (row: ExchangeAccountTableItem) => {
     const { id: accountId, exchange, active } = row
 
@@ -110,6 +124,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       title: 'Exchange',
       dataIndex: 'exchange',
       key: 'exchange',
+      render: (text: string) => <Button type="link">{text}</Button>,
     },
     {
       title: 'Orders',
@@ -122,7 +137,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       key: 'actions',
       render: (_: string, record: ExchangeAccountTableItem) => (
         <Button type="link" onClick={async () => clickedDelete(record)}>
-          Delete
+          {DELETE_TEXT}
         </Button>
       ),
     },
@@ -153,6 +168,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
           >
             <Table
               rowKey="id"
+              onRow={onRow}
               columns={exchangeAccountTableColumns}
               dataSource={exchangeAccountsTableData}
               // onChange={handleTableChange}

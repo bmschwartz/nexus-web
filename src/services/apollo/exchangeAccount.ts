@@ -5,7 +5,9 @@ import { client } from './client'
 import {
   Exchange as RemoteExchange,
   CreateExchangeAccountDocument,
+  UpdateExchangeAccountDocument,
   CreateExchangeAccountInput as RemoteCreateExchangeAccountInput,
+  UpdateExchangeAccountInput as RemoteUpdateExchangeAccountInput,
   DeleteExchangeAccountDocument,
   ToggleExchangeAccountActiveDocument,
 } from '../../graphql/index'
@@ -19,6 +21,17 @@ export interface CreateExchangeAccountResponse {
 export interface CreateExchangeAccountInput {
   exchange: Exchange
   membershipId: string
+  apiKey: string
+  apiSecret: string
+}
+
+export interface UpdateExchangeAccountResponse {
+  success: boolean
+  error?: string
+}
+
+export interface UpdateExchangeAccountInput {
+  id: string
   apiKey: string
   apiSecret: string
 }
@@ -110,6 +123,31 @@ export const createExchangeAccount = async (
     return { exchangeAccountId: data.createExchangeAccount.id }
   } catch (error) {
     return { error: error.message }
+  }
+}
+
+export const updateExchangeAccount = async (
+  input: UpdateExchangeAccountInput,
+): Promise<UpdateExchangeAccountResponse> => {
+  const payload: RemoteUpdateExchangeAccountInput = {
+    ...input,
+  }
+
+  try {
+    const { data } = await client.mutate({
+      mutation: UpdateExchangeAccountDocument,
+      variables: {
+        input: payload,
+      },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Unable to update the exchange account' }
+    }
+
+    return { success: data.success, error: data.error }
+  } catch (error) {
+    return { success: false, error: error.message }
   }
 }
 

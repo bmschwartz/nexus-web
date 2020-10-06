@@ -10,5 +10,6 @@ export { createOrderSet } from './order'
 export {
   createExchangeAccount,
   deleteExchangeAccount,
+  updateExchangeAccount,
   toggleExchangeAccountActive,
 } from './exchangeAccount'

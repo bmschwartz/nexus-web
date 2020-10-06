@@ -1,0 +1,6 @@
+mutation UpdateExchangeAccount($input: UpdateExchangeAccountInput!) {
+  updateExchangeAccount(input: $input) {
+    success
+    error
+  }
+}

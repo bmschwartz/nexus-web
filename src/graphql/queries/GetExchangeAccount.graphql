@@ -1,0 +1,5 @@
+query GetExchangeAccount($input: ExchangeAccountInput!) {
+  exchangeAccount(input: $input) {
+    ...ExchangeAccountDetails
+  }
+}

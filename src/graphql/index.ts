@@ -249,6 +249,10 @@ export type ExchangeAccount = {
   orders: Array<Order>
 }
 
+export type ExchangeAccountInput = {
+  id: Scalars['ID']
+}
+
 export type ExchangeAccountsInput = {
   membershipId: Scalars['ID']
 }
@@ -314,6 +318,18 @@ export type ToggleExchangeAccountActiveResult = {
   success: Scalars['Boolean']
 }
 
+export type UpdateExchangeAccountInput = {
+  id: Scalars['ID']
+  apiKey: Scalars['String']
+  apiSecret: Scalars['String']
+}
+
+export type UpdateExchangeAccountResult = {
+  __typename?: 'UpdateExchangeAccountResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
 export type UpdateOrderSetInput = {
   orderSetId: Scalars['ID']
   description: Scalars['String']
@@ -360,6 +376,7 @@ export type Query = {
   orderSet?: Maybe<OrderSet>
   binanceCurrencies: Array<BinanceCurrency>
   bitmexCurrencies: Array<BitmexCurrency>
+  exchangeAccount?: Maybe<ExchangeAccount>
   exchangeAccounts: Array<ExchangeAccount>
   me?: Maybe<User>
 }
@@ -392,6 +409,10 @@ export type QueryOrderSetArgs = {
   input: OrderSetInput
 }
 
+export type QueryExchangeAccountArgs = {
+  input: ExchangeAccountInput
+}
+
 export type QueryExchangeAccountsArgs = {
   input: ExchangeAccountsInput
 }
@@ -413,6 +434,7 @@ export type Mutation = {
   cancelOrder?: Maybe<Order>
   createExchangeAccount?: Maybe<ExchangeAccount>
   deleteExchangeAccount: DeleteExchangeAccountResult
+  updateExchangeAccount: UpdateExchangeAccountResult
   toggleExchangeAccountActive: ToggleExchangeAccountActiveResult
   loginUser: AuthPayload
   signupUser: AuthPayload
@@ -476,6 +498,10 @@ export type MutationCreateExchangeAccountArgs = {
 
 export type MutationDeleteExchangeAccountArgs = {
   input: DeleteExchangeAccountInput
+}
+
+export type MutationUpdateExchangeAccountArgs = {
+  input: UpdateExchangeAccountInput
 }
 
 export type MutationToggleExchangeAccountActiveArgs = {
@@ -584,6 +610,17 @@ export type ToggleExchangeAccountActiveMutation = { __typename?: 'Mutation' } & 
   >
 }
 
+export type UpdateExchangeAccountMutationVariables = Exact<{
+  input: UpdateExchangeAccountInput
+}>
+
+export type UpdateExchangeAccountMutation = { __typename?: 'Mutation' } & {
+  updateExchangeAccount: { __typename?: 'UpdateExchangeAccountResult' } & Pick<
+    UpdateExchangeAccountResult,
+    'success' | 'error'
+  >
+}
+
 export type UserLoginMutationVariables = Exact<{
   input: LoginUserInput
 }>
@@ -652,6 +689,14 @@ export type GetCurrenciesQuery = { __typename?: 'Query' } & {
       | 'allowsTakeProfitLimit'
     >
   >
+}
+
+export type GetExchangeAccountQueryVariables = Exact<{
+  input: ExchangeAccountInput
+}>
+
+export type GetExchangeAccountQuery = { __typename?: 'Query' } & {
+  exchangeAccount?: Maybe<{ __typename?: 'ExchangeAccount' } & ExchangeAccountDetailsFragment>
 }
 
 export type GetExchangeAccountsQueryVariables = Exact<{
@@ -1056,6 +1101,57 @@ export type ToggleExchangeAccountActiveMutationOptions = Apollo.BaseMutationOpti
   ToggleExchangeAccountActiveMutation,
   ToggleExchangeAccountActiveMutationVariables
 >
+export const UpdateExchangeAccountDocument = gql`
+  mutation UpdateExchangeAccount($input: UpdateExchangeAccountInput!) {
+    updateExchangeAccount(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type UpdateExchangeAccountMutationFn = Apollo.MutationFunction<
+  UpdateExchangeAccountMutation,
+  UpdateExchangeAccountMutationVariables
+>
+
+/**
+ * __useUpdateExchangeAccountMutation__
+ *
+ * To run a mutation, you first call `useUpdateExchangeAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateExchangeAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateExchangeAccountMutation, { data, loading, error }] = useUpdateExchangeAccountMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateExchangeAccountMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateExchangeAccountMutation,
+    UpdateExchangeAccountMutationVariables
+  >,
+) {
+  return Apollo.useMutation<UpdateExchangeAccountMutation, UpdateExchangeAccountMutationVariables>(
+    UpdateExchangeAccountDocument,
+    baseOptions,
+  )
+}
+export type UpdateExchangeAccountMutationHookResult = ReturnType<
+  typeof useUpdateExchangeAccountMutation
+>
+export type UpdateExchangeAccountMutationResult = Apollo.MutationResult<
+  UpdateExchangeAccountMutation
+>
+export type UpdateExchangeAccountMutationOptions = Apollo.BaseMutationOptions<
+  UpdateExchangeAccountMutation,
+  UpdateExchangeAccountMutationVariables
+>
 export const UserLoginDocument = gql`
   mutation UserLogin($input: LoginUserInput!) {
     loginUser(input: $input) {
@@ -1266,6 +1362,58 @@ export type GetCurrenciesLazyQueryHookResult = ReturnType<typeof useGetCurrencie
 export type GetCurrenciesQueryResult = Apollo.QueryResult<
   GetCurrenciesQuery,
   GetCurrenciesQueryVariables
+>
+export const GetExchangeAccountDocument = gql`
+  query GetExchangeAccount($input: ExchangeAccountInput!) {
+    exchangeAccount(input: $input) {
+      ...ExchangeAccountDetails
+    }
+  }
+  ${ExchangeAccountDetailsFragmentDoc}
+`
+
+/**
+ * __useGetExchangeAccountQuery__
+ *
+ * To run a query within a React component, call `useGetExchangeAccountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetExchangeAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetExchangeAccountQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetExchangeAccountQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetExchangeAccountQuery, GetExchangeAccountQueryVariables>,
+) {
+  return Apollo.useQuery<GetExchangeAccountQuery, GetExchangeAccountQueryVariables>(
+    GetExchangeAccountDocument,
+    baseOptions,
+  )
+}
+export function useGetExchangeAccountLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetExchangeAccountQuery,
+    GetExchangeAccountQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<GetExchangeAccountQuery, GetExchangeAccountQueryVariables>(
+    GetExchangeAccountDocument,
+    baseOptions,
+  )
+}
+export type GetExchangeAccountQueryHookResult = ReturnType<typeof useGetExchangeAccountQuery>
+export type GetExchangeAccountLazyQueryHookResult = ReturnType<
+  typeof useGetExchangeAccountLazyQuery
+>
+export type GetExchangeAccountQueryResult = Apollo.QueryResult<
+  GetExchangeAccountQuery,
+  GetExchangeAccountQueryVariables
 >
 export const GetExchangeAccountsDocument = gql`
   query GetExchangeAccounts($input: ExchangeAccountsInput!) {

@@ -24,6 +24,7 @@ export const MemberExchanges: FC<MemberExchangesProps> = ({
   tabState,
   setTabState,
 }) => {
+  const [selectedExchangeName, setSelectedExchangeName] = useState<string>()
   const [selectedExchangeAccountId, setSelectedExchangeAccountId] = useState<string>()
 
   const onClickBack = () => {
@@ -38,8 +39,9 @@ export const MemberExchanges: FC<MemberExchangesProps> = ({
     setTabState(MemberExchangesTabState.CREATE_EXCHANGE_ACCOUNT)
   }
 
-  const onClickExchangeAccount = (exchangeAccountId: string) => {
+  const onClickExchangeAccount = (exchangeAccountId: string, exchange: string) => {
     setSelectedExchangeAccountId(exchangeAccountId)
+    setSelectedExchangeName(exchange)
     setTabState(MemberExchangesTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT)
   }
 
@@ -73,6 +75,7 @@ export const MemberExchanges: FC<MemberExchangesProps> = ({
       {tabState === MemberExchangesTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT &&
         selectedExchangeAccountId && (
           <ExchangeAccountDetail
+            exchange={selectedExchangeName}
             onClickBack={onClickBack}
             exchangeAccountId={selectedExchangeAccountId}
           />
