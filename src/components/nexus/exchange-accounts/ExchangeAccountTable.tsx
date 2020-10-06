@@ -76,17 +76,6 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     })
   }
 
-  const onRow = (row: ExchangeAccountTableItem) => {
-    return {
-      onClick: (e: any) => {
-        if (e.target.outerText === DELETE_TEXT) {
-          return
-        }
-        onClickExchangeAccount(row.id, row.exchange)
-      },
-    }
-  }
-
   const toggleExchangeAccountActive = async (row: ExchangeAccountTableItem) => {
     const { id: accountId, exchange, active } = row
 
@@ -124,7 +113,11 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       title: 'Exchange',
       dataIndex: 'exchange',
       key: 'exchange',
-      render: (text: string) => <Button type="link">{text}</Button>,
+      render: (text: string, { id, exchange }: ExchangeAccountTableItem) => (
+        <Button type="link" onClick={() => onClickExchangeAccount(id, exchange)}>
+          {text}
+        </Button>
+      ),
     },
     {
       title: 'Orders',
@@ -168,7 +161,6 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
           >
             <Table
               rowKey="id"
-              onRow={onRow}
               columns={exchangeAccountTableColumns}
               dataSource={exchangeAccountsTableData}
               // onChange={handleTableChange}
