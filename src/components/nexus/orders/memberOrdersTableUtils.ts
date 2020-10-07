@@ -1,6 +1,13 @@
 import { GetMemberOrdersQuery } from 'graphql'
-import { Exchange } from 'types/exchange'
-import { OrderSide, OrderType } from 'types/order'
+import { convertToLocalExchange, Exchange } from 'types/exchange'
+import {
+  convertToLocalOrderSide,
+  convertToLocalOrderStatus,
+  convertToLocalOrderType,
+  OrderSide,
+  OrderStatus,
+  OrderType,
+} from 'types/order'
 
 export interface OrdersTableItem {
   id: string
@@ -9,8 +16,9 @@ export interface OrdersTableItem {
   side: OrderSide
   orderType: OrderType
   price?: string
-  quantity?: number
-  filled?: number
+  quantity?: number | null
+  filledQty?: number | null
+  status: OrderStatus
   date: string
 }
 
@@ -26,13 +34,27 @@ export const createOrderTableData = (
   } = ordersResponse.membership
 
   const ordersTableItems: OrdersTableItem[] = orders.map(order => {
-    const { id, symbol, price, exchange, side, orderType, createdAt } = order
+    const {
+      id,
+      symbol,
+      price,
+      exchange,
+      side,
+      orderType,
+      createdAt,
+      quantity,
+      filledQty,
+      status,
+    } = order
     return {
       id,
       price: String(price) ?? '',
       symbol,
+      quantity,
+      filledQty,
       exchange: convertToLocalExchange(exchange),
       side: convertToLocalOrderSide(side),
+      status: convertToLocalOrderStatus(status),
       orderType: convertToLocalOrderType(orderType),
       date: createdAt,
     }

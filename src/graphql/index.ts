@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client'
 import * as Apollo from '@apollo/client'
+
 export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
 /** All built-in and custom scalars, mapped to their actual values */
@@ -281,17 +282,20 @@ export type MemberOrders = {
 export type Order = {
   __typename?: 'Order'
   id: Scalars['ID']
-  createdAt: Scalars['DateTime']
-  updatedAt: Scalars['DateTime']
   membership: GroupMembership
   orderSet: OrderSet
-  side?: Maybe<OrderSide>
-  orderType?: Maybe<OrderType>
+  side: OrderSide
+  exchange: Exchange
+  orderType: OrderType
+  status: OrderStatus
   price?: Maybe<Scalars['Float']>
   quantity?: Maybe<Scalars['Float']>
   stopPrice?: Maybe<Scalars['Float']>
+  filledQty?: Maybe<Scalars['Float']>
   symbol: Scalars['String']
   lastTimestamp: Scalars['DateTime']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
 }
 
 export type OrderSet = {
@@ -317,6 +321,13 @@ export type OrderSetInput = {
 export enum OrderSide {
   Buy = 'BUY',
   Sell = 'SELL',
+}
+
+export enum OrderStatus {
+  New = 'NEW',
+  Filled = 'FILLED',
+  PartiallyFilled = 'PARTIALLY_FILLED',
+  Canceled = 'CANCELED',
 }
 
 export enum OrderType {
@@ -539,7 +550,9 @@ export type MutationSignupUserArgs = {
 export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } & Pick<
   ExchangeAccount,
   'id' | 'active' | 'exchange'
-> & { orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment> }
+> & {
+    orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment>
+  }
 
 export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
   Group,
@@ -558,10 +571,13 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
 export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
   Order,
   | 'id'
-  | 'price'
   | 'side'
+  | 'price'
   | 'symbol'
+  | 'status'
+  | 'exchange'
   | 'quantity'
+  | 'filledQty'
   | 'stopPrice'
   | 'orderType'
   | 'createdAt'
@@ -842,10 +858,13 @@ export const GroupDetailsFragmentDoc = gql`
 export const OrderDetailsFragmentDoc = gql`
   fragment OrderDetails on Order {
     id
-    price
     side
+    price
     symbol
+    status
+    exchange
     quantity
+    filledQty
     stopPrice
     orderType
     createdAt

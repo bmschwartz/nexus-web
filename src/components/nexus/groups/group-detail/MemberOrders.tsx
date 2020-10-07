@@ -1,5 +1,8 @@
 import React, { FC, useState } from 'react'
+
 import { Membership } from 'types/membership'
+import { MemberOrdersTable } from 'components/nexus/orders/MemberOrdersTable'
+import { MemberOrderDetail } from 'components/nexus/orders/MemberOrderDetail'
 
 interface MemberOrdersProps {
   membership: Membership
@@ -37,11 +40,7 @@ export const MemberOrders: FC<MemberOrdersProps> = ({ membership, tabState, setT
         <MemberOrdersTable membershipId={membership.id} onClickOrder={onClickOrder} />
       )}
       {tabState === MemberOrdersTabState.VIEW_DETAIL && selectedOrderId && (
-        <MemberOrderDetail
-          membershipId={membership.id}
-          onClickBack={onClickBack}
-          orderId={selectedOrderId}
-        />
+        <MemberOrderDetail onClickBack={onClickBack} orderId={selectedOrderId} />
       )}
     </div>
   )

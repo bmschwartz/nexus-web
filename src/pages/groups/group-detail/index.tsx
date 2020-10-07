@@ -53,14 +53,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
   })
 
   const transformOrderData = (order: any): Order => ({
-    id: order.id,
-    side: order.side,
-    orderType: order.orderType,
-    price: order.price,
-    quantity: order.quantity,
-    stopPrice: order.stopPrice,
-    symbol: order.symbol,
-    lastTimestamp: order.lastTimeStamp,
+    ...order,
   })
 
   const transformExchangeAccount = (exchangeAccount: any): ExchangeAccount => ({

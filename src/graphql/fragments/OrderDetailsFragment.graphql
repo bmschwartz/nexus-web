@@ -1,10 +1,12 @@
 fragment OrderDetails on Order {
   id
-  price
   side
+  price
   symbol
+  status
   exchange
   quantity
+  filledQty
   stopPrice
   orderType
   createdAt

@@ -1,14 +1,13 @@
 import React, { FC } from 'react'
-import { Table, Button, PageHeader, Spin } from 'antd'
+import { PageHeader } from 'antd'
 
 /* eslint-disable */
-import { createOrderTableData, OrderTableItem } from './ordersTableUtils'
-import { useGetMemberOrdersQuery } from '../../../graphql'
+// import { createOrderTableData, OrdersTableItem } from './memberOrdersTableUtils'
+// import { useGetMemberOrdersQuery } from '../../../graphql'
 /* eslint-enable */
 
-interface OrdersTableProps {
+interface MemberOrdersTableProps {
   membershipId: string
-  onClickCreate: () => void
   onClickOrder: (orderId: string) => void
 }
 
@@ -62,42 +61,38 @@ const orderTableColumns = [
 
 const PAGE_SIZE = 15
 
-export const OrdersTable: FC<OrdersTableProps> = ({
-  // onClickOrder,
-  // onClickCreate,
-  membershipId,
-}) => {
+export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId }) => {
   console.log(membershipId, PAGE_SIZE, orderTableColumns)
-  const onChangePage = (page: number, pageSize?: number) => {
-    const offset = pageSize ? pageSize * (page - 1) : 0
-    fetchMore({
-      variables: { offset },
-      updateQuery: (prev, result) => {
-        if (!result) {
-          return prev
-        }
-        return { ...result.fetchMoreResult }
-      },
-    })
-  }
+  // const onChangePage = (page: number, pageSize?: number) => {
+  //   const offset = pageSize ? pageSize * (page - 1) : 0
+  //   fetchMore({
+  //     variables: { offset },
+  //     updateQuery: (prev, result) => {
+  //       if (!result) {
+  //         return prev
+  //       }
+  //       return { ...result.fetchMoreResult }
+  //     },
+  //   })
+  // }
 
-  const {
-    data: memberOrdersData,
-    loading: fetchingMemberOrders,
-    fetchMore,
-  } = useGetMemberOrdersQuery({
-    fetchPolicy: 'cache-and-network',
-    variables: { input: { membershipId }, limit: PAGE_SIZE },
-    notifyOnNetworkStatusChange: true,
-  })
+  // const {
+  //   data: memberOrdersData,
+  //   loading: fetchingMemberOrders,
+  //   fetchMore,
+  // } = useGetMemberOrdersQuery({
+  //   fetchPolicy: 'cache-and-network',
+  //   variables: { input: { membershipId }, limit: PAGE_SIZE },
+  //   notifyOnNetworkStatusChange: true,
+  // })
 
-  const totalCount = memberOrdersData?.membership.orders.totalCount
-  const orderTableData: OrdersTableItem[] = createOrderTableData(memberOrdersData)
+  // const totalCount = memberOrdersData?.membership.orders.totalCount
+  // const orderTableData: OrdersTableItem[] = createOrderTableData(memberOrdersData)
 
   // const onRow = (row: OrdersTableItem) => {
   //   return {
   //     onClick: () => {
-  //       onClickOrders(row.id)
+  //       onClickOrder(row.id)
   //     },
   //   }
   // }

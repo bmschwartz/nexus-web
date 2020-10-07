@@ -6,8 +6,7 @@ import { PageHeader } from 'antd'
 /* eslint-enable */
 
 interface MemberOrderDetailProps {
-  groupId: string
-  orderSetId: string
+  orderId: string
   onClickBack: () => void
 }
 

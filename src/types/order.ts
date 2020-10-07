@@ -1,5 +1,9 @@
 /* eslint-disable */
-import { OrderSide as RemoteOrderSide, OrderType as RemoteOrderType } from '../graphql'
+import {
+  OrderSide as RemoteOrderSide,
+  OrderType as RemoteOrderType,
+  OrderStatus as RemoteOrderStatus,
+} from '../graphql'
 import { Exchange } from './exchange'
 /* eslint-enable */
 
@@ -13,12 +17,22 @@ export enum OrderType {
   LIMIT = 'Limit',
 }
 
+export enum OrderStatus {
+  NEW = 'New',
+  FILLED = 'Filled',
+  PARTIALLY_FILLED = 'Partially Filled',
+  CANCELED = 'Canceled',
+}
+
 export interface Order {
   id: string
   side: OrderSide
   orderType: OrderType
+  exchange: Exchange
+  status: OrderStatus
   price?: number
   quantity?: number
+  filledQty?: number
   stopPrice?: number
   symbol: string
   lastTimestamp: string
@@ -52,5 +66,22 @@ export function convertToLocalOrderType(orderType: RemoteOrderType): OrderType {
     case RemoteOrderType.Market:
     default:
       return OrderType.MARKET
+  }
+}
+
+export function convertToLocalOrderStatus(orderStatus: RemoteOrderStatus): OrderStatus {
+  switch (orderStatus) {
+    case RemoteOrderStatus.Filled:
+      return OrderStatus.FILLED
+
+    case RemoteOrderStatus.PartiallyFilled:
+      return OrderStatus.PARTIALLY_FILLED
+
+    case RemoteOrderStatus.Canceled:
+      return OrderStatus.CANCELED
+
+    case RemoteOrderStatus.New:
+    default:
+      return OrderStatus.NEW
   }
 }
