@@ -1,0 +1,5 @@
+query GetOrder($input: OrderInput!) {
+  order(input: $input) {
+    ...OrderDetails
+  }
+}

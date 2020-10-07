@@ -1,8 +1,10 @@
-import React, { FC } from 'react'
-import { PageHeader } from 'antd'
+import React, { FC, useState } from 'react'
+import { Button, Modal, notification, PageHeader, Spin } from 'antd'
+import * as apollo from 'services/apollo'
 
 /* eslint-disable */
-// import { useGetGroupOrderDetailsQuery } from '../../../graphql'
+import { useGetOrderQuery, OrderStatus } from '../../../graphql'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 /* eslint-enable */
 
 interface MemberOrderDetailProps {
@@ -10,41 +12,54 @@ interface MemberOrderDetailProps {
   onClickBack: () => void
 }
 
-// const OrdersTableColumns = [
-//   {
-//     title: 'ID',
-//     id: 'id',
-//     dataIndex: 'id',
-//   },
-//   {
-//     title: 'Username',
-//     id: 'username',
-//     dataIndex: 'username',
-//   },
-// ]
+function canCancelOrder(order: any) {
+  return [OrderStatus.New, OrderStatus.PartiallyFilled].includes(order.status)
+}
 
-// interface OrderTableRow {
-//   id: string
-//   username: string
-// }
+export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack, orderId }) => {
+  const { data, loading, refetch: refetchOrder } = useGetOrderQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      input: { id: orderId },
+    },
+    notifyOnNetworkStatusChange: true,
+  })
 
-// function transformOrdersData(ordersData: any[]): OrderTableRow[] {
-//   return ordersData.map(order => ({
-//     id: order.id,
-//     username: order.membership.member.username,
-//   }))
-// }
+  const [cancelingOrder, setCancelingOrder] = useState<boolean>(false)
 
-export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack }) => {
-  // const { data, loading } = useGetGroupOrderDetailsQuery({
-  //   fetchPolicy: 'cache-and-network',
-  //   variables: {
-  //     groupInput: { groupId },
-  //     orderSetInput: { id: orderSetId },
-  //   },
-  // })
+  async function clickedDelete(order: any) {
+    Modal.confirm({
+      title: `Canceling ${order.exchange} ${order.symbol} order`,
+      icon: <ExclamationCircleOutlined />,
+      content: 'Are you sure you want to cancel this order?',
+      okText: 'Yes',
+      okType: 'danger',
+      async onOk() {
+        setCancelingOrder(true)
 
-  // const orderSet = data?.group?.orderSet
+        const { error, success } = await apollo.cancelOrder({ orderId: order.id })
+
+        setCancelingOrder(false)
+
+        if (success) {
+          notification.success({
+            message: `Canceled order`,
+          })
+        } else {
+          notification.error({
+            message: `Error canceling order`,
+            description: error,
+            duration: 3, // seconds
+          })
+        }
+
+        refetchOrder()
+      },
+      onCancel() {},
+    })
+  }
+
+  const order = data?.order
 
   return (
     <>
@@ -53,51 +68,62 @@ export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack }) =
           <PageHeader className="site-page-header" title="Order Detail" onBack={onClickBack} />
         </div>
       </div>
-      {/* <Spin spinning={loading} tip="Fetching Order Set...">
+      <Spin spinning={loading || cancelingOrder} tip="Fetching Order Set...">
         <div className="card-body">
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Exchange</strong>
-            {orderSet && orderSet.exchange}
+            {order && order.exchange}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Symbol</strong>
-            {orderSet && orderSet.symbol}
+            {order && order.symbol}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Price</strong>
-            {orderSet && orderSet.price}
+            {order && order.price}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Side</strong>
-            {orderSet && orderSet.side}
+            {order && order.side}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Order Type</strong>
-            {orderSet && orderSet.orderType}
+            {order && order.orderType}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Percent</strong>
-            {orderSet && `${orderSet.percent}%`}
+            <strong className="mr-3">Status</strong>
+            {order && order.status}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Description</strong>
-            {orderSet && orderSet.description}
+            <strong className="mr-3">Quantity</strong>
+            {order && order.quantity}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Creation Date</strong>
-            {orderSet && orderSet.createdAt}
+            <strong className="mr-3">Filled Quantity</strong>
+            {order && order.filledQty}
           </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Created</strong>
+            {order && order.createdAt}
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Last Updated</strong>
+            {order && order.updatedAt}
+          </div>
+
+          {order && canCancelOrder(order) && (
+            <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+              <Button
+                danger
+                disabled={loading || cancelingOrder}
+                onClick={() => clickedDelete(order)}
+              >
+                Cancel Order
+              </Button>
+            </div>
+          )}
         </div>
-        <div className="text-nowrap">
-          <Table
-            className="mr-5 ml-5"
-            rowKey="id"
-            columns={OrdersTableColumns}
-            dataSource={transformOrdersData(orderSet?.orders || [])}
-          // onChange={handleTableChange}
-          />
-        </div>
-      </Spin> */}
+      </Spin>
     </>
   )
 }

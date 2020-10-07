@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { client } from './client'
 import {
+  CancelOrderDocument,
   CreateOrderSetDocument,
   CreateOrderSetInput as RemoteCreateOrderSetInput,
   OrderType as RemoteOrderType,
@@ -29,6 +30,15 @@ export interface CreateOrderSetInput {
   membershipIds: string[]
 }
 
+export interface CancelOrderResponse {
+  success: boolean
+  error?: string
+}
+
+export interface CancelOrderInput {
+  orderId: string
+}
+
 export const createOrderSet = async (
   input: CreateOrderSetInput,
 ): Promise<CreateOrderSetResponse> => {
@@ -55,6 +65,27 @@ export const createOrderSet = async (
     return { orderSetId: data.createOrderSet.id }
   } catch (error) {
     return { error: error.message }
+  }
+}
+
+export const cancelOrder = async (input: CancelOrderInput): Promise<CancelOrderResponse> => {
+  const { orderId } = input
+
+  try {
+    const {
+      data: { success, error },
+    } = await client.mutate({
+      mutation: CancelOrderDocument,
+      variables: {
+        input: { id: orderId },
+      },
+    })
+
+    console.log(orderId, success, error)
+
+    return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
   }
 }
 

@@ -209,7 +209,13 @@ export type BitmexCurrency = {
 }
 
 export type CancelOrderInput = {
-  orderId: Scalars['String']
+  id: Scalars['String']
+}
+
+export type CancelOrderResponse = {
+  __typename?: 'CancelOrderResponse'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
 }
 
 export type CreateExchangeAccountInput = {
@@ -296,6 +302,10 @@ export type Order = {
   lastTimestamp: Scalars['DateTime']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+}
+
+export type OrderInput = {
+  id: Scalars['ID']
 }
 
 export type OrderSet = {
@@ -400,6 +410,7 @@ export type Query = {
   myMemberships?: Maybe<Array<GroupMembership>>
   groupMembers?: Maybe<Array<GroupMembership>>
   membershipRequests?: Maybe<Array<GroupMembership>>
+  order?: Maybe<Order>
   orderSet?: Maybe<OrderSet>
   binanceCurrencies: Array<BinanceCurrency>
   bitmexCurrencies: Array<BitmexCurrency>
@@ -436,6 +447,10 @@ export type QueryMembershipRequestsArgs = {
   input: MembershipRequestsInput
 }
 
+export type QueryOrderArgs = {
+  input: OrderInput
+}
+
 export type QueryOrderSetArgs = {
   input: OrderSetInput
 }
@@ -462,7 +477,7 @@ export type Mutation = {
   deleteMembership?: Maybe<GroupMembership>
   createOrderSet?: Maybe<OrderSet>
   updateOrderSet?: Maybe<OrderSet>
-  cancelOrder?: Maybe<Order>
+  cancelOrder: CancelOrderResponse
   createExchangeAccount?: Maybe<ExchangeAccount>
   deleteExchangeAccount: DeleteExchangeAccountResult
   updateExchangeAccount: UpdateExchangeAccountResult
@@ -597,6 +612,17 @@ export type OrderSetDetailsFragment = { __typename?: 'OrderSet' } & Pick<
   | 'description'
   | 'createdAt'
 >
+
+export type CancelOrderMutationVariables = Exact<{
+  input: CancelOrderInput
+}>
+
+export type CancelOrderMutation = { __typename?: 'Mutation' } & {
+  cancelOrder: { __typename?: 'CancelOrderResponse' } & Pick<
+    CancelOrderResponse,
+    'success' | 'error'
+  >
+}
 
 export type CreateExchangeAccountMutationVariables = Exact<{
   input: CreateExchangeAccountInput
@@ -820,6 +846,14 @@ export type GetMyMembershipQuery = { __typename?: 'Query' } & {
   myMembership: { __typename?: 'GroupMembership' } & GroupMembershipDetailsFragment
 }
 
+export type GetOrderQueryVariables = Exact<{
+  input: OrderInput
+}>
+
+export type GetOrderQuery = { __typename?: 'Query' } & {
+  order?: Maybe<{ __typename?: 'Order' } & OrderDetailsFragment>
+}
+
 export type GroupExistsQueryVariables = Exact<{
   input: GroupExistsInput
 }>
@@ -916,6 +950,50 @@ export const OrderSetDetailsFragmentDoc = gql`
     createdAt
   }
 `
+export const CancelOrderDocument = gql`
+  mutation CancelOrder($input: CancelOrderInput!) {
+    cancelOrder(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type CancelOrderMutationFn = Apollo.MutationFunction<
+  CancelOrderMutation,
+  CancelOrderMutationVariables
+>
+
+/**
+ * __useCancelOrderMutation__
+ *
+ * To run a mutation, you first call `useCancelOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelOrderMutation, { data, loading, error }] = useCancelOrderMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCancelOrderMutation(
+  baseOptions?: Apollo.MutationHookOptions<CancelOrderMutation, CancelOrderMutationVariables>,
+) {
+  return Apollo.useMutation<CancelOrderMutation, CancelOrderMutationVariables>(
+    CancelOrderDocument,
+    baseOptions,
+  )
+}
+export type CancelOrderMutationHookResult = ReturnType<typeof useCancelOrderMutation>
+export type CancelOrderMutationResult = Apollo.MutationResult<CancelOrderMutation>
+export type CancelOrderMutationOptions = Apollo.BaseMutationOptions<
+  CancelOrderMutation,
+  CancelOrderMutationVariables
+>
 export const CreateExchangeAccountDocument = gql`
   mutation CreateExchangeAccount($input: CreateExchangeAccountInput!) {
     createExchangeAccount(input: $input) {
@@ -1830,6 +1908,44 @@ export type GetMyMembershipQueryResult = Apollo.QueryResult<
   GetMyMembershipQuery,
   GetMyMembershipQueryVariables
 >
+export const GetOrderDocument = gql`
+  query GetOrder($input: OrderInput!) {
+    order(input: $input) {
+      ...OrderDetails
+    }
+  }
+  ${OrderDetailsFragmentDoc}
+`
+
+/**
+ * __useGetOrderQuery__
+ *
+ * To run a query within a React component, call `useGetOrderQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrderQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrderQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetOrderQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetOrderQuery, GetOrderQueryVariables>,
+) {
+  return Apollo.useQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, baseOptions)
+}
+export function useGetOrderLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetOrderQuery, GetOrderQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, baseOptions)
+}
+export type GetOrderQueryHookResult = ReturnType<typeof useGetOrderQuery>
+export type GetOrderLazyQueryHookResult = ReturnType<typeof useGetOrderLazyQuery>
+export type GetOrderQueryResult = Apollo.QueryResult<GetOrderQuery, GetOrderQueryVariables>
 export const GroupExistsDocument = gql`
   query GroupExists($input: GroupExistsInput!) {
     groupExists(input: $input)
