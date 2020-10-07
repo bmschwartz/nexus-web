@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
-import { PageHeader } from 'antd'
+import { Button, PageHeader, Spin, Table } from 'antd'
 
 /* eslint-disable */
-// import { createOrderTableData, OrdersTableItem } from './memberOrdersTableUtils'
-// import { useGetMemberOrdersQuery } from '../../../graphql'
+import { createOrderTableData, OrdersTableItem } from './memberOrdersTableUtils'
+import { useGetMemberOrdersQuery } from '../../../graphql'
 /* eslint-enable */
 
 interface MemberOrdersTableProps {
@@ -12,6 +12,12 @@ interface MemberOrdersTableProps {
 }
 
 const orderTableColumns = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id',
+    render: (text: string) => <Button type="link">{text}</Button>,
+  },
   {
     title: 'Exchange',
     dataIndex: 'exchange',
@@ -38,16 +44,6 @@ const orderTableColumns = [
     key: 'price',
   },
   {
-    title: 'Quantity',
-    dataIndex: 'quantity',
-    key: 'quantity',
-  },
-  {
-    title: 'Filled',
-    dataIndex: 'filled',
-    key: 'filled',
-  },
-  {
     title: 'Status',
     dataIndex: 'orderStatus',
     key: 'orderStatus',
@@ -61,41 +57,41 @@ const orderTableColumns = [
 
 const PAGE_SIZE = 15
 
-export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId }) => {
+export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId, onClickOrder }) => {
   console.log(membershipId, PAGE_SIZE, orderTableColumns)
-  // const onChangePage = (page: number, pageSize?: number) => {
-  //   const offset = pageSize ? pageSize * (page - 1) : 0
-  //   fetchMore({
-  //     variables: { offset },
-  //     updateQuery: (prev, result) => {
-  //       if (!result) {
-  //         return prev
-  //       }
-  //       return { ...result.fetchMoreResult }
-  //     },
-  //   })
-  // }
+  const onChangePage = (page: number, pageSize?: number) => {
+    const offset = pageSize ? pageSize * (page - 1) : 0
+    fetchMore({
+      variables: { offset },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return prev
+        }
+        return { ...fetchMoreResult }
+      },
+    })
+  }
 
-  // const {
-  //   data: memberOrdersData,
-  //   loading: fetchingMemberOrders,
-  //   fetchMore,
-  // } = useGetMemberOrdersQuery({
-  //   fetchPolicy: 'cache-and-network',
-  //   variables: { input: { membershipId }, limit: PAGE_SIZE },
-  //   notifyOnNetworkStatusChange: true,
-  // })
+  const {
+    data: memberOrdersData,
+    loading: fetchingMemberOrders,
+    fetchMore,
+  } = useGetMemberOrdersQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: { input: { membershipId }, limit: PAGE_SIZE },
+    notifyOnNetworkStatusChange: true,
+  })
 
-  // const totalCount = memberOrdersData?.membership.orders.totalCount
-  // const orderTableData: OrdersTableItem[] = createOrderTableData(memberOrdersData)
+  const totalCount = memberOrdersData?.membership.orders.totalCount
+  const orderTableData: OrdersTableItem[] = createOrderTableData(memberOrdersData)
 
-  // const onRow = (row: OrdersTableItem) => {
-  //   return {
-  //     onClick: () => {
-  //       onClickOrder(row.id)
-  //     },
-  //   }
-  // }
+  const onRow = (row: OrdersTableItem) => {
+    return {
+      onClick: () => {
+        onClickOrder(row.id)
+      },
+    }
+  }
 
   return (
     <>
@@ -106,7 +102,7 @@ export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId }) 
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          {/* <Spin spinning={fetchingGroupOrderss}>
+          <Spin spinning={fetchingMemberOrders}>
             <Table
               rowKey="id"
               onRow={onRow}
@@ -117,12 +113,11 @@ export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId }) 
                 defaultPageSize: PAGE_SIZE,
                 total: totalCount,
                 onChange: onChangePage,
-                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                showTotal: (total: any, range: any) => `${range[0]}-${range[1]} of ${total} items`,
               }}
-            // onChange={handleTableChange}
+              // onChange={handleTableChange}
             />
-          </Spin> */}
-          <div>Hey!</div>
+          </Spin>
         </div>
       </div>
     </>

@@ -16,8 +16,6 @@ export interface OrdersTableItem {
   side: OrderSide
   orderType: OrderType
   price?: string
-  quantity?: number | null
-  filledQty?: number | null
   status: OrderStatus
   date: string
 }
@@ -34,24 +32,11 @@ export const createOrderTableData = (
   } = ordersResponse.membership
 
   const ordersTableItems: OrdersTableItem[] = orders.map(order => {
-    const {
-      id,
-      symbol,
-      price,
-      exchange,
-      side,
-      orderType,
-      createdAt,
-      quantity,
-      filledQty,
-      status,
-    } = order
+    const { id, symbol, price, exchange, side, orderType, createdAt, status } = order
     return {
       id,
       price: String(price) ?? '',
       symbol,
-      quantity,
-      filledQty,
       exchange: convertToLocalExchange(exchange),
       side: convertToLocalOrderSide(side),
       status: convertToLocalOrderStatus(status),
