@@ -26,7 +26,7 @@ export interface CreateOrderSetInput {
   orderType: OrderType
   stopPrice?: number
   description?: string
-  exchangeAccountIds: string[]
+  membershipIds: string[]
 }
 
 export const createOrderSet = async (

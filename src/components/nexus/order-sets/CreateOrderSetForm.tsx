@@ -34,11 +34,11 @@ const getOverviewText = ({
   side,
   symbol,
   price,
-  exchangeAccountIds,
+  membershipIds,
   percent,
   exchange,
 }: any): String => {
-  return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${exchangeAccountIds.length} members`
+  return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${membershipIds.length} members`
 }
 
 export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
@@ -104,11 +104,11 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           orderType: OrderType.LIMIT,
           percent: 5,
           price: 0,
-          exchangeAccountIds: [],
+          membershipIds: [],
         }}
         validationSchema={CreateOrderSetSchema}
         onSubmit={async (values, { setSubmitting }) => {
-          if (values.exchangeAccountIds.length === 0) {
+          if (values.membershipIds.length === 0) {
             setSubmitting(false)
             handleNoMembersSelected()
             return
@@ -243,9 +243,9 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   <TextArea name="description" rows={4} placeholder="Description (optional)" />
                 </Form.Item>
 
-                <Form.Item name="exchangeAccountIds" label="Members" className="mb-3">
+                <Form.Item name="membershipIds" label="Members" className="mb-3">
                   <Transfer
-                    name="exchangeAccountIds"
+                    name="membershipIds"
                     showSearch
                     showSelectAll
                     pagination

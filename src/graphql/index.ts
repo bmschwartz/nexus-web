@@ -221,7 +221,7 @@ export type CreateExchangeAccountInput = {
 
 export type CreateOrderSetInput = {
   groupId: Scalars['ID']
-  exchangeAccountIds: Array<Scalars['ID']>
+  membershipIds: Array<Scalars['ID']>
   symbol: Scalars['String']
   exchange: Exchange
   description?: Maybe<Scalars['String']>
