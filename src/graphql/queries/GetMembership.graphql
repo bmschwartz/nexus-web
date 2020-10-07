@@ -1,5 +1,0 @@
-query GetMembership($input: MembershipInput!) {
-  membership(input: $input) {
-    ...GroupMembershipDetails
-  }
-}

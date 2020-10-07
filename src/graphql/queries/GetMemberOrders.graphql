@@ -1,0 +1,11 @@
+query GetMemberOrders($input: MembershipInput!, $limit: Int, $offset: Int) {
+  membership(input: $input) {
+    id
+    orders(limit: $limit, offset: $offset) {
+      totalCount
+      orders {
+        ...OrderDetails
+      }
+    }
+  }
+}

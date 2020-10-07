@@ -1,0 +1,5 @@
+query GetMyMembership($input: MyMembershipInput!) {
+  myMembership(input: $input) {
+    ...GroupMembershipDetails
+  }
+}

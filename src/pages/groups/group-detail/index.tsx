@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet'
 import { Spin } from 'antd'
 import { Group } from 'types/group'
 /* eslint-disable */
-import { useGetGroupQuery, useGetMembershipQuery } from '../../../graphql/index'
+import { useGetGroupQuery, useGetMyMembershipQuery } from '../../../graphql/index'
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
 import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
 import { Membership, roleFromString, statusFromString } from 'types/membership'
@@ -26,7 +26,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     fetchPolicy: 'cache-and-network',
     variables: { input: { groupId } },
   })
-  const { data: membershipData, loading: membershipLoading } = useGetMembershipQuery({
+  const { data: membershipData, loading: membershipLoading } = useGetMyMembershipQuery({
     fetchPolicy: 'cache-and-network',
     variables: { input: { groupId } },
   })
@@ -76,8 +76,8 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
   if (getGroupData && getGroupData.group) {
     transformedGroup = transformGroupData(getGroupData.group)
   }
-  if (membershipData?.membership) {
-    transformedMembership = transformMembershipData(membershipData.membership)
+  if (membershipData?.myMembership) {
+    transformedMembership = transformMembershipData(membershipData.myMembership)
   }
 
   return (

@@ -3,6 +3,7 @@ fragment OrderDetails on Order {
   price
   side
   symbol
+  exchange
   quantity
   stopPrice
   orderType
