@@ -45,8 +45,8 @@ const orderTableColumns = [
   },
   {
     title: 'Status',
-    dataIndex: 'orderStatus',
-    key: 'orderStatus',
+    dataIndex: 'status',
+    key: 'status',
   },
   {
     title: 'Date',
@@ -58,7 +58,6 @@ const orderTableColumns = [
 const PAGE_SIZE = 15
 
 export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId, onClickOrder }) => {
-  console.log(membershipId, PAGE_SIZE, orderTableColumns)
   const onChangePage = (page: number, pageSize?: number) => {
     const offset = pageSize ? pageSize * (page - 1) : 0
     fetchMore({
