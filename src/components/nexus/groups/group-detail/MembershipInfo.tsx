@@ -11,7 +11,7 @@ export const MembershipInfo: FC<MembershipInfoProps> = ({ membership }) => {
     <div className="card">
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
-          <PageHeader className="site-page-header" title="Details" backIcon={false} />
+          <PageHeader className="site-page-header" title="Membership" backIcon={false} />
         </div>
       </div>
       <div className="card-body">
