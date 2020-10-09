@@ -259,10 +259,11 @@ export type ExchangeAccount = {
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   exchange: Exchange
-  membership: GroupMembership
   apiKey: Scalars['String']
   apiSecret: Scalars['String']
   orders: Array<Order>
+  membershipId: Scalars['ID']
+  membership: GroupMembership
 }
 
 export type ExchangeAccountInput = {
@@ -288,7 +289,6 @@ export type MemberOrders = {
 export type Order = {
   __typename?: 'Order'
   id: Scalars['ID']
-  membership: GroupMembership
   orderSet: OrderSet
   side: OrderSide
   exchange: Exchange
@@ -302,6 +302,7 @@ export type Order = {
   lastTimestamp: Scalars['DateTime']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+  exchangeAccount: ExchangeAccount
 }
 
 export type OrderInput = {
@@ -791,9 +792,14 @@ export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
           { __typename?: 'OrderSet' } & {
             orders: Array<
               { __typename?: 'Order' } & {
-                membership: { __typename?: 'GroupMembership' } & {
-                  member: { __typename?: 'User' } & Pick<User, 'username'>
-                }
+                exchangeAccount: { __typename?: 'ExchangeAccount' } & Pick<
+                  ExchangeAccount,
+                  'id'
+                > & {
+                    membership: { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
+                        member: { __typename?: 'User' } & Pick<User, 'username'>
+                      }
+                  }
               } & OrderDetailsFragment
             >
           } & OrderSetDetailsFragment
@@ -1649,9 +1655,13 @@ export const GetGroupOrderSetDetailsDocument = gql`
         ...OrderSetDetails
         orders {
           ...OrderDetails
-          membership {
-            member {
-              username
+          exchangeAccount {
+            id
+            membership {
+              id
+              member {
+                username
+              }
             }
           }
         }

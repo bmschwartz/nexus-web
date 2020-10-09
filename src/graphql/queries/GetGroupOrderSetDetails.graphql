@@ -5,9 +5,13 @@ query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSet
       ...OrderSetDetails
       orders {
         ...OrderDetails
-        membership {
-          member {
-            username
+        exchangeAccount {
+          id
+          membership {
+            id
+            member {
+              username
+            }
           }
         }
       }

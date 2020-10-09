@@ -3,37 +3,13 @@ import { PageHeader, Spin, Table } from 'antd'
 
 /* eslint-disable */
 import { useGetGroupOrderSetDetailsQuery } from '../../../graphql'
+import { OrdersTableColumns, transformOrdersData } from './orderSetDetailUtils'
 /* eslint-enable */
 
 interface OrderSetDetailProps {
   groupId: string
   orderSetId: string
   onClickBack: () => void
-}
-
-const OrdersTableColumns = [
-  {
-    title: 'ID',
-    id: 'id',
-    dataIndex: 'id',
-  },
-  {
-    title: 'Username',
-    id: 'username',
-    dataIndex: 'username',
-  },
-]
-
-interface OrderTableRow {
-  id: string
-  username: string
-}
-
-function transformOrdersData(ordersData: any[]): OrderTableRow[] {
-  return ordersData.map(order => ({
-    id: order.id,
-    username: order.membership.member.username,
-  }))
 }
 
 export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, orderSetId }) => {
@@ -85,7 +61,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             {orderSet && orderSet.description}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Creation Date</strong>
+            <strong className="mr-3">Created</strong>
             {orderSet && orderSet.createdAt}
           </div>
         </div>
