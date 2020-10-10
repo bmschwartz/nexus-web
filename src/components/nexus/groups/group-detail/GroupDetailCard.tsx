@@ -7,7 +7,7 @@ import { Tabs } from 'antd'
 import { availableTabs, Tab } from './groupTabs'
 import { GroupDashboard } from './GroupDashboard'
 import { GroupOrderSets, OrderSetTabState } from './GroupOrderSet'
-import { GroupPositions } from './GroupPositions'
+import { GroupPositions, GroupPositionsTabState } from './GroupPositions'
 import { GroupSettings } from './GroupSettings'
 import { MemberDashboard } from './MemberDashboard'
 import { MemberPositions } from './MemberPositions'
@@ -32,6 +32,9 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
 
   const [groupOrdersTabState, setGroupOrdersTabState] = useState<OrderSetTabState>(
     OrderSetTabState.VIEW_ALL,
+  )
+  const [groupPositionsTabState, setGroupPositionsTabState] = useState<GroupPositionsTabState>(
+    GroupPositionsTabState.VIEW_EXCHANGES,
   )
   const [membershipTabTabState, setMembershipTabTabState] = useState<MembershipTabTabState>(
     MembershipTabTabState.VIEW_ALL,
@@ -98,7 +101,13 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
                     setTabState={setGroupOrdersTabState}
                   />
                 )}
-                {tabKey === 'groupPositions' && <GroupPositions group={group} />}
+                {tabKey === 'groupPositions' && (
+                  <GroupPositions
+                    group={group}
+                    tabState={groupPositionsTabState}
+                    setTabState={setGroupPositionsTabState}
+                  />
+                )}
                 {tabKey === 'groupProfile' && <GroupProfile group={group} />}
                 {tabKey === 'groupSettings' && <GroupSettings group={group} />}
               </>

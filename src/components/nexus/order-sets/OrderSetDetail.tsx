@@ -13,7 +13,7 @@ interface OrderSetDetailProps {
   onClickBack: () => void
 }
 
-const PAGE_SIZE = 100
+const PAGE_SIZE = 50
 
 export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, orderSetId }) => {
   const {

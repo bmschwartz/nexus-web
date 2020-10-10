@@ -1,4 +1,4 @@
-query GetGroupPosition($input: GroupInput!, $limit: Int, $offset: Int) {
+query GetGroupPositions($input: GroupInput!, $limit: Int, $offset: Int) {
   group(input: $input) {
     id
     positions(limit: $limit, offset: $offset) {

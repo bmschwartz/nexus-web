@@ -395,7 +395,7 @@ export type Position = {
   __typename?: 'Position'
   id: Scalars['ID']
   exchangeAccount: ExchangeAccount
-  side: OrderSide
+  side: PositionSide
   exchange: Exchange
   quantity?: Maybe<Scalars['Float']>
   avgPrice?: Maybe<Scalars['Float']>
@@ -406,6 +406,11 @@ export type Position = {
 
 export type PositionInput = {
   id: Scalars['ID']
+}
+
+export enum PositionSide {
+  Long = 'LONG',
+  Short = 'SHORT',
 }
 
 export type ToggleExchangeAccountActiveInput = {
@@ -880,7 +885,9 @@ export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
                         membership: { __typename?: 'GroupMembership' } & Pick<
                           GroupMembership,
                           'id'
-                        > & { member: { __typename?: 'User' } & Pick<User, 'username'> }
+                        > & {
+                            member: { __typename?: 'User' } & Pick<User, 'username'>
+                          }
                       }
                   } & OrderDetailsFragment
                 >
@@ -922,13 +929,13 @@ export type GetGroupPositionDetailsQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type GetGroupPositionQueryVariables = Exact<{
+export type GetGroupPositionsQueryVariables = Exact<{
   input: GroupInput
   limit?: Maybe<Scalars['Int']>
   offset?: Maybe<Scalars['Int']>
 }>
 
-export type GetGroupPositionQuery = { __typename?: 'Query' } & {
+export type GetGroupPositionsQuery = { __typename?: 'Query' } & {
   group?: Maybe<
     { __typename?: 'Group' } & Pick<Group, 'id'> & {
         positions: { __typename?: 'GroupPositions' } & Pick<GroupPositions, 'totalCount'> & {
@@ -2010,8 +2017,8 @@ export type GetGroupPositionDetailsQueryResult = Apollo.QueryResult<
   GetGroupPositionDetailsQuery,
   GetGroupPositionDetailsQueryVariables
 >
-export const GetGroupPositionDocument = gql`
-  query GetGroupPosition($input: GroupInput!, $limit: Int, $offset: Int) {
+export const GetGroupPositionsDocument = gql`
+  query GetGroupPositions($input: GroupInput!, $limit: Int, $offset: Int) {
     group(input: $input) {
       id
       positions(limit: $limit, offset: $offset) {
@@ -2026,16 +2033,16 @@ export const GetGroupPositionDocument = gql`
 `
 
 /**
- * __useGetGroupPositionQuery__
+ * __useGetGroupPositionsQuery__
  *
- * To run a query within a React component, call `useGetGroupPositionQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetGroupPositionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetGroupPositionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGroupPositionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetGroupPositionQuery({
+ * const { data, loading, error } = useGetGroupPositionsQuery({
  *   variables: {
  *      input: // value for 'input'
  *      limit: // value for 'limit'
@@ -2043,27 +2050,30 @@ export const GetGroupPositionDocument = gql`
  *   },
  * });
  */
-export function useGetGroupPositionQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetGroupPositionQuery, GetGroupPositionQueryVariables>,
+export function useGetGroupPositionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetGroupPositionsQuery, GetGroupPositionsQueryVariables>,
 ) {
-  return Apollo.useQuery<GetGroupPositionQuery, GetGroupPositionQueryVariables>(
-    GetGroupPositionDocument,
+  return Apollo.useQuery<GetGroupPositionsQuery, GetGroupPositionsQueryVariables>(
+    GetGroupPositionsDocument,
     baseOptions,
   )
 }
-export function useGetGroupPositionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetGroupPositionQuery, GetGroupPositionQueryVariables>,
+export function useGetGroupPositionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGroupPositionsQuery,
+    GetGroupPositionsQueryVariables
+  >,
 ) {
-  return Apollo.useLazyQuery<GetGroupPositionQuery, GetGroupPositionQueryVariables>(
-    GetGroupPositionDocument,
+  return Apollo.useLazyQuery<GetGroupPositionsQuery, GetGroupPositionsQueryVariables>(
+    GetGroupPositionsDocument,
     baseOptions,
   )
 }
-export type GetGroupPositionQueryHookResult = ReturnType<typeof useGetGroupPositionQuery>
-export type GetGroupPositionLazyQueryHookResult = ReturnType<typeof useGetGroupPositionLazyQuery>
-export type GetGroupPositionQueryResult = Apollo.QueryResult<
-  GetGroupPositionQuery,
-  GetGroupPositionQueryVariables
+export type GetGroupPositionsQueryHookResult = ReturnType<typeof useGetGroupPositionsQuery>
+export type GetGroupPositionsLazyQueryHookResult = ReturnType<typeof useGetGroupPositionsLazyQuery>
+export type GetGroupPositionsQueryResult = Apollo.QueryResult<
+  GetGroupPositionsQuery,
+  GetGroupPositionsQueryVariables
 >
 export const MeDocument = gql`
   query Me {
