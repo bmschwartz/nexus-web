@@ -2,6 +2,10 @@ import { GetGroupOrderSetsQuery } from 'graphql'
 import { convertToLocalExchange, Exchange } from 'types/exchange'
 import { convertToLocalOrderSide, convertToLocalOrderType, OrderSide, OrderType } from 'types/order'
 
+/* eslint-disable */
+import { displayTimeBeforeNow } from '../dateUtil'
+/* eslint-enable */
+
 export interface OrderSetTableItem {
   id: string
   exchange: Exchange
@@ -32,7 +36,7 @@ export const createOrderSetTableData = (
       exchange: convertToLocalExchange(exchange),
       side: convertToLocalOrderSide(side),
       orderType: convertToLocalOrderType(orderType),
-      date: createdAt,
+      date: displayTimeBeforeNow(createdAt),
     }
   })
 

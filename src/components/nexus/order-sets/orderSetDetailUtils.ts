@@ -1,5 +1,9 @@
 import { convertToLocalOrderStatus } from 'types/order'
 
+/* eslint-disable */
+import { displayTimeBeforeNow } from '../dateUtil'
+/* eslint-enable */
+
 export const OrdersTableColumns = [
   {
     id: 'username',
@@ -51,7 +55,7 @@ export function transformOrdersData(ordersData: any[]): OrderTableRow[] {
       price,
       quantity,
       filledQty,
-      updatedAt,
+      updatedAt: displayTimeBeforeNow(updatedAt),
       status: convertToLocalOrderStatus(status),
       username: order.exchangeAccount.membership.member.username,
     }

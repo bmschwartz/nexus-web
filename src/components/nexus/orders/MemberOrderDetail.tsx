@@ -3,6 +3,7 @@ import { Button, Modal, notification, PageHeader, Spin } from 'antd'
 import * as apollo from 'services/apollo'
 
 /* eslint-disable */
+import { displayTimeBeforeNow } from '../dateUtil'
 import { useGetOrderQuery, OrderStatus } from '../../../graphql'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 /* eslint-enable */
@@ -104,11 +105,11 @@ export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack, ord
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Created</strong>
-            {order && order.createdAt}
+            {order && displayTimeBeforeNow(order.createdAt)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Last Updated</strong>
-            {order && order.updatedAt}
+            {order && displayTimeBeforeNow(order.updatedAt)}
           </div>
 
           {order && canCancelOrder(order) && (

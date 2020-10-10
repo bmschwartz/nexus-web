@@ -4,6 +4,7 @@ import { PageHeader, Spin, Table } from 'antd'
 /* eslint-disable */
 import { useGetGroupOrderSetDetailsQuery } from '../../../graphql'
 import { OrdersTableColumns, transformOrdersData } from './orderSetDetailUtils'
+import { displayTimeBeforeNow } from '../dateUtil'
 /* eslint-enable */
 
 interface OrderSetDetailProps {
@@ -62,7 +63,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Created</strong>
-            {orderSet && orderSet.createdAt}
+            {orderSet && displayTimeBeforeNow(orderSet.createdAt)}
           </div>
         </div>
         <div className="text-nowrap">
