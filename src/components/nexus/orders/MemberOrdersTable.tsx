@@ -114,7 +114,6 @@ export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId, on
                 onChange: onChangePage,
                 showTotal: (total: any, range: any) => `${range[0]}-${range[1]} of ${total} items`,
               }}
-              // onChange={handleTableChange}
             />
           </Spin>
         </div>

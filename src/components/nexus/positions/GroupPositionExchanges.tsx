@@ -64,7 +64,6 @@ export const GroupPositionExchangeTable: FC<GroupPositionExchangeTableProps> = (
             onRow={onRow}
             columns={exchangeTableColumns}
             dataSource={exchangeTableData}
-            // onChange={handleTableChange}
           />
         </div>
       </div>

@@ -168,7 +168,6 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
               rowKey="id"
               columns={exchangeAccountTableColumns}
               dataSource={exchangeAccountsTableData}
-              // onChange={handleTableChange}
             />
           </Spin>
         </div>

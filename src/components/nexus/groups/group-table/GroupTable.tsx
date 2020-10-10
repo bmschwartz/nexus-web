@@ -96,13 +96,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Table
-            rowKey="id"
-            onRow={onRow}
-            columns={columns}
-            dataSource={mergedTableData}
-            // onChange={handleTableChange}
-          />
+          <Table rowKey="id" onRow={onRow} columns={columns} dataSource={mergedTableData} />
         </div>
       </div>
     </div>

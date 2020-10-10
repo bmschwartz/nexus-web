@@ -101,7 +101,6 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
               onChange: onChangePage,
               showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
             }}
-            // onChange={handleTableChange}
           />
         </div>
       </Spin>

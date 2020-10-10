@@ -107,7 +107,6 @@ export const MemberPositionsTable: FC<MemberPositionsTableProps> = ({
                 onChange: onChangePage,
                 showTotal: (total: any, range: any) => `${range[0]}-${range[1]} of ${total} items`,
               }}
-              // onChange={handleTableChange}
             />
           </Spin>
         </div>
