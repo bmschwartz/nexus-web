@@ -16,7 +16,7 @@ export function timeDifference(current: number, previous: number) {
 
   if (elapsed < msPerMinute) {
     timeLength = Math.round(elapsed / 1000)
-    timeScale = 'day'
+    timeScale = 'second'
   } else if (elapsed < msPerHour) {
     timeLength = Math.round(elapsed / msPerMinute)
     timeScale = 'minute'
