@@ -125,6 +125,11 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       key: 'orderCount',
     },
     {
+      title: 'Created',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+    },
+    {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',

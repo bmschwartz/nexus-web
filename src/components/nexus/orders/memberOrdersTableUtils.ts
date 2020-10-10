@@ -9,6 +9,10 @@ import {
   OrderType,
 } from 'types/order'
 
+/* eslint-disable */
+import { displayTimeBeforeNow } from '../dateUtil'
+/* eslint-enable */
+
 export interface OrdersTableItem {
   id: string
   exchange: Exchange
@@ -41,7 +45,7 @@ export const createOrderTableData = (
       side: convertToLocalOrderSide(side),
       status: convertToLocalOrderStatus(status),
       orderType: convertToLocalOrderType(orderType),
-      date: createdAt,
+      date: displayTimeBeforeNow(createdAt),
     }
   })
 

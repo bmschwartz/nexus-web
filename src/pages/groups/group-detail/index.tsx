@@ -56,12 +56,17 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     ...order,
   })
 
-  const transformExchangeAccount = (exchangeAccount: any): ExchangeAccount => ({
-    id: exchangeAccount.id,
-    active: exchangeAccount.active,
-    exchange: exchangeAccount.exchange,
-    orders: exchangeAccount.orders.map(transformOrderData),
-  })
+  const transformExchangeAccount = (exchangeAccount: any): ExchangeAccount => {
+    const { id, active, createdAt, exchange, orders } = exchangeAccount
+
+    return {
+      id,
+      active,
+      createdAt,
+      exchange,
+      orders: orders.map(transformOrderData),
+    }
+  }
 
   let transformedGroup
   let transformedMembership

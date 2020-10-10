@@ -565,7 +565,7 @@ export type MutationSignupUserArgs = {
 
 export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } & Pick<
   ExchangeAccount,
-  'id' | 'active' | 'exchange'
+  'id' | 'active' | 'exchange' | 'createdAt'
 > & {
     orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment>
   }
@@ -916,6 +916,7 @@ export const ExchangeAccountDetailsFragmentDoc = gql`
     id
     active
     exchange
+    createdAt
     orders {
       ...OrderDetails
     }

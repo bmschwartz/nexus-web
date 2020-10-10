@@ -12,6 +12,7 @@ export interface ExchangeAccount {
   id: string
   active: boolean
   exchange: Exchange
+  createdAt: string
   orders: Order[]
 }
 
