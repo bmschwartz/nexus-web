@@ -12,7 +12,7 @@ interface GroupPositionExchangeTableProps {
 
 interface PositionExchangeTableItem {
   exchange: Exchange
-  openPositions: number
+  members: number
 }
 const exchangeTableColumns = [
   {
@@ -22,9 +22,9 @@ const exchangeTableColumns = [
     render: (text: string) => <Button type="link">{text}</Button>,
   },
   {
-    title: 'Open Positions',
-    dataIndex: 'openPositions',
-    key: 'openPositions',
+    title: 'Members',
+    dataIndex: 'members',
+    key: 'members',
   },
 ]
 
@@ -34,11 +34,11 @@ export const GroupPositionExchangeTable: FC<GroupPositionExchangeTableProps> = (
   const exchangeTableData = [
     {
       exchange: Exchange.BINANCE,
-      openPositions: 0,
+      members: 0,
     },
     {
       exchange: Exchange.BITMEX,
-      openPositions: 0,
+      members: 0,
     },
   ]
 
@@ -60,7 +60,7 @@ export const GroupPositionExchangeTable: FC<GroupPositionExchangeTableProps> = (
       <div className="card-body">
         <div className="text-nowrap">
           <Table
-            rowKey="id"
+            rowKey="exchange"
             onRow={onRow}
             columns={exchangeTableColumns}
             dataSource={exchangeTableData}
