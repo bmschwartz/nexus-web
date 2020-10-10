@@ -640,6 +640,47 @@ export type MutationSignupUserArgs = {
   input: SignupUserInput
 }
 
+export type BinanceCurrencyDetailsFragment = { __typename?: 'BinanceCurrency' } & Pick<
+  BinanceCurrency,
+  | 'id'
+  | 'symbol'
+  | 'status'
+  | 'lastPrice'
+  | 'openPrice'
+  | 'highPrice'
+  | 'lowPrice'
+  | 'minPrice'
+  | 'maxPrice'
+  | 'tickSize'
+  | 'priceChange'
+  | 'priceChangePercent'
+  | 'baseAsset'
+  | 'quoteAsset'
+  | 'baseAssetPrecision'
+  | 'quotePrecision'
+  | 'quoteAssetPrecision'
+  | 'baseCommissionPrecision'
+  | 'quoteCommissionPrecision'
+  | 'allowsLimit'
+  | 'allowsMarket'
+  | 'allowsStopLoss'
+  | 'allowsStopLossLimit'
+  | 'allowsTakeProfit'
+  | 'allowsTakeProfitLimit'
+>
+
+export type BitmexCurrencyDetailsFragment = { __typename?: 'BitmexCurrency' } & Pick<
+  BitmexCurrency,
+  | 'id'
+  | 'symbol'
+  | 'underlying'
+  | 'active'
+  | 'fractionalDigits'
+  | 'lastPrice'
+  | 'markPrice'
+  | 'tickSize'
+>
+
 export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } & Pick<
   ExchangeAccount,
   'id' | 'active' | 'exchange' | 'createdAt'
@@ -790,49 +831,8 @@ export type GetAllGroupsQuery = { __typename?: 'Query' } & {
 export type GetCurrenciesQueryVariables = Exact<{ [key: string]: never }>
 
 export type GetCurrenciesQuery = { __typename?: 'Query' } & {
-  bitmexCurrencies: Array<
-    { __typename?: 'BitmexCurrency' } & Pick<
-      BitmexCurrency,
-      | 'id'
-      | 'symbol'
-      | 'underlying'
-      | 'active'
-      | 'fractionalDigits'
-      | 'lastPrice'
-      | 'markPrice'
-      | 'tickSize'
-    >
-  >
-  binanceCurrencies: Array<
-    { __typename?: 'BinanceCurrency' } & Pick<
-      BinanceCurrency,
-      | 'id'
-      | 'symbol'
-      | 'status'
-      | 'lastPrice'
-      | 'openPrice'
-      | 'highPrice'
-      | 'lowPrice'
-      | 'minPrice'
-      | 'maxPrice'
-      | 'tickSize'
-      | 'priceChange'
-      | 'priceChangePercent'
-      | 'baseAsset'
-      | 'quoteAsset'
-      | 'baseAssetPrecision'
-      | 'quotePrecision'
-      | 'quoteAssetPrecision'
-      | 'baseCommissionPrecision'
-      | 'quoteCommissionPrecision'
-      | 'allowsLimit'
-      | 'allowsMarket'
-      | 'allowsStopLoss'
-      | 'allowsStopLossLimit'
-      | 'allowsTakeProfit'
-      | 'allowsTakeProfitLimit'
-    >
-  >
+  bitmexCurrencies: Array<{ __typename?: 'BitmexCurrency' } & BitmexCurrencyDetailsFragment>
+  binanceCurrencies: Array<{ __typename?: 'BinanceCurrency' } & BinanceCurrencyDetailsFragment>
 }
 
 export type GetExchangeAccountQueryVariables = Exact<{
@@ -1030,6 +1030,47 @@ export type MyMembershipsQuery = { __typename?: 'Query' } & {
   >
 }
 
+export const BinanceCurrencyDetailsFragmentDoc = gql`
+  fragment BinanceCurrencyDetails on BinanceCurrency {
+    id
+    symbol
+    status
+    lastPrice
+    openPrice
+    highPrice
+    lowPrice
+    minPrice
+    maxPrice
+    tickSize
+    priceChange
+    priceChangePercent
+    baseAsset
+    quoteAsset
+    baseAssetPrecision
+    quotePrecision
+    quoteAssetPrecision
+    baseCommissionPrecision
+    quoteCommissionPrecision
+    allowsLimit
+    allowsMarket
+    allowsStopLoss
+    allowsStopLossLimit
+    allowsTakeProfit
+    allowsTakeProfitLimit
+  }
+`
+export const BitmexCurrencyDetailsFragmentDoc = gql`
+  fragment BitmexCurrencyDetails on BitmexCurrency {
+    id
+    symbol
+    underlying
+    active
+    fractionalDigits
+    lastPrice
+    markPrice
+    tickSize
+  }
+`
 export const GroupDetailsFragmentDoc = gql`
   fragment GroupDetails on Group {
     id
@@ -1582,43 +1623,14 @@ export type GetAllGroupsQueryResult = Apollo.QueryResult<
 export const GetCurrenciesDocument = gql`
   query GetCurrencies {
     bitmexCurrencies {
-      id
-      symbol
-      underlying
-      active
-      fractionalDigits
-      lastPrice
-      markPrice
-      tickSize
+      ...BitmexCurrencyDetails
     }
     binanceCurrencies {
-      id
-      symbol
-      status
-      lastPrice
-      openPrice
-      highPrice
-      lowPrice
-      minPrice
-      maxPrice
-      tickSize
-      priceChange
-      priceChangePercent
-      baseAsset
-      quoteAsset
-      baseAssetPrecision
-      quotePrecision
-      quoteAssetPrecision
-      baseCommissionPrecision
-      quoteCommissionPrecision
-      allowsLimit
-      allowsMarket
-      allowsStopLoss
-      allowsStopLossLimit
-      allowsTakeProfit
-      allowsTakeProfitLimit
+      ...BinanceCurrencyDetails
     }
   }
+  ${BitmexCurrencyDetailsFragmentDoc}
+  ${BinanceCurrencyDetailsFragmentDoc}
 `
 
 /**
