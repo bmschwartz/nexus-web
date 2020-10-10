@@ -69,7 +69,7 @@ export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack, ord
           <PageHeader className="site-page-header" title="Order Detail" onBack={onClickBack} />
         </div>
       </div>
-      <Spin spinning={loading || cancelingOrder} tip="Fetching Order Set...">
+      <Spin spinning={loading || cancelingOrder} tip="Fetching Order...">
         <div className="card-body">
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Exchange</strong>
