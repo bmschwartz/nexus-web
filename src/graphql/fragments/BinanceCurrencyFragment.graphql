@@ -1,0 +1,27 @@
+fragment BinanceCurrencyDetails on BinanceCurrency {
+  id
+  symbol
+  status
+  lastPrice
+  openPrice
+  highPrice
+  lowPrice
+  minPrice
+  maxPrice
+  tickSize
+  priceChange
+  priceChangePercent
+  baseAsset
+  quoteAsset
+  baseAssetPrecision
+  quotePrecision
+  quoteAssetPrecision
+  baseCommissionPrecision
+  quoteCommissionPrecision
+  allowsLimit
+  allowsMarket
+  allowsStopLoss
+  allowsStopLossLimit
+  allowsTakeProfit
+  allowsTakeProfitLimit
+}

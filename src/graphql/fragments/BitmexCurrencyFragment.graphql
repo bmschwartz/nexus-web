@@ -1,0 +1,10 @@
+fragment BitmexCurrencyDetails on BitmexCurrency {
+  id
+  symbol
+  underlying
+  active
+  fractionalDigits
+  lastPrice
+  markPrice
+  tickSize
+}

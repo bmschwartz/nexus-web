@@ -1,40 +1,9 @@
 query GetCurrencies {
   bitmexCurrencies {
-    id
-    symbol
-    underlying
-    active
-    fractionalDigits
-    lastPrice
-    markPrice
-    tickSize
+    ...BitmexCurrencyDetails
   }
 
   binanceCurrencies {
-    id
-    symbol
-    status
-    lastPrice
-    openPrice
-    highPrice
-    lowPrice
-    minPrice
-    maxPrice
-    tickSize
-    priceChange
-    priceChangePercent
-    baseAsset
-    quoteAsset
-    baseAssetPrecision
-    quotePrecision
-    quoteAssetPrecision
-    baseCommissionPrecision
-    quoteCommissionPrecision
-    allowsLimit
-    allowsMarket
-    allowsStopLoss
-    allowsStopLossLimit
-    allowsTakeProfit
-    allowsTakeProfitLimit
+    ...BinanceCurrencyDetails
   }
 }
