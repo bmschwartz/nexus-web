@@ -23,7 +23,8 @@ export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, group, setTa
   const [selectedPositionId, setSelectedPositionId] = useState<string>()
   const [selectedExchange, setSelectedExchange] = useState<Exchange>()
 
-  const onClickCreateOrderSet = () => {
+  const onClickCreateOrderSet = (exchange: Exchange, symbol: string | undefined) => {
+    console.log(exchange, symbol)
     setTabState(GroupPositionsTabState.CREATE)
   }
   const onClickBack = () => {
