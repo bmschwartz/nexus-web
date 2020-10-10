@@ -1,0 +1,5 @@
+query GetPosition($input: PositionInput!) {
+  position(input: $input) {
+    ...PositionDetails
+  }
+}

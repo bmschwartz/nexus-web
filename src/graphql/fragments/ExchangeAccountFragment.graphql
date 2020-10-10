@@ -6,4 +6,7 @@ fragment ExchangeAccountDetails on ExchangeAccount {
   orders {
     ...OrderDetails
   }
+  positions {
+    ...PositionDetails
+  }
 }

@@ -1,0 +1,10 @@
+fragment PositionDetails on Position {
+  id
+  side
+  symbol
+  exchange
+  quantity
+  avgPrice
+  createdAt
+  updatedAt
+}
