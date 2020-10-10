@@ -12,16 +12,11 @@ import { Group } from 'types/group'
 import { Membership } from 'types/membership'
 
 /* eslint-disable */
-import {
-  extractCurrencyData,
-  getCreateOrderSetSchema,
-  getMaxPrice,
-  getMinPrice,
-  getPriceTickSize,
-} from './createOrderFormUtils'
+import { getCreateOrderSetSchema } from './createOrderFormUtils'
 import * as apollo from 'services/apollo'
 import { CreateOrderSetResponse } from 'services/apollo/order'
 import { useGetCurrenciesQuery } from '../../../graphql/index'
+import { extractCurrencyData, getMinPrice, getMaxPrice, getPriceTickSize } from 'types/currency'
 /* eslint-enable */
 
 interface CreateOrderSetFormProps {
