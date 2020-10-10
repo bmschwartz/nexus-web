@@ -317,7 +317,7 @@ export type OrderSet = {
   price?: Maybe<Scalars['Float']>
   side: OrderSide
   orderType: OrderType
-  orders: Array<Order>
+  orders: OrderSetOrders
   percent: Scalars['Float']
   stopPrice?: Maybe<Scalars['Float']>
   description?: Maybe<Scalars['String']>
@@ -325,8 +325,19 @@ export type OrderSet = {
   updatedAt: Scalars['DateTime']
 }
 
+export type OrderSetOrdersArgs = {
+  limit?: Maybe<Scalars['Int']>
+  offset?: Maybe<Scalars['Int']>
+}
+
 export type OrderSetInput = {
   id: Scalars['ID']
+}
+
+export type OrderSetOrders = {
+  __typename?: 'OrderSetOrders'
+  totalCount: Scalars['Int']
+  orders: Array<Order>
 }
 
 export enum OrderSide {
@@ -783,6 +794,8 @@ export type GetGroupQuery = { __typename?: 'Query' } & {
 export type GetGroupOrderSetDetailsQueryVariables = Exact<{
   groupInput: GroupInput
   orderSetInput: OrderSetInput
+  limit?: Maybe<Scalars['Int']>
+  offset?: Maybe<Scalars['Int']>
 }>
 
 export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
@@ -790,18 +803,23 @@ export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
     { __typename?: 'Group' } & Pick<Group, 'id'> & {
         orderSet?: Maybe<
           { __typename?: 'OrderSet' } & {
-            orders: Array<
-              { __typename?: 'Order' } & {
-                exchangeAccount: { __typename?: 'ExchangeAccount' } & Pick<
-                  ExchangeAccount,
-                  'id'
-                > & {
-                    membership: { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
-                        member: { __typename?: 'User' } & Pick<User, 'username'>
+            orders: { __typename?: 'OrderSetOrders' } & Pick<OrderSetOrders, 'totalCount'> & {
+                orders: Array<
+                  { __typename?: 'Order' } & {
+                    exchangeAccount: { __typename?: 'ExchangeAccount' } & Pick<
+                      ExchangeAccount,
+                      'id'
+                    > & {
+                        membership: { __typename?: 'GroupMembership' } & Pick<
+                          GroupMembership,
+                          'id'
+                        > & {
+                            member: { __typename?: 'User' } & Pick<User, 'username'>
+                          }
                       }
-                  }
-              } & OrderDetailsFragment
-            >
+                  } & OrderDetailsFragment
+                >
+              }
           } & OrderSetDetailsFragment
         >
       }
@@ -1649,19 +1667,27 @@ export type GetGroupQueryHookResult = ReturnType<typeof useGetGroupQuery>
 export type GetGroupLazyQueryHookResult = ReturnType<typeof useGetGroupLazyQuery>
 export type GetGroupQueryResult = Apollo.QueryResult<GetGroupQuery, GetGroupQueryVariables>
 export const GetGroupOrderSetDetailsDocument = gql`
-  query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSetInput!) {
+  query GetGroupOrderSetDetails(
+    $groupInput: GroupInput!
+    $orderSetInput: OrderSetInput!
+    $limit: Int
+    $offset: Int
+  ) {
     group(input: $groupInput) {
       id
       orderSet(input: $orderSetInput) {
         ...OrderSetDetails
-        orders {
-          ...OrderDetails
-          exchangeAccount {
-            id
-            membership {
+        orders(limit: $limit, offset: $offset) {
+          totalCount
+          orders {
+            ...OrderDetails
+            exchangeAccount {
               id
-              member {
-                username
+              membership {
+                id
+                member {
+                  username
+                }
               }
             }
           }
@@ -1687,6 +1713,8 @@ export const GetGroupOrderSetDetailsDocument = gql`
  *   variables: {
  *      groupInput: // value for 'groupInput'
  *      orderSetInput: // value for 'orderSetInput'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */

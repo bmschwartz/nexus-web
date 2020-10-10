@@ -63,7 +63,7 @@ export const OrderSetTable: FC<OrderSetTableProps> = ({
     fetchMore({
       variables: { offset },
       updateQuery: (prev, result) => {
-        if (!result) {
+        if (!result.fetchMoreResult) {
           return prev
         }
         return { ...result.fetchMoreResult }

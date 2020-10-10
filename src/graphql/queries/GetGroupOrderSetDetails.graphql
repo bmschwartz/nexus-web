@@ -1,16 +1,19 @@
-query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSetInput!) {
+query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSetInput!, $limit: Int, $offset: Int) {
   group(input: $groupInput) {
     id
     orderSet(input: $orderSetInput) {
       ...OrderSetDetails
-      orders {
-        ...OrderDetails
-        exchangeAccount {
-          id
-          membership {
+      orders(limit: $limit, offset: $offset)  {
+        totalCount
+        orders {
+          ...OrderDetails
+          exchangeAccount {
             id
-            member {
-              username
+            membership {
+              id
+              member {
+                username
+              }
             }
           }
         }

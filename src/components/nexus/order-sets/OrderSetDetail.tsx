@@ -13,16 +13,38 @@ interface OrderSetDetailProps {
   onClickBack: () => void
 }
 
+const PAGE_SIZE = 100
+
 export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, orderSetId }) => {
-  const { data, loading } = useGetGroupOrderSetDetailsQuery({
+  const {
+    data: orderSetDetailData,
+    loading: orderSetDetailLoading,
+    fetchMore,
+  } = useGetGroupOrderSetDetailsQuery({
     fetchPolicy: 'cache-and-network',
     variables: {
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
+      limit: PAGE_SIZE,
     },
+    notifyOnNetworkStatusChange: true,
   })
 
-  const orderSet = data?.group?.orderSet
+  const onChangePage = (page: number, pageSize?: number) => {
+    const offset = pageSize ? pageSize * (page - 1) : 0
+    fetchMore({
+      variables: { offset },
+      updateQuery: (prev, result) => {
+        if (!result.fetchMoreResult) {
+          return prev
+        }
+        return { ...result.fetchMoreResult }
+      },
+    })
+  }
+
+  const totalCount = orderSetDetailData?.group?.orderSet?.orders.totalCount
+  const orderSet = orderSetDetailData?.group?.orderSet
 
   return (
     <>
@@ -31,7 +53,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
           <PageHeader className="site-page-header" title="Order Set Detail" onBack={onClickBack} />
         </div>
       </div>
-      <Spin spinning={loading} tip="Fetching Order Set...">
+      <Spin spinning={orderSetDetailLoading} tip="Fetching Order Set...">
         <div className="card-body">
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Exchange</strong>
@@ -71,7 +93,14 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             className="mr-5 ml-5"
             rowKey="id"
             columns={OrdersTableColumns}
-            dataSource={transformOrdersData(orderSet?.orders || [])}
+            dataSource={transformOrdersData(orderSet?.orders.orders || [])}
+            pagination={{
+              defaultCurrent: 1,
+              defaultPageSize: PAGE_SIZE,
+              total: totalCount,
+              onChange: onChangePage,
+              showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+            }}
             // onChange={handleTableChange}
           />
         </div>

@@ -62,11 +62,11 @@ export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId, on
     const offset = pageSize ? pageSize * (page - 1) : 0
     fetchMore({
       variables: { offset },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
+      updateQuery: (prev, result) => {
+        if (!result.fetchMoreResult) {
           return prev
         }
-        return { ...fetchMoreResult }
+        return { ...result.fetchMoreResult }
       },
     })
   }
