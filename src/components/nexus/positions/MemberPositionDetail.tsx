@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Button, PageHeader, Spin } from 'antd'
+import { PageHeader, Spin } from 'antd'
 
 /* eslint-disable */
 import { displayTimeBeforeNow } from '../dateUtil'

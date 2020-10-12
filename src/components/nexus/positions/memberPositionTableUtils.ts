@@ -1,11 +1,6 @@
 import { GetMemberPositionsQuery } from '../../../graphql'
 import { convertToLocalExchange, Exchange } from 'types/exchange'
-import {
-  convertToLocalPositionSide,
-  convertToLocalPositionStatus,
-  convertToLocalPositionType,
-  PositionSide,
-} from 'types/position'
+import { convertToLocalPositionSide, PositionSide } from 'types/position'
 
 /* eslint-disable */
 import { displayTimeBeforeNow } from '../dateUtil'
@@ -15,10 +10,10 @@ export interface PositionsTableItem {
   id: string
   exchange: Exchange
   symbol: string
-  quantity: number
   side: PositionSide
-  avgPrice: string
   updated: string
+  quantity: string
+  avgPrice: string
 }
 
 export const createPositionTableData = (
@@ -37,7 +32,7 @@ export const createPositionTableData = (
     return {
       id,
       symbol,
-      quantity,
+      quantity: String(quantity) ?? '',
       avgPrice: String(avgPrice) ?? '',
       exchange: convertToLocalExchange(exchange),
       side: convertToLocalPositionSide(side),
