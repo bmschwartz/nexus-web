@@ -15,7 +15,7 @@ import {
 
 export interface CreateExchangeAccountResponse {
   error?: string
-  exchangeAccountId?: string
+  operationId?: string
 }
 
 export interface CreateExchangeAccountInput {
@@ -120,7 +120,9 @@ export const createExchangeAccount = async (
       return { error: 'Unable to create the exchange account' }
     }
 
-    return { exchangeAccountId: data.createExchangeAccount.id }
+    const { createExchangeAccount: operationId } = data
+
+    return { operationId }
   } catch (error) {
     return { error: error.message }
   }

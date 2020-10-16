@@ -49,7 +49,6 @@ const formItemLayout = {
 export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
   membership,
   onClickBack,
-  onCreated,
 }) => {
   const [submittingExchangeAccount, setSubmittingExchangeAccount] = useState<boolean>(false)
   const CreateExchangeAccountSchema = getCreateExchangeAccountSchema()
@@ -75,7 +74,7 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
         onSubmit={async values => {
           setSubmittingExchangeAccount(true)
           const {
-            exchangeAccountId,
+            operationId,
             error,
           }: CreateExchangeAccountResponse = await apollo.createExchangeAccount({
             membershipId: membership.id,
@@ -83,12 +82,13 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
           })
           setSubmittingExchangeAccount(false)
 
-          if (exchangeAccountId) {
-            notification.success({
-              message: 'Created Exchange Account',
-              description: `On ${values.exchange}`,
-            })
-            onCreated()
+          if (operationId) {
+            console.log('start polling...')
+            // notification.success({
+            //   message: 'Created Exchange Account',
+            //   description: `On ${values.exchange}`,
+            // })
+            // onCreated()
           } else {
             notification.error({
               message: 'Create Exchange Account Error',

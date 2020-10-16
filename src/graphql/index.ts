@@ -53,6 +53,7 @@ export type Group = {
   updatedAt: Scalars['DateTime']
   orderSets: GroupOrderSets
   orderSet?: Maybe<OrderSet>
+  symbolsWithPosition?: Maybe<SymbolsWithPositionResult>
   positions: GroupPositions
   position?: Maybe<Position>
 }
@@ -67,6 +68,7 @@ export type GroupOrderSetArgs = {
 }
 
 export type GroupPositionsArgs = {
+  symbol?: Maybe<Scalars['String']>
   limit?: Maybe<Scalars['Int']>
   offset?: Maybe<Scalars['Int']>
 }
@@ -246,6 +248,11 @@ export type CreateExchangeAccountInput = {
   apiSecret: Scalars['String']
 }
 
+export type CreateExchangeAccountResult = {
+  __typename?: 'CreateExchangeAccountResult'
+  operationId: Scalars['ID']
+}
+
 export type CreateOrderSetInput = {
   groupId: Scalars['ID']
   membershipIds: Array<Scalars['ID']>
@@ -413,6 +420,12 @@ export enum PositionSide {
   Short = 'SHORT',
 }
 
+export type SymbolsWithPositionResult = {
+  __typename?: 'SymbolsWithPositionResult'
+  binance: Array<BinanceCurrency>
+  bitmex: Array<BitmexCurrency>
+}
+
 export type ToggleExchangeAccountActiveInput = {
   id: Scalars['ID']
 }
@@ -552,7 +565,7 @@ export type Mutation = {
   updateOrderSet?: Maybe<OrderSet>
   cancelOrderSet?: Maybe<OrderSet>
   cancelOrder: CancelOrderResponse
-  createExchangeAccount?: Maybe<ExchangeAccount>
+  createExchangeAccount?: Maybe<CreateExchangeAccountResult>
   deleteExchangeAccount: DeleteExchangeAccountResult
   updateExchangeAccount: UpdateExchangeAccountResult
   toggleExchangeAccountActive: ToggleExchangeAccountActiveResult
@@ -754,7 +767,12 @@ export type CreateExchangeAccountMutationVariables = Exact<{
 }>
 
 export type CreateExchangeAccountMutation = { __typename?: 'Mutation' } & {
-  createExchangeAccount?: Maybe<{ __typename?: 'ExchangeAccount' } & Pick<ExchangeAccount, 'id'>>
+  createExchangeAccount?: Maybe<
+    { __typename?: 'CreateExchangeAccountResult' } & Pick<
+      CreateExchangeAccountResult,
+      'operationId'
+    >
+  >
 }
 
 export type CreateGroupMutationVariables = Exact<{
@@ -1204,7 +1222,7 @@ export type CancelOrderMutationOptions = Apollo.BaseMutationOptions<
 export const CreateExchangeAccountDocument = gql`
   mutation CreateExchangeAccount($input: CreateExchangeAccountInput!) {
     createExchangeAccount(input: $input) {
-      id
+      operationId
     }
   }
 `
