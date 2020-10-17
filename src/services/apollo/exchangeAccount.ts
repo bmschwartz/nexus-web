@@ -117,12 +117,14 @@ export const createExchangeAccount = async (
     })
 
     if (!data) {
-      return { error: 'Unable to create the exchange account' }
+      return { error: 'Unable to create exchange account' }
     }
 
-    const { createExchangeAccount: operationId } = data
+    const {
+      createExchangeAccount: { operationId, error },
+    } = data
 
-    return { operationId }
+    return { operationId, error }
   } catch (error) {
     return { error: error.message }
   }

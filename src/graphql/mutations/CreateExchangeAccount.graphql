@@ -1,5 +1,6 @@
 mutation CreateExchangeAccount($input: CreateExchangeAccountInput!) {
   createExchangeAccount(input: $input) {
     operationId
+    error
   }
 }

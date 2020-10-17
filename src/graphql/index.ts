@@ -172,6 +172,24 @@ export type UpdateMembershipStatusInput = {
   status: MembershipStatus
 }
 
+export type AsyncOperation = {
+  __typename?: 'AsyncOperation'
+  id: Scalars['ID']
+  opType: OperationType
+  success: Scalars['Boolean']
+  complete: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
+export type AsyncOperationStatus = {
+  __typename?: 'AsyncOperationStatus'
+  operation: AsyncOperation
+}
+
+export type AsyncOperationStatusInput = {
+  id: Scalars['ID']
+}
+
 export type BinanceCurrency = {
   __typename?: 'BinanceCurrency'
   id: Scalars['ID']
@@ -250,7 +268,8 @@ export type CreateExchangeAccountInput = {
 
 export type CreateExchangeAccountResult = {
   __typename?: 'CreateExchangeAccountResult'
-  operationId: Scalars['ID']
+  operationId?: Maybe<Scalars['ID']>
+  error?: Maybe<Scalars['String']>
 }
 
 export type CreateOrderSetInput = {
@@ -325,6 +344,15 @@ export type MemberPositions = {
   __typename?: 'MemberPositions'
   positions: Array<Position>
   totalCount: Scalars['Int']
+}
+
+export enum OperationType {
+  CancelBinanceOrder = 'CANCEL_BINANCE_ORDER',
+  CreateBinanceAccount = 'CREATE_BINANCE_ACCOUNT',
+  CreateBinanceOrder = 'CREATE_BINANCE_ORDER',
+  DeleteBinanceAccount = 'DELETE_BINANCE_ACCOUNT',
+  UpdateBinanceAccount = 'UPDATE_BINANCE_ACCOUNT',
+  UpdateBinanceOrder = 'UPDATE_BINANCE_ORDER',
 }
 
 export type Order = {
@@ -496,6 +524,7 @@ export type Query = {
   binanceCurrencies: Array<BinanceCurrency>
   bitmexCurrencies: Array<BitmexCurrency>
   position?: Maybe<Position>
+  asyncOperationStatus?: Maybe<AsyncOperationStatus>
   exchangeAccount?: Maybe<ExchangeAccount>
   exchangeAccounts: Array<ExchangeAccount>
   me?: Maybe<User>
@@ -539,6 +568,10 @@ export type QueryOrderSetArgs = {
 
 export type QueryPositionArgs = {
   input: PositionInput
+}
+
+export type QueryAsyncOperationStatusArgs = {
+  input: AsyncOperationStatusInput
 }
 
 export type QueryExchangeAccountArgs = {
@@ -770,7 +803,7 @@ export type CreateExchangeAccountMutation = { __typename?: 'Mutation' } & {
   createExchangeAccount?: Maybe<
     { __typename?: 'CreateExchangeAccountResult' } & Pick<
       CreateExchangeAccountResult,
-      'operationId'
+      'operationId' | 'error'
     >
   >
 }
@@ -1223,6 +1256,7 @@ export const CreateExchangeAccountDocument = gql`
   mutation CreateExchangeAccount($input: CreateExchangeAccountInput!) {
     createExchangeAccount(input: $input) {
       operationId
+      error
     }
   }
 `
