@@ -1,0 +1,7 @@
+fragment AsyncOperationDetails on AsyncOperation {
+  id
+  success
+  complete
+  error
+  opType
+}

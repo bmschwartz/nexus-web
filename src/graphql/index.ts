@@ -686,6 +686,11 @@ export type MutationSignupUserArgs = {
   input: SignupUserInput
 }
 
+export type AsyncOperationDetailsFragment = { __typename?: 'AsyncOperation' } & Pick<
+  AsyncOperation,
+  'id' | 'success' | 'complete' | 'error' | 'opType'
+>
+
 export type BinanceCurrencyDetailsFragment = { __typename?: 'BinanceCurrency' } & Pick<
   BinanceCurrency,
   | 'id'
@@ -877,6 +882,18 @@ export type GetAllGroupsQueryVariables = Exact<{ [key: string]: never }>
 
 export type GetAllGroupsQuery = { __typename?: 'Query' } & {
   allGroups: Array<{ __typename?: 'Group' } & GroupDetailsFragment>
+}
+
+export type GetAsyncOperationStatusQueryVariables = Exact<{
+  input: AsyncOperationStatusInput
+}>
+
+export type GetAsyncOperationStatusQuery = { __typename?: 'Query' } & {
+  asyncOperationStatus?: Maybe<
+    { __typename?: 'AsyncOperationStatus' } & {
+      operation: { __typename?: 'AsyncOperation' } & AsyncOperationDetailsFragment
+    }
+  >
 }
 
 export type GetCurrenciesQueryVariables = Exact<{ [key: string]: never }>
@@ -1081,6 +1098,15 @@ export type MyMembershipsQuery = { __typename?: 'Query' } & {
   >
 }
 
+export const AsyncOperationDetailsFragmentDoc = gql`
+  fragment AsyncOperationDetails on AsyncOperation {
+    id
+    success
+    complete
+    error
+    opType
+  }
+`
 export const BinanceCurrencyDetailsFragmentDoc = gql`
   fragment BinanceCurrencyDetails on BinanceCurrency {
     id
@@ -1671,6 +1697,65 @@ export type GetAllGroupsLazyQueryHookResult = ReturnType<typeof useGetAllGroupsL
 export type GetAllGroupsQueryResult = Apollo.QueryResult<
   GetAllGroupsQuery,
   GetAllGroupsQueryVariables
+>
+export const GetAsyncOperationStatusDocument = gql`
+  query GetAsyncOperationStatus($input: AsyncOperationStatusInput!) {
+    asyncOperationStatus(input: $input) {
+      operation {
+        ...AsyncOperationDetails
+      }
+    }
+  }
+  ${AsyncOperationDetailsFragmentDoc}
+`
+
+/**
+ * __useGetAsyncOperationStatusQuery__
+ *
+ * To run a query within a React component, call `useGetAsyncOperationStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAsyncOperationStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAsyncOperationStatusQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetAsyncOperationStatusQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAsyncOperationStatusQuery,
+    GetAsyncOperationStatusQueryVariables
+  >,
+) {
+  return Apollo.useQuery<GetAsyncOperationStatusQuery, GetAsyncOperationStatusQueryVariables>(
+    GetAsyncOperationStatusDocument,
+    baseOptions,
+  )
+}
+export function useGetAsyncOperationStatusLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAsyncOperationStatusQuery,
+    GetAsyncOperationStatusQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<GetAsyncOperationStatusQuery, GetAsyncOperationStatusQueryVariables>(
+    GetAsyncOperationStatusDocument,
+    baseOptions,
+  )
+}
+export type GetAsyncOperationStatusQueryHookResult = ReturnType<
+  typeof useGetAsyncOperationStatusQuery
+>
+export type GetAsyncOperationStatusLazyQueryHookResult = ReturnType<
+  typeof useGetAsyncOperationStatusLazyQuery
+>
+export type GetAsyncOperationStatusQueryResult = Apollo.QueryResult<
+  GetAsyncOperationStatusQuery,
+  GetAsyncOperationStatusQueryVariables
 >
 export const GetCurrenciesDocument = gql`
   query GetCurrencies {

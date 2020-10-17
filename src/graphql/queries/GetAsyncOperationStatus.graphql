@@ -1,0 +1,7 @@
+query GetAsyncOperationStatus($input: AsyncOperationStatusInput!) {
+  asyncOperationStatus(input: $input) {
+    operation {
+      ...AsyncOperationDetails
+    }
+  }
+}
