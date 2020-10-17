@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import * as Yup from 'yup'
 
 import { Exchange } from 'types/exchange'
@@ -10,6 +10,7 @@ import { Form, Input, Select, SubmitButton } from 'formik-antd'
 /* eslint-disable */
 import * as apollo from 'services/apollo'
 import { CreateExchangeAccountResponse } from 'services/apollo/exchangeAccount'
+import { useGetAsyncOperationStatusQuery } from '../../../graphql'
 /* eslint-enable */
 
 interface CreateExchangeAccountFormProps {
@@ -49,9 +50,50 @@ const formItemLayout = {
 export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
   membership,
   onClickBack,
+  onCreated,
 }) => {
+  const [asyncOperationId, setAsyncOperationId] = useState<string>('')
+  const { startPolling, stopPolling, data: asyncOperationData } = useGetAsyncOperationStatusQuery({
+    variables: { input: { id: asyncOperationId } },
+    fetchPolicy: 'network-only',
+  })
+  // const [fetchAsyncOperationStatus, { data: asyncOperationData }] = useGetAsyncOperationStatusLazyQuery({ variables: { input: { id: asyncOperationId } } })
   const [submittingExchangeAccount, setSubmittingExchangeAccount] = useState<boolean>(false)
   const CreateExchangeAccountSchema = getCreateExchangeAccountSchema()
+  const [showSuccessNotification, setShowSuccessNotification] = useState<boolean>(false)
+  const [showErrorNotification, setShowErrorNotification] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (asyncOperationId.length) {
+      console.log('polling!')
+      startPolling(500)
+    } else {
+      console.log('stopped polling!')
+      stopPolling()
+    }
+  }, [asyncOperationId, stopPolling, startPolling])
+
+  if (
+    asyncOperationId !== '' &&
+    asyncOperationData?.asyncOperationStatus?.operation.complete === true
+  ) {
+    setAsyncOperationId('')
+
+    setSubmittingExchangeAccount(false)
+
+    const {
+      asyncOperationStatus: { operation },
+    } = asyncOperationData
+
+    if (operation.success) {
+      console.log('success!')
+      setShowSuccessNotification(true)
+      onCreated()
+    } else {
+      console.log('erro!')
+      setShowErrorNotification(true)
+    }
+  }
 
   return (
     <div className="card">
@@ -64,6 +106,16 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
           />
         </div>
       </div>
+      {showSuccessNotification &&
+        notification.success({
+          message: 'Created Exchange Account',
+        })}
+      {showErrorNotification &&
+        notification.error({
+          message: 'Create Exchange Account Error',
+          description: asyncOperationData?.asyncOperationStatus?.operation.error || '',
+          duration: 3, // seconds
+        })}
       <Formik
         initialValues={{
           exchange: EXCHANGES[0],
@@ -80,15 +132,33 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
             membershipId: membership.id,
             ...values,
           })
-          setSubmittingExchangeAccount(false)
+
+          console.log(operationId, error)
 
           if (operationId) {
-            console.log('start polling...')
-            // notification.success({
-            //   message: 'Created Exchange Account',
-            //   description: `On ${values.exchange}`,
-            // })
-            // onCreated()
+            setAsyncOperationId(operationId)
+
+            if (asyncOperationData?.asyncOperationStatus?.operation.complete === true) {
+              setAsyncOperationId('')
+              setSubmittingExchangeAccount(false)
+
+              const {
+                asyncOperationStatus: { operation },
+              } = asyncOperationData
+
+              if (operation.success) {
+                notification.success({
+                  message: 'Created Exchange Account',
+                })
+                onCreated()
+              } else {
+                notification.error({
+                  message: 'Create Exchange Account Error',
+                  description: operation.error || '',
+                  duration: 3, // seconds
+                })
+              }
+            }
           } else {
             notification.error({
               message: 'Create Exchange Account Error',
