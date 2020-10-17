@@ -85,7 +85,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   }
 
   return (
-    <Spin spinning={submittingOrder} tip="Submitting Order...">
+    <>
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Create Order Set" onBack={onClickBack} />
@@ -269,12 +269,14 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                 </Form.Item>
 
                 <p>Overview: {getOverviewText(values)}</p>
-                <SubmitButton disabled={submittingOrder}>Submit</SubmitButton>
+                <SubmitButton disabled={submittingOrder} loading={submittingOrder}>
+                  Submit
+                </SubmitButton>
               </Form>
             </Spin>
           </div>
         )}
       </Formik>
-    </Spin>
+    </>
   )
 }

@@ -3,7 +3,7 @@ import * as Yup from 'yup'
 
 import { Exchange } from 'types/exchange'
 import { Membership } from 'types/membership'
-import { notification, PageHeader, Spin } from 'antd'
+import { notification, PageHeader } from 'antd'
 import { Formik } from 'formik'
 import { Form, Input, Select, SubmitButton } from 'formik-antd'
 
@@ -100,46 +100,44 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
       >
         {({ handleChange }) => (
           <div className="card-body">
-            <Spin spinning={submittingExchangeAccount}>
-              <Form {...formItemLayout} labelAlign="left">
-                <Form.Item name="exchange" label="Exchange">
-                  <Select
-                    name="exchange"
-                    size="large"
-                    style={{ width: 120 }}
-                    onChange={handleChange}
-                  >
-                    {EXCHANGES.map(exchange => (
-                      <Select.Option key={exchange} value={exchange}>
-                        {exchange}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+            <Form {...formItemLayout} labelAlign="left">
+              <Form.Item name="exchange" label="Exchange">
+                <Select name="exchange" size="large" style={{ width: 120 }} onChange={handleChange}>
+                  {EXCHANGES.map(exchange => (
+                    <Select.Option key={exchange} value={exchange}>
+                      {exchange}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
 
-                <Form.Item name="apiKey" label="API Key" className="mb-3">
-                  <Input
-                    name="apiKey"
-                    size="large"
-                    style={{ width: 360 }}
-                    placeholder="nQ8PsQbuns8f2deF3cXAqOqGJ1YbBjfDVHWHrc1EWpi7W0rb6gntuAaaEj2bBcd17"
-                    onChange={handleChange}
-                  />
-                </Form.Item>
+              <Form.Item name="apiKey" label="API Key" className="mb-3">
+                <Input
+                  name="apiKey"
+                  size="large"
+                  style={{ width: 360 }}
+                  placeholder="nQ8PsQbuns8f2deF3cXAqOqGJ1YbBjfDVHWHrc1EWpi7W0rb6gntuAaaEj2bBcd17"
+                  onChange={handleChange}
+                />
+              </Form.Item>
 
-                <Form.Item name="apiSecret" label="API Secret" className="mb-3">
-                  <Input
-                    name="apiSecret"
-                    size="large"
-                    style={{ width: 360 }}
-                    placeholder="1A9tObLcK8pW3H0vCSdsehqrjc33lpIrlTeTRHzdhY22YC85LW4fra5xC9m4WA0o"
-                    onChange={handleChange}
-                  />
-                </Form.Item>
+              <Form.Item name="apiSecret" label="API Secret" className="mb-3">
+                <Input
+                  name="apiSecret"
+                  size="large"
+                  style={{ width: 360 }}
+                  placeholder="1A9tObLcK8pW3H0vCSdsehqrjc33lpIrlTeTRHzdhY22YC85LW4fra5xC9m4WA0o"
+                  onChange={handleChange}
+                />
+              </Form.Item>
 
-                <SubmitButton disabled={submittingExchangeAccount}>Submit</SubmitButton>
-              </Form>
-            </Spin>
+              <SubmitButton
+                loading={submittingExchangeAccount}
+                disabled={submittingExchangeAccount}
+              >
+                Submit
+              </SubmitButton>
+            </Form>
           </div>
         )}
       </Formik>
