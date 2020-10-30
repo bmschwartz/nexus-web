@@ -64,11 +64,9 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
   const [showErrorNotification, setShowErrorNotification] = useState<boolean>(false)
 
   useEffect(() => {
-    if (asyncOperationId.length) {
-      console.log('polling!')
+    if (asyncOperationId) {
       startPolling(500)
     } else {
-      console.log('stopped polling!')
       stopPolling()
     }
   }, [asyncOperationId, stopPolling, startPolling])

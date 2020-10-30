@@ -46,7 +46,7 @@ export interface DeleteExchangeAccountInput {
 }
 
 export interface ToggleExchangeAccountResponse {
-  success: boolean
+  operationId?: string
   error?: string
 }
 
@@ -90,12 +90,16 @@ export const toggleExchangeAccountActive = async (
     })
 
     if (!data) {
-      return { error: `Unable to ${active ? 'disable' : 'enable'} the account`, success: false }
+      return { error: `Unable to ${active ? 'disable' : 'enable'} the account` }
     }
 
-    return { success: true }
+    const {
+      toggleExchangeAccountActive: { operationId, error },
+    } = data
+
+    return { operationId, error }
   } catch (error) {
-    return { error: error.message, success: false }
+    return { error: error.message }
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Table, Button, PageHeader, Spin, Modal, notification, Switch } from 'antd'
 
 import { Membership } from 'types/membership'
@@ -8,9 +8,10 @@ import {
   createExchangeAccountTableData,
   ExchangeAccountTableItem,
 } from './exchangeAccountTableUtils'
-import { useGetExchangeAccountsQuery } from '../../../graphql'
+import { useGetAsyncOperationStatusQuery, useGetExchangeAccountsQuery } from '../../../graphql'
 import * as apollo from 'services/apollo'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { ToggleExchangeAccountResponse } from 'services/apollo/exchangeAccount'
 /* eslint-enable */
 
 interface ExchangeAccountTableProps {
@@ -35,8 +36,43 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     variables: { input: { membershipId: membership.id } },
     notifyOnNetworkStatusChange: true,
   })
-  const [togglingAccountActive, setTogglingAccountActive] = useState<boolean>(false)
-  const [deletingExchangeAccount, setDeletingExchangeAccount] = useState<boolean>(false)
+  const [asyncOperationId, setAsyncOperationId] = useState<string>('')
+  const { startPolling, stopPolling, data: asyncOperationData } = useGetAsyncOperationStatusQuery({
+    variables: { input: { id: asyncOperationId } },
+    fetchPolicy: 'network-only',
+  })
+  const [showSuccessNotification, setShowSuccessNotification] = useState<boolean>(false)
+  const [showErrorNotification, setShowErrorNotification] = useState<boolean>(false)
+  const [submittingAccountOperation, setSubmittingAccountOperation] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (asyncOperationId) {
+      startPolling(500)
+    } else {
+      stopPolling()
+    }
+  }, [asyncOperationId, stopPolling, startPolling])
+
+  if (
+    asyncOperationId !== '' &&
+    asyncOperationData?.asyncOperationStatus?.operation.complete === true
+  ) {
+    setAsyncOperationId('')
+
+    setSubmittingAccountOperation(false)
+
+    const {
+      asyncOperationStatus: { operation },
+    } = asyncOperationData
+
+    if (operation.success) {
+      console.log('success!')
+      setShowSuccessNotification(true)
+    } else {
+      console.log('error!')
+      setShowErrorNotification(true)
+    }
+  }
 
   const exchangeAccountsTableData: ExchangeAccountTableItem[] = createExchangeAccountTableData(
     exchangeAccountsData?.exchangeAccounts,
@@ -52,11 +88,9 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       okText: 'Delete',
       okType: 'danger',
       async onOk() {
-        setDeletingExchangeAccount(true)
-
+        setSubmittingAccountOperation(true)
         const { error, success } = await apollo.deleteExchangeAccount({ accountId })
-
-        setDeletingExchangeAccount(false)
+        setSubmittingAccountOperation(false)
 
         if (success) {
           notification.success({
@@ -79,25 +113,28 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
   const toggleExchangeAccountActive = async (row: ExchangeAccountTableItem) => {
     const { id: accountId, exchange, active } = row
 
-    setTogglingAccountActive(true)
-    const { error, success } = await apollo.toggleExchangeAccountActive({ accountId, active })
+    setSubmittingAccountOperation(true)
+    const {
+      error,
+      operationId,
+    }: ToggleExchangeAccountResponse = await apollo.toggleExchangeAccountActive({
+      accountId,
+      active,
+    })
+    setSubmittingAccountOperation(false)
 
     const newActiveState = !active
+    console.log(newActiveState)
 
-    if (success) {
-      notification.success({
-        message: `${newActiveState ? 'Disabled' : 'Enabled'} ${exchange} Account`,
-        duration: 3, // seconds
-      })
-    } else {
+    if (!operationId) {
       notification.error({
-        message: `${exchange} Account Error`,
+        message: `Toggle ${exchange} Account Error`,
         description: error,
         duration: 3, // seconds
       })
+    } else {
+      await refetchExchangeAccounts()
     }
-    setTogglingAccountActive(false)
-    await refetchExchangeAccounts()
   }
 
   const exchangeAccountTableColumns = [
@@ -106,7 +143,11 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       dataIndex: 'active',
       key: 'active',
       render: (_: string, record: ExchangeAccountTableItem) => (
-        <Switch checked={record.active} onClick={async () => toggleExchangeAccountActive(record)} />
+        <Switch
+          checked={record.active}
+          disabled={submittingAccountOperation}
+          onClick={async () => toggleExchangeAccountActive(record)}
+        />
       ),
     },
     {
@@ -114,7 +155,11 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       dataIndex: 'exchange',
       key: 'exchange',
       render: (text: string, { id, exchange }: ExchangeAccountTableItem) => (
-        <Button type="link" onClick={() => onClickExchangeAccount(id, exchange)}>
+        <Button
+          type="link"
+          disabled={submittingAccountOperation}
+          onClick={() => onClickExchangeAccount(id, exchange)}
+        >
           {text}
         </Button>
       ),
@@ -134,7 +179,11 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       dataIndex: 'actions',
       key: 'actions',
       render: (_: string, record: ExchangeAccountTableItem) => (
-        <Button type="link" onClick={async () => clickedDelete(record)}>
+        <Button
+          type="link"
+          disabled={submittingAccountOperation}
+          onClick={async () => clickedDelete(record)}
+        >
           {DELETE_TEXT}
         </Button>
       ),
@@ -147,11 +196,21 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Exchange Accounts" backIcon={false} />
         </div>
+        {showSuccessNotification &&
+          notification.success({
+            message: 'Finished Account Change',
+          })}
+        {showErrorNotification &&
+          notification.error({
+            message: 'Failed Account Change',
+            description: asyncOperationData?.asyncOperationStatus?.operation.error || '',
+            duration: 3, // seconds
+          })}
         {membership.active && (
           <div className="d-flex flex-column justify-content-center">
             <Button
               className="btn btn-primary"
-              disabled={!membership.active}
+              disabled={!membership.active || submittingAccountOperation}
               onClick={() => membership.active && onClickCreate()}
             >
               Create Exchange Account
@@ -161,9 +220,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Spin
-            spinning={fetchingExchangeAccounts || deletingExchangeAccount || togglingAccountActive}
-          >
+          <Spin spinning={fetchingExchangeAccounts}>
             <Table
               rowKey="id"
               columns={exchangeAccountTableColumns}

@@ -460,7 +460,8 @@ export type ToggleExchangeAccountActiveInput = {
 
 export type ToggleExchangeAccountActiveResult = {
   __typename?: 'ToggleExchangeAccountActiveResult'
-  success: Scalars['Boolean']
+  operationId?: Maybe<Scalars['ID']>
+  error?: Maybe<Scalars['String']>
 }
 
 export type UpdateExchangeAccountInput = {
@@ -471,7 +472,7 @@ export type UpdateExchangeAccountInput = {
 
 export type UpdateExchangeAccountResult = {
   __typename?: 'UpdateExchangeAccountResult'
-  success: Scalars['Boolean']
+  operationId?: Maybe<Scalars['ID']>
   error?: Maybe<Scalars['String']>
 }
 
@@ -847,7 +848,7 @@ export type ToggleExchangeAccountActiveMutationVariables = Exact<{
 export type ToggleExchangeAccountActiveMutation = { __typename?: 'Mutation' } & {
   toggleExchangeAccountActive: { __typename?: 'ToggleExchangeAccountActiveResult' } & Pick<
     ToggleExchangeAccountActiveResult,
-    'success'
+    'operationId' | 'error'
   >
 }
 
@@ -858,7 +859,7 @@ export type UpdateExchangeAccountMutationVariables = Exact<{
 export type UpdateExchangeAccountMutation = { __typename?: 'Mutation' } & {
   updateExchangeAccount: { __typename?: 'UpdateExchangeAccountResult' } & Pick<
     UpdateExchangeAccountResult,
-    'success' | 'error'
+    'operationId' | 'error'
   >
 }
 
@@ -1468,7 +1469,8 @@ export type DeleteExchangeAccountMutationOptions = Apollo.BaseMutationOptions<
 export const ToggleExchangeAccountActiveDocument = gql`
   mutation ToggleExchangeAccountActive($input: ToggleExchangeAccountActiveInput!) {
     toggleExchangeAccountActive(input: $input) {
-      success
+      operationId
+      error
     }
   }
 `
@@ -1518,7 +1520,7 @@ export type ToggleExchangeAccountActiveMutationOptions = Apollo.BaseMutationOpti
 export const UpdateExchangeAccountDocument = gql`
   mutation UpdateExchangeAccount($input: UpdateExchangeAccountInput!) {
     updateExchangeAccount(input: $input) {
-      success
+      operationId
       error
     }
   }
