@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Table, Button, PageHeader, Spin, Modal, notification, Switch } from 'antd'
+import { Table, Button, PageHeader, Spin, Modal, Switch, message } from 'antd'
 
 import { Membership } from 'types/membership'
 
@@ -24,6 +24,9 @@ interface ExchangeAccountTableProps {
 }
 
 const DELETE_TEXT = 'Delete'
+
+const MESSAGE_DURATION = 3
+const ACCOUNT_MESSAGE_KEY = 'account_message_key'
 
 export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
   membership,
@@ -53,8 +56,9 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
 
   useEffect(() => {
     if (asyncOperationId && !pollingAsyncResult) {
-      console.log('starting polling')
       startPolling(500)
+    } else if (pollingAsyncResult) {
+      stopPolling()
     }
   }, [asyncOperationId, pollingAsyncResult, startPolling, stopPolling])
 
@@ -62,7 +66,6 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     asyncOperationId !== '' &&
     asyncOperationData?.asyncOperationStatus?.operation.complete === true
   ) {
-    stopPolling()
     setAsyncOperationId('')
     setSubmittingAccountOperation(false)
 
@@ -73,9 +76,9 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     Promise.resolve(refetchExchangeAccounts())
 
     if (operation.success) {
-      console.log('success!')
+      message.success({ content: 'Success', key: ACCOUNT_MESSAGE_KEY, duration: MESSAGE_DURATION })
     } else {
-      console.log('error!')
+      message.error({ content: 'Error', key: ACCOUNT_MESSAGE_KEY, duration: MESSAGE_DURATION })
     }
   }
 
@@ -101,14 +104,10 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
 
         if (operationId) {
           setAsyncOperationId(operationId)
+          message.loading({ content: 'Deleting account', key: ACCOUNT_MESSAGE_KEY, duration: 0 })
         } else {
           setSubmittingAccountOperation(false)
-          notification.error({
-            message: `Error deleting ${exchange} account`,
-            description: error,
-            type: 'error',
-            duration: 3, // seconds
-          })
+          message.error({ content: error, key: ACCOUNT_MESSAGE_KEY, duration: MESSAGE_DURATION })
         }
       },
       onCancel() {},
@@ -129,14 +128,14 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
 
     if (operationId) {
       setAsyncOperationId(operationId)
+      message.loading({
+        content: `${active ? 'Disabling' : 'Enabling'} ${exchange} Account`,
+        key: ACCOUNT_MESSAGE_KEY,
+        duration: 0,
+      })
     } else {
       setSubmittingAccountOperation(false)
-      notification.error({
-        message: `Toggle ${exchange} Account Error`,
-        description: error,
-        type: 'error',
-        duration: 3, // seconds
-      })
+      message.error({ content: error, key: ACCOUNT_MESSAGE_KEY, duration: MESSAGE_DURATION })
     }
   }
 
