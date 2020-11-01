@@ -65,7 +65,7 @@ export const ExchangeAccountDetail: FC<ExchangeAccountDetailProps> = ({
         onSubmit={async values => {
           setUpdatingExchangeAccount(true)
           const {
-            success,
+            operationId,
             error,
           }: UpdateExchangeAccountResponse = await apollo.updateExchangeAccount({
             id: exchangeAccountId,
@@ -73,7 +73,7 @@ export const ExchangeAccountDetail: FC<ExchangeAccountDetailProps> = ({
           })
           setUpdatingExchangeAccount(false)
 
-          if (success) {
+          if (operationId) {
             notification.success({
               message: 'Updated Exchange Account',
             })

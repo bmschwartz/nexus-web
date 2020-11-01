@@ -291,7 +291,8 @@ export type DeleteExchangeAccountInput = {
 
 export type DeleteExchangeAccountResult = {
   __typename?: 'DeleteExchangeAccountResult'
-  success: Scalars['Boolean']
+  operationId?: Maybe<Scalars['ID']>
+  error?: Maybe<Scalars['String']>
 }
 
 export enum Exchange {
@@ -837,7 +838,7 @@ export type DeleteExchangeAccountMutationVariables = Exact<{
 export type DeleteExchangeAccountMutation = { __typename?: 'Mutation' } & {
   deleteExchangeAccount: { __typename?: 'DeleteExchangeAccountResult' } & Pick<
     DeleteExchangeAccountResult,
-    'success'
+    'operationId' | 'error'
   >
 }
 
@@ -1419,7 +1420,8 @@ export type CreateOrderSetMutationOptions = Apollo.BaseMutationOptions<
 export const DeleteExchangeAccountDocument = gql`
   mutation DeleteExchangeAccount($input: DeleteExchangeAccountInput!) {
     deleteExchangeAccount(input: $input) {
-      success
+      operationId
+      error
     }
   }
 `

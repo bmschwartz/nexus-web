@@ -11,7 +11,10 @@ import {
 import { useGetAsyncOperationStatusQuery, useGetExchangeAccountsQuery } from '../../../graphql'
 import * as apollo from 'services/apollo'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { ToggleExchangeAccountResponse } from 'services/apollo/exchangeAccount'
+import {
+  DeleteExchangeAccountResponse,
+  ToggleExchangeAccountResponse,
+} from 'services/apollo/exchangeAccount'
 /* eslint-enable */
 
 interface ExchangeAccountTableProps {
@@ -37,40 +40,42 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     notifyOnNetworkStatusChange: true,
   })
   const [asyncOperationId, setAsyncOperationId] = useState<string>('')
-  const { startPolling, stopPolling, data: asyncOperationData } = useGetAsyncOperationStatusQuery({
+  const [submittingAccountOperation, setSubmittingAccountOperation] = useState<boolean>(false)
+  const {
+    startPolling,
+    stopPolling,
+    data: asyncOperationData,
+    loading: pollingAsyncResult,
+  } = useGetAsyncOperationStatusQuery({
     variables: { input: { id: asyncOperationId } },
     fetchPolicy: 'network-only',
   })
-  const [showSuccessNotification, setShowSuccessNotification] = useState<boolean>(false)
-  const [showErrorNotification, setShowErrorNotification] = useState<boolean>(false)
-  const [submittingAccountOperation, setSubmittingAccountOperation] = useState<boolean>(false)
 
   useEffect(() => {
-    if (asyncOperationId) {
+    if (asyncOperationId && !pollingAsyncResult) {
+      console.log('starting polling')
       startPolling(500)
-    } else {
-      stopPolling()
     }
-  }, [asyncOperationId, stopPolling, startPolling])
+  }, [asyncOperationId, pollingAsyncResult, startPolling, stopPolling])
 
   if (
     asyncOperationId !== '' &&
     asyncOperationData?.asyncOperationStatus?.operation.complete === true
   ) {
+    stopPolling()
     setAsyncOperationId('')
-
     setSubmittingAccountOperation(false)
 
     const {
       asyncOperationStatus: { operation },
     } = asyncOperationData
 
+    Promise.resolve(refetchExchangeAccounts())
+
     if (operation.success) {
       console.log('success!')
-      setShowSuccessNotification(true)
     } else {
       console.log('error!')
-      setShowErrorNotification(true)
     }
   }
 
@@ -78,7 +83,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     exchangeAccountsData?.exchangeAccounts,
   )
 
-  const clickedDelete = async (row: ExchangeAccountTableItem) => {
+  const onClickDeleteAccount = async (row: ExchangeAccountTableItem) => {
     const { id: accountId, exchange } = row
 
     Modal.confirm({
@@ -89,22 +94,21 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       okType: 'danger',
       async onOk() {
         setSubmittingAccountOperation(true)
-        const { error, success } = await apollo.deleteExchangeAccount({ accountId })
-        setSubmittingAccountOperation(false)
+        const {
+          error,
+          operationId,
+        }: DeleteExchangeAccountResponse = await apollo.deleteExchangeAccount({ accountId })
 
-        if (success) {
-          notification.success({
-            message: `Deleted ${exchange} Account`,
-          })
+        if (operationId) {
+          setAsyncOperationId(operationId)
         } else {
           notification.error({
             message: `Error deleting ${exchange} account`,
             description: error,
+            type: 'error',
             duration: 3, // seconds
           })
         }
-
-        await refetchExchangeAccounts()
       },
       onCancel() {},
     })
@@ -121,19 +125,16 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
       accountId,
       active,
     })
-    setSubmittingAccountOperation(false)
 
-    const newActiveState = !active
-    console.log(newActiveState)
-
-    if (!operationId) {
+    if (operationId) {
+      setAsyncOperationId(operationId)
+    } else {
       notification.error({
         message: `Toggle ${exchange} Account Error`,
         description: error,
+        type: 'error',
         duration: 3, // seconds
       })
-    } else {
-      await refetchExchangeAccounts()
     }
   }
 
@@ -182,7 +183,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
         <Button
           type="link"
           disabled={submittingAccountOperation}
-          onClick={async () => clickedDelete(record)}
+          onClick={async () => onClickDeleteAccount(record)}
         >
           {DELETE_TEXT}
         </Button>
@@ -196,7 +197,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Exchange Accounts" backIcon={false} />
         </div>
-        {showSuccessNotification &&
+        {/* {showSuccessNotification &&
           notification.success({
             message: 'Finished Account Change',
           })}
@@ -205,7 +206,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
             message: 'Failed Account Change',
             description: asyncOperationData?.asyncOperationStatus?.operation.error || '',
             duration: 3, // seconds
-          })}
+          })} */}
         {membership.active && (
           <div className="d-flex flex-column justify-content-center">
             <Button

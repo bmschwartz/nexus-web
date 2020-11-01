@@ -26,8 +26,8 @@ export interface CreateExchangeAccountInput {
 }
 
 export interface UpdateExchangeAccountResponse {
-  success: boolean
   error?: string
+  operationId?: string
 }
 
 export interface UpdateExchangeAccountInput {
@@ -37,8 +37,8 @@ export interface UpdateExchangeAccountInput {
 }
 
 export interface DeleteExchangeAccountResponse {
-  success: boolean
   error?: string
+  operationId?: string
 }
 
 export interface DeleteExchangeAccountInput {
@@ -68,12 +68,16 @@ export const deleteExchangeAccount = async (
     })
 
     if (!data) {
-      return { error: 'Unable to delete the exchange account', success: false }
+      return { error: 'Unable to delete the exchange account' }
     }
 
-    return { success: true }
+    const {
+      deleteExchangeAccount: { operationId, error },
+    } = data
+
+    return { operationId, error }
   } catch (error) {
-    return { error: error.message, success: false }
+    return { error: error.message }
   }
 }
 
@@ -150,12 +154,16 @@ export const updateExchangeAccount = async (
     })
 
     if (!data) {
-      return { success: false, error: 'Unable to update the exchange account' }
+      return { error: 'Unable to update the exchange account' }
     }
 
-    return { success: data.success, error: data.error }
+    const {
+      updateExchangeAccount: { operationId, error },
+    } = data
+
+    return { operationId, error }
   } catch (error) {
-    return { success: false, error: error.message }
+    return { error: error.message }
   }
 }
 

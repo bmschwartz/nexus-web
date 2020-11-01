@@ -1,5 +1,6 @@
 mutation DeleteExchangeAccount($input: DeleteExchangeAccountInput!) {
   deleteExchangeAccount(input: $input) {
-    success
+    operationId
+    error
   }
 }

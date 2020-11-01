@@ -53,30 +53,32 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
   onCreated,
 }) => {
   const [asyncOperationId, setAsyncOperationId] = useState<string>('')
-  const { startPolling, stopPolling, data: asyncOperationData } = useGetAsyncOperationStatusQuery({
+  const [submittingExchangeAccount, setSubmittingExchangeAccount] = useState<boolean>(false)
+  const CreateExchangeAccountSchema = getCreateExchangeAccountSchema()
+  const [showErrorNotification, setShowErrorNotification] = useState<boolean>(false)
+  const {
+    startPolling,
+    stopPolling,
+    data: asyncOperationData,
+    loading: pollingAsyncResult,
+  } = useGetAsyncOperationStatusQuery({
     variables: { input: { id: asyncOperationId } },
     fetchPolicy: 'network-only',
   })
-  // const [fetchAsyncOperationStatus, { data: asyncOperationData }] = useGetAsyncOperationStatusLazyQuery({ variables: { input: { id: asyncOperationId } } })
-  const [submittingExchangeAccount, setSubmittingExchangeAccount] = useState<boolean>(false)
-  const CreateExchangeAccountSchema = getCreateExchangeAccountSchema()
-  const [showSuccessNotification, setShowSuccessNotification] = useState<boolean>(false)
-  const [showErrorNotification, setShowErrorNotification] = useState<boolean>(false)
 
   useEffect(() => {
-    if (asyncOperationId) {
+    if (asyncOperationId && !pollingAsyncResult) {
+      console.log('starting polling')
       startPolling(500)
-    } else {
-      stopPolling()
     }
-  }, [asyncOperationId, stopPolling, startPolling])
+  }, [asyncOperationId, pollingAsyncResult, startPolling, stopPolling])
 
   if (
     asyncOperationId !== '' &&
     asyncOperationData?.asyncOperationStatus?.operation.complete === true
   ) {
+    stopPolling()
     setAsyncOperationId('')
-
     setSubmittingExchangeAccount(false)
 
     const {
@@ -84,11 +86,8 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
     } = asyncOperationData
 
     if (operation.success) {
-      console.log('success!')
-      setShowSuccessNotification(true)
       onCreated()
     } else {
-      console.log('erro!')
       setShowErrorNotification(true)
     }
   }
@@ -104,10 +103,6 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
           />
         </div>
       </div>
-      {showSuccessNotification &&
-        notification.success({
-          message: 'Created Exchange Account',
-        })}
       {showErrorNotification &&
         notification.error({
           message: 'Create Exchange Account Error',
@@ -135,28 +130,6 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
 
           if (operationId) {
             setAsyncOperationId(operationId)
-
-            if (asyncOperationData?.asyncOperationStatus?.operation.complete === true) {
-              setAsyncOperationId('')
-              setSubmittingExchangeAccount(false)
-
-              const {
-                asyncOperationStatus: { operation },
-              } = asyncOperationData
-
-              if (operation.success) {
-                notification.success({
-                  message: 'Created Exchange Account',
-                })
-                onCreated()
-              } else {
-                notification.error({
-                  message: 'Create Exchange Account Error',
-                  description: operation.error || '',
-                  duration: 3, // seconds
-                })
-              }
-            }
           } else {
             notification.error({
               message: 'Create Exchange Account Error',
