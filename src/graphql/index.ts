@@ -349,11 +349,12 @@ export type MemberPositions = {
 
 export enum OperationType {
   CancelBinanceOrder = 'CANCEL_BINANCE_ORDER',
-  CreateBinanceAccount = 'CREATE_BINANCE_ACCOUNT',
   CreateBinanceOrder = 'CREATE_BINANCE_ORDER',
-  DeleteBinanceAccount = 'DELETE_BINANCE_ACCOUNT',
-  UpdateBinanceAccount = 'UPDATE_BINANCE_ACCOUNT',
   UpdateBinanceOrder = 'UPDATE_BINANCE_ORDER',
+  CreateBinanceAccount = 'CREATE_BINANCE_ACCOUNT',
+  DeleteBinanceAccount = 'DELETE_BINANCE_ACCOUNT',
+  DisableBinanceAccount = 'DISABLE_BINANCE_ACCOUNT',
+  UpdateBinanceAccount = 'UPDATE_BINANCE_ACCOUNT',
 }
 
 export type Order = {
