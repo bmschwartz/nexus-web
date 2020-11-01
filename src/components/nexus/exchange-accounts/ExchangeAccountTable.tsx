@@ -48,7 +48,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     loading: pollingAsyncResult,
   } = useGetAsyncOperationStatusQuery({
     variables: { input: { id: asyncOperationId } },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'no-cache',
   })
 
   useEffect(() => {
@@ -102,6 +102,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
         if (operationId) {
           setAsyncOperationId(operationId)
         } else {
+          setSubmittingAccountOperation(false)
           notification.error({
             message: `Error deleting ${exchange} account`,
             description: error,
@@ -129,6 +130,7 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
     if (operationId) {
       setAsyncOperationId(operationId)
     } else {
+      setSubmittingAccountOperation(false)
       notification.error({
         message: `Toggle ${exchange} Account Error`,
         description: error,

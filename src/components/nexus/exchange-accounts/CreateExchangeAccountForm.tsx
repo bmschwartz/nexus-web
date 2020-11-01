@@ -63,7 +63,7 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
     loading: pollingAsyncResult,
   } = useGetAsyncOperationStatusQuery({
     variables: { input: { id: asyncOperationId } },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'no-cache',
   })
 
   useEffect(() => {
@@ -131,6 +131,7 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
           if (operationId) {
             setAsyncOperationId(operationId)
           } else {
+            setSubmittingExchangeAccount(false)
             notification.error({
               message: 'Create Exchange Account Error',
               description: error,
