@@ -1,5 +1,7 @@
 mutation CreateOrderSet($input: CreateOrderSetInput!) {
   createOrderSet(input: $input) {
-    id
+    orderSet {
+      id
+    }
   }
 }

@@ -23,6 +23,7 @@ export interface CreateOrderSetInput {
   symbol: string
   price?: number
   percent: number
+  leverage: number
   side: OrderSide
   orderType: OrderType
   stopPrice?: number

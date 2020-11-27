@@ -112,6 +112,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           setSubmittingOrder(true)
           const { orderSetId, error }: CreateOrderSetResponse = await apollo.createOrderSet({
             groupId: group.id,
+            leverage: 1,
             ...values,
           })
           setSubmittingOrder(false)

@@ -242,6 +242,7 @@ export type BitmexCurrency = {
   fractionalDigits?: Maybe<Scalars['Int']>
   lastPrice?: Maybe<Scalars['Float']>
   markPrice?: Maybe<Scalars['Float']>
+  maxPrice?: Maybe<Scalars['Float']>
   tickSize?: Maybe<Scalars['Float']>
 }
 
@@ -251,12 +252,18 @@ export type CancelOrderInput = {
 
 export type CancelOrderResponse = {
   __typename?: 'CancelOrderResponse'
-  success: Scalars['Boolean']
+  operationId?: Maybe<Scalars['ID']>
   error?: Maybe<Scalars['String']>
 }
 
 export type CancelOrderSetInput = {
   orderSetId: Scalars['ID']
+}
+
+export type CancelOrderSetResult = {
+  __typename?: 'CancelOrderSetResult'
+  operationId?: Maybe<Scalars['ID']>
+  error?: Maybe<Scalars['String']>
 }
 
 export type CreateExchangeAccountInput = {
@@ -280,9 +287,17 @@ export type CreateOrderSetInput = {
   description?: Maybe<Scalars['String']>
   side: OrderSide
   orderType: OrderType
+  leverage: Scalars['Float']
   price?: Maybe<Scalars['Float']>
-  stopPrice?: Maybe<Scalars['Float']>
   percent?: Maybe<Scalars['Float']>
+  stopPrice?: Maybe<Scalars['Float']>
+  trailingStopPercent?: Maybe<Scalars['Float']>
+  stopTriggerType?: Maybe<StopTriggerType>
+}
+
+export type CreateOrderSetResult = {
+  __typename?: 'CreateOrderSetResult'
+  orderSet?: Maybe<OrderSet>
 }
 
 export type DeleteExchangeAccountInput = {
@@ -355,6 +370,13 @@ export enum OperationType {
   DeleteBinanceAccount = 'DELETE_BINANCE_ACCOUNT',
   DisableBinanceAccount = 'DISABLE_BINANCE_ACCOUNT',
   UpdateBinanceAccount = 'UPDATE_BINANCE_ACCOUNT',
+  CancelBitmexOrder = 'CANCEL_BITMEX_ORDER',
+  CreateBitmexOrder = 'CREATE_BITMEX_ORDER',
+  UpdateBitmexOrder = 'UPDATE_BITMEX_ORDER',
+  CreateBitmexAccount = 'CREATE_BITMEX_ACCOUNT',
+  DeleteBitmexAccount = 'DELETE_BITMEX_ACCOUNT',
+  DisableBitmexAccount = 'DISABLE_BITMEX_ACCOUNT',
+  UpdateBitmexAccount = 'UPDATE_BITMEX_ACCOUNT',
 }
 
 export type Order = {
@@ -365,9 +387,12 @@ export type Order = {
   exchange: Exchange
   orderType: OrderType
   status: OrderStatus
+  leverage: Scalars['Float']
   price?: Maybe<Scalars['Float']>
   quantity?: Maybe<Scalars['Float']>
   stopPrice?: Maybe<Scalars['Float']>
+  trailingStopPercent?: Maybe<Scalars['Float']>
+  stopTriggerType?: Maybe<StopTriggerType>
   filledQty?: Maybe<Scalars['Float']>
   symbol: Scalars['String']
   lastTimestamp: Scalars['DateTime']
@@ -390,7 +415,10 @@ export type OrderSet = {
   orderType: OrderType
   orders: OrderSetOrders
   percent: Scalars['Float']
+  leverage: Scalars['Float']
   stopPrice?: Maybe<Scalars['Float']>
+  trailingStopPercent?: Maybe<Scalars['Float']>
+  stopTriggerType?: Maybe<StopTriggerType>
   description?: Maybe<Scalars['String']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
@@ -450,6 +478,11 @@ export enum PositionSide {
   Short = 'SHORT',
 }
 
+export enum StopTriggerType {
+  LastPrice = 'LAST_PRICE',
+  MarkPrice = 'MARK_PRICE',
+}
+
 export type SymbolsWithPositionResult = {
   __typename?: 'SymbolsWithPositionResult'
   binance: Array<BinanceCurrency>
@@ -481,8 +514,17 @@ export type UpdateExchangeAccountResult = {
 export type UpdateOrderSetInput = {
   orderSetId: Scalars['ID']
   description: Scalars['String']
+  leverage: Scalars['Float']
   price?: Maybe<Scalars['Float']>
   stopPrice?: Maybe<Scalars['Float']>
+  trailingStopPercent?: Maybe<Scalars['Float']>
+  stopTriggerType?: Maybe<StopTriggerType>
+}
+
+export type UpdateOrderSetResult = {
+  __typename?: 'UpdateOrderSetResult'
+  operationId?: Maybe<Scalars['ID']>
+  error?: Maybe<Scalars['String']>
 }
 
 export type AuthPayload = {
@@ -597,10 +639,10 @@ export type Mutation = {
   updateMembershipStatus?: Maybe<GroupMembership>
   updateMembershipActive?: Maybe<GroupMembership>
   deleteMembership?: Maybe<GroupMembership>
-  createOrderSet?: Maybe<OrderSet>
-  updateOrderSet?: Maybe<OrderSet>
-  cancelOrderSet?: Maybe<OrderSet>
-  cancelOrder: CancelOrderResponse
+  createOrderSet?: Maybe<CreateOrderSetResult>
+  updateOrderSet?: Maybe<UpdateOrderSetResult>
+  cancelOrderSet?: Maybe<CancelOrderSetResult>
+  cancelOrder?: Maybe<CancelOrderResponse>
   createExchangeAccount?: Maybe<CreateExchangeAccountResult>
   deleteExchangeAccount: DeleteExchangeAccountResult
   updateExchangeAccount: UpdateExchangeAccountResult
@@ -732,6 +774,7 @@ export type BitmexCurrencyDetailsFragment = { __typename?: 'BitmexCurrency' } & 
   | 'fractionalDigits'
   | 'lastPrice'
   | 'markPrice'
+  | 'maxPrice'
   | 'tickSize'
 >
 
@@ -797,9 +840,8 @@ export type CancelOrderMutationVariables = Exact<{
 }>
 
 export type CancelOrderMutation = { __typename?: 'Mutation' } & {
-  cancelOrder: { __typename?: 'CancelOrderResponse' } & Pick<
-    CancelOrderResponse,
-    'success' | 'error'
+  cancelOrder?: Maybe<
+    { __typename?: 'CancelOrderResponse' } & Pick<CancelOrderResponse, 'operationId' | 'error'>
   >
 }
 
@@ -829,7 +871,11 @@ export type CreateOrderSetMutationVariables = Exact<{
 }>
 
 export type CreateOrderSetMutation = { __typename?: 'Mutation' } & {
-  createOrderSet?: Maybe<{ __typename?: 'OrderSet' } & Pick<OrderSet, 'id'>>
+  createOrderSet?: Maybe<
+    { __typename?: 'CreateOrderSetResult' } & {
+      orderSet?: Maybe<{ __typename?: 'OrderSet' } & Pick<OrderSet, 'id'>>
+    }
+  >
 }
 
 export type DeleteExchangeAccountMutationVariables = Exact<{
@@ -1148,6 +1194,7 @@ export const BitmexCurrencyDetailsFragmentDoc = gql`
     fractionalDigits
     lastPrice
     markPrice
+    maxPrice
     tickSize
   }
 `
@@ -1240,7 +1287,7 @@ export const OrderSetDetailsFragmentDoc = gql`
 export const CancelOrderDocument = gql`
   mutation CancelOrder($input: CancelOrderInput!) {
     cancelOrder(input: $input) {
-      success
+      operationId
       error
     }
   }
@@ -1378,7 +1425,9 @@ export type CreateGroupMutationOptions = Apollo.BaseMutationOptions<
 export const CreateOrderSetDocument = gql`
   mutation CreateOrderSet($input: CreateOrderSetInput!) {
     createOrderSet(input: $input) {
-      id
+      orderSet {
+        id
+      }
     }
   }
 `

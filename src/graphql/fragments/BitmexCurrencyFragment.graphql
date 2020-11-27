@@ -6,5 +6,6 @@ fragment BitmexCurrencyDetails on BitmexCurrency {
   fractionalDigits
   lastPrice
   markPrice
+  maxPrice
   tickSize
 }
