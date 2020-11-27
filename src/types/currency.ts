@@ -75,9 +75,14 @@ export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined
       {},
     )
     bitmexCurrencies = currencyInfo.bitmexCurrencies.reduce(
-      (acc, { symbol, ...otherInfo }) => ({
+      (acc, { symbol, markPrice, maxPrice, tickSize, ...otherInfo }) => ({
         ...acc,
-        [symbol]: otherInfo,
+        [symbol]: {
+          minPrice: markPrice,
+          maxPrice: Number(maxPrice),
+          tickSize: Number(tickSize),
+          otherInfo,
+        },
       }),
       {},
     )
@@ -96,6 +101,7 @@ function getSymbolPriceInfo(currencyInfo: ICurrencyMap, exchange: Exchange, symb
     maxPrice: 1,
     tickSize: 0.1,
   }
+
   if (!symbol) {
     return defaultPriceInfo
   }
@@ -108,7 +114,14 @@ function getSymbolPriceInfo(currencyInfo: ICurrencyMap, exchange: Exchange, symb
         tickSize,
       }
     }
-    case Exchange.BITMEX:
+    case Exchange.BITMEX: {
+      const { minPrice, maxPrice, tickSize } = currencyInfo.Bitmex[symbol]
+      return {
+        minPrice,
+        maxPrice,
+        tickSize,
+      }
+    }
     default:
       return defaultPriceInfo
   }
