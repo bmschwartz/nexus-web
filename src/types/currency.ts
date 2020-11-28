@@ -78,7 +78,7 @@ export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined
       (acc, { symbol, markPrice, maxPrice, tickSize, ...otherInfo }) => ({
         ...acc,
         [symbol]: {
-          minPrice: markPrice,
+          minPrice: 0,
           maxPrice: Number(maxPrice),
           tickSize: Number(tickSize),
           otherInfo,
