@@ -327,6 +327,18 @@ export type CreateOrderSetResult = {
   orderSet?: Maybe<OrderSet>
 }
 
+export type Currency = BitmexCurrency | BinanceCurrency
+
+export type CurrencyInput = {
+  exchange: Exchange
+  symbol: Scalars['String']
+}
+
+export type CurrencyResponse = {
+  __typename?: 'CurrencyResponse'
+  currency?: Maybe<Currency>
+}
+
 export type DeleteExchangeAccountInput = {
   id: Scalars['ID']
 }
@@ -629,8 +641,9 @@ export type Query = {
   membershipRequests?: Maybe<Array<GroupMembership>>
   order?: Maybe<Order>
   orderSet?: Maybe<OrderSet>
-  binanceCurrencies: Array<BinanceCurrency>
   bitmexCurrencies: Array<BitmexCurrency>
+  binanceCurrencies: Array<BinanceCurrency>
+  currency?: Maybe<CurrencyResponse>
   position?: Maybe<Position>
   asyncOperationStatus?: Maybe<AsyncOperationStatus>
   exchangeAccount?: Maybe<ExchangeAccount>
@@ -672,6 +685,10 @@ export type QueryOrderArgs = {
 
 export type QueryOrderSetArgs = {
   input: OrderSetInput
+}
+
+export type QueryCurrencyArgs = {
+  input: CurrencyInput
 }
 
 export type QueryPositionArgs = {
@@ -1043,6 +1060,21 @@ export type GetCurrenciesQueryVariables = Exact<{ [key: string]: never }>
 export type GetCurrenciesQuery = { __typename?: 'Query' } & {
   bitmexCurrencies: Array<{ __typename?: 'BitmexCurrency' } & BitmexCurrencyDetailsFragment>
   binanceCurrencies: Array<{ __typename?: 'BinanceCurrency' } & BinanceCurrencyDetailsFragment>
+}
+
+export type GetCurrencyQueryVariables = Exact<{
+  input: CurrencyInput
+}>
+
+export type GetCurrencyQuery = { __typename?: 'Query' } & {
+  currency?: Maybe<
+    { __typename?: 'CurrencyResponse' } & {
+      currency?: Maybe<
+        | ({ __typename: 'BitmexCurrency' } & BitmexCurrencyDetailsFragment)
+        | { __typename: 'BinanceCurrency' }
+      >
+    }
+  >
 }
 
 export type GetExchangeAccountQueryVariables = Exact<{
@@ -1967,6 +1999,55 @@ export type GetCurrenciesQueryResult = Apollo.QueryResult<
   GetCurrenciesQuery,
   GetCurrenciesQueryVariables
 >
+export const GetCurrencyDocument = gql`
+  query GetCurrency($input: CurrencyInput!) {
+    currency(input: $input) {
+      currency {
+        ... on BitmexCurrency {
+          ...BitmexCurrencyDetails
+        }
+        __typename
+      }
+    }
+  }
+  ${BitmexCurrencyDetailsFragmentDoc}
+`
+
+/**
+ * __useGetCurrencyQuery__
+ *
+ * To run a query within a React component, call `useGetCurrencyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrencyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrencyQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetCurrencyQuery(
+  baseOptions: Apollo.QueryHookOptions<GetCurrencyQuery, GetCurrencyQueryVariables>,
+) {
+  return Apollo.useQuery<GetCurrencyQuery, GetCurrencyQueryVariables>(
+    GetCurrencyDocument,
+    baseOptions,
+  )
+}
+export function useGetCurrencyLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetCurrencyQuery, GetCurrencyQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetCurrencyQuery, GetCurrencyQueryVariables>(
+    GetCurrencyDocument,
+    baseOptions,
+  )
+}
+export type GetCurrencyQueryHookResult = ReturnType<typeof useGetCurrencyQuery>
+export type GetCurrencyLazyQueryHookResult = ReturnType<typeof useGetCurrencyLazyQuery>
+export type GetCurrencyQueryResult = Apollo.QueryResult<GetCurrencyQuery, GetCurrencyQueryVariables>
 export const GetExchangeAccountDocument = gql`
   query GetExchangeAccount($input: ExchangeAccountInput!) {
     exchangeAccount(input: $input) {

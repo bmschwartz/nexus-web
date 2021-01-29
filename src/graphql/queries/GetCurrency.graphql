@@ -1,0 +1,10 @@
+query GetCurrency($input: CurrencyInput!) {
+  currency(input: $input) {
+    currency {
+      ... on BitmexCurrency {
+        ...BitmexCurrencyDetails
+      }
+      __typename
+    }
+  }
+}
