@@ -1,7 +1,7 @@
 import { Exchange } from 'types/exchange'
 
 /* eslint-disable */
-import { BinanceSymbolStatus, GetCurrenciesQuery } from '../graphql'
+import { BinanceSymbolStatus, GetCurrenciesQuery, GetSymbolsQuery } from '../graphql'
 /* eslint-enable */
 
 export interface IBinanceCurrency {
@@ -55,6 +55,11 @@ export interface ICurrencyMap {
   }
 }
 
+export interface ISymbolMap {
+  [Exchange.BITMEX]: string[]
+  [Exchange.BINANCE]: string[]
+}
+
 export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined): ICurrencyMap {
   const exchanges = [Exchange.BITMEX, Exchange.BINANCE]
 
@@ -92,6 +97,15 @@ export function extractCurrencyData(currencyInfo: GetCurrenciesQuery | undefined
     exchanges,
     Bitmex: bitmexCurrencies,
     Binance: binanceCurrencies,
+  }
+}
+
+export function extractSymbols(symbolInfo: GetSymbolsQuery | undefined): ISymbolMap {
+  const bitmexSymbols = symbolInfo?.bitmexCurrencies.map(currency => currency.symbol) || []
+  const binanceSymbols = symbolInfo?.binanceCurrencies.map(currency => currency.symbol) || []
+  return {
+    Bitmex: bitmexSymbols,
+    Binance: binanceSymbols,
   }
 }
 
