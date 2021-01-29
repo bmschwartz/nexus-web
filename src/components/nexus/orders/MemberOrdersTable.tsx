@@ -66,7 +66,8 @@ export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId, on
         if (!result.fetchMoreResult) {
           return prev
         }
-        return { ...result.fetchMoreResult }
+        const fetchedResult: object = result.fetchMoreResult as object
+        return { ...fetchedResult }
       },
     })
   }
@@ -77,7 +78,7 @@ export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId, on
     fetchMore,
   } = useGetMemberOrdersQuery({
     fetchPolicy: 'cache-and-network',
-    variables: { input: { membershipId }, limit: PAGE_SIZE },
+    variables: { membershipInput: { membershipId }, ordersInput: { limit: PAGE_SIZE } },
     notifyOnNetworkStatusChange: true,
   })
 
