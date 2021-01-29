@@ -1,13 +1,14 @@
-import React, { FC, useEffect, useState } from 'react'
-import { Table, Button, PageHeader, Spin, Select } from 'antd'
+import React, { FC, useState } from 'react'
+import { Button, PageHeader, Select, Spin, Table } from 'antd'
 
 import { PositionSide } from 'types/position'
-import { Exchange } from 'types/exchange'
-import { extractCurrencyData } from 'types/currency'
+import { convertToRemoteExchange, Exchange } from 'types/exchange'
+import { extractSymbols } from 'types/currency'
 
 /* eslint-disable */
 import { createPositionTableData, PositionTableItem } from './groupPositionTableUtils'
-import { useGetCurrenciesQuery, useGetGroupPositionsQuery } from '../../../graphql'
+import { useGetGroupPositionsQuery, useGetSymbolsQuery } from '../../../graphql'
+
 /* eslint-enable */
 
 interface PositionTableProps {
@@ -55,24 +56,27 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
   onClickCreate,
   onClickPosition,
 }) => {
+  const [selectedSymbol, setSelectedSymbol] = useState<string>()
   const {
     data: groupPositionsData,
     loading: fetchingGroupPositions,
     fetchMore,
   } = useGetGroupPositionsQuery({
     fetchPolicy: 'cache-and-network',
-    variables: { input: { groupId }, limit: PAGE_SIZE },
+    variables: {
+      groupInput: { groupId },
+      positionsInput: {
+        symbol: selectedSymbol,
+        exchange: convertToRemoteExchange(exchange),
+        limit: PAGE_SIZE,
+      },
+    },
     notifyOnNetworkStatusChange: true,
   })
 
-  const { data: getCurrenciesData } = useGetCurrenciesQuery({
+  const { data: getSymbolsData, loading: fetchingSymbols } = useGetSymbolsQuery({
     fetchPolicy: 'cache-and-network',
   })
-  const [selectedSymbol, setSelectedSymbol] = useState<string>()
-
-  useEffect(() => {
-    console.log(selectedSymbol)
-  }, [selectedSymbol])
 
   const onChangePage = (page: number, pageSize?: number) => {
     const offset = pageSize ? pageSize * (page - 1) : 0
@@ -82,14 +86,25 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
         if (!result.fetchMoreResult) {
           return prev
         }
-        return { ...result.fetchMoreResult }
+        const fetchedResult: object = result.fetchMoreResult as object
+        return { ...fetchedResult }
       },
     })
   }
 
-  const totalCount = groupPositionsData?.group?.positions.totalCount
-  const positionTableData: PositionTableItem[] = createPositionTableData(groupPositionsData)
-  const currencyData = extractCurrencyData(getCurrenciesData)
+  const memberships = groupPositionsData?.group?.memberships
+  const positions = memberships?.map(membership => membership.positions)
+  const totalCount = positions?.map(pos => pos.totalCount).reduce((sum, current) => sum + current)
+
+  const longPositionTableData: PositionTableItem[] = createPositionTableData(
+    groupPositionsData,
+    PositionSide.LONG,
+  )
+  const shortPositionTableData: PositionTableItem[] = createPositionTableData(
+    groupPositionsData,
+    PositionSide.SHORT,
+  )
+  const symbolsData = extractSymbols(getSymbolsData)
 
   const onRow = (row: PositionTableItem) => {
     return {
@@ -109,7 +124,7 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
             onRow={onRow}
             title={() => <strong>{`${side} Positions`}</strong>}
             columns={positionTableColumns}
-            dataSource={positionTableData}
+            dataSource={side === PositionSide.LONG ? longPositionTableData : shortPositionTableData}
             pagination={{
               defaultCurrent: 1,
               defaultPageSize: PAGE_SIZE,
@@ -144,30 +159,37 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <strong className="mt-3 mr-3">Symbol</strong>
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select Symbol..."
-            style={{ width: 200 }}
-            size="large"
-            onChange={(symbol: string) => {
-              setSelectedSymbol(symbol)
-            }}
-          >
-            {currencyData &&
-              Object.keys(currencyData[exchange])
-                .sort()
-                .map(symbol => (
-                  <Select.Option key={symbol} value={symbol}>
-                    {symbol}
-                  </Select.Option>
-                ))}
-          </Select>
+          <Spin spinning={fetchingSymbols}>
+            <strong className="mt-3 mr-3">Symbol</strong>
+            <Select
+              showSearch
+              allowClear
+              loading={fetchingSymbols}
+              placeholder="Select Symbol..."
+              style={{ width: 200 }}
+              size="large"
+              onChange={(symbol: string) => {
+                setSelectedSymbol(symbol)
+              }}
+            >
+              {symbolsData &&
+                Object.values(symbolsData[exchange])
+                  .sort()
+                  .map(symbol => (
+                    <Select.Option key={symbol} value={symbol}>
+                      {symbol}
+                    </Select.Option>
+                  ))}
+            </Select>
+          </Spin>
         </div>
       </div>
-      {PositionsTable(PositionSide.LONG)}
-      {PositionsTable(PositionSide.SHORT)}
+      {selectedSymbol && (
+        <>
+          {PositionsTable(PositionSide.LONG)}
+          {PositionsTable(PositionSide.SHORT)}
+        </>
+      )}
     </>
   )
 }

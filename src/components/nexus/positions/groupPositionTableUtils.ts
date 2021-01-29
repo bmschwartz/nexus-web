@@ -3,6 +3,7 @@ import { convertToLocalPositionSide, PositionSide } from 'types/position'
 /* eslint-disable */
 import { GetGroupPositionsQuery } from '../../../graphql'
 import { displayTimeBeforeNow } from '../dateUtil'
+// import { displayTimeBeforeNow } from '../dateUtil'
 /* eslint-enable */
 
 export interface PositionTableItem {
@@ -16,28 +17,31 @@ export interface PositionTableItem {
 
 export const createPositionTableData = (
   positionResponse: GetGroupPositionsQuery | undefined,
+  desiredSide: PositionSide,
 ): PositionTableItem[] => {
   if (!positionResponse?.group) {
     return []
   }
 
-  const {
-    positions: { positions },
-  } = positionResponse.group
+  const { memberships } = positionResponse.group
+  const positions = memberships.flatMap(membership => membership.positions.positions)
 
-  const positionTableItems: PositionTableItem[] = positions.map(position => {
-    const { id, symbol, avgPrice, quantity, side, updatedAt } = position
-    return {
-      id,
-      symbol,
-      quantity: String(quantity) ?? '',
-      avgPrice: String(avgPrice) ?? '',
-      side: convertToLocalPositionSide(side),
-      updated: displayTimeBeforeNow(updatedAt),
-    }
-  })
-
-  return positionTableItems
+  return positions
+    .filter(position => {
+      const sidesMatch = convertToLocalPositionSide(position.side) === desiredSide
+      return sidesMatch && position.isOpen
+    })
+    .map(position => {
+      const { id, symbol, avgPrice, quantity, side, updatedAt } = position
+      return {
+        id,
+        symbol,
+        quantity: String(quantity) ?? '',
+        avgPrice: String(avgPrice) ?? '',
+        side: convertToLocalPositionSide(side),
+        updated: displayTimeBeforeNow(updatedAt),
+      }
+    })
 }
 
 export interface FilterDropdown {
