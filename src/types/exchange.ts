@@ -32,6 +32,6 @@ export function convertToRemoteExchange(exchange: Exchange): RemoteExchange {
       return RemoteExchange.Binance
     case Exchange.BITMEX:
     default:
-      return RemoteExchange.Binance
+      return RemoteExchange.Bitmex
   }
 }
