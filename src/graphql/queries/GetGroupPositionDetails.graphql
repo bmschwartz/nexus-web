@@ -1,8 +1,0 @@
-query GetGroupPositionDetails($groupInput: GroupInput!, $positionInput: PositionInput!, $limit: Int, $offset: Int) {
-  group(input: $groupInput) {
-    id
-    position(input: $positionInput) {
-      ...PositionDetails
-    }
-  }
-}

@@ -1,10 +1,13 @@
-query GetGroupPositions($input: GroupInput!, $limit: Int, $offset: Int) {
-  group(input: $input) {
+query GetGroupPositions($groupInput: GroupInput!, $positionsInput: MemberPositionsInput!) {
+  group(input: $groupInput) {
     id
-    positions(limit: $limit, offset: $offset) {
-      totalCount
-      positions {
-        ...PositionDetails
+    memberships {
+      id
+      positions(input: $positionsInput) {
+        totalCount
+        positions {
+          ...PositionDetails
+        }
       }
     }
   }

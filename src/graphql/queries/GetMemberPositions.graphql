@@ -1,7 +1,7 @@
-query GetMemberPositions($input: MembershipInput!, $limit: Int, $offset: Int) {
-  membership(input: $input) {
+query GetMemberPositions($membershipInput: MembershipInput!, $positionsInput: MemberPositionsInput!) {
+  membership(input: $membershipInput) {
     id
-    positions(limit: $limit, offset: $offset) {
+    positions(input: $positionsInput) {
       totalCount
       positions {
         ...PositionDetails

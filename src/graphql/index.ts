@@ -3,6 +3,8 @@ import * as Apollo from '@apollo/client'
 
 export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> }
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> }
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string
@@ -54,8 +56,6 @@ export type Group = {
   orderSets: GroupOrderSets
   orderSet?: Maybe<OrderSet>
   symbolsWithPosition?: Maybe<SymbolsWithPositionResult>
-  positions: GroupPositions
-  position?: Maybe<Position>
 }
 
 export type GroupOrderSetsArgs = {
@@ -65,16 +65,6 @@ export type GroupOrderSetsArgs = {
 
 export type GroupOrderSetArgs = {
   input: OrderSetInput
-}
-
-export type GroupPositionsArgs = {
-  symbol?: Maybe<Scalars['String']>
-  limit?: Maybe<Scalars['Int']>
-  offset?: Maybe<Scalars['Int']>
-}
-
-export type GroupPositionArgs = {
-  input: PositionInput
 }
 
 export type GroupExistsInput = {
@@ -95,19 +85,17 @@ export type GroupMembership = {
   status: MembershipStatus
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-  orders: MemberOrders
-  positions: MemberPositions
+  orders: MemberOrdersResult
+  positions: MemberPositionsResult
   exchangeAccounts: Array<ExchangeAccount>
 }
 
 export type GroupMembershipOrdersArgs = {
-  limit?: Maybe<Scalars['Int']>
-  offset?: Maybe<Scalars['Int']>
+  input: MemberOrdersInput
 }
 
 export type GroupMembershipPositionsArgs = {
-  limit?: Maybe<Scalars['Int']>
-  offset?: Maybe<Scalars['Int']>
+  input: MemberPositionsInput
 }
 
 export type GroupMembersInput = {
@@ -170,6 +158,32 @@ export type UpdateMembershipRoleInput = {
 export type UpdateMembershipStatusInput = {
   membershipId: Scalars['ID']
   status: MembershipStatus
+}
+
+export type AddStopToPositionsInput = {
+  symbol: Scalars['String']
+  stopPrice: Scalars['Float']
+  exchangeAccountIds: Array<Scalars['ID']>
+  stopTriggerPriceType: StopTriggerType
+}
+
+export type AddStopToPositionsResult = {
+  __typename?: 'AddStopToPositionsResult'
+  operationId?: Maybe<Scalars['ID']>
+  error?: Maybe<Scalars['String']>
+}
+
+export type AddTslToPositionsInput = {
+  symbol: Scalars['String']
+  tslPercent: Scalars['Float']
+  exchangeAccountIds: Array<Scalars['ID']>
+  stopTriggerPriceType: StopTriggerType
+}
+
+export type AddTslToPositionsResult = {
+  __typename?: 'AddTslToPositionsResult'
+  operationId?: Maybe<Scalars['ID']>
+  error?: Maybe<Scalars['String']>
 }
 
 export type AsyncOperation = {
@@ -266,6 +280,19 @@ export type CancelOrderSetResult = {
   error?: Maybe<Scalars['String']>
 }
 
+export type ClosePositionsInput = {
+  symbol: Scalars['String']
+  price?: Maybe<Scalars['Float']>
+  fraction?: Maybe<Scalars['Float']>
+  exchangeAccountIds: Array<Scalars['ID']>
+}
+
+export type ClosePositionsResult = {
+  __typename?: 'ClosePositionsResult'
+  operationId?: Maybe<Scalars['ID']>
+  error?: Maybe<Scalars['String']>
+}
+
 export type CreateExchangeAccountInput = {
   exchange: Exchange
   membershipId: Scalars['ID']
@@ -325,17 +352,46 @@ export type ExchangeAccount = {
   apiKey: Scalars['String']
   apiSecret: Scalars['String']
   orders: Array<Order>
-  positions: Array<Position>
+  positions?: Maybe<ExchangeAccountPositionsResult>
+  position?: Maybe<ExchangeAccountSymbolPositionResult>
   membershipId: Scalars['ID']
   membership: GroupMembership
+}
+
+export type ExchangeAccountPositionsArgs = {
+  input?: Maybe<ExchangeAccountPositionsInput>
+}
+
+export type ExchangeAccountPositionArgs = {
+  input: ExchangeAccountSymbolPositionInput
 }
 
 export type ExchangeAccountInput = {
   id: Scalars['ID']
 }
 
+export type ExchangeAccountPositionsInput = {
+  limit?: Maybe<Scalars['Int']>
+  offset?: Maybe<Scalars['Int']>
+}
+
+export type ExchangeAccountPositionsResult = {
+  __typename?: 'ExchangeAccountPositionsResult'
+  positions: Array<Position>
+  totalCount: Scalars['Int']
+}
+
 export type ExchangeAccountsInput = {
   membershipId: Scalars['ID']
+}
+
+export type ExchangeAccountSymbolPositionInput = {
+  symbol: Scalars['String']
+}
+
+export type ExchangeAccountSymbolPositionResult = {
+  __typename?: 'ExchangeAccountSymbolPositionResult'
+  position: Position
 }
 
 export type GroupOrderSets = {
@@ -344,20 +400,26 @@ export type GroupOrderSets = {
   totalCount: Scalars['Int']
 }
 
-export type GroupPositions = {
-  __typename?: 'GroupPositions'
-  positions: Array<Position>
-  totalCount: Scalars['Int']
+export type MemberOrdersInput = {
+  limit?: Maybe<Scalars['Int']>
+  offset?: Maybe<Scalars['Int']>
 }
 
-export type MemberOrders = {
-  __typename?: 'MemberOrders'
+export type MemberOrdersResult = {
+  __typename?: 'MemberOrdersResult'
   orders: Array<Order>
   totalCount: Scalars['Int']
 }
 
-export type MemberPositions = {
-  __typename?: 'MemberPositions'
+export type MemberPositionsInput = {
+  exchange?: Maybe<Exchange>
+  symbol?: Maybe<Scalars['String']>
+  limit?: Maybe<Scalars['Int']>
+  offset?: Maybe<Scalars['Int']>
+}
+
+export type MemberPositionsResult = {
+  __typename?: 'MemberPositionsResult'
   positions: Array<Position>
   totalCount: Scalars['Int']
 }
@@ -465,6 +527,7 @@ export type Position = {
   quantity?: Maybe<Scalars['Float']>
   avgPrice?: Maybe<Scalars['Float']>
   symbol: Scalars['String']
+  isOpen: Scalars['Boolean']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
@@ -643,6 +706,9 @@ export type Mutation = {
   updateOrderSet?: Maybe<UpdateOrderSetResult>
   cancelOrderSet?: Maybe<CancelOrderSetResult>
   cancelOrder?: Maybe<CancelOrderResponse>
+  closePositions?: Maybe<Array<ClosePositionsResult>>
+  addStopToPositions?: Maybe<Array<AddStopToPositionsResult>>
+  addTslToPositions?: Maybe<Array<AddTslToPositionsResult>>
   createExchangeAccount?: Maybe<CreateExchangeAccountResult>
   deleteExchangeAccount: DeleteExchangeAccountResult
   updateExchangeAccount: UpdateExchangeAccountResult
@@ -705,6 +771,18 @@ export type MutationCancelOrderSetArgs = {
 
 export type MutationCancelOrderArgs = {
   input: CancelOrderInput
+}
+
+export type MutationClosePositionsArgs = {
+  input: ClosePositionsInput
+}
+
+export type MutationAddStopToPositionsArgs = {
+  input: AddStopToPositionsInput
+}
+
+export type MutationAddTslToPositionsArgs = {
+  input: AddTslToPositionsInput
 }
 
 export type MutationCreateExchangeAccountArgs = {
@@ -783,7 +861,12 @@ export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } 
   'id' | 'active' | 'exchange' | 'createdAt'
 > & {
     orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment>
-    positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment>
+    positions?: Maybe<
+      { __typename?: 'ExchangeAccountPositionsResult' } & Pick<
+        ExchangeAccountPositionsResult,
+        'totalCount'
+      > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
+    >
   }
 
 export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
@@ -1002,9 +1085,7 @@ export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
                         membership: { __typename?: 'GroupMembership' } & Pick<
                           GroupMembership,
                           'id'
-                        > & {
-                            member: { __typename?: 'User' } & Pick<User, 'username'>
-                          }
+                        > & { member: { __typename?: 'User' } & Pick<User, 'username'> }
                       }
                   } & OrderDetailsFragment
                 >
@@ -1031,33 +1112,22 @@ export type GetGroupOrderSetsQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type GetGroupPositionDetailsQueryVariables = Exact<{
-  groupInput: GroupInput
-  positionInput: PositionInput
-  limit?: Maybe<Scalars['Int']>
-  offset?: Maybe<Scalars['Int']>
-}>
-
-export type GetGroupPositionDetailsQuery = { __typename?: 'Query' } & {
-  group?: Maybe<
-    { __typename?: 'Group' } & Pick<Group, 'id'> & {
-        position?: Maybe<{ __typename?: 'Position' } & PositionDetailsFragment>
-      }
-  >
-}
-
 export type GetGroupPositionsQueryVariables = Exact<{
-  input: GroupInput
-  limit?: Maybe<Scalars['Int']>
-  offset?: Maybe<Scalars['Int']>
+  groupInput: GroupInput
+  positionsInput: MemberPositionsInput
 }>
 
 export type GetGroupPositionsQuery = { __typename?: 'Query' } & {
   group?: Maybe<
     { __typename?: 'Group' } & Pick<Group, 'id'> & {
-        positions: { __typename?: 'GroupPositions' } & Pick<GroupPositions, 'totalCount'> & {
-            positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment>
-          }
+        memberships: Array<
+          { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
+              positions: { __typename?: 'MemberPositionsResult' } & Pick<
+                MemberPositionsResult,
+                'totalCount'
+              > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
+            }
+        >
       }
   >
 }
@@ -1069,30 +1139,29 @@ export type MeQuery = { __typename?: 'Query' } & {
 }
 
 export type GetMemberOrdersQueryVariables = Exact<{
-  input: MembershipInput
-  limit?: Maybe<Scalars['Int']>
-  offset?: Maybe<Scalars['Int']>
+  membershipInput: MembershipInput
+  ordersInput: MemberOrdersInput
 }>
 
 export type GetMemberOrdersQuery = { __typename?: 'Query' } & {
   membership: { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
-      orders: { __typename?: 'MemberOrders' } & Pick<MemberOrders, 'totalCount'> & {
+      orders: { __typename?: 'MemberOrdersResult' } & Pick<MemberOrdersResult, 'totalCount'> & {
           orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment>
         }
     }
 }
 
 export type GetMemberPositionsQueryVariables = Exact<{
-  input: MembershipInput
-  limit?: Maybe<Scalars['Int']>
-  offset?: Maybe<Scalars['Int']>
+  membershipInput: MembershipInput
+  positionsInput: MemberPositionsInput
 }>
 
 export type GetMemberPositionsQuery = { __typename?: 'Query' } & {
   membership: { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
-      positions: { __typename?: 'MemberPositions' } & Pick<MemberPositions, 'totalCount'> & {
-          positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment>
-        }
+      positions: { __typename?: 'MemberPositionsResult' } & Pick<
+        MemberPositionsResult,
+        'totalCount'
+      > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
     }
 }
 
@@ -1244,7 +1313,10 @@ export const ExchangeAccountDetailsFragmentDoc = gql`
       ...OrderDetails
     }
     positions {
-      ...PositionDetails
+      totalCount
+      positions {
+        ...PositionDetails
+      }
     }
   }
   ${OrderDetailsFragmentDoc}
@@ -1780,7 +1852,7 @@ export const GetAsyncOperationStatusDocument = gql`
  * });
  */
 export function useGetAsyncOperationStatusQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     GetAsyncOperationStatusQuery,
     GetAsyncOperationStatusQueryVariables
   >,
@@ -1887,7 +1959,7 @@ export const GetExchangeAccountDocument = gql`
  * });
  */
 export function useGetExchangeAccountQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetExchangeAccountQuery, GetExchangeAccountQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetExchangeAccountQuery, GetExchangeAccountQueryVariables>,
 ) {
   return Apollo.useQuery<GetExchangeAccountQuery, GetExchangeAccountQueryVariables>(
     GetExchangeAccountDocument,
@@ -1939,10 +2011,7 @@ export const GetExchangeAccountsDocument = gql`
  * });
  */
 export function useGetExchangeAccountsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetExchangeAccountsQuery,
-    GetExchangeAccountsQueryVariables
-  >,
+  baseOptions: Apollo.QueryHookOptions<GetExchangeAccountsQuery, GetExchangeAccountsQueryVariables>,
 ) {
   return Apollo.useQuery<GetExchangeAccountsQuery, GetExchangeAccountsQueryVariables>(
     GetExchangeAccountsDocument,
@@ -1998,7 +2067,7 @@ export const GetGroupDocument = gql`
  * });
  */
 export function useGetGroupQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetGroupQuery, GetGroupQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetGroupQuery, GetGroupQueryVariables>,
 ) {
   return Apollo.useQuery<GetGroupQuery, GetGroupQueryVariables>(GetGroupDocument, baseOptions)
 }
@@ -2063,7 +2132,7 @@ export const GetGroupOrderSetDetailsDocument = gql`
  * });
  */
 export function useGetGroupOrderSetDetailsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     GetGroupOrderSetDetailsQuery,
     GetGroupOrderSetDetailsQueryVariables
   >,
@@ -2128,7 +2197,7 @@ export const GetGroupOrderSetsDocument = gql`
  * });
  */
 export function useGetGroupOrderSetsQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetGroupOrderSetsQuery, GetGroupOrderSetsQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetGroupOrderSetsQuery, GetGroupOrderSetsQueryVariables>,
 ) {
   return Apollo.useQuery<GetGroupOrderSetsQuery, GetGroupOrderSetsQueryVariables>(
     GetGroupOrderSetsDocument,
@@ -2152,82 +2221,17 @@ export type GetGroupOrderSetsQueryResult = Apollo.QueryResult<
   GetGroupOrderSetsQuery,
   GetGroupOrderSetsQueryVariables
 >
-export const GetGroupPositionDetailsDocument = gql`
-  query GetGroupPositionDetails(
-    $groupInput: GroupInput!
-    $positionInput: PositionInput!
-    $limit: Int
-    $offset: Int
-  ) {
+export const GetGroupPositionsDocument = gql`
+  query GetGroupPositions($groupInput: GroupInput!, $positionsInput: MemberPositionsInput!) {
     group(input: $groupInput) {
       id
-      position(input: $positionInput) {
-        ...PositionDetails
-      }
-    }
-  }
-  ${PositionDetailsFragmentDoc}
-`
-
-/**
- * __useGetGroupPositionDetailsQuery__
- *
- * To run a query within a React component, call `useGetGroupPositionDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetGroupPositionDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetGroupPositionDetailsQuery({
- *   variables: {
- *      groupInput: // value for 'groupInput'
- *      positionInput: // value for 'positionInput'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useGetGroupPositionDetailsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetGroupPositionDetailsQuery,
-    GetGroupPositionDetailsQueryVariables
-  >,
-) {
-  return Apollo.useQuery<GetGroupPositionDetailsQuery, GetGroupPositionDetailsQueryVariables>(
-    GetGroupPositionDetailsDocument,
-    baseOptions,
-  )
-}
-export function useGetGroupPositionDetailsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetGroupPositionDetailsQuery,
-    GetGroupPositionDetailsQueryVariables
-  >,
-) {
-  return Apollo.useLazyQuery<GetGroupPositionDetailsQuery, GetGroupPositionDetailsQueryVariables>(
-    GetGroupPositionDetailsDocument,
-    baseOptions,
-  )
-}
-export type GetGroupPositionDetailsQueryHookResult = ReturnType<
-  typeof useGetGroupPositionDetailsQuery
->
-export type GetGroupPositionDetailsLazyQueryHookResult = ReturnType<
-  typeof useGetGroupPositionDetailsLazyQuery
->
-export type GetGroupPositionDetailsQueryResult = Apollo.QueryResult<
-  GetGroupPositionDetailsQuery,
-  GetGroupPositionDetailsQueryVariables
->
-export const GetGroupPositionsDocument = gql`
-  query GetGroupPositions($input: GroupInput!, $limit: Int, $offset: Int) {
-    group(input: $input) {
-      id
-      positions(limit: $limit, offset: $offset) {
-        totalCount
-        positions {
-          ...PositionDetails
+      memberships {
+        id
+        positions(input: $positionsInput) {
+          totalCount
+          positions {
+            ...PositionDetails
+          }
         }
       }
     }
@@ -2247,14 +2251,13 @@ export const GetGroupPositionsDocument = gql`
  * @example
  * const { data, loading, error } = useGetGroupPositionsQuery({
  *   variables: {
- *      input: // value for 'input'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
+ *      groupInput: // value for 'groupInput'
+ *      positionsInput: // value for 'positionsInput'
  *   },
  * });
  */
 export function useGetGroupPositionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetGroupPositionsQuery, GetGroupPositionsQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetGroupPositionsQuery, GetGroupPositionsQueryVariables>,
 ) {
   return Apollo.useQuery<GetGroupPositionsQuery, GetGroupPositionsQueryVariables>(
     GetGroupPositionsDocument,
@@ -2316,10 +2319,10 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>
 export const GetMemberOrdersDocument = gql`
-  query GetMemberOrders($input: MembershipInput!, $limit: Int, $offset: Int) {
-    membership(input: $input) {
+  query GetMemberOrders($membershipInput: MembershipInput!, $ordersInput: MemberOrdersInput!) {
+    membership(input: $membershipInput) {
       id
-      orders(limit: $limit, offset: $offset) {
+      orders(input: $ordersInput) {
         totalCount
         orders {
           ...OrderDetails
@@ -2342,14 +2345,13 @@ export const GetMemberOrdersDocument = gql`
  * @example
  * const { data, loading, error } = useGetMemberOrdersQuery({
  *   variables: {
- *      input: // value for 'input'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
+ *      membershipInput: // value for 'membershipInput'
+ *      ordersInput: // value for 'ordersInput'
  *   },
  * });
  */
 export function useGetMemberOrdersQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetMemberOrdersQuery, GetMemberOrdersQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetMemberOrdersQuery, GetMemberOrdersQueryVariables>,
 ) {
   return Apollo.useQuery<GetMemberOrdersQuery, GetMemberOrdersQueryVariables>(
     GetMemberOrdersDocument,
@@ -2371,10 +2373,13 @@ export type GetMemberOrdersQueryResult = Apollo.QueryResult<
   GetMemberOrdersQueryVariables
 >
 export const GetMemberPositionsDocument = gql`
-  query GetMemberPositions($input: MembershipInput!, $limit: Int, $offset: Int) {
-    membership(input: $input) {
+  query GetMemberPositions(
+    $membershipInput: MembershipInput!
+    $positionsInput: MemberPositionsInput!
+  ) {
+    membership(input: $membershipInput) {
       id
-      positions(limit: $limit, offset: $offset) {
+      positions(input: $positionsInput) {
         totalCount
         positions {
           ...PositionDetails
@@ -2397,14 +2402,13 @@ export const GetMemberPositionsDocument = gql`
  * @example
  * const { data, loading, error } = useGetMemberPositionsQuery({
  *   variables: {
- *      input: // value for 'input'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
+ *      membershipInput: // value for 'membershipInput'
+ *      positionsInput: // value for 'positionsInput'
  *   },
  * });
  */
 export function useGetMemberPositionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetMemberPositionsQuery, GetMemberPositionsQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetMemberPositionsQuery, GetMemberPositionsQueryVariables>,
 ) {
   return Apollo.useQuery<GetMemberPositionsQuery, GetMemberPositionsQueryVariables>(
     GetMemberPositionsDocument,
@@ -2456,7 +2460,7 @@ export const GetMyMembershipDocument = gql`
  * });
  */
 export function useGetMyMembershipQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetMyMembershipQuery, GetMyMembershipQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetMyMembershipQuery, GetMyMembershipQueryVariables>,
 ) {
   return Apollo.useQuery<GetMyMembershipQuery, GetMyMembershipQueryVariables>(
     GetMyMembershipDocument,
@@ -2503,7 +2507,7 @@ export const GetOrderDocument = gql`
  * });
  */
 export function useGetOrderQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetOrderQuery, GetOrderQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetOrderQuery, GetOrderQueryVariables>,
 ) {
   return Apollo.useQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, baseOptions)
 }
@@ -2541,7 +2545,7 @@ export const GetPositionDocument = gql`
  * });
  */
 export function useGetPositionQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetPositionQuery, GetPositionQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GetPositionQuery, GetPositionQueryVariables>,
 ) {
   return Apollo.useQuery<GetPositionQuery, GetPositionQueryVariables>(
     GetPositionDocument,
@@ -2582,7 +2586,7 @@ export const GroupExistsDocument = gql`
  * });
  */
 export function useGroupExistsQuery(
-  baseOptions?: Apollo.QueryHookOptions<GroupExistsQuery, GroupExistsQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GroupExistsQuery, GroupExistsQueryVariables>,
 ) {
   return Apollo.useQuery<GroupExistsQuery, GroupExistsQueryVariables>(
     GroupExistsDocument,
@@ -2639,7 +2643,7 @@ export const MyMembershipsDocument = gql`
  * });
  */
 export function useMyMembershipsQuery(
-  baseOptions?: Apollo.QueryHookOptions<MyMembershipsQuery, MyMembershipsQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<MyMembershipsQuery, MyMembershipsQueryVariables>,
 ) {
   return Apollo.useQuery<MyMembershipsQuery, MyMembershipsQueryVariables>(
     MyMembershipsDocument,
