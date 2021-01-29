@@ -145,6 +145,9 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
         </div>
         <div className="d-flex flex-column justify-content-center">
           <Button
+            disabled={
+              !selectedSymbol || (!longPositionTableData.length && !shortPositionTableData.length)
+            }
             className="btn btn-primary"
             onClick={() => onClickCreate(exchange, selectedSymbol)}
           >
