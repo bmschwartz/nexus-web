@@ -3,7 +3,6 @@ import { convertToLocalPositionSide, PositionSide } from 'types/position'
 /* eslint-disable */
 import { GetGroupPositionsQuery } from '../../../graphql'
 import { displayTimeBeforeNow } from '../dateUtil'
-// import { displayTimeBeforeNow } from '../dateUtil'
 /* eslint-enable */
 
 export interface PositionTableItem {
