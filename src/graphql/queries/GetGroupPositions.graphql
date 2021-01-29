@@ -3,6 +3,9 @@ query GetGroupPositions($groupInput: GroupInput!, $positionsInput: MemberPositio
     id
     memberships {
       id
+      member {
+        username
+      }
       positions(input: $positionsInput) {
         totalCount
         positions {

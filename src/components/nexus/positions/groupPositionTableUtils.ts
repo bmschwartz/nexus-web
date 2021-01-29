@@ -24,7 +24,12 @@ export const createPositionTableData = (
   }
 
   const { memberships } = positionResponse.group
-  const positions = memberships.flatMap(membership => membership.positions.positions)
+  const positions = memberships.flatMap(membership => {
+    const {
+      member: { username },
+    } = membership
+    return membership.positions.positions.map(position => ({ ...position, username }))
+  })
 
   return positions
     .filter(position => {
@@ -32,10 +37,11 @@ export const createPositionTableData = (
       return sidesMatch && position.isOpen
     })
     .map(position => {
-      const { id, symbol, avgPrice, quantity, side, updatedAt } = position
+      const { id, symbol, avgPrice, quantity, side, updatedAt, username } = position
       return {
         id,
         symbol,
+        username,
         quantity: String(quantity) ?? '',
         avgPrice: String(avgPrice) ?? '',
         side: convertToLocalPositionSide(side),

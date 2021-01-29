@@ -1130,6 +1130,7 @@ export type GetGroupPositionsQuery = { __typename?: 'Query' } & {
     { __typename?: 'Group' } & Pick<Group, 'id'> & {
         memberships: Array<
           { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
+              member: { __typename?: 'User' } & Pick<User, 'username'>
               positions: { __typename?: 'MemberPositionsResult' } & Pick<
                 MemberPositionsResult,
                 'totalCount'
@@ -2245,6 +2246,9 @@ export const GetGroupPositionsDocument = gql`
       id
       memberships {
         id
+        member {
+          username
+        }
         positions(input: $positionsInput) {
           totalCount
           positions {

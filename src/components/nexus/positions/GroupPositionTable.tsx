@@ -21,14 +21,9 @@ interface PositionTableProps {
 
 const positionTableColumns = [
   {
-    title: 'Symbol',
-    dataIndex: 'symbol',
-    key: 'symbol',
-  },
-  {
-    title: 'Side',
-    dataIndex: 'side',
-    key: 'side',
+    title: 'Member',
+    dataIndex: 'username',
+    key: 'username',
   },
   {
     title: 'Quantity',
