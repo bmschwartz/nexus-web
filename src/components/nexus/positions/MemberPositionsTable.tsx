@@ -59,7 +59,8 @@ export const MemberPositionsTable: FC<MemberPositionsTableProps> = ({
         if (!result.fetchMoreResult) {
           return prev
         }
-        return { ...result.fetchMoreResult }
+        const fetchedResult: object = result.fetchMoreResult as object
+        return { ...fetchedResult }
       },
     })
   }
@@ -70,7 +71,7 @@ export const MemberPositionsTable: FC<MemberPositionsTableProps> = ({
     fetchMore,
   } = useGetMemberPositionsQuery({
     fetchPolicy: 'cache-and-network',
-    variables: { input: { membershipId }, limit: PAGE_SIZE },
+    variables: { membershipInput: { membershipId }, positionsInput: { limit: PAGE_SIZE } },
     notifyOnNetworkStatusChange: true,
   })
 
