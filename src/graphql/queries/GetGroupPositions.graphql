@@ -9,6 +9,9 @@ query GetGroupPositions($groupInput: GroupInput!, $positionsInput: MemberPositio
       positions(input: $positionsInput) {
         totalCount
         positions {
+          exchangeAccount {
+            id
+          }
           ...PositionDetails
         }
       }

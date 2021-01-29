@@ -865,7 +865,9 @@ export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } 
       { __typename?: 'ExchangeAccountPositionsResult' } & Pick<
         ExchangeAccountPositionsResult,
         'totalCount'
-      > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
+      > & {
+          positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment>
+        }
     >
   }
 
@@ -1093,7 +1095,9 @@ export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
                         membership: { __typename?: 'GroupMembership' } & Pick<
                           GroupMembership,
                           'id'
-                        > & { member: { __typename?: 'User' } & Pick<User, 'username'> }
+                        > & {
+                            member: { __typename?: 'User' } & Pick<User, 'username'>
+                          }
                       }
                   } & OrderDetailsFragment
                 >
@@ -1134,7 +1138,16 @@ export type GetGroupPositionsQuery = { __typename?: 'Query' } & {
               positions: { __typename?: 'MemberPositionsResult' } & Pick<
                 MemberPositionsResult,
                 'totalCount'
-              > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
+              > & {
+                  positions: Array<
+                    { __typename?: 'Position' } & {
+                      exchangeAccount: { __typename?: 'ExchangeAccount' } & Pick<
+                        ExchangeAccount,
+                        'id'
+                      >
+                    } & PositionDetailsFragment
+                  >
+                }
             }
         >
       }
@@ -1170,7 +1183,9 @@ export type GetMemberPositionsQuery = { __typename?: 'Query' } & {
       positions: { __typename?: 'MemberPositionsResult' } & Pick<
         MemberPositionsResult,
         'totalCount'
-      > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
+      > & {
+          positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment>
+        }
     }
 }
 
@@ -2252,6 +2267,9 @@ export const GetGroupPositionsDocument = gql`
         positions(input: $positionsInput) {
           totalCount
           positions {
+            exchangeAccount {
+              id
+            }
             ...PositionDetails
           }
         }
