@@ -2,6 +2,7 @@ fragment PositionDetails on Position {
   id
   side
   symbol
+  isOpen
   exchange
   quantity
   avgPrice

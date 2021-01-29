@@ -1,0 +1,11 @@
+query GetSymbols {
+  bitmexCurrencies {
+    id
+    symbol
+  }
+
+  binanceCurrencies {
+    id
+    symbol
+  }
+}

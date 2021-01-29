@@ -915,7 +915,15 @@ export type OrderSetDetailsFragment = { __typename?: 'OrderSet' } & Pick<
 
 export type PositionDetailsFragment = { __typename?: 'Position' } & Pick<
   Position,
-  'id' | 'side' | 'symbol' | 'exchange' | 'quantity' | 'avgPrice' | 'createdAt' | 'updatedAt'
+  | 'id'
+  | 'side'
+  | 'symbol'
+  | 'isOpen'
+  | 'exchange'
+  | 'quantity'
+  | 'avgPrice'
+  | 'createdAt'
+  | 'updatedAt'
 >
 
 export type CancelOrderMutationVariables = Exact<{
@@ -1189,6 +1197,15 @@ export type GetPositionQuery = { __typename?: 'Query' } & {
   position?: Maybe<{ __typename?: 'Position' } & PositionDetailsFragment>
 }
 
+export type GetSymbolsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetSymbolsQuery = { __typename?: 'Query' } & {
+  bitmexCurrencies: Array<{ __typename?: 'BitmexCurrency' } & Pick<BitmexCurrency, 'id' | 'symbol'>>
+  binanceCurrencies: Array<
+    { __typename?: 'BinanceCurrency' } & Pick<BinanceCurrency, 'id' | 'symbol'>
+  >
+}
+
 export type GroupExistsQueryVariables = Exact<{
   input: GroupExistsInput
 }>
@@ -1296,6 +1313,7 @@ export const PositionDetailsFragmentDoc = gql`
     id
     side
     symbol
+    isOpen
     exchange
     quantity
     avgPrice
@@ -2563,6 +2581,50 @@ export function useGetPositionLazyQuery(
 export type GetPositionQueryHookResult = ReturnType<typeof useGetPositionQuery>
 export type GetPositionLazyQueryHookResult = ReturnType<typeof useGetPositionLazyQuery>
 export type GetPositionQueryResult = Apollo.QueryResult<GetPositionQuery, GetPositionQueryVariables>
+export const GetSymbolsDocument = gql`
+  query GetSymbols {
+    bitmexCurrencies {
+      id
+      symbol
+    }
+    binanceCurrencies {
+      id
+      symbol
+    }
+  }
+`
+
+/**
+ * __useGetSymbolsQuery__
+ *
+ * To run a query within a React component, call `useGetSymbolsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSymbolsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSymbolsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetSymbolsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetSymbolsQuery, GetSymbolsQueryVariables>,
+) {
+  return Apollo.useQuery<GetSymbolsQuery, GetSymbolsQueryVariables>(GetSymbolsDocument, baseOptions)
+}
+export function useGetSymbolsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetSymbolsQuery, GetSymbolsQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetSymbolsQuery, GetSymbolsQueryVariables>(
+    GetSymbolsDocument,
+    baseOptions,
+  )
+}
+export type GetSymbolsQueryHookResult = ReturnType<typeof useGetSymbolsQuery>
+export type GetSymbolsLazyQueryHookResult = ReturnType<typeof useGetSymbolsLazyQuery>
+export type GetSymbolsQueryResult = Apollo.QueryResult<GetSymbolsQuery, GetSymbolsQueryVariables>
 export const GroupExistsDocument = gql`
   query GroupExists($input: GroupExistsInput!) {
     groupExists(input: $input)
