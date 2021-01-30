@@ -40,14 +40,15 @@ const orderSetTableColumns = [
     key: 'orderType',
   },
   {
+    title: 'Close Order',
+    dataIndex: 'closeOrderSet',
+    key: 'closeOrderSet',
+    render: (closeOrderSet: boolean) => <>{closeOrderSet ? 'Yes' : 'No'}</>,
+  },
+  {
     title: 'Price',
     dataIndex: 'price',
     key: 'price',
-  },
-  {
-    title: 'Date',
-    dataIndex: 'date',
-    key: 'date',
   },
 ]
 

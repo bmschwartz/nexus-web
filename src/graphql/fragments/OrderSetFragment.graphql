@@ -5,6 +5,7 @@ fragment OrderSetDetails on OrderSet {
   price
   side
   orderType
+  closeOrderSet
   percent
   stopPrice
   description

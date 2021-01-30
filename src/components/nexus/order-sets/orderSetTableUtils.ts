@@ -12,6 +12,7 @@ export interface OrderSetTableItem {
   symbol: string
   side: OrderSide
   orderType: OrderType
+  closeOrderSet: boolean
   price: string
   date: string
 }
@@ -28,11 +29,12 @@ export const createOrderSetTableData = (
   } = orderSetResponse.group
 
   const orderSetTableItems: OrderSetTableItem[] = orderSets.map(orderSet => {
-    const { id, symbol, price, exchange, side, orderType, createdAt } = orderSet
+    const { id, symbol, price, exchange, side, orderType, closeOrderSet, createdAt } = orderSet
     return {
       id,
       price: String(price) ?? '',
       symbol,
+      closeOrderSet,
       exchange: convertToLocalExchange(exchange),
       side: convertToLocalOrderSide(side),
       orderType: convertToLocalOrderType(orderType),

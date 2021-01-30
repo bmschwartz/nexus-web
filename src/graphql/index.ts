@@ -928,6 +928,7 @@ export type OrderSetDetailsFragment = { __typename?: 'OrderSet' } & Pick<
   | 'price'
   | 'side'
   | 'orderType'
+  | 'closeOrderSet'
   | 'percent'
   | 'stopPrice'
   | 'description'
@@ -1430,6 +1431,7 @@ export const OrderSetDetailsFragmentDoc = gql`
     price
     side
     orderType
+    closeOrderSet
     percent
     stopPrice
     description

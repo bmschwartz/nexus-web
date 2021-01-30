@@ -76,6 +76,10 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             {orderSet && orderSet.orderType}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Close Order</strong>
+            {orderSet && orderSet.closeOrderSet ? 'Yes' : 'No'}
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Percent</strong>
             {orderSet && `${orderSet.percent}%`}
           </div>
