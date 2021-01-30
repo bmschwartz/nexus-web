@@ -307,12 +307,13 @@ export type CreateExchangeAccountResult = {
 
 export type CreateOrderSetInput = {
   groupId: Scalars['ID']
-  membershipIds: Array<Scalars['ID']>
+  exchangeAccountIds: Array<Scalars['ID']>
   symbol: Scalars['String']
   exchange: Exchange
   description?: Maybe<Scalars['String']>
   side: OrderSide
   orderType: OrderType
+  closeOrderSet: Scalars['Boolean']
   leverage: Scalars['Float']
   price?: Maybe<Scalars['Float']>
   percent?: Maybe<Scalars['Float']>
@@ -460,6 +461,7 @@ export type Order = {
   exchange: Exchange
   orderType: OrderType
   status: OrderStatus
+  closeOrder: Scalars['Boolean']
   leverage: Scalars['Float']
   price?: Maybe<Scalars['Float']>
   quantity?: Maybe<Scalars['Float']>
@@ -486,6 +488,7 @@ export type OrderSet = {
   price?: Maybe<Scalars['Float']>
   side: OrderSide
   orderType: OrderType
+  closeOrderSet: Scalars['Boolean']
   orders: OrderSetOrders
   percent: Scalars['Float']
   leverage: Scalars['Float']

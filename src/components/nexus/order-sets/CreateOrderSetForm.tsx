@@ -7,7 +7,7 @@ import TextArea from 'antd/lib/input/TextArea'
 
 /* Local */
 import { OrderSide, OrderType } from 'types/order'
-import { Exchange } from 'types/exchange'
+import { Exchange, ExchangeAccount } from 'types/exchange'
 import { Group } from 'types/group'
 import { Membership } from 'types/membership'
 
@@ -25,15 +25,20 @@ interface CreateOrderSetFormProps {
   onClickBack: () => void
 }
 
+interface MemberAccountMap {
+  membership: Membership
+  account: ExchangeAccount
+}
+
 const getOverviewText = ({
   side,
   symbol,
   price,
-  membershipIds,
+  exchangeAccountIds,
   percent,
   exchange,
 }: any): String => {
-  return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${membershipIds.length} members`
+  return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${exchangeAccountIds.length} members`
 }
 
 export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
@@ -63,18 +68,27 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
       return []
     }
 
-    const transferData = group.memberships.map((membership: Membership) => {
-      const accountsExchages = membership.exchangeAccounts
-        ? membership.exchangeAccounts.map(account => account.exchange.toLowerCase())
-        : []
+    const memberAccounts: MemberAccountMap[] = group.memberships
+      .map((membership: Membership) => {
+        const exchangeAccounts = membership.exchangeAccounts
+          .filter((account: ExchangeAccount) => {
+            return exchange.toLowerCase() === account.exchange.toLowerCase()
+          })
+          .filter(Boolean)
+        if (exchangeAccounts.length === 0) {
+          return
+        }
+        // eslint-disable-next-line consistent-return
+        return { membership, account: exchangeAccounts[0] }
+      })
+      .filter(Boolean) as MemberAccountMap[]
+
+    return memberAccounts.map(({ membership, account }) => {
       return {
-        key: membership.id,
+        key: account.id,
         title: membership.username,
-        disabled: !accountsExchages.includes(exchange.toLowerCase()),
       }
     })
-
-    return transferData
   }
 
   const handleNoMembersSelected = () => {
@@ -99,11 +113,11 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           orderType: OrderType.LIMIT,
           percent: 5,
           price: 0,
-          membershipIds: [],
+          exchangeAccountIds: [],
         }}
         validationSchema={CreateOrderSetSchema}
         onSubmit={async (values, { setSubmitting }) => {
-          if (values.membershipIds.length === 0) {
+          if (values.exchangeAccountIds.length === 0) {
             setSubmitting(false)
             handleNoMembersSelected()
             return
@@ -112,6 +126,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           setSubmittingOrder(true)
           const { orderSetId, error }: CreateOrderSetResponse = await apollo.createOrderSet({
             groupId: group.id,
+            closeOrderSet: false,
             leverage: 1,
             ...values,
           })
@@ -239,9 +254,9 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   <TextArea name="description" rows={4} placeholder="Description (optional)" />
                 </Form.Item>
 
-                <Form.Item name="membershipIds" label="Members" className="mb-3">
+                <Form.Item name="exchangeAccountIds" label="Members" className="mb-3">
                   <Transfer
-                    name="membershipIds"
+                    name="exchangeAccountIds"
                     showSearch
                     showSelectAll
                     pagination

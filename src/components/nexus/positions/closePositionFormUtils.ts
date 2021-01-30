@@ -25,7 +25,7 @@ export const getClosePositionsSchema = () => {
       .required(),
     price: Yup.number()
       .label('Price')
-      .when('type', {
+      .when('orderType', {
         is: OrderType.LIMIT,
         then: Yup.number()
           .positive()

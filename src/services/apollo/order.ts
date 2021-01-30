@@ -26,9 +26,10 @@ export interface CreateOrderSetInput {
   leverage: number
   side: OrderSide
   orderType: OrderType
+  closeOrderSet: boolean
   stopPrice?: number
   description?: string
-  membershipIds: string[]
+  exchangeAccountIds: string[]
 }
 
 export interface CancelOrderResponse {

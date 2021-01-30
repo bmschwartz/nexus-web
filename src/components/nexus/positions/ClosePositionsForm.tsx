@@ -147,14 +147,7 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                 </Form.Item>
 
                 <Form.Item name="symbol" label="Symbol" className="mb-3">
-                  <Select
-                    showSearch
-                    placeholder="Search Symbol..."
-                    name="symbol"
-                    style={{ width: 200 }}
-                    size="large"
-                    value={symbol}
-                  >
+                  <Select name="symbol" style={{ width: 200 }} size="large" value={symbol}>
                     <Select.Option key={symbol} value={symbol}>
                       {symbol}
                     </Select.Option>
