@@ -106,12 +106,14 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
             return
           }
 
+          const { percent, price, exchangeAccountIds } = values
+
           setSubmittingClosePositions(true)
           const { orderSetId, error }: ClosePositionsResponse = await apollo.closePositions({
             symbol,
-            fraction: values.percent,
-            price: values.price,
-            exchangeAccountIds: values.exchangeAccountIds,
+            percent,
+            price,
+            exchangeAccountIds,
           })
           setSubmittingClosePositions(false)
 
@@ -136,51 +138,28 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
           <div className="card-body">
             <Spin spinning={!currencyData}>
               <Form {...formItemLayout} labelAlign="left">
-                {/* <Form.Item name="exchange" label="Exchange">
-                  <Select
-                    name="exchange"
-                    size="large"
-                    style={{ width: 120 }}
-                    onChange={e => {
-                      handleChange(e)
-                      setSelectedAccountKeys([])
-                      setFieldValue('symbol', '')
-                    }}
-                  >
-                    {currencyData &&
-                      currencyData.exchanges.map(exchange => (
-                        <Select.Option key={exchange} value={exchange}>
-                          {exchange}
-                        </Select.Option>
-                      ))}
+                <Form.Item name="exchange" label="Exchange">
+                  <Select name="exchange" size="large" style={{ width: 120 }} value={exchange}>
+                    <Select.Option key={exchange} value={exchange}>
+                      {exchange}
+                    </Select.Option>
                   </Select>
-                </Form.Item> */}
+                </Form.Item>
 
-                {/* <Form.Item name="symbol" label="Symbol" className="mb-3">
+                <Form.Item name="symbol" label="Symbol" className="mb-3">
                   <Select
                     showSearch
                     placeholder="Search Symbol..."
                     name="symbol"
                     style={{ width: 200 }}
                     size="large"
-                    onChange={e => {
-                      handleChange(e)
-                      setFieldValue(
-                        'price',
-                        getMinPrice(currencyData, values.exchange, values.symbol),
-                      )
-                    }}
+                    value={symbol}
                   >
-                    {currencyData &&
-                      Object.keys(currencyData[values.exchange])
-                        .sort()
-                        .map(symbol => (
-                          <Select.Option key={symbol} value={symbol}>
-                            {symbol}
-                          </Select.Option>
-                        ))}
+                    <Select.Option key={symbol} value={symbol}>
+                      {symbol}
+                    </Select.Option>
                   </Select>
-                </Form.Item> */}
+                </Form.Item>
 
                 <Form.Item name="side" label="Side" className="mb-3">
                   <Select

@@ -9,7 +9,7 @@ import {
 export interface ClosePositionsInput {
   symbol: string
   price?: number
-  fraction?: number
+  percent?: number
   exchangeAccountIds: string[]
 }
 
@@ -21,10 +21,10 @@ export interface ClosePositionsResponse {
 export const closePositions = async (
   input: ClosePositionsInput,
 ): Promise<ClosePositionsResponse> => {
-  const { symbol, fraction, price, exchangeAccountIds } = input
+  const { symbol, percent, price, exchangeAccountIds } = input
   const payload: RemoteClosePositionsInput = {
     symbol,
-    fraction,
+    percent,
     price,
     exchangeAccountIds,
   }

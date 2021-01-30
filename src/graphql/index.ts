@@ -283,7 +283,7 @@ export type CancelOrderSetResult = {
 export type ClosePositionsInput = {
   symbol: Scalars['String']
   price?: Maybe<Scalars['Float']>
-  fraction?: Maybe<Scalars['Float']>
+  percent?: Maybe<Scalars['Float']>
   exchangeAccountIds: Array<Scalars['ID']>
 }
 

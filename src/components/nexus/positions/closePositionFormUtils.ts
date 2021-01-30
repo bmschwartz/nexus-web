@@ -56,7 +56,7 @@ export const createTransferData = (
     .filter(memberPosition => memberPosition.position.side === desiredSide)
     .map((memberPosition: MemberPosition) => {
       return {
-        key: memberPosition.username,
+        key: memberPosition.exchangeAccountId,
         title: memberPosition.username,
       }
     })
