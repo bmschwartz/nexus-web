@@ -4,7 +4,7 @@ import { Form, Input, InputNumber, Select, SubmitButton, Transfer } from 'formik
 import { Modal, notification, PageHeader, Spin } from 'antd'
 
 /* Local */
-import { OrderType } from 'types/order'
+import { OrderSide, OrderType } from 'types/order'
 import { Exchange, convertToRemoteExchange } from 'types/exchange'
 
 /* eslint-disable */
@@ -106,11 +106,19 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
             return
           }
 
-          const { percent, price, exchangeAccountIds } = values
+          const { percent, price, exchangeAccountIds, orderType } = values
+          const orderSide =
+            selectedPositionSide === PositionSide.LONG ? OrderSide.SELL : OrderSide.BUY
 
           setSubmittingClosePositions(true)
-          const { orderSetId, error }: ClosePositionsResponse = await apollo.closePositions({
+          const { orderSetId, error }: ClosePositionsResponse = await apollo.createOrderSet({
+            exchange,
             symbol,
+            side: orderSide,
+            orderType,
+            groupId: group.id,
+            closeOrderSet: true,
+            leverage: 0,
             percent,
             price,
             exchangeAccountIds,
