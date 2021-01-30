@@ -289,8 +289,7 @@ export type ClosePositionsInput = {
 
 export type ClosePositionsResult = {
   __typename?: 'ClosePositionsResult'
-  operationId?: Maybe<Scalars['ID']>
-  error?: Maybe<Scalars['String']>
+  orderSet?: Maybe<OrderSet>
 }
 
 export type CreateExchangeAccountInput = {
@@ -723,7 +722,7 @@ export type Mutation = {
   updateOrderSet?: Maybe<UpdateOrderSetResult>
   cancelOrderSet?: Maybe<CancelOrderSetResult>
   cancelOrder?: Maybe<CancelOrderResponse>
-  closePositions?: Maybe<Array<ClosePositionsResult>>
+  closePositions?: Maybe<ClosePositionsResult>
   addStopToPositions?: Maybe<Array<AddStopToPositionsResult>>
   addTslToPositions?: Maybe<Array<AddTslToPositionsResult>>
   createExchangeAccount?: Maybe<CreateExchangeAccountResult>
@@ -961,9 +960,9 @@ export type ClosePositionsMutationVariables = Exact<{
 
 export type ClosePositionsMutation = { __typename?: 'Mutation' } & {
   closePositions?: Maybe<
-    Array<
-      { __typename?: 'ClosePositionsResult' } & Pick<ClosePositionsResult, 'operationId' | 'error'>
-    >
+    { __typename?: 'ClosePositionsResult' } & {
+      orderSet?: Maybe<{ __typename?: 'OrderSet' } & Pick<OrderSet, 'id'>>
+    }
   >
 }
 
@@ -1481,8 +1480,9 @@ export type CancelOrderMutationOptions = Apollo.BaseMutationOptions<
 export const ClosePositionsDocument = gql`
   mutation ClosePositions($input: ClosePositionsInput!) {
     closePositions(input: $input) {
-      operationId
-      error
+      orderSet {
+        id
+      }
     }
   }
 `

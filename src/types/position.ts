@@ -1,6 +1,6 @@
 /* eslint-disable */
-import { PositionSide as RemotePositionSide } from '../graphql'
-import { Exchange } from './exchange'
+import { PositionSide as RemotePositionSide, Position as RenotePosition } from '../graphql'
+import { convertToLocalExchange, Exchange } from './exchange'
 /* eslint-enable */
 
 export enum PositionSide {
@@ -25,5 +25,19 @@ export function convertToLocalPositionSide(side: RemotePositionSide): PositionSi
     case RemotePositionSide.Short:
     default:
       return PositionSide.SHORT
+  }
+}
+
+export function convertToLocalPosition(remotePosition: RenotePosition): Position {
+  const { id, side, exchange, avgPrice, quantity, symbol, updatedAt } = remotePosition
+
+  return {
+    id,
+    avgPrice: avgPrice || undefined,
+    quantity: quantity || undefined,
+    symbol,
+    updatedAt,
+    side: convertToLocalPositionSide(side),
+    exchange: convertToLocalExchange(exchange),
   }
 }

@@ -23,7 +23,7 @@ export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {
       .required(),
     price: Yup.number()
       .label('Price')
-      .when('side', {
+      .when('orderType', {
         is: OrderType.LIMIT,
         then: Yup.number()
           .positive()

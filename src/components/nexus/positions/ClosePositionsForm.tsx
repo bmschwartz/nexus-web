@@ -2,49 +2,69 @@ import React, { FC, useState } from 'react'
 import { Formik } from 'formik'
 import { Form, Input, InputNumber, Select, SubmitButton, Transfer } from 'formik-antd'
 import { Modal, notification, PageHeader, Spin } from 'antd'
-import { TransferItem } from 'antd/lib/transfer'
 
 /* Local */
-import { OrderSide, OrderType } from 'types/order'
+import { OrderType } from 'types/order'
 import { Exchange, convertToRemoteExchange } from 'types/exchange'
-import { Membership } from 'types/membership'
 
 /* eslint-disable */
-import { getClosePositionsSchema } from './closePositionFormUtils'
+import {
+  getClosePositionsSchema,
+  createTransferData,
+  extractMemberPositions,
+} from './closePositionFormUtils'
 import * as apollo from 'services/apollo'
 import { ClosePositionsResponse } from 'services/apollo/position'
-import { useGetCurrencyQuery } from '../../../graphql/index'
-import { extractCurrencyData, getMinPrice, getMaxPrice, getPriceTickSize } from 'types/currency'
+import {
+  GetGroupPositionsQueryVariables,
+  useGetCurrencyQuery,
+  useGetGroupPositionsQuery,
+} from '../../../graphql/index'
+import { extractCurrencyData } from 'types/currency'
 import { Group } from 'types/group'
+import TextArea from 'antd/lib/input/TextArea'
+import { PositionSide } from 'types/position'
 /* eslint-enable */
 
 interface ClosePositionsFormProps {
-  groupId: string
+  group: Group
   exchange: Exchange
   symbol: string
   onClickBack: () => void
-  onClosePositions: () => void
-}
-
-const getOverviewText = ({ symbol, price, exchangeAccountIds, percent, exchange }: any): String => {
-  return `Closing ${symbol} positions on ${exchange} at ${price} with ${percent}% of balance for ${exchangeAccountIds.length} accounts`
+  onClosePositions: (orderSetId: string) => void
 }
 
 export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
+  group,
   symbol,
   exchange,
   onClickBack,
+  onClosePositions,
 }) => {
+  const groupPositionsVariables: GetGroupPositionsQueryVariables = {
+    groupInput: {
+      groupId: group.id,
+    },
+    positionsInput: {
+      symbol,
+      exchange: convertToRemoteExchange(exchange),
+    },
+  }
   const { data: currencyResponse } = useGetCurrencyQuery({
     variables: { input: { exchange: convertToRemoteExchange(exchange)!, symbol } },
   })
+  const { data: groupPositionsData, loading: groupPositionsLoading } = useGetGroupPositionsQuery({
+    variables: groupPositionsVariables,
+  })
+  const [selectedPositionSide, setSelectedPositionSide] = useState<PositionSide>(PositionSide.LONG)
   const [submittingClosePositions, setSubmittingClosePositions] = useState<boolean>(false)
-  // const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
+  const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
 
+  const groupPositions = extractMemberPositions(exchange, groupPositionsData)
   const currencyData = extractCurrencyData(currencyResponse)
   console.log(currencyData)
 
-  const ClosePositionsSchema = getClosePositionsSchema(currencyData)
+  const ClosePositionsSchema = getClosePositionsSchema()
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -54,25 +74,6 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
       xs: { span: 24 },
       sm: { span: 12 },
     },
-  }
-
-  const createTransferData = (group?: Group): TransferItem[] => {
-    if (!group) {
-      return []
-    }
-
-    const transferData = group.memberships.map((membership: Membership) => {
-      const accountsExchages = membership.exchangeAccounts
-        ? membership.exchangeAccounts.map(account => account.exchange.toLowerCase())
-        : []
-      return {
-        key: membership.id,
-        title: membership.username,
-        disabled: !accountsExchages.includes(exchange.toLowerCase()),
-      }
-    })
-
-    return transferData
   }
 
   const handleNoMembersSelected = () => {
@@ -91,36 +92,37 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
       </div>
       <Formik
         initialValues={{
-          exchange,
-          symbol,
-          side: OrderSide.BUY,
+          side: selectedPositionSide,
           orderType: OrderType.LIMIT,
-          percent: 5,
+          percent: 100,
           price: 0,
-          membershipIds: [],
+          exchangeAccountIds: [],
         }}
         validationSchema={ClosePositionsSchema}
         onSubmit={async (values, { setSubmitting }) => {
-          if (values.membershipIds.length === 0) {
+          if (values.exchangeAccountIds.length === 0) {
             setSubmitting(false)
             handleNoMembersSelected()
             return
           }
 
           setSubmittingClosePositions(true)
-          const { orderSetId, error }: ClosePositionsResponse = await apollo.createOrderSet({
-            groupId: group.id,
-            leverage: 1,
-            ...values,
+          const { orderSetId, error }: ClosePositionsResponse = await apollo.closePositions({
+            symbol,
+            fraction: values.percent,
+            price: values.price,
+            exchangeAccountIds: values.exchangeAccountIds,
           })
           setSubmittingClosePositions(false)
 
+          console.log(orderSetId, error)
+
           if (orderSetId) {
             notification.success({
-              message: 'Created Order Set',
-              description: `${values.symbol} on ${values.exchange}`,
+              message: 'Closed Positions',
+              description: `${symbol} on ${exchange}`,
             })
-            onCreated()
+            onClosePositions(orderSetId)
           } else {
             notification.error({
               message: 'Create Order Set Error',
@@ -134,7 +136,7 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
           <div className="card-body">
             <Spin spinning={!currencyData}>
               <Form {...formItemLayout} labelAlign="left">
-                <Form.Item name="exchange" label="Exchange">
+                {/* <Form.Item name="exchange" label="Exchange">
                   <Select
                     name="exchange"
                     size="large"
@@ -152,9 +154,9 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                         </Select.Option>
                       ))}
                   </Select>
-                </Form.Item>
+                </Form.Item> */}
 
-                <Form.Item name="symbol" label="Symbol" className="mb-3">
+                {/* <Form.Item name="symbol" label="Symbol" className="mb-3">
                   <Select
                     showSearch
                     placeholder="Search Symbol..."
@@ -178,11 +180,23 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                           </Select.Option>
                         ))}
                   </Select>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item name="side" label="Side" className="mb-3">
-                  <Select name="side" style={{ width: 120 }} size="large" onChange={handleChange}>
-                    {Object.values(OrderSide).map(side => (
+                  <Select
+                    name="side"
+                    style={{ width: 120 }}
+                    size="large"
+                    onChange={(side: string) => {
+                      handleChange(side)
+                      if (side === PositionSide.LONG) {
+                        setSelectedPositionSide(PositionSide.LONG)
+                      } else {
+                        setSelectedPositionSide(PositionSide.SHORT)
+                      }
+                    }}
+                  >
+                    {Object.values(PositionSide).map(side => (
                       <Select.Option key={side} value={side}>
                         {side}
                       </Select.Option>
@@ -208,9 +222,9 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                 <Form.Item name="price" label="Price" className="mb-3">
                   <InputNumber
                     name="price"
-                    min={getMinPrice(currencyData, values.exchange, values.symbol)}
-                    max={getMaxPrice(currencyData, values.exchange, values.symbol)}
-                    step={getPriceTickSize(currencyData, values.exchange, values.symbol)}
+                    // min={getMinPrice(currencyData, exchange, symbol)}
+                    // max={getMaxPrice(currencyData, exchange, symbol)}
+                    // step={getPriceTickSize(currencyData, exchange, symbol)}
                     size="large"
                     onChange={val => setFieldValue('price', val, true)}
                     disabled={values.orderType === OrderType.MARKET}
@@ -219,7 +233,7 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                   />
                 </Form.Item>
 
-                <Form.Item name="percent" label="Balance Percent" className="mb-3">
+                <Form.Item name="percent" label="Position Percent" className="mb-3">
                   <Input
                     name="percent"
                     min={0}
@@ -227,7 +241,7 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                     size="large"
                     style={{ width: 120 }}
                     type="number"
-                    placeholder="5"
+                    placeholder="100"
                     addonAfter="%"
                     onChange={handleChange}
                   />
@@ -237,9 +251,10 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                   <TextArea name="description" rows={4} placeholder="Description (optional)" />
                 </Form.Item>
 
-                <Form.Item name="membershipIds" label="Members" className="mb-3">
+                <Form.Item name="exchangeAccountIds" label="Members" className="mb-3">
                   <Transfer
-                    name="membershipIds"
+                    name="exchangeAccountIds"
+                    disabled={groupPositionsLoading}
                     showSearch
                     showSelectAll
                     pagination
@@ -249,7 +264,7 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                       width: 350,
                       height: 350,
                     }}
-                    dataSource={createTransferData(values.exchange)}
+                    dataSource={createTransferData(selectedPositionSide, groupPositions)}
                     render={item =>
                       item.disabled ? `${item.title} (No account)` : `${item.title}`
                     }
@@ -267,8 +282,10 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                   />
                 </Form.Item>
 
-                <p>Overview: {getOverviewText(values)}</p>
-                <SubmitButton disabled={submittingOrder} loading={submittingOrder}>
+                <SubmitButton
+                  disabled={submittingClosePositions}
+                  loading={submittingClosePositions}
+                >
                   Submit
                 </SubmitButton>
               </Form>

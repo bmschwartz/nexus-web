@@ -1,21 +1,23 @@
 import * as Yup from 'yup'
 
 /* Local */
-import { OrderSide, OrderType } from 'types/order'
-import { ICurrencyMap } from 'types/currency'
+import { convertToLocalPositionSide, Position, PositionSide } from 'types/position'
+import { OrderType } from 'types/order'
+import { TransferItem } from 'antd/lib/transfer'
+import { GetGroupPositionsQuery } from 'graphql'
+import { convertToLocalExchange, convertToRemoteExchange, Exchange } from 'types/exchange'
 
-export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {
+interface MemberPosition {
+  position: Position
+  username: string
+  exchangeAccountId: string
+}
+
+export const getClosePositionsSchema = () => {
   return Yup.object().shape({
-    exchange: Yup.string()
-      .label('Exchange')
-      .oneOf(currencyData.exchanges)
-      .required(),
-    symbol: Yup.string()
-      .label('Symbol')
-      .required(),
     side: Yup.string()
       .label('Side')
-      .oneOf(Object.values(OrderSide))
+      .oneOf(Object.values(PositionSide))
       .required(),
     orderType: Yup.string()
       .label('Type')
@@ -23,7 +25,7 @@ export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {
       .required(),
     price: Yup.number()
       .label('Price')
-      .when('side', {
+      .when('type', {
         is: OrderType.LIMIT,
         then: Yup.number()
           .positive()
@@ -44,4 +46,77 @@ export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {
       .optional(),
     exchangeAccountIds: Yup.array().label('Members'),
   })
+}
+
+export const createTransferData = (
+  desiredSide: PositionSide,
+  memberPositions: MemberPosition[],
+): TransferItem[] => {
+  return memberPositions
+    .filter(memberPosition => memberPosition.position.side === desiredSide)
+    .map((memberPosition: MemberPosition) => {
+      return {
+        key: memberPosition.username,
+        title: memberPosition.username,
+      }
+    })
+}
+
+export const extractMemberPositions = (
+  targetExchange: Exchange,
+  groupPositions: GetGroupPositionsQuery | undefined,
+): MemberPosition[] => {
+  if (!groupPositions || !groupPositions.group) {
+    return []
+  }
+
+  const { memberships } = groupPositions.group
+
+  const memberPositions = memberships
+    .map(membership => {
+      const {
+        member: { username },
+        positions: { positions },
+      } = membership
+
+      const remotePositions: any = positions.filter(
+        position => position.exchange === convertToRemoteExchange(targetExchange),
+      )
+      if (!Array.isArray(remotePositions) || remotePositions.length === 0) {
+        return
+      }
+
+      const remotePosition = remotePositions[0]
+
+      const {
+        id,
+        side,
+        avgPrice,
+        quantity,
+        updatedAt,
+        symbol,
+        exchange,
+        exchangeAccount: { id: exchangeAccountId },
+      } = remotePosition
+      const position: Position = {
+        id,
+        avgPrice: avgPrice || undefined,
+        quantity: quantity || undefined,
+        updatedAt,
+        symbol,
+        exchange: convertToLocalExchange(exchange),
+        side: convertToLocalPositionSide(side),
+      }
+
+      const memberPosition: MemberPosition = {
+        username,
+        position,
+        exchangeAccountId,
+      }
+      // eslint-disable-next-line consistent-return
+      return memberPosition
+    })
+    .filter(Boolean)
+
+  return memberPositions as MemberPosition[]
 }

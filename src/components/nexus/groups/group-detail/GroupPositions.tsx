@@ -32,8 +32,10 @@ export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, setTabState,
   const onClickClosePositions = () => {
     setTabState(GroupPositionsTabState.CLOSE_POSITIONS)
   }
-  const onPositionsClosed = () => {
+  const onPositionsClosed = (orderSetId: string) => {
     setTabState(GroupPositionsTabState.VIEW_ALL)
+    // TODO: Go to OrderSetDetail page?
+    console.log(orderSetId)
   }
   const onClickBack = () => {
     setTabState(GroupPositionsTabState.VIEW_ALL)
@@ -64,7 +66,7 @@ export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, setTabState,
         selectedSymbol &&
         selectedExchange && (
           <ClosePositionsForm
-            groupId={group.id}
+            group={group}
             symbol={selectedSymbol}
             exchange={selectedExchange}
             onClickBack={onClickBack}

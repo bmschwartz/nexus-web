@@ -14,7 +14,7 @@ export interface ClosePositionsInput {
 }
 
 export interface ClosePositionsResponse {
-  operationId?: string
+  orderSetId?: string
   error?: string
 }
 
@@ -42,10 +42,12 @@ export const closePositions = async (
     }
 
     const {
-      closePositions: { operationId, error },
+      closePositions: {
+        orderSet: { id: orderSetId },
+      },
     } = data
 
-    return { operationId, error }
+    return { orderSetId }
   } catch (error) {
     return { error: error.message }
   }
