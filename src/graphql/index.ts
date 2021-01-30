@@ -955,6 +955,18 @@ export type CancelOrderMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type ClosePositionsMutationVariables = Exact<{
+  input: ClosePositionsInput
+}>
+
+export type ClosePositionsMutation = { __typename?: 'Mutation' } & {
+  closePositions?: Maybe<
+    Array<
+      { __typename?: 'ClosePositionsResult' } & Pick<ClosePositionsResult, 'operationId' | 'error'>
+    >
+  >
+}
+
 export type CreateExchangeAccountMutationVariables = Exact<{
   input: CreateExchangeAccountInput
 }>
@@ -1465,6 +1477,50 @@ export type CancelOrderMutationResult = Apollo.MutationResult<CancelOrderMutatio
 export type CancelOrderMutationOptions = Apollo.BaseMutationOptions<
   CancelOrderMutation,
   CancelOrderMutationVariables
+>
+export const ClosePositionsDocument = gql`
+  mutation ClosePositions($input: ClosePositionsInput!) {
+    closePositions(input: $input) {
+      operationId
+      error
+    }
+  }
+`
+export type ClosePositionsMutationFn = Apollo.MutationFunction<
+  ClosePositionsMutation,
+  ClosePositionsMutationVariables
+>
+
+/**
+ * __useClosePositionsMutation__
+ *
+ * To run a mutation, you first call `useClosePositionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClosePositionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [closePositionsMutation, { data, loading, error }] = useClosePositionsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useClosePositionsMutation(
+  baseOptions?: Apollo.MutationHookOptions<ClosePositionsMutation, ClosePositionsMutationVariables>,
+) {
+  return Apollo.useMutation<ClosePositionsMutation, ClosePositionsMutationVariables>(
+    ClosePositionsDocument,
+    baseOptions,
+  )
+}
+export type ClosePositionsMutationHookResult = ReturnType<typeof useClosePositionsMutation>
+export type ClosePositionsMutationResult = Apollo.MutationResult<ClosePositionsMutation>
+export type ClosePositionsMutationOptions = Apollo.BaseMutationOptions<
+  ClosePositionsMutation,
+  ClosePositionsMutationVariables
 >
 export const CreateExchangeAccountDocument = gql`
   mutation CreateExchangeAccount($input: CreateExchangeAccountInput!) {

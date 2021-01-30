@@ -1,8 +1,9 @@
 import React, { FC, useState } from 'react'
 import { Group } from 'types/group'
 import { GroupPositionTable } from 'components/nexus/positions/GroupPositionTable'
+import { ClosePositionsForm } from 'components/nexus/positions/ClosePositionsForm'
 import { Exchange } from 'types/exchange'
-import { GroupPositionExchangeTable } from 'components/nexus/positions/GroupPositionExchanges'
+// import { GroupPositionExchangeTable } from 'components/nexus/positions/GroupPositionExchanges'
 // import { CreatePositionForm } from 'components/nexus/positions/CreatePositionForm'
 // import { PositionDetail } from 'components/nexus/positions/PositionDetail'
 
@@ -13,53 +14,64 @@ interface GroupPositionsProps {
 }
 
 export enum GroupPositionsTabState {
-  CREATE,
   VIEW_ALL,
   VIEW_DETAIL,
-  VIEW_EXCHANGES,
+  CLOSE_POSITIONS,
 }
 
-export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, group, setTabState }) => {
+export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, setTabState, group }) => {
   const [selectedPositionId, setSelectedPositionId] = useState<string>()
   const [selectedExchange, setSelectedExchange] = useState<Exchange>()
+  const [selectedSymbol, setSelectedSymbol] = useState<string>()
 
-  const onClickCreateOrderSet = (exchange: Exchange, symbol: string | undefined) => {
-    console.log(exchange, symbol)
-    setTabState(GroupPositionsTabState.CREATE)
-  }
-  const onClickBack = () => {
-    setTabState(GroupPositionsTabState.VIEW_EXCHANGES)
-  }
   const onClickPosition = (positionId: string) => {
     setSelectedPositionId(positionId)
     console.log(selectedPositionId)
     setTabState(GroupPositionsTabState.VIEW_DETAIL)
   }
-  const onClickExchange = (exchange: Exchange) => {
-    setSelectedExchange(exchange)
+  const onClickClosePositions = () => {
+    setTabState(GroupPositionsTabState.CLOSE_POSITIONS)
+  }
+  const onPositionsClosed = () => {
     setTabState(GroupPositionsTabState.VIEW_ALL)
   }
-  // const onPositionCreated = () => {
-  //   setTabState(GroupPositionsTabState.VIEW_ALL)
-  // }
+  const onClickBack = () => {
+    setTabState(GroupPositionsTabState.VIEW_ALL)
+  }
+
+  function shouldShowViewAll() {
+    return (
+      tabState === GroupPositionsTabState.VIEW_ALL ||
+      (tabState === GroupPositionsTabState.VIEW_DETAIL && !selectedPositionId)
+    )
+  }
 
   return (
     <div className="card">
-      {tabState === GroupPositionsTabState.VIEW_EXCHANGES && (
-        <GroupPositionExchangeTable groupId={group.id} onClickExchange={onClickExchange} />
-      )}
-      {tabState === GroupPositionsTabState.VIEW_ALL && selectedExchange && (
+      {shouldShowViewAll() && (
         <GroupPositionTable
           groupId={group.id}
-          exchange={selectedExchange}
-          onClickBack={onClickBack}
-          onClickCreate={onClickCreateOrderSet}
+          selectedSymbol={selectedSymbol}
+          selectedExchange={selectedExchange}
+          clearSymbol={() => setSelectedSymbol(undefined)}
+          onChangeSymbol={setSelectedSymbol}
+          onChangeExchange={setSelectedExchange}
           onClickPosition={onClickPosition}
+          onClickClosePositions={onClickClosePositions}
         />
       )}
-      {/* {tabState === GroupPositionsTabState.CREATE && (
-        <CreatePositionForm group={group} onClickBack={onClickBack} onCreated={onPositionCreated} />
-      )}
+      {tabState === GroupPositionsTabState.CLOSE_POSITIONS &&
+        selectedSymbol &&
+        selectedExchange && (
+          <ClosePositionsForm
+            groupId={group.id}
+            symbol={selectedSymbol}
+            exchange={selectedExchange}
+            onClickBack={onClickBack}
+            onClosePositions={onPositionsClosed}
+          />
+        )}
+      {/*
       {tabState === GroupPositionsTabState.VIEW_DETAIL && selectedPositionId && (
         <PositionDetail
           groupId={group.id}

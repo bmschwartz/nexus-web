@@ -3,50 +3,48 @@ import { Formik } from 'formik'
 import { Form, Input, InputNumber, Select, SubmitButton, Transfer } from 'formik-antd'
 import { Modal, notification, PageHeader, Spin } from 'antd'
 import { TransferItem } from 'antd/lib/transfer'
-import TextArea from 'antd/lib/input/TextArea'
 
 /* Local */
 import { OrderSide, OrderType } from 'types/order'
-import { Exchange } from 'types/exchange'
-import { Group } from 'types/group'
+import { Exchange, convertToRemoteExchange } from 'types/exchange'
 import { Membership } from 'types/membership'
 
 /* eslint-disable */
-import { getCreateOrderSetSchema } from './createOrderFormUtils'
+import { getClosePositionsSchema } from './closePositionFormUtils'
 import * as apollo from 'services/apollo'
-import { CreateOrderSetResponse } from 'services/apollo/order'
-import { useGetCurrenciesQuery } from '../../../graphql/index'
-import { extractCurrenciesData, getMinPrice, getMaxPrice, getPriceTickSize } from 'types/currency'
+import { ClosePositionsResponse } from 'services/apollo/position'
+import { useGetCurrencyQuery } from '../../../graphql/index'
+import { extractCurrencyData, getMinPrice, getMaxPrice, getPriceTickSize } from 'types/currency'
+import { Group } from 'types/group'
 /* eslint-enable */
 
-interface CreateOrderSetFormProps {
-  group: Group
-  onCreated: () => void
+interface ClosePositionsFormProps {
+  groupId: string
+  exchange: Exchange
+  symbol: string
   onClickBack: () => void
+  onClosePositions: () => void
 }
 
-const getOverviewText = ({
-  side,
+const getOverviewText = ({ symbol, price, exchangeAccountIds, percent, exchange }: any): String => {
+  return `Closing ${symbol} positions on ${exchange} at ${price} with ${percent}% of balance for ${exchangeAccountIds.length} accounts`
+}
+
+export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
   symbol,
-  price,
-  membershipIds,
-  percent,
   exchange,
-}: any): String => {
-  return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${membershipIds.length} members`
-}
-
-export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
-  group,
   onClickBack,
-  onCreated,
 }) => {
-  const { data: currenciesResponse } = useGetCurrenciesQuery()
-  const [submittingOrder, setSubmittingOrder] = useState<boolean>(false)
-  const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
+  const { data: currencyResponse } = useGetCurrencyQuery({
+    variables: { input: { exchange: convertToRemoteExchange(exchange)!, symbol } },
+  })
+  const [submittingClosePositions, setSubmittingClosePositions] = useState<boolean>(false)
+  // const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
 
-  const currencyData = extractCurrenciesData(currenciesResponse)
-  const CreateOrderSetSchema = getCreateOrderSetSchema(currencyData)
+  const currencyData = extractCurrencyData(currencyResponse)
+  console.log(currencyData)
+
+  const ClosePositionsSchema = getClosePositionsSchema(currencyData)
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -58,8 +56,8 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
     },
   }
 
-  const createTransferData = (exchange?: Exchange): TransferItem[] => {
-    if (!exchange) {
+  const createTransferData = (group?: Group): TransferItem[] => {
+    if (!group) {
       return []
     }
 
@@ -80,7 +78,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   const handleNoMembersSelected = () => {
     Modal.error({
       title: 'Select Members',
-      content: 'Select one or more members for order',
+      content: 'Select one or more members',
     })
   }
 
@@ -88,20 +86,20 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
     <>
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
-          <PageHeader className="site-page-header" title="Create Order Set" onBack={onClickBack} />
+          <PageHeader className="site-page-header" title="Close Positions" onBack={onClickBack} />
         </div>
       </div>
       <Formik
         initialValues={{
-          exchange: currencyData?.exchanges[0],
-          symbol: '',
+          exchange,
+          symbol,
           side: OrderSide.BUY,
           orderType: OrderType.LIMIT,
           percent: 5,
           price: 0,
           membershipIds: [],
         }}
-        validationSchema={CreateOrderSetSchema}
+        validationSchema={ClosePositionsSchema}
         onSubmit={async (values, { setSubmitting }) => {
           if (values.membershipIds.length === 0) {
             setSubmitting(false)
@@ -109,13 +107,13 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
             return
           }
 
-          setSubmittingOrder(true)
-          const { orderSetId, error }: CreateOrderSetResponse = await apollo.createOrderSet({
+          setSubmittingClosePositions(true)
+          const { orderSetId, error }: ClosePositionsResponse = await apollo.createOrderSet({
             groupId: group.id,
             leverage: 1,
             ...values,
           })
-          setSubmittingOrder(false)
+          setSubmittingClosePositions(false)
 
           if (orderSetId) {
             notification.success({

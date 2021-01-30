@@ -1,0 +1,6 @@
+mutation ClosePositions($input: ClosePositionsInput!) {
+  closePositions(input: $input) {
+    operationId
+    error
+  }
+}

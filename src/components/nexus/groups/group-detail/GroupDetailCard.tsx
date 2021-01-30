@@ -34,7 +34,7 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
     OrderSetTabState.VIEW_ALL,
   )
   const [groupPositionsTabState, setGroupPositionsTabState] = useState<GroupPositionsTabState>(
-    GroupPositionsTabState.VIEW_EXCHANGES,
+    GroupPositionsTabState.VIEW_ALL,
   )
   const [membershipTabTabState, setMembershipTabTabState] = useState<MembershipTabTabState>(
     MembershipTabTabState.VIEW_ALL,

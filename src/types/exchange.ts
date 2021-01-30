@@ -26,12 +26,13 @@ export function convertToLocalExchange(exchange: RemoteExchange): Exchange {
   }
 }
 
-export function convertToRemoteExchange(exchange: Exchange): RemoteExchange {
+export function convertToRemoteExchange(exchange?: Exchange): RemoteExchange | undefined {
   switch (exchange) {
     case Exchange.BINANCE:
       return RemoteExchange.Binance
     case Exchange.BITMEX:
-    default:
       return RemoteExchange.Bitmex
+    default:
+      return undefined
   }
 }
