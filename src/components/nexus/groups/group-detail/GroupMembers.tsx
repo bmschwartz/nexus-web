@@ -21,13 +21,19 @@ export const GroupMembers: FC<GroupMembersProps> = ({ group, tabState, setTabSta
 
   const onClickInvite = () => {
     setTabState(GroupMembersTabState.INVITE)
+    setSelectedMemberId(undefined)
   }
   const onClickBack = () => {
     setTabState(GroupMembersTabState.VIEW_ALL)
+    setSelectedMemberId(undefined)
   }
   const onClickMember = (memberId: string) => {
     setSelectedMemberId(memberId)
     setTabState(GroupMembersTabState.VIEW_DETAIL)
+  }
+  const onRemovedMember = () => {
+    setSelectedMemberId(undefined)
+    setTabState(GroupMembersTabState.VIEW_ALL)
   }
   // const onMemberInvited = () => {
   //   setTabState(GroupMembersTabState.VIEW_ALL)
@@ -53,7 +59,11 @@ export const GroupMembers: FC<GroupMembersProps> = ({ group, tabState, setTabSta
         <CreateOrderSetForm group={group} onClickBack={onClickBack} onCreated={onOrderSetCreated} />
       )} */}
       {tabState === GroupMembersTabState.VIEW_DETAIL && selectedMemberId && (
-        <GroupMemberDetail onClickBack={onClickBack} groupMemberId={selectedMemberId} />
+        <GroupMemberDetail
+          groupMemberId={selectedMemberId}
+          onClickBack={onClickBack}
+          onRemovedMember={onRemovedMember}
+        />
       )}
     </div>
   )

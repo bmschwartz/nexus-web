@@ -1,6 +1,10 @@
 /* eslint-disable */
 import { client } from './client'
-import { GroupExistsDocument, CreateGroupDocument } from '../../graphql/index'
+import {
+  GroupExistsDocument,
+  CreateGroupDocument,
+  DeleteMembershipDocument,
+} from '../../graphql/index'
 /* eslint-enable */
 
 export interface CreateGroupResponse {
@@ -24,6 +28,16 @@ export interface CreateGroupInput {
   email?: string
   payoutCurrency?: string
   payoutAddress?: string
+}
+
+export interface RemoveMemberInput {
+  groupId: string
+  membershipId: string
+}
+
+export interface RemoveMemberResponse {
+  success: boolean
+  error?: string
 }
 
 export const createGroup = async (input: CreateGroupInput): Promise<CreateGroupResponse> => {
@@ -63,4 +77,26 @@ export const groupExists = async (name: string): Promise<GroupExistsResponse> =>
   }
 
   return result
+}
+
+export const removeMember = async ({
+  groupId,
+  membershipId,
+}: RemoveMemberInput): Promise<RemoveMemberResponse> => {
+  try {
+    const { data } = await client.mutate({
+      mutation: DeleteMembershipDocument,
+      variables: { input: { groupId, membershipId } },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Unable to remove member' }
+    }
+    console.log(data)
+
+    const { success, error } = data.deleteMembership
+    return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
 }

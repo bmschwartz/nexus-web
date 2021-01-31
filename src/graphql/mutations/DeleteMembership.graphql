@@ -1,0 +1,6 @@
+mutation DeleteMembership($input: DeleteMembershipInput!) {
+  deleteMembership(input: $input) {
+    success
+    error
+  }
+}

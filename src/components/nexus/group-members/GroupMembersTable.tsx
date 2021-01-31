@@ -90,8 +90,6 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
   const tradersCount = groupTradersData?.group?.members?.totalCount
   const membersCount = groupMembersData?.group?.members?.totalCount
 
-  console.log(adminsCount, tradersCount)
-
   const groupAdminsTableData: GroupMembersTableRow[] = createGroupMembersTableData(groupAdminsData)
   const groupTradersTableData: GroupMembersTableRow[] = createGroupMembersTableData(
     groupTradersData,

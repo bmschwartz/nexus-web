@@ -37,7 +37,14 @@ export type CreateGroupMembershipInput = {
 }
 
 export type DeleteMembershipInput = {
+  groupId: Scalars['ID']
   membershipId: Scalars['ID']
+}
+
+export type DeleteMembershipResult = {
+  __typename?: 'DeleteMembershipResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
 }
 
 export type DisableGroupInput = {
@@ -732,7 +739,7 @@ export type Mutation = {
   updateMembershipRole?: Maybe<GroupMembership>
   updateMembershipStatus?: Maybe<GroupMembership>
   updateMembershipActive?: Maybe<GroupMembership>
-  deleteMembership?: Maybe<GroupMembership>
+  deleteMembership?: Maybe<DeleteMembershipResult>
   createOrderSet?: Maybe<CreateOrderSetResult>
   updateOrderSet?: Maybe<UpdateOrderSetResult>
   cancelOrderSet?: Maybe<CancelOrderSetResult>
@@ -1024,6 +1031,16 @@ export type DeleteExchangeAccountMutation = { __typename?: 'Mutation' } & {
   deleteExchangeAccount: { __typename?: 'DeleteExchangeAccountResult' } & Pick<
     DeleteExchangeAccountResult,
     'operationId' | 'error'
+  >
+}
+
+export type DeleteMembershipMutationVariables = Exact<{
+  input: DeleteMembershipInput
+}>
+
+export type DeleteMembershipMutation = { __typename?: 'Mutation' } & {
+  deleteMembership?: Maybe<
+    { __typename?: 'DeleteMembershipResult' } & Pick<DeleteMembershipResult, 'success' | 'error'>
   >
 }
 
@@ -1757,6 +1774,53 @@ export type DeleteExchangeAccountMutationResult = Apollo.MutationResult<
 export type DeleteExchangeAccountMutationOptions = Apollo.BaseMutationOptions<
   DeleteExchangeAccountMutation,
   DeleteExchangeAccountMutationVariables
+>
+export const DeleteMembershipDocument = gql`
+  mutation DeleteMembership($input: DeleteMembershipInput!) {
+    deleteMembership(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type DeleteMembershipMutationFn = Apollo.MutationFunction<
+  DeleteMembershipMutation,
+  DeleteMembershipMutationVariables
+>
+
+/**
+ * __useDeleteMembershipMutation__
+ *
+ * To run a mutation, you first call `useDeleteMembershipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteMembershipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteMembershipMutation, { data, loading, error }] = useDeleteMembershipMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteMembershipMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteMembershipMutation,
+    DeleteMembershipMutationVariables
+  >,
+) {
+  return Apollo.useMutation<DeleteMembershipMutation, DeleteMembershipMutationVariables>(
+    DeleteMembershipDocument,
+    baseOptions,
+  )
+}
+export type DeleteMembershipMutationHookResult = ReturnType<typeof useDeleteMembershipMutation>
+export type DeleteMembershipMutationResult = Apollo.MutationResult<DeleteMembershipMutation>
+export type DeleteMembershipMutationOptions = Apollo.BaseMutationOptions<
+  DeleteMembershipMutation,
+  DeleteMembershipMutationVariables
 >
 export const ToggleExchangeAccountActiveDocument = gql`
   mutation ToggleExchangeAccountActive($input: ToggleExchangeAccountActiveInput!) {
