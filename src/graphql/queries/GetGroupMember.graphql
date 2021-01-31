@@ -1,0 +1,5 @@
+query GetGroupMember($input: MembershipInput!) {
+  membership(input: $input) {
+    ...GroupMembershipDetails
+  }
+}

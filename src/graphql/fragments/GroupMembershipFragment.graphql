@@ -3,6 +3,7 @@ fragment GroupMembershipDetails on GroupMembership {
   active
   role
   status
+  createdAt
   member {
     id
     username
@@ -11,7 +12,10 @@ fragment GroupMembershipDetails on GroupMembership {
     id
     name
   }
+  orders(input: {}) {
+    totalCount
+  }
   exchangeAccounts {
-    ...ExchangeAccountDetails
+    id
   }
 }

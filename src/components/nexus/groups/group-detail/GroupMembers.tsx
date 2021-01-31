@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react'
 
 import { Group } from 'types/group'
 import { GroupMembersTable } from 'components/nexus/group-members/GroupMembersTable'
+import { GroupMemberDetail } from 'components/nexus/group-members/GroupMemberDetail'
 
 interface GroupMembersProps {
   group: Group
@@ -21,9 +22,9 @@ export const GroupMembers: FC<GroupMembersProps> = ({ group, tabState, setTabSta
   const onClickInvite = () => {
     setTabState(GroupMembersTabState.INVITE)
   }
-  // const onClickBack = () => {
-  //   setTabState(GroupMembersTabState.VIEW_ALL)
-  // }
+  const onClickBack = () => {
+    setTabState(GroupMembersTabState.VIEW_ALL)
+  }
   const onClickMember = (memberId: string) => {
     setSelectedMemberId(memberId)
     setTabState(GroupMembersTabState.VIEW_DETAIL)
@@ -51,12 +52,9 @@ export const GroupMembers: FC<GroupMembersProps> = ({ group, tabState, setTabSta
       {/* {tabState === GroupMembersTabState.INVITE && (
         <CreateOrderSetForm group={group} onClickBack={onClickBack} onCreated={onOrderSetCreated} />
       )} */}
-      {/* {tabState === GroupMembersTabState.VIEW_DETAIL && selectedMemberId && (
-        <GroupMemberDetail
-          memberId={selectedMemberId}
-          onClickBack={onClickBack}
-        />
-      )} */}
+      {tabState === GroupMembersTabState.VIEW_DETAIL && selectedMemberId && (
+        <GroupMemberDetail onClickBack={onClickBack} groupMemberId={selectedMemberId} />
+      )}
     </div>
   )
 }

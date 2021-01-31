@@ -63,7 +63,6 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
   }
 
   const { data: groupAdminsData, loading: fetchingGroupAdmins } = useGetGroupMembersQuery({
-    fetchPolicy: 'cache-and-network',
     variables: {
       groupInput: { groupId },
       membersInput: { limit: PAGE_SIZE, offset: adminsOffset, roles: [MembershipRole.Admin] },
@@ -72,7 +71,6 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
   })
 
   const { data: groupTradersData, loading: fetchingGroupTraders } = useGetGroupMembersQuery({
-    fetchPolicy: 'cache-and-network',
     variables: {
       groupInput: { groupId },
       membersInput: { limit: PAGE_SIZE, offset: tradersOffset, roles: [MembershipRole.Trader] },
@@ -81,7 +79,6 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
   })
 
   const { data: groupMembersData, loading: fetchingGroupMembers } = useGetGroupMembersQuery({
-    fetchPolicy: 'cache-and-network',
     variables: {
       groupInput: { groupId },
       membersInput: { limit: PAGE_SIZE, offset: membersOffset, roles: [MembershipRole.Member] },
