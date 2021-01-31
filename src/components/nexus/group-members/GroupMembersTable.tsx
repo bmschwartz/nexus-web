@@ -125,10 +125,10 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Spin spinning={fetchingGroupAdmins || fetchingGroupTraders || fetchingGroupMembers}>
-            <Divider orientation="left">
-              <strong>Admins</strong>
-            </Divider>
+          <Divider orientation="left">
+            <strong>Admins</strong>
+          </Divider>
+          <Spin spinning={fetchingGroupAdmins}>
             <Table
               rowKey="id"
               onRow={onRow}
@@ -142,9 +142,11 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
-            <Divider orientation="left">
-              <strong>Traders</strong>
-            </Divider>
+          </Spin>
+          <Divider orientation="left">
+            <strong>Traders</strong>
+          </Divider>
+          <Spin spinning={fetchingGroupTraders}>
             <Table
               rowKey="id"
               onRow={onRow}
@@ -158,9 +160,11 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
-            <Divider orientation="left">
-              <strong>Members</strong>
-            </Divider>
+          </Spin>
+          <Divider orientation="left">
+            <strong>Members</strong>
+          </Divider>
+          <Spin spinning={fetchingGroupMembers}>
             <Table
               rowKey="id"
               onRow={onRow}
