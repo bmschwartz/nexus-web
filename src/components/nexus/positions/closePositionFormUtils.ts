@@ -53,7 +53,10 @@ export const createTransferData = (
   memberPositions: MemberPosition[],
 ): TransferItem[] => {
   return memberPositions
-    .filter(memberPosition => memberPosition.position.side === desiredSide)
+    .filter(
+      memberPosition =>
+        memberPosition.position.side === desiredSide && memberPosition.position.quantity,
+    )
     .map((memberPosition: MemberPosition) => {
       return {
         key: memberPosition.exchangeAccountId,
