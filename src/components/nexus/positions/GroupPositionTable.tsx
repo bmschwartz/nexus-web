@@ -18,7 +18,6 @@ interface PositionTableProps {
   clearSymbol: () => void
   onChangeSymbol: (symbol: string) => void
   onChangeExchange: (exchange: Exchange) => void
-  onClickPosition: (positionId: string) => void
   onClickClosePositions: () => void
 }
 
@@ -52,7 +51,6 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
   selectedSymbol,
   selectedExchange,
   clearSymbol,
-  onClickPosition,
   onChangeSymbol,
   onChangeExchange,
   onClickClosePositions,
@@ -114,14 +112,6 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
   const symbolsData = extractSymbols(getSymbolsData)
   console.log(symbolsData)
 
-  const onRow = (row: PositionTableItem) => {
-    return {
-      onClick: () => {
-        onClickPosition(row.id)
-      },
-    }
-  }
-
   const PositionsTable = (side: PositionSide) => (
     <div className="card-body">
       <div className="text-nowrap">
@@ -129,7 +119,6 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
           <Table
             bordered
             rowKey="id"
-            onRow={onRow}
             title={() => <strong>{`${side} Positions`}</strong>}
             columns={positionTableColumns}
             dataSource={side === PositionSide.LONG ? longPositionTableData : shortPositionTableData}

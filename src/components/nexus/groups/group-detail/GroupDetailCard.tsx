@@ -15,7 +15,7 @@ import { MemberOrders, MemberOrdersTabState } from './MemberOrders'
 import { MembershipTab, MembershipTabTabState } from './MembershipTab'
 import { MemberExchanges, MemberExchangesTabState } from './MemberExchanges'
 import { GroupProfile } from './GroupProfile'
-import { GroupMembers } from './GroupMembers'
+import { GroupMembers, GroupMembersTabState } from './GroupMembers'
 import { StringParam, useQueryParam, withDefault } from 'use-query-params'
 /* eslint-enable */
 
@@ -32,6 +32,9 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
 
   const [groupOrdersTabState, setGroupOrdersTabState] = useState<OrderSetTabState>(
     OrderSetTabState.VIEW_ALL,
+  )
+  const [groupMembersTabState, setGroupMembersTabState] = useState<GroupMembersTabState>(
+    GroupMembersTabState.VIEW_ALL,
   )
   const [groupPositionsTabState, setGroupPositionsTabState] = useState<GroupPositionsTabState>(
     GroupPositionsTabState.VIEW_ALL,
@@ -93,7 +96,13 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
 
                 {/* Group Admin/Trader tabs */}
                 {tabKey === 'groupDashboard' && <GroupDashboard group={group} />}
-                {tabKey === 'groupMembers' && <GroupMembers group={group} />}
+                {tabKey === 'groupMembers' && (
+                  <GroupMembers
+                    group={group}
+                    tabState={groupMembersTabState}
+                    setTabState={setGroupMembersTabState}
+                  />
+                )}
                 {tabKey === 'groupOrders' && (
                   <GroupOrderSets
                     group={group}

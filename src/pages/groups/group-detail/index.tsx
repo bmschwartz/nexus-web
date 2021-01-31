@@ -37,7 +37,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
       name: group.name,
       active: group.active,
       description: group.description,
-      memberships: group.memberships.map(transformMembershipData),
+      memberships: [],
     }
   }
 

@@ -20,15 +20,9 @@ export enum GroupPositionsTabState {
 }
 
 export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, setTabState, group }) => {
-  const [selectedPositionId, setSelectedPositionId] = useState<string>()
   const [selectedExchange, setSelectedExchange] = useState<Exchange>()
   const [selectedSymbol, setSelectedSymbol] = useState<string>()
 
-  const onClickPosition = (positionId: string) => {
-    setSelectedPositionId(positionId)
-    console.log(selectedPositionId)
-    setTabState(GroupPositionsTabState.VIEW_DETAIL)
-  }
   const onClickClosePositions = () => {
     setTabState(GroupPositionsTabState.CLOSE_POSITIONS)
   }
@@ -42,10 +36,7 @@ export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, setTabState,
   }
 
   function shouldShowViewAll() {
-    return (
-      tabState === GroupPositionsTabState.VIEW_ALL ||
-      (tabState === GroupPositionsTabState.VIEW_DETAIL && !selectedPositionId)
-    )
+    return tabState === GroupPositionsTabState.VIEW_ALL
   }
 
   return (
@@ -58,7 +49,6 @@ export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, setTabState,
           clearSymbol={() => setSelectedSymbol(undefined)}
           onChangeSymbol={setSelectedSymbol}
           onChangeExchange={setSelectedExchange}
-          onClickPosition={onClickPosition}
           onClickClosePositions={onClickClosePositions}
         />
       )}
@@ -73,14 +63,6 @@ export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, setTabState,
             onClosePositions={onPositionsClosed}
           />
         )}
-      {/*
-      {tabState === GroupPositionsTabState.VIEW_DETAIL && selectedPositionId && (
-        <PositionDetail
-          groupId={group.id}
-          onClickBack={onClickBack}
-          positionId={selectedPositionId}
-        />
-      )} */}
     </div>
   )
 }

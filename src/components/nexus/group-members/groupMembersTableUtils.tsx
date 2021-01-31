@@ -1,7 +1,7 @@
 import React from 'react'
 import { Membership, MembershipStatus, MembershipRole } from 'types/membership'
 
-export interface GroupMembershipRow {
+export interface GroupMembersTableRow {
   id: string
   active: boolean
   username: string
@@ -14,9 +14,9 @@ interface Badge {
   text: string
 }
 
-export const createGroupMembersTableData = (memberships: Membership[]): GroupMembershipRow[] => {
+export const createGroupMembersTableData = (memberships: Membership[]): GroupMembersTableRow[] => {
   return memberships.map(
-    (membership: Membership): GroupMembershipRow => ({
+    (membership: Membership): GroupMembersTableRow => ({
       id: membership.id,
       active: membership.active,
       username: membership.username,
@@ -36,7 +36,7 @@ export const badgeForIsActiveMember = (active: boolean) => {
   )
 }
 
-export const badgeForRole = ({ role }: GroupMembershipRow) => {
+export const badgeForRole = ({ role }: GroupMembersTableRow) => {
   const badge: Badge = {
     style: '',
     text: '',
@@ -61,7 +61,7 @@ export const badgeForRole = ({ role }: GroupMembershipRow) => {
   return <span className={`font-size-12 badge ${badge.style}`}>{badge.text}</span>
 }
 
-export const badgeForStatus = ({ status }: GroupMembershipRow) => {
+export const badgeForStatus = ({ status }: GroupMembersTableRow) => {
   const badge: Badge = {
     style: '',
     text: '',
