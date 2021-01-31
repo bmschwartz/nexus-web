@@ -1,0 +1,11 @@
+query GetGroupMembers($groupInput: GroupInput!, $membersInput: GroupMembersInput!) {
+  group(input: $groupInput) {
+    ...GroupDetails
+    members(input: $membersInput) {
+      totalCount
+      members {
+        ...GroupMembershipDetails
+      }
+    }
+  }
+}

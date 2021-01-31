@@ -97,7 +97,7 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
     })
   }
 
-  const memberships = groupPositionsData?.group?.memberships
+  const memberships = groupPositionsData?.group?.members?.members
   const positions = memberships?.map(membership => membership.positions)
   const totalCount = positions?.map(pos => pos.totalCount).reduce((sum, current) => sum + current)
 

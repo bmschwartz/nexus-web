@@ -43,7 +43,7 @@ export const GroupMembers: FC<GroupMembersProps> = ({ group, tabState, setTabSta
     <div className="card">
       {shouldShowViewAll() && (
         <GroupMembersTable
-          group={group}
+          groupId={group.id}
           onClickInvite={onClickInvite}
           onClickGroupMember={onClickMember}
         />

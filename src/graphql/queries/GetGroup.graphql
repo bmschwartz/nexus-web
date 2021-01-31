@@ -1,8 +1,5 @@
 query GetGroup($input: GroupInput!) {
   group(input: $input) {
     ...GroupDetails
-    memberships {
-      ...GroupMembershipDetails
-    }
   }
 }

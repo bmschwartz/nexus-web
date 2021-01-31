@@ -1,5 +1,7 @@
 import React from 'react'
-import { Membership, MembershipStatus, MembershipRole } from 'types/membership'
+
+import { GetGroupMembersQuery } from 'graphql'
+import { MembershipStatus, MembershipRole } from 'types/membership'
 
 export interface GroupMembersTableRow {
   id: string
@@ -14,12 +16,19 @@ interface Badge {
   text: string
 }
 
-export const createGroupMembersTableData = (memberships: Membership[]): GroupMembersTableRow[] => {
-  return memberships.map(
-    (membership: Membership): GroupMembersTableRow => ({
+export const createGroupMembersTableData = (
+  groupMembersResponse: GetGroupMembersQuery | undefined,
+): GroupMembersTableRow[] => {
+  if (!groupMembersResponse?.group?.members) {
+    return []
+  }
+
+  const { members } = groupMembersResponse.group.members
+  return members.map(
+    (membership): GroupMembersTableRow => ({
       id: membership.id,
       active: membership.active,
-      username: membership.username,
+      username: membership.member.username,
       role: membership.role,
       status: membership.status,
     }),

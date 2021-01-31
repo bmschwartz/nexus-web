@@ -1,18 +1,20 @@
 query GetGroupPositions($groupInput: GroupInput!, $positionsInput: MemberPositionsInput!) {
   group(input: $groupInput) {
     id
-    memberships {
-      id
-      member {
-        username
-      }
-      positions(input: $positionsInput) {
-        totalCount
-        positions {
-          exchangeAccount {
-            id
+    members {
+      members {
+        id
+        member {
+          username
+        }
+        positions(input: $positionsInput) {
+          totalCount
+          positions {
+            exchangeAccount {
+              id
+            }
+            ...PositionDetails
           }
-          ...PositionDetails
         }
       }
     }

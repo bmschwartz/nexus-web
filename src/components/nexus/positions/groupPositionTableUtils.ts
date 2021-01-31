@@ -18,12 +18,12 @@ export const createPositionTableData = (
   positionResponse: GetGroupPositionsQuery | undefined,
   desiredSide: PositionSide,
 ): PositionTableItem[] => {
-  if (!positionResponse?.group) {
+  if (!positionResponse?.group || !positionResponse.group.members) {
     return []
   }
 
-  const { memberships } = positionResponse.group
-  const positions = memberships.flatMap(membership => {
+  const { members } = positionResponse.group.members
+  const positions = members.flatMap(membership => {
     const {
       member: { username },
     } = membership

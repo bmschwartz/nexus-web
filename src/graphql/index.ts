@@ -50,12 +50,16 @@ export type Group = {
   name: Scalars['String']
   active: Scalars['Boolean']
   description: Scalars['String']
-  memberships: Array<GroupMembership>
+  members?: Maybe<GroupMembersResult>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   orderSets: GroupOrderSets
   orderSet?: Maybe<OrderSet>
   symbolsWithPosition?: Maybe<SymbolsWithPositionResult>
+}
+
+export type GroupMembersArgs = {
+  input?: Maybe<GroupMembersInput>
 }
 
 export type GroupOrderSetsArgs = {
@@ -99,7 +103,15 @@ export type GroupMembershipPositionsArgs = {
 }
 
 export type GroupMembersInput = {
-  groupId: Scalars['ID']
+  limit?: Maybe<Scalars['Int']>
+  offset?: Maybe<Scalars['Int']>
+  roles?: Maybe<Array<MembershipRole>>
+}
+
+export type GroupMembersResult = {
+  __typename?: 'GroupMembersResult'
+  members: Array<GroupMembership>
+  totalCount: Scalars['Int']
 }
 
 export type MembershipInput = {
@@ -1113,9 +1125,22 @@ export type GetGroupQueryVariables = Exact<{
 }>
 
 export type GetGroupQuery = { __typename?: 'Query' } & {
+  group?: Maybe<{ __typename?: 'Group' } & GroupDetailsFragment>
+}
+
+export type GetGroupMembersQueryVariables = Exact<{
+  groupInput: GroupInput
+  membersInput: GroupMembersInput
+}>
+
+export type GetGroupMembersQuery = { __typename?: 'Query' } & {
   group?: Maybe<
     { __typename?: 'Group' } & {
-      memberships: Array<{ __typename?: 'GroupMembership' } & GroupMembershipDetailsFragment>
+      members?: Maybe<
+        { __typename?: 'GroupMembersResult' } & Pick<GroupMembersResult, 'totalCount'> & {
+            members: Array<{ __typename?: 'GroupMembership' } & GroupMembershipDetailsFragment>
+          }
+      >
     } & GroupDetailsFragment
   >
 }
@@ -1179,23 +1204,27 @@ export type GetGroupPositionsQueryVariables = Exact<{
 export type GetGroupPositionsQuery = { __typename?: 'Query' } & {
   group?: Maybe<
     { __typename?: 'Group' } & Pick<Group, 'id'> & {
-        memberships: Array<
-          { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
-              member: { __typename?: 'User' } & Pick<User, 'username'>
-              positions: { __typename?: 'MemberPositionsResult' } & Pick<
-                MemberPositionsResult,
-                'totalCount'
-              > & {
-                  positions: Array<
-                    { __typename?: 'Position' } & {
-                      exchangeAccount: { __typename?: 'ExchangeAccount' } & Pick<
-                        ExchangeAccount,
-                        'id'
+        members?: Maybe<
+          { __typename?: 'GroupMembersResult' } & {
+            members: Array<
+              { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
+                  member: { __typename?: 'User' } & Pick<User, 'username'>
+                  positions: { __typename?: 'MemberPositionsResult' } & Pick<
+                    MemberPositionsResult,
+                    'totalCount'
+                  > & {
+                      positions: Array<
+                        { __typename?: 'Position' } & {
+                          exchangeAccount: { __typename?: 'ExchangeAccount' } & Pick<
+                            ExchangeAccount,
+                            'id'
+                          >
+                        } & PositionDetailsFragment
                       >
-                    } & PositionDetailsFragment
-                  >
+                    }
                 }
-            }
+            >
+          }
         >
       }
   >
@@ -2217,13 +2246,9 @@ export const GetGroupDocument = gql`
   query GetGroup($input: GroupInput!) {
     group(input: $input) {
       ...GroupDetails
-      memberships {
-        ...GroupMembershipDetails
-      }
     }
   }
   ${GroupDetailsFragmentDoc}
-  ${GroupMembershipDetailsFragmentDoc}
 `
 
 /**
@@ -2255,6 +2280,61 @@ export function useGetGroupLazyQuery(
 export type GetGroupQueryHookResult = ReturnType<typeof useGetGroupQuery>
 export type GetGroupLazyQueryHookResult = ReturnType<typeof useGetGroupLazyQuery>
 export type GetGroupQueryResult = Apollo.QueryResult<GetGroupQuery, GetGroupQueryVariables>
+export const GetGroupMembersDocument = gql`
+  query GetGroupMembers($groupInput: GroupInput!, $membersInput: GroupMembersInput!) {
+    group(input: $groupInput) {
+      ...GroupDetails
+      members(input: $membersInput) {
+        totalCount
+        members {
+          ...GroupMembershipDetails
+        }
+      }
+    }
+  }
+  ${GroupDetailsFragmentDoc}
+  ${GroupMembershipDetailsFragmentDoc}
+`
+
+/**
+ * __useGetGroupMembersQuery__
+ *
+ * To run a query within a React component, call `useGetGroupMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGroupMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGroupMembersQuery({
+ *   variables: {
+ *      groupInput: // value for 'groupInput'
+ *      membersInput: // value for 'membersInput'
+ *   },
+ * });
+ */
+export function useGetGroupMembersQuery(
+  baseOptions: Apollo.QueryHookOptions<GetGroupMembersQuery, GetGroupMembersQueryVariables>,
+) {
+  return Apollo.useQuery<GetGroupMembersQuery, GetGroupMembersQueryVariables>(
+    GetGroupMembersDocument,
+    baseOptions,
+  )
+}
+export function useGetGroupMembersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetGroupMembersQuery, GetGroupMembersQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetGroupMembersQuery, GetGroupMembersQueryVariables>(
+    GetGroupMembersDocument,
+    baseOptions,
+  )
+}
+export type GetGroupMembersQueryHookResult = ReturnType<typeof useGetGroupMembersQuery>
+export type GetGroupMembersLazyQueryHookResult = ReturnType<typeof useGetGroupMembersLazyQuery>
+export type GetGroupMembersQueryResult = Apollo.QueryResult<
+  GetGroupMembersQuery,
+  GetGroupMembersQueryVariables
+>
 export const GetGroupOrderSetDetailsDocument = gql`
   query GetGroupOrderSetDetails(
     $groupInput: GroupInput!
@@ -2401,18 +2481,20 @@ export const GetGroupPositionsDocument = gql`
   query GetGroupPositions($groupInput: GroupInput!, $positionsInput: MemberPositionsInput!) {
     group(input: $groupInput) {
       id
-      memberships {
-        id
-        member {
-          username
-        }
-        positions(input: $positionsInput) {
-          totalCount
-          positions {
-            exchangeAccount {
-              id
+      members {
+        members {
+          id
+          member {
+            username
+          }
+          positions(input: $positionsInput) {
+            totalCount
+            positions {
+              exchangeAccount {
+                id
+              }
+              ...PositionDetails
             }
-            ...PositionDetails
           }
         }
       }

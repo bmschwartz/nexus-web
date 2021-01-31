@@ -1,8 +1,7 @@
-import React, { FC } from 'react'
-import { Table, Button, PageHeader } from 'antd'
+import React, { FC, useState } from 'react'
+import { Table, Button, PageHeader, Spin, Divider } from 'antd'
 
 /* eslint-disable */
-import { Group } from 'types/group'
 import {
   GroupMembersTableRow,
   badgeForRole,
@@ -10,41 +9,14 @@ import {
   createGroupMembersTableData,
 } from './groupMembersTableUtils'
 import { MembershipRole } from 'types/membership'
+import { useGetGroupMembersQuery } from '../../../graphql'
 /* eslint-enable */
 
 interface GroupMembersTableProps {
-  group: Group
+  groupId: string
   onClickInvite: () => void
   onClickGroupMember: (groupMemberId: string) => void
 }
-
-/**
- * const columns = [
-  {
-    title: 'Username',
-    dataIndex: 'username',
-    key: 'username',
-    sorter: (a: GroupMembershipRow, b: GroupMembershipRow) => (a.username > b.username ? -1 : 1),
-    render: (text: string) => (
-      <a className="btn btn-md btn-light" href="#">
-        {text}
-      </a>
-    ),
-  },
-  {
-    title: 'Active',
-    dataIndex: 'active',
-    key: 'active',
-    render: (active: boolean) => badgeForIsActiveMember(active),
-  },
-  {
-    title: 'Role',
-    dataIndex: 'role',
-    key: 'role',
-    render: (text: MembershipRole, record: GroupMembershipRow) => badgeForRole(record),
-  },
-]
- */
 
 const groupMembersTableColumns = [
   {
@@ -52,8 +24,6 @@ const groupMembersTableColumns = [
     dataIndex: 'username',
     key: 'username',
     render: (text: string) => <Button type="link">{text}</Button>,
-    sorter: (a: GroupMembersTableRow, b: GroupMembersTableRow) =>
-      a.username > b.username ? -1 : 1,
   },
   {
     title: 'Active',
@@ -72,26 +42,65 @@ const groupMembersTableColumns = [
 const PAGE_SIZE = 10
 
 export const GroupMembersTable: FC<GroupMembersTableProps> = ({
-  group,
+  groupId,
   onClickInvite,
   onClickGroupMember,
 }) => {
-  // const onChangePage = (page: number, pageSize?: number) => {
-  //   const offset = pageSize ? pageSize * (page - 1) : 0
-  //   fetchMore({
-  //     variables: { offset },
-  //     updateQuery: (prev, result) => {
-  //       if (!result.fetchMoreResult) {
-  //         return prev
-  //       }
-  //       return { ...result.fetchMoreResult }
-  //     },
-  //   })
-  // }
+  const [adminsOffset, setAdminsOffset] = useState<number>(0)
+  const [tradersOffset, setTradersOffset] = useState<number>(0)
+  const [membersOffset, setMembersOffset] = useState<number>(0)
 
-  const totalCount = group.memberships.length
+  const onChangeAdminsPage = (page: number, pageSize?: number) => {
+    setAdminsOffset(pageSize ? pageSize * (page - 1) : 0)
+  }
+
+  const onChangeTradersPage = (page: number, pageSize?: number) => {
+    setTradersOffset(pageSize ? pageSize * (page - 1) : 0)
+  }
+
+  const onChangeMembersPage = (page: number, pageSize?: number) => {
+    setMembersOffset(pageSize ? pageSize * (page - 1) : 0)
+  }
+
+  const { data: groupAdminsData, loading: fetchingGroupAdmins } = useGetGroupMembersQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      groupInput: { groupId },
+      membersInput: { limit: PAGE_SIZE, offset: adminsOffset, roles: [MembershipRole.Admin] },
+    },
+    notifyOnNetworkStatusChange: true,
+  })
+
+  const { data: groupTradersData, loading: fetchingGroupTraders } = useGetGroupMembersQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      groupInput: { groupId },
+      membersInput: { limit: PAGE_SIZE, offset: tradersOffset, roles: [MembershipRole.Trader] },
+    },
+    notifyOnNetworkStatusChange: true,
+  })
+
+  const { data: groupMembersData, loading: fetchingGroupMembers } = useGetGroupMembersQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      groupInput: { groupId },
+      membersInput: { limit: PAGE_SIZE, offset: membersOffset, roles: [MembershipRole.Member] },
+    },
+    notifyOnNetworkStatusChange: true,
+  })
+
+  const adminsCount = groupAdminsData?.group?.members?.totalCount
+  const tradersCount = groupTradersData?.group?.members?.totalCount
+  const membersCount = groupMembersData?.group?.members?.totalCount
+
+  console.log(adminsCount, tradersCount)
+
+  const groupAdminsTableData: GroupMembersTableRow[] = createGroupMembersTableData(groupAdminsData)
+  const groupTradersTableData: GroupMembersTableRow[] = createGroupMembersTableData(
+    groupTradersData,
+  )
   const groupMembersTableData: GroupMembersTableRow[] = createGroupMembersTableData(
-    group.memberships,
+    groupMembersData,
   )
 
   const onRow = (row: GroupMembersTableRow) => {
@@ -116,18 +125,56 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Table
-            rowKey="id"
-            onRow={onRow}
-            columns={groupMembersTableColumns}
-            dataSource={groupMembersTableData}
-            pagination={{
-              defaultCurrent: 1,
-              defaultPageSize: PAGE_SIZE,
-              total: totalCount,
-              showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-            }}
-          />
+          <Spin spinning={fetchingGroupAdmins || fetchingGroupTraders || fetchingGroupMembers}>
+            <Divider orientation="left">
+              <strong>Admins</strong>
+            </Divider>
+            <Table
+              rowKey="id"
+              onRow={onRow}
+              columns={groupMembersTableColumns}
+              dataSource={groupAdminsTableData}
+              pagination={{
+                defaultCurrent: 1,
+                defaultPageSize: PAGE_SIZE,
+                total: adminsCount,
+                onChange: onChangeAdminsPage,
+                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+              }}
+            />
+            <Divider orientation="left">
+              <strong>Traders</strong>
+            </Divider>
+            <Table
+              rowKey="id"
+              onRow={onRow}
+              columns={groupMembersTableColumns}
+              dataSource={groupTradersTableData}
+              pagination={{
+                defaultCurrent: 1,
+                defaultPageSize: PAGE_SIZE,
+                total: tradersCount,
+                onChange: onChangeTradersPage,
+                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+              }}
+            />
+            <Divider orientation="left">
+              <strong>Members</strong>
+            </Divider>
+            <Table
+              rowKey="id"
+              onRow={onRow}
+              columns={groupMembersTableColumns}
+              dataSource={groupMembersTableData}
+              pagination={{
+                defaultCurrent: 1,
+                defaultPageSize: PAGE_SIZE,
+                total: membersCount,
+                onChange: onChangeMembersPage,
+                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+              }}
+            />
+          </Spin>
         </div>
       </div>
     </>

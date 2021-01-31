@@ -69,13 +69,15 @@ export const extractMemberPositions = (
   targetExchange: Exchange,
   groupPositions: GetGroupPositionsQuery | undefined,
 ): MemberPosition[] => {
-  if (!groupPositions || !groupPositions.group) {
+  if (!groupPositions || !groupPositions.group || !groupPositions.group.members) {
     return []
   }
 
-  const { memberships } = groupPositions.group
+  const {
+    members: { members },
+  } = groupPositions.group
 
-  const memberPositions = memberships
+  const memberPositions = members
     .map(membership => {
       const {
         member: { username },
