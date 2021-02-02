@@ -8,7 +8,6 @@ import { useGetGroupQuery, useGetMyMembershipQuery } from '../../../graphql/inde
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
 import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
 import { Membership, roleFromString, statusFromString } from 'types/membership'
-import { Order } from 'types/order'
 import { ExchangeAccount } from 'types/exchange'
 /* eslint-enable */
 
@@ -52,10 +51,6 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     status: statusFromString(membership.status)!,
   })
 
-  const transformOrderData = (order: any): Order => ({
-    ...order,
-  })
-
   const transformExchangeAccount = (exchangeAccount: any): ExchangeAccount => {
     const { id, active, createdAt, exchange, orders } = exchangeAccount
 
@@ -64,7 +59,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
       active,
       createdAt,
       exchange,
-      orders: orders.map(transformOrderData),
+      orderCount: orders?.totalCount,
     }
   }
 
