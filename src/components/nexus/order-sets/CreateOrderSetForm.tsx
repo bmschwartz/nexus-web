@@ -7,15 +7,14 @@ import TextArea from 'antd/lib/input/TextArea'
 
 /* Local */
 import { OrderSide, OrderType } from 'types/order'
-import { Exchange, ExchangeAccount } from 'types/exchange'
+import { Exchange } from 'types/exchange'
 import { Group } from 'types/group'
-import { Membership } from 'types/membership'
 
 /* eslint-disable */
 import { getCreateOrderSetSchema } from './createOrderFormUtils'
 import * as apollo from 'services/apollo'
 import { CreateOrderSetResponse } from 'services/apollo/order'
-import { useGetCurrenciesQuery } from '../../../graphql/index'
+import { useGetCurrenciesQuery, useGetGroupExchangeAccountsQuery } from '../../../graphql/index'
 import { extractCurrenciesData, getMinPrice, getMaxPrice, getPriceTickSize } from 'types/currency'
 /* eslint-enable */
 
@@ -23,11 +22,6 @@ interface CreateOrderSetFormProps {
   group: Group
   onCreated: () => void
   onClickBack: () => void
-}
-
-interface MemberAccountMap {
-  membership: Membership
-  account: ExchangeAccount
 }
 
 const getOverviewText = ({
@@ -47,6 +41,12 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   onCreated,
 }) => {
   const { data: currenciesResponse } = useGetCurrenciesQuery()
+  const {
+    data: groupExchangeAccountsData,
+    loading: fetchingGroupExchangeAccounts,
+  } = useGetGroupExchangeAccountsQuery({
+    variables: { groupInput: { groupId: group.id } },
+  })
   const [submittingOrder, setSubmittingOrder] = useState<boolean>(false)
   const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
 
@@ -64,29 +64,33 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   }
 
   const createTransferData = (exchange?: Exchange): TransferItem[] => {
-    if (!exchange) {
+    if (!exchange || !groupExchangeAccountsData?.group || !groupExchangeAccountsData.group) {
       return []
     }
 
-    const memberAccounts: MemberAccountMap[] = group.memberships
-      .map((membership: Membership) => {
-        const exchangeAccounts = membership.exchangeAccounts
-          .filter((account: ExchangeAccount) => {
-            return exchange.toLowerCase() === account.exchange.toLowerCase()
-          })
-          .filter(Boolean)
-        if (exchangeAccounts.length === 0) {
+    if (!groupExchangeAccountsData.group.members?.members) {
+      return []
+    }
+
+    const memberAccounts = groupExchangeAccountsData.group.members.members
+      .map(membership => {
+        const activeAccounts = membership.exchangeAccounts.filter(account => account.active)
+        if (activeAccounts.length === 0) {
           return
         }
         // eslint-disable-next-line consistent-return
-        return { membership, account: exchangeAccounts[0] }
+        return {
+          accountId: activeAccounts[0].id,
+          username: membership.member.username,
+        }
       })
-      .filter(Boolean) as MemberAccountMap[]
+      .filter(Boolean)
 
-    return memberAccounts.map(({ membership, account }) => {
+    // @ts-ignore
+    return memberAccounts.map(({ accountId, username }) => {
       return {
-        key: account.id,
-        title: membership.username,
+        key: accountId,
+        title: username,
       }
     })
   }
@@ -149,7 +153,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
       >
         {({ values, handleChange, setFieldValue }) => (
           <div className="card-body">
-            <Spin spinning={!currencyData}>
+            <Spin spinning={!currencyData || fetchingGroupExchangeAccounts}>
               <Form {...formItemLayout} labelAlign="left">
                 <Form.Item name="exchange" label="Exchange">
                   <Select

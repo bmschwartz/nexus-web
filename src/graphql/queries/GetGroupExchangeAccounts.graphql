@@ -1,0 +1,19 @@
+query GetGroupExchangeAccounts($groupInput: GroupInput!) {
+  group(input: $groupInput) {
+    id
+    members {
+      members {
+        id
+        member {
+          id
+          username
+        }
+        exchangeAccounts {
+          id
+          active
+          exchange
+        }
+      }
+    }
+  }
+}

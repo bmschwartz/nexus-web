@@ -903,9 +903,7 @@ export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } 
       { __typename?: 'ExchangeAccountPositionsResult' } & Pick<
         ExchangeAccountPositionsResult,
         'totalCount'
-      > & {
-          positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment>
-        }
+      > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
     >
   }
 
@@ -1146,6 +1144,32 @@ export type GetGroupQuery = { __typename?: 'Query' } & {
   group?: Maybe<{ __typename?: 'Group' } & GroupDetailsFragment>
 }
 
+export type GetGroupExchangeAccountsQueryVariables = Exact<{
+  groupInput: GroupInput
+}>
+
+export type GetGroupExchangeAccountsQuery = { __typename?: 'Query' } & {
+  group?: Maybe<
+    { __typename?: 'Group' } & Pick<Group, 'id'> & {
+        members?: Maybe<
+          { __typename?: 'GroupMembersResult' } & {
+            members: Array<
+              { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
+                  member: { __typename?: 'User' } & Pick<User, 'id' | 'username'>
+                  exchangeAccounts: Array<
+                    { __typename?: 'ExchangeAccount' } & Pick<
+                      ExchangeAccount,
+                      'id' | 'active' | 'exchange'
+                    >
+                  >
+                }
+            >
+          }
+        >
+      }
+  >
+}
+
 export type GetGroupMemberQueryVariables = Exact<{
   input: MembershipInput
 }>
@@ -1193,9 +1217,7 @@ export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
                         membership: { __typename?: 'GroupMembership' } & Pick<
                           GroupMembership,
                           'id'
-                        > & {
-                            member: { __typename?: 'User' } & Pick<User, 'username'>
-                          }
+                        > & { member: { __typename?: 'User' } & Pick<User, 'username'> }
                       }
                   } & OrderDetailsFragment
                 >
@@ -1285,9 +1307,7 @@ export type GetMemberPositionsQuery = { __typename?: 'Query' } & {
       positions: { __typename?: 'MemberPositionsResult' } & Pick<
         MemberPositionsResult,
         'totalCount'
-      > & {
-          positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment>
-        }
+      > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
     }
 }
 
@@ -2356,6 +2376,76 @@ export function useGetGroupLazyQuery(
 export type GetGroupQueryHookResult = ReturnType<typeof useGetGroupQuery>
 export type GetGroupLazyQueryHookResult = ReturnType<typeof useGetGroupLazyQuery>
 export type GetGroupQueryResult = Apollo.QueryResult<GetGroupQuery, GetGroupQueryVariables>
+export const GetGroupExchangeAccountsDocument = gql`
+  query GetGroupExchangeAccounts($groupInput: GroupInput!) {
+    group(input: $groupInput) {
+      id
+      members {
+        members {
+          id
+          member {
+            id
+            username
+          }
+          exchangeAccounts {
+            id
+            active
+            exchange
+          }
+        }
+      }
+    }
+  }
+`
+
+/**
+ * __useGetGroupExchangeAccountsQuery__
+ *
+ * To run a query within a React component, call `useGetGroupExchangeAccountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGroupExchangeAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGroupExchangeAccountsQuery({
+ *   variables: {
+ *      groupInput: // value for 'groupInput'
+ *   },
+ * });
+ */
+export function useGetGroupExchangeAccountsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetGroupExchangeAccountsQuery,
+    GetGroupExchangeAccountsQueryVariables
+  >,
+) {
+  return Apollo.useQuery<GetGroupExchangeAccountsQuery, GetGroupExchangeAccountsQueryVariables>(
+    GetGroupExchangeAccountsDocument,
+    baseOptions,
+  )
+}
+export function useGetGroupExchangeAccountsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGroupExchangeAccountsQuery,
+    GetGroupExchangeAccountsQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<GetGroupExchangeAccountsQuery, GetGroupExchangeAccountsQueryVariables>(
+    GetGroupExchangeAccountsDocument,
+    baseOptions,
+  )
+}
+export type GetGroupExchangeAccountsQueryHookResult = ReturnType<
+  typeof useGetGroupExchangeAccountsQuery
+>
+export type GetGroupExchangeAccountsLazyQueryHookResult = ReturnType<
+  typeof useGetGroupExchangeAccountsLazyQuery
+>
+export type GetGroupExchangeAccountsQueryResult = Apollo.QueryResult<
+  GetGroupExchangeAccountsQuery,
+  GetGroupExchangeAccountsQueryVariables
+>
 export const GetGroupMemberDocument = gql`
   query GetGroupMember($input: MembershipInput!) {
     membership(input: $input) {
