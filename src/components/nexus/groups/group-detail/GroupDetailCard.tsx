@@ -10,7 +10,7 @@ import { GroupOrderSets, OrderSetTabState } from './GroupOrderSet'
 import { GroupPositions, GroupPositionsTabState } from './GroupPositions'
 import { GroupSettings } from './GroupSettings'
 import { MemberDashboard } from './MemberDashboard'
-import { MemberPositions } from './MemberPositions'
+import { MemberPositions, MemberPositionsTabState } from './MemberPositions'
 import { MemberOrders, MemberOrdersTabState } from './MemberOrders'
 import { MembershipTab, MembershipTabTabState } from './MembershipTab'
 import { MemberExchanges, MemberExchangesTabState } from './MemberExchanges'
@@ -48,6 +48,9 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
   const [memberOrdersTabState, setMemberOrdersTabState] = useState<MemberOrdersTabState>(
     MemberOrdersTabState.VIEW_ALL,
   )
+  const [memberPositionsTabState, setMemberPositionsTabState] = useState<MemberPositionsTabState>(
+    MemberPositionsTabState.VIEW_ALL,
+  )
 
   const changeTab = (key: string): void => {
     setTabKey(key)
@@ -78,7 +81,13 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
                     setTabState={setMemberOrdersTabState}
                   />
                 )}
-                {tabKey === 'memberPositions' && <MemberPositions membership={myMembership} />}
+                {tabKey === 'memberPositions' && (
+                  <MemberPositions
+                    membership={myMembership}
+                    tabState={memberPositionsTabState}
+                    setTabState={setMemberPositionsTabState}
+                  />
+                )}
                 {tabKey === 'membershipTab' && (
                   <MembershipTab
                     membership={myMembership}

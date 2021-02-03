@@ -16,7 +16,7 @@ const orderTableColumns = [
     title: 'ID',
     dataIndex: 'id',
     key: 'id',
-    render: (text: string) => <Button type="link">{text}</Button>,
+    render: (text: string) => <Button type="link">{text.split('-')[0]}</Button>,
   },
   {
     title: 'Exchange',

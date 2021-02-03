@@ -1,0 +1,11 @@
+query GetMyGroupPositions($membershipInput: MyMembershipInput!, $positionsInput: MemberPositionsInput!) {
+  myMembership(input: $membershipInput) {
+    id
+    positions(input: $positionsInput) {
+      totalCount
+      positions {
+        ...PositionDetails
+      }
+    }
+  }
+}

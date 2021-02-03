@@ -1,8 +1,8 @@
-import { GetMemberPositionsQuery } from '../../../graphql'
 import { convertToLocalExchange, Exchange } from 'types/exchange'
 import { convertToLocalPositionSide, PositionSide } from 'types/position'
 
 /* eslint-disable */
+import { GetMemberPositionsQuery } from '../../../graphql'
 import { displayTimeBeforeNow } from '../dateUtil'
 /* eslint-enable */
 
@@ -14,6 +14,7 @@ export interface PositionsTableItem {
   updated: string
   quantity: string
   avgPrice: string
+  isOpen: string
 }
 
 export const createPositionTableData = (
@@ -27,18 +28,19 @@ export const createPositionTableData = (
     positions: { positions },
   } = positionsResponse.membership
 
-  const positionsTableItems: PositionsTableItem[] = positions.map(position => {
-    const { id, symbol, avgPrice, exchange, side, quantity, updatedAt } = position
-    return {
-      id,
-      symbol,
-      quantity: String(quantity) ?? '',
-      avgPrice: String(avgPrice) ?? '',
-      exchange: convertToLocalExchange(exchange),
-      side: convertToLocalPositionSide(side),
-      updated: displayTimeBeforeNow(updatedAt),
-    }
-  })
-
-  return positionsTableItems
+  return positions
+    .filter(position => position.isOpen)
+    .map(position => {
+      const { id, symbol, avgPrice, exchange, side, quantity, updatedAt, isOpen } = position
+      return {
+        id,
+        symbol,
+        isOpen: isOpen ? 'Yes' : 'No',
+        quantity: quantity ? String(quantity) : '',
+        avgPrice: avgPrice ? String(avgPrice) : '',
+        exchange: convertToLocalExchange(exchange),
+        side: convertToLocalPositionSide(side),
+        updated: displayTimeBeforeNow(updatedAt),
+      }
+    })
 }

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Button, PageHeader, Spin, Table } from 'antd'
+import { PageHeader, Spin, Table } from 'antd'
 
 /* eslint-disable */
 import { createPositionTableData, PositionsTableItem } from './memberPositionTableUtils'
@@ -12,12 +12,6 @@ interface MemberPositionsTableProps {
 }
 
 const positionTableColumns = [
-  {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-    render: (text: string) => <Button type="link">{text}</Button>,
-  },
   {
     title: 'Exchange',
     dataIndex: 'exchange',
@@ -32,6 +26,11 @@ const positionTableColumns = [
     title: 'Side',
     dataIndex: 'side',
     key: 'side',
+  },
+  {
+    title: 'Quantity',
+    dataIndex: 'quantity',
+    key: 'quantity',
   },
   {
     title: 'Avg Price',

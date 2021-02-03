@@ -23,7 +23,7 @@ const groupMembersTableColumns = [
     title: 'Username',
     dataIndex: 'username',
     key: 'username',
-    render: (text: string) => <Button type="link">{text}</Button>,
+    render: (text: string) => <Button type="link">{text.split('-')[0]}</Button>,
   },
   {
     title: 'Active',

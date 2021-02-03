@@ -1339,6 +1339,20 @@ export type GetMemberPositionsQuery = { __typename?: 'Query' } & {
     }
 }
 
+export type GetMyGroupPositionsQueryVariables = Exact<{
+  membershipInput: MyMembershipInput
+  positionsInput: MemberPositionsInput
+}>
+
+export type GetMyGroupPositionsQuery = { __typename?: 'Query' } & {
+  myMembership: { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
+      positions: { __typename?: 'MemberPositionsResult' } & Pick<
+        MemberPositionsResult,
+        'totalCount'
+      > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
+    }
+}
+
 export type GetMyMembershipQueryVariables = Exact<{
   input: MyMembershipInput
 }>
@@ -2995,6 +3009,68 @@ export type GetMemberPositionsLazyQueryHookResult = ReturnType<
 export type GetMemberPositionsQueryResult = Apollo.QueryResult<
   GetMemberPositionsQuery,
   GetMemberPositionsQueryVariables
+>
+export const GetMyGroupPositionsDocument = gql`
+  query GetMyGroupPositions(
+    $membershipInput: MyMembershipInput!
+    $positionsInput: MemberPositionsInput!
+  ) {
+    myMembership(input: $membershipInput) {
+      id
+      positions(input: $positionsInput) {
+        totalCount
+        positions {
+          ...PositionDetails
+        }
+      }
+    }
+  }
+  ${PositionDetailsFragmentDoc}
+`
+
+/**
+ * __useGetMyGroupPositionsQuery__
+ *
+ * To run a query within a React component, call `useGetMyGroupPositionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyGroupPositionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyGroupPositionsQuery({
+ *   variables: {
+ *      membershipInput: // value for 'membershipInput'
+ *      positionsInput: // value for 'positionsInput'
+ *   },
+ * });
+ */
+export function useGetMyGroupPositionsQuery(
+  baseOptions: Apollo.QueryHookOptions<GetMyGroupPositionsQuery, GetMyGroupPositionsQueryVariables>,
+) {
+  return Apollo.useQuery<GetMyGroupPositionsQuery, GetMyGroupPositionsQueryVariables>(
+    GetMyGroupPositionsDocument,
+    baseOptions,
+  )
+}
+export function useGetMyGroupPositionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyGroupPositionsQuery,
+    GetMyGroupPositionsQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<GetMyGroupPositionsQuery, GetMyGroupPositionsQueryVariables>(
+    GetMyGroupPositionsDocument,
+    baseOptions,
+  )
+}
+export type GetMyGroupPositionsQueryHookResult = ReturnType<typeof useGetMyGroupPositionsQuery>
+export type GetMyGroupPositionsLazyQueryHookResult = ReturnType<
+  typeof useGetMyGroupPositionsLazyQuery
+>
+export type GetMyGroupPositionsQueryResult = Apollo.QueryResult<
+  GetMyGroupPositionsQuery,
+  GetMyGroupPositionsQueryVariables
 >
 export const GetMyMembershipDocument = gql`
   query GetMyMembership($input: MyMembershipInput!) {

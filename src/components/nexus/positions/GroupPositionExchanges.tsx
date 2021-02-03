@@ -19,7 +19,7 @@ const exchangeTableColumns = [
     title: 'Exchange',
     dataIndex: 'exchange',
     key: 'exchange',
-    render: (text: string) => <Button type="link">{text}</Button>,
+    render: (text: string) => <Button type="link">{text.split('-')[0]}</Button>,
   },
   {
     title: 'Members',
