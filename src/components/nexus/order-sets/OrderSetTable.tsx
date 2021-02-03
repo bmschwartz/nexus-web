@@ -50,6 +50,11 @@ const orderSetTableColumns = [
     dataIndex: 'price',
     key: 'price',
   },
+  {
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
+  },
 ]
 
 const PAGE_SIZE = 10
