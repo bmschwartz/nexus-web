@@ -36,6 +36,12 @@ export type CreateGroupMembershipInput = {
   status: MembershipStatus
 }
 
+export type CreateGroupMembershipResult = {
+  __typename?: 'CreateGroupMembershipResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
 export type DeleteMembershipInput = {
   groupId: Scalars['ID']
   membershipId: Scalars['ID']
@@ -650,6 +656,10 @@ export type User = {
   memberships: Array<GroupMembership>
 }
 
+export type UserIdByEmailInput = {
+  email: Scalars['String']
+}
+
 export type Query = {
   __typename?: 'Query'
   allGroups: Array<Group>
@@ -670,6 +680,7 @@ export type Query = {
   exchangeAccount?: Maybe<ExchangeAccount>
   exchangeAccounts: Array<ExchangeAccount>
   me?: Maybe<User>
+  userIdByEmail?: Maybe<Scalars['ID']>
 }
 
 export type QueryGroupArgs = {
@@ -728,6 +739,10 @@ export type QueryExchangeAccountsArgs = {
   input: ExchangeAccountsInput
 }
 
+export type QueryUserIdByEmailArgs = {
+  input: UserIdByEmailInput
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createGroup?: Maybe<Group>
@@ -735,7 +750,7 @@ export type Mutation = {
   updateGroupDescription?: Maybe<Group>
   disableGroup?: Maybe<Group>
   requestGroupAccess?: Maybe<GroupMembership>
-  createMembership?: Maybe<GroupMembership>
+  createMembership?: Maybe<CreateGroupMembershipResult>
   updateMembershipRole?: Maybe<GroupMembership>
   updateMembershipStatus?: Maybe<GroupMembership>
   updateMembershipActive?: Maybe<GroupMembership>
@@ -1007,6 +1022,19 @@ export type CreateGroupMutationVariables = Exact<{
 
 export type CreateGroupMutation = { __typename?: 'Mutation' } & {
   createGroup?: Maybe<{ __typename?: 'Group' } & Pick<Group, 'id'>>
+}
+
+export type CreateGroupMembershipMutationVariables = Exact<{
+  input: CreateGroupMembershipInput
+}>
+
+export type CreateGroupMembershipMutation = { __typename?: 'Mutation' } & {
+  createMembership?: Maybe<
+    { __typename?: 'CreateGroupMembershipResult' } & Pick<
+      CreateGroupMembershipResult,
+      'success' | 'error'
+    >
+  >
 }
 
 export type CreateOrderSetMutationVariables = Exact<{
@@ -1343,6 +1371,12 @@ export type GetSymbolsQuery = { __typename?: 'Query' } & {
     { __typename?: 'BinanceCurrency' } & Pick<BinanceCurrency, 'id' | 'symbol'>
   >
 }
+
+export type GetUserIdByEmailQueryVariables = Exact<{
+  input: UserIdByEmailInput
+}>
+
+export type GetUserIdByEmailQuery = { __typename?: 'Query' } & Pick<Query, 'userIdByEmail'>
 
 export type GroupExistsQueryVariables = Exact<{
   input: GroupExistsInput
@@ -1698,6 +1732,57 @@ export type CreateGroupMutationResult = Apollo.MutationResult<CreateGroupMutatio
 export type CreateGroupMutationOptions = Apollo.BaseMutationOptions<
   CreateGroupMutation,
   CreateGroupMutationVariables
+>
+export const CreateGroupMembershipDocument = gql`
+  mutation CreateGroupMembership($input: CreateGroupMembershipInput!) {
+    createMembership(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type CreateGroupMembershipMutationFn = Apollo.MutationFunction<
+  CreateGroupMembershipMutation,
+  CreateGroupMembershipMutationVariables
+>
+
+/**
+ * __useCreateGroupMembershipMutation__
+ *
+ * To run a mutation, you first call `useCreateGroupMembershipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateGroupMembershipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createGroupMembershipMutation, { data, loading, error }] = useCreateGroupMembershipMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateGroupMembershipMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateGroupMembershipMutation,
+    CreateGroupMembershipMutationVariables
+  >,
+) {
+  return Apollo.useMutation<CreateGroupMembershipMutation, CreateGroupMembershipMutationVariables>(
+    CreateGroupMembershipDocument,
+    baseOptions,
+  )
+}
+export type CreateGroupMembershipMutationHookResult = ReturnType<
+  typeof useCreateGroupMembershipMutation
+>
+export type CreateGroupMembershipMutationResult = Apollo.MutationResult<
+  CreateGroupMembershipMutation
+>
+export type CreateGroupMembershipMutationOptions = Apollo.BaseMutationOptions<
+  CreateGroupMembershipMutation,
+  CreateGroupMembershipMutationVariables
 >
 export const CreateOrderSetDocument = gql`
   mutation CreateOrderSet($input: CreateOrderSetInput!) {
@@ -3084,6 +3169,50 @@ export function useGetSymbolsLazyQuery(
 export type GetSymbolsQueryHookResult = ReturnType<typeof useGetSymbolsQuery>
 export type GetSymbolsLazyQueryHookResult = ReturnType<typeof useGetSymbolsLazyQuery>
 export type GetSymbolsQueryResult = Apollo.QueryResult<GetSymbolsQuery, GetSymbolsQueryVariables>
+export const GetUserIdByEmailDocument = gql`
+  query GetUserIdByEmail($input: UserIdByEmailInput!) {
+    userIdByEmail(input: $input)
+  }
+`
+
+/**
+ * __useGetUserIdByEmailQuery__
+ *
+ * To run a query within a React component, call `useGetUserIdByEmailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserIdByEmailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserIdByEmailQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetUserIdByEmailQuery(
+  baseOptions: Apollo.QueryHookOptions<GetUserIdByEmailQuery, GetUserIdByEmailQueryVariables>,
+) {
+  return Apollo.useQuery<GetUserIdByEmailQuery, GetUserIdByEmailQueryVariables>(
+    GetUserIdByEmailDocument,
+    baseOptions,
+  )
+}
+export function useGetUserIdByEmailLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetUserIdByEmailQuery, GetUserIdByEmailQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetUserIdByEmailQuery, GetUserIdByEmailQueryVariables>(
+    GetUserIdByEmailDocument,
+    baseOptions,
+  )
+}
+export type GetUserIdByEmailQueryHookResult = ReturnType<typeof useGetUserIdByEmailQuery>
+export type GetUserIdByEmailLazyQueryHookResult = ReturnType<typeof useGetUserIdByEmailLazyQuery>
+export type GetUserIdByEmailQueryResult = Apollo.QueryResult<
+  GetUserIdByEmailQuery,
+  GetUserIdByEmailQueryVariables
+>
 export const GroupExistsDocument = gql`
   query GroupExists($input: GroupExistsInput!) {
     groupExists(input: $input)

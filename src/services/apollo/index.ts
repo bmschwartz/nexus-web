@@ -1,7 +1,7 @@
 /* eslint-disable */
 export { login, register, logout } from './auth'
 
-export { createGroup, removeMember } from './group'
+export { createGroup, inviteMember, removeMember } from './group'
 
 export { currentAccount } from './user'
 

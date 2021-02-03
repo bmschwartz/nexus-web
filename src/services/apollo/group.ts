@@ -4,6 +4,10 @@ import {
   GroupExistsDocument,
   CreateGroupDocument,
   DeleteMembershipDocument,
+  CreateGroupMembershipDocument,
+  GetUserIdByEmailDocument,
+  MembershipRole,
+  MembershipStatus,
 } from '../../graphql/index'
 /* eslint-enable */
 
@@ -28,6 +32,16 @@ export interface CreateGroupInput {
   email?: string
   payoutCurrency?: string
   payoutAddress?: string
+}
+
+export interface InviteMemberInput {
+  groupId: string
+  email: string
+}
+
+export interface InviteMemberResponse {
+  success: boolean
+  error?: string
 }
 
 export interface RemoveMemberInput {
@@ -79,6 +93,47 @@ export const groupExists = async (name: string): Promise<GroupExistsResponse> =>
   return result
 }
 
+export const inviteMember = async ({
+  groupId,
+  email,
+}: InviteMemberInput): Promise<InviteMemberResponse> => {
+  try {
+    const { data: getUserData } = await client.query({
+      query: GetUserIdByEmailDocument,
+      variables: { input: { email } },
+    })
+
+    if (!getUserData || !getUserData.userIdByEmail) {
+      return { success: false, error: 'Unable to invite user' }
+    }
+
+    const memberId = getUserData.userIdByEmail
+
+    const { data: inviteResponse } = await client.mutate({
+      mutation: CreateGroupMembershipDocument,
+      variables: {
+        input: {
+          groupId,
+          memberId,
+          role: MembershipRole.Member,
+          status: MembershipStatus.Approved,
+        },
+      },
+    })
+
+    if (!inviteResponse) {
+      console.log('memberId', memberId)
+      return { success: false, error: 'Unable to invite user' }
+    }
+
+    console.log(inviteResponse.createMembership)
+    return inviteResponse.createMembership
+  } catch (e) {
+    console.log(e)
+    return { success: false, error: e.message }
+  }
+}
+
 export const removeMember = async ({
   groupId,
   membershipId,
@@ -92,7 +147,6 @@ export const removeMember = async ({
     if (!data) {
       return { success: false, error: 'Unable to remove member' }
     }
-    console.log(data)
 
     const { success, error } = data.deleteMembership
     return { success, error }

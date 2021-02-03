@@ -3,6 +3,7 @@ import React, { FC, useState } from 'react'
 import { Group } from 'types/group'
 import { GroupMembersTable } from 'components/nexus/group-members/GroupMembersTable'
 import { GroupMemberDetail } from 'components/nexus/group-members/GroupMemberDetail'
+import { GroupMemberInviteForm } from 'components/nexus/group-members/GroupMemberInviteForm'
 
 interface GroupMembersProps {
   group: Group
@@ -35,9 +36,9 @@ export const GroupMembers: FC<GroupMembersProps> = ({ group, tabState, setTabSta
     setSelectedMemberId(undefined)
     setTabState(GroupMembersTabState.VIEW_ALL)
   }
-  // const onMemberInvited = () => {
-  //   setTabState(GroupMembersTabState.VIEW_ALL)
-  // }
+  const onMemberInvited = () => {
+    setTabState(GroupMembersTabState.VIEW_ALL)
+  }
 
   function shouldShowViewAll() {
     return (
@@ -55,9 +56,13 @@ export const GroupMembers: FC<GroupMembersProps> = ({ group, tabState, setTabSta
           onClickGroupMember={onClickMember}
         />
       )}
-      {/* {tabState === GroupMembersTabState.INVITE && (
-        <CreateOrderSetForm group={group} onClickBack={onClickBack} onCreated={onOrderSetCreated} />
-      )} */}
+      {tabState === GroupMembersTabState.INVITE && (
+        <GroupMemberInviteForm
+          group={group}
+          onClickBack={onClickBack}
+          onInvited={onMemberInvited}
+        />
+      )}
       {tabState === GroupMembersTabState.VIEW_DETAIL && selectedMemberId && (
         <GroupMemberDetail
           groupMemberId={selectedMemberId}

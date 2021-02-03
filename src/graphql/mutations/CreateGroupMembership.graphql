@@ -1,0 +1,6 @@
+mutation CreateGroupMembership($input: CreateGroupMembershipInput!) {
+  createMembership(input: $input) {
+    success
+    error
+  }
+}

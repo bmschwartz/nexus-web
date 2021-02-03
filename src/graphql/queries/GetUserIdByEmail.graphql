@@ -1,0 +1,3 @@
+query GetUserIdByEmail($input: UserIdByEmailInput!) {
+  userIdByEmail(input: $input)
+}
