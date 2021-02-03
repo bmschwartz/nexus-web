@@ -66,6 +66,7 @@ export interface ISymbolMap {
 }
 
 export function extractCurrencyData(currencyInfo: GetCurrencyQuery | undefined) {
+  console.log(currencyInfo)
   return {}
 }
 

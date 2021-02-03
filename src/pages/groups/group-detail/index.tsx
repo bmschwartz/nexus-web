@@ -73,10 +73,18 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     transformedMembership = transformMembershipData(membershipData.myMembership)
   }
 
+  if (getGroupLoading || membershipLoading) {
+    return (
+      <div>
+        <Helmet title="Groups" />
+        <Spin />
+      </div>
+    )
+  }
+
   return (
     <div>
       <Helmet title="Groups" />
-      {(getGroupLoading || membershipLoading) && <Spin />}
       {getGroupError && <strong>No access to group {getGroupError.message}</strong>}
       {transformedGroup && transformedMembership ? (
         <>
@@ -84,7 +92,6 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
           <GroupDetailCard group={transformedGroup} myMembership={transformedMembership} />
         </>
       ) : (
-        /* eslint-disable-next-line */
         <strong>No access to group</strong>
       )}
     </div>
