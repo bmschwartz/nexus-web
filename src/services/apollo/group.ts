@@ -122,14 +122,11 @@ export const inviteMember = async ({
     })
 
     if (!inviteResponse) {
-      console.log('memberId', memberId)
       return { success: false, error: 'Unable to invite user' }
     }
 
-    console.log(inviteResponse.createMembership)
     return inviteResponse.createMembership
   } catch (e) {
-    console.log(e)
     return { success: false, error: e.message }
   }
 }

@@ -83,8 +83,6 @@ export const cancelOrder = async (input: CancelOrderInput): Promise<CancelOrderR
       },
     })
 
-    console.log(orderId, success, error)
-
     return { success, error }
   } catch (error) {
     return { success: false, error: error.message }
