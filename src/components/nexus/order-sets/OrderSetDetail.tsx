@@ -1,10 +1,11 @@
 import React, { FC } from 'react'
-import { PageHeader, Spin, Table } from 'antd'
+import { Divider, PageHeader, Spin, Table } from 'antd'
 
 /* eslint-disable */
-import { useGetGroupOrderSetDetailsQuery } from '../../../graphql'
+import { OrderType, useGetGroupOrderSetDetailsQuery } from '../../../graphql'
 import { OrdersTableColumns, transformOrdersData } from './orderSetDetailUtils'
 import { displayTimeBeforeNow } from '../dateUtil'
+
 /* eslint-enable */
 
 interface OrderSetDetailProps {
@@ -65,11 +66,29 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Price</strong>
-            {orderSet && orderSet.price}
+            {orderSet &&
+              orderSet.orderType &&
+              (orderSet.orderType === OrderType.Limit ? orderSet.price : 'Market')}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Side</strong>
             {orderSet && orderSet.side}
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Order Type</strong>
+            {orderSet && orderSet.orderType}
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Stop Price</strong>
+            {orderSet && orderSet.stopPrice}
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Trailing Stop Percent</strong>
+            {orderSet && orderSet.trailingStopPercent}
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Stop Trigger Type</strong>
+            {orderSet && orderSet.stopTriggerType}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Order Type</strong>
@@ -92,21 +111,56 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             {orderSet && displayTimeBeforeNow(orderSet.createdAt)}
           </div>
         </div>
-        <div className="text-nowrap">
-          <Table
-            className="mr-5 ml-5"
-            rowKey="id"
-            columns={OrdersTableColumns}
-            dataSource={transformOrdersData(orderSet?.orders.orders || [])}
-            pagination={{
-              defaultCurrent: 1,
-              defaultPageSize: PAGE_SIZE,
-              total: totalCount,
-              onChange: onChangePage,
-              showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-            }}
-          />
-        </div>
+        <Divider orientation="left">Orders</Divider>
+        <Table
+          className="mr-5 ml-5"
+          rowKey="id"
+          columns={OrdersTableColumns}
+          dataSource={transformOrdersData(orderSet?.orders.orders || [])}
+          pagination={{
+            defaultCurrent: 1,
+            defaultPageSize: PAGE_SIZE,
+            total: totalCount,
+            onChange: onChangePage,
+            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          }}
+        />
+        {orderSet && orderSet.stopPrice && (
+          <>
+            <Divider orientation="left">Stop Orders</Divider>
+            <Table
+              className="mr-5 ml-5"
+              rowKey="id"
+              columns={OrdersTableColumns}
+              dataSource={transformOrdersData(orderSet?.orders.orders || [])}
+              pagination={{
+                defaultCurrent: 1,
+                defaultPageSize: PAGE_SIZE,
+                total: totalCount,
+                onChange: onChangePage,
+                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+              }}
+            />
+          </>
+        )}
+        {orderSet && orderSet.trailingStopPercent && (
+          <>
+            <Divider orientation="left">Trailing Stop Orders</Divider>
+            <Table
+              className="mr-5 ml-5"
+              rowKey="id"
+              columns={OrdersTableColumns}
+              dataSource={transformOrdersData(orderSet?.orders.orders || [])}
+              pagination={{
+                defaultCurrent: 1,
+                defaultPageSize: PAGE_SIZE,
+                total: totalCount,
+                onChange: onChangePage,
+                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+              }}
+            />
+          </>
+        )}
       </Spin>
     </>
   )

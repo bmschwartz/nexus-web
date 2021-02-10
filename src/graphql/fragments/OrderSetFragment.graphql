@@ -8,6 +8,8 @@ fragment OrderSetDetails on OrderSet {
   closeOrderSet
   percent
   stopPrice
+  trailingStopPercent
+  stopTriggerType
   description
   createdAt
 }
