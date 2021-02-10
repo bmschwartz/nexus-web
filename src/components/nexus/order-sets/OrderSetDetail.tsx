@@ -5,6 +5,12 @@ import { Divider, PageHeader, Spin, Table } from 'antd'
 import { OrderType, useGetGroupOrderSetDetailsQuery } from '../../../graphql'
 import { OrdersTableColumns, transformOrdersData } from './orderSetDetailUtils'
 import { displayTimeBeforeNow } from '../dateUtil'
+import {
+  convertToLocalOrderSide,
+  convertToLocalOrderType,
+  convertToLocalStopTriggerType,
+} from '../../../types/order'
+import { convertToLocalExchange } from '../../../types/exchange'
 
 /* eslint-enable */
 
@@ -56,13 +62,18 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       </div>
       <Spin spinning={orderSetDetailLoading} tip="Fetching Order Set...">
         <div className="card-body">
+          <Divider orientation="left">General</Divider>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Exchange</strong>
-            {orderSet && orderSet.exchange}
+            {orderSet && orderSet.exchange && convertToLocalExchange(orderSet.exchange)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Symbol</strong>
             {orderSet && orderSet.symbol}
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Side</strong>
+            {orderSet && orderSet.side && convertToLocalOrderSide(orderSet.side)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Price</strong>
@@ -71,28 +82,8 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
               (orderSet.orderType === OrderType.Limit ? orderSet.price : 'Market')}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Side</strong>
-            {orderSet && orderSet.side}
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Order Type</strong>
-            {orderSet && orderSet.orderType}
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Stop Price</strong>
-            {orderSet && orderSet.stopPrice}
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Trailing Stop Percent</strong>
-            {orderSet && orderSet.trailingStopPercent}
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Stop Trigger Type</strong>
-            {orderSet && orderSet.stopTriggerType}
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Order Type</strong>
-            {orderSet && orderSet.orderType}
+            {orderSet && orderSet.orderType && convertToLocalOrderType(orderSet.orderType)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Close Order</strong>
@@ -102,6 +93,26 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             <strong className="mr-3">Percent</strong>
             {orderSet && `${orderSet.percent}%`}
           </div>
+          {orderSet && (orderSet.stopPrice || orderSet.trailingStopPercent) && (
+            <>
+              <Divider orientation="left">Stop Order</Divider>
+              <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+                <strong className="mr-3">Stop Price</strong>
+                {orderSet && orderSet.stopPrice}
+              </div>
+              <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+                <strong className="mr-3">Trailing Stop Percent</strong>
+                {orderSet && orderSet.trailingStopPercent}
+              </div>
+              <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+                <strong className="mr-3">Stop Trigger Type</strong>
+                {orderSet &&
+                  orderSet.stopTriggerType &&
+                  convertToLocalStopTriggerType(orderSet.stopTriggerType)}
+              </div>
+            </>
+          )}
+          <Divider orientation="left">Additional</Divider>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Description</strong>
             {orderSet && orderSet.description}

@@ -1,10 +1,12 @@
 /* eslint-disable */
 import {
   OrderSide as RemoteOrderSide,
-  OrderType as RemoteOrderType,
   OrderStatus as RemoteOrderStatus,
+  OrderType as RemoteOrderType,
+  StopTriggerType as RemoteStopTriggerType,
 } from '../graphql'
 import { Exchange } from './exchange'
+
 /* eslint-enable */
 
 export enum OrderSide {
@@ -88,5 +90,18 @@ export function convertToLocalOrderStatus(orderStatus: RemoteOrderStatus): Order
     case RemoteOrderStatus.New:
     default:
       return OrderStatus.NEW
+  }
+}
+
+export function convertToLocalStopTriggerType(
+  stopTriggerType: RemoteStopTriggerType,
+): StopTriggerType | null {
+  switch (stopTriggerType) {
+    case RemoteStopTriggerType.LastPrice:
+      return StopTriggerType.LAST_PRICE
+    case RemoteStopTriggerType.MarkPrice:
+      return StopTriggerType.MARK_PRICE
+    default:
+      return null
   }
 }
