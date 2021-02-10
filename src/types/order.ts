@@ -24,6 +24,11 @@ export enum OrderStatus {
   CANCELED = 'Canceled',
 }
 
+export enum StopTriggerType {
+  LAST_PRICE = 'Last Price',
+  MARK_PRICE = 'Mark Price',
+}
+
 export interface Order {
   id: string
   side: OrderSide

@@ -1,17 +1,17 @@
 import React, { FC, useState } from 'react'
 import { Formik } from 'formik'
 import { Form, Input, InputNumber, Select, SubmitButton, Transfer } from 'formik-antd'
-import { Modal, notification, PageHeader, Spin } from 'antd'
+import { Divider, Modal, notification, PageHeader, Spin } from 'antd'
 import { TransferItem } from 'antd/lib/transfer'
 import TextArea from 'antd/lib/input/TextArea'
 
 /* Local */
-import { OrderSide, OrderType } from 'types/order'
+import { OrderSide, OrderType, StopTriggerType } from 'types/order'
 import { Exchange } from 'types/exchange'
 import { Group } from 'types/group'
 
 /* eslint-disable */
-import { getCreateOrderSetSchema } from './createOrderFormUtils'
+import { getCreateOrderSetSchema, StopOrderOption } from './createOrderFormUtils'
 import * as apollo from 'services/apollo'
 import { CreateOrderSetResponse } from 'services/apollo/order'
 import { useGetCurrenciesQuery, useGetGroupExchangeAccountsQuery } from '../../../graphql/index'
@@ -22,17 +22,6 @@ interface CreateOrderSetFormProps {
   group: Group
   onCreated: () => void
   onClickBack: () => void
-}
-
-const getOverviewText = ({
-  side,
-  symbol,
-  price,
-  exchangeAccountIds,
-  percent,
-  exchange,
-}: any): String => {
-  return `${side} ${symbol} on ${exchange} at ${price} with ${percent}% of balance for ${exchangeAccountIds.length} members`
 }
 
 export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
@@ -116,11 +105,12 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           side: OrderSide.BUY,
           orderType: OrderType.LIMIT,
           percent: 5,
-          price: 0,
           exchangeAccountIds: [],
+          stopOrderType: StopOrderOption.NONE,
+          stopTriggerType: StopTriggerType.LAST_PRICE,
         }}
         validationSchema={CreateOrderSetSchema}
-        onSubmit={async (values, { setSubmitting }) => {
+        onSubmit={async ({ stopOrderType, ...values }, { setSubmitting }) => {
           if (values.exchangeAccountIds.length === 0) {
             setSubmitting(false)
             handleNoMembersSelected()
@@ -155,6 +145,9 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           <div className="card-body">
             <Spin spinning={!currencyData || fetchingGroupExchangeAccounts}>
               <Form {...formItemLayout} labelAlign="left">
+                <Divider orientation="left">
+                  <strong>General</strong>
+                </Divider>
                 <Form.Item name="exchange" label="Exchange">
                   <Select
                     name="exchange"
@@ -211,6 +204,9 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   </Select>
                 </Form.Item>
 
+                <Divider orientation="left">
+                  <strong>Order</strong>
+                </Divider>
                 <Form.Item name="orderType" label="Type" className="mb-3">
                   <Select
                     name="orderType"
@@ -226,7 +222,12 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   </Select>
                 </Form.Item>
 
-                <Form.Item name="price" label="Price" className="mb-3">
+                <Form.Item
+                  name="price"
+                  label="Price"
+                  className="mb-3"
+                  hidden={values.orderType !== OrderType.LIMIT}
+                >
                   <InputNumber
                     name="price"
                     min={getMinPrice(currencyData, values.exchange, values.symbol)}
@@ -235,7 +236,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                     size="large"
                     onChange={val => setFieldValue('price', val, true)}
                     disabled={values.orderType === OrderType.MARKET}
-                    style={{ width: 300 }}
+                    style={{ width: 200 }}
                     placeholder="0.00"
                   />
                 </Form.Item>
@@ -254,10 +255,85 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   />
                 </Form.Item>
 
-                <Form.Item name="description" label="Description" className="mb-3">
-                  <TextArea name="description" rows={4} placeholder="Description (optional)" />
+                <Divider orientation="left">
+                  <strong>Stop Order</strong>
+                </Divider>
+                <Form.Item name="stopOrderType" label="Stop Order Type" className="mb-3">
+                  <Select
+                    name="stopOrderType"
+                    style={{ width: 200 }}
+                    size="large"
+                    onChange={handleChange}
+                  >
+                    {Object.values(StopOrderOption).map(type => (
+                      <Select.Option key={type} value={type}>
+                        {type}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
 
+                <Form.Item
+                  name="stopPrice"
+                  label="Stop Price"
+                  className="mb-3"
+                  hidden={values.stopOrderType !== StopOrderOption.STOP_LIMIT}
+                >
+                  <InputNumber
+                    name="stopPrice"
+                    min={getMinPrice(currencyData, values.exchange, values.symbol)}
+                    max={getMaxPrice(currencyData, values.exchange, values.symbol)}
+                    step={getPriceTickSize(currencyData, values.exchange, values.symbol)}
+                    size="large"
+                    onChange={val => setFieldValue('stopPrice', val, true)}
+                    disabled={values.stopOrderType !== StopOrderOption.STOP_LIMIT}
+                    style={{ width: 200 }}
+                    placeholder="0.00"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="trailingStopPercent"
+                  label="Trailing Stop Percent"
+                  className="mb-3"
+                  hidden={values.stopOrderType !== StopOrderOption.TRAILING_STOP}
+                >
+                  <Input
+                    name="trailingStopPercent"
+                    min={0}
+                    max={100}
+                    size="large"
+                    style={{ width: 120 }}
+                    type="number"
+                    placeholder="5"
+                    addonAfter="%"
+                    onChange={handleChange}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="stopTriggerType"
+                  label="Stop Trigger Type"
+                  className="mb-3"
+                  hidden={values.stopOrderType === StopOrderOption.NONE}
+                >
+                  <Select
+                    name="stopTriggerType"
+                    style={{ width: 200 }}
+                    size="large"
+                    onChange={handleChange}
+                  >
+                    {Object.values(StopTriggerType).map(type => (
+                      <Select.Option key={type} value={type}>
+                        {type}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+
+                <Divider orientation="left">
+                  <strong>Members</strong>
+                </Divider>
                 <Form.Item name="exchangeAccountIds" label="Members" className="mb-3">
                   <Transfer
                     name="exchangeAccountIds"
@@ -288,7 +364,13 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   />
                 </Form.Item>
 
-                <p>Overview: {getOverviewText(values)}</p>
+                <Divider orientation="left">
+                  <strong>Additional</strong>
+                </Divider>
+                <Form.Item name="description" label="Description" className="mb-3">
+                  <TextArea name="description" rows={4} placeholder="Description (optional)" />
+                </Form.Item>
+
                 <SubmitButton disabled={submittingOrder} loading={submittingOrder}>
                   Submit
                 </SubmitButton>

@@ -4,12 +4,14 @@ import {
   CancelOrderDocument,
   CreateOrderSetDocument,
   CreateOrderSetInput as RemoteCreateOrderSetInput,
-  OrderType as RemoteOrderType,
-  OrderSide as RemoteOrderSide,
   Exchange as RemoteExchange,
+  OrderSide as RemoteOrderSide,
+  OrderType as RemoteOrderType,
+  StopTriggerType as RemoteStopTriggerType,
 } from '../../graphql/index'
 import { Exchange } from 'types/exchange'
-import { OrderSide, OrderType } from 'types/order'
+import { OrderSide, OrderType, StopTriggerType } from 'types/order'
+
 /* eslint-enable */
 
 export interface CreateOrderSetResponse {
@@ -30,6 +32,8 @@ export interface CreateOrderSetInput {
   stopPrice?: number
   description?: string
   exchangeAccountIds: string[]
+  trailingStopPercent?: number
+  stopTriggerType?: StopTriggerType
 }
 
 export interface CancelOrderResponse {
@@ -44,11 +48,12 @@ export interface CancelOrderInput {
 export const createOrderSet = async (
   input: CreateOrderSetInput,
 ): Promise<CreateOrderSetResponse> => {
-  const { orderType, side, exchange, ...rest } = input
+  const { orderType, side, exchange, stopTriggerType, ...rest } = input
   const payload: RemoteCreateOrderSetInput = {
     side: convertOrderSide(side),
     exchange: convertExchange(exchange),
     orderType: convertOrderType(orderType),
+    stopTriggerType: convertStopTriggerType(stopTriggerType),
     ...rest,
   }
 
@@ -117,4 +122,16 @@ function convertOrderType(orderType: OrderType): RemoteOrderType {
     default:
       return RemoteOrderType.Market
   }
+}
+
+function convertStopTriggerType(stopTriggerType?: StopTriggerType): RemoteStopTriggerType | null {
+  switch (stopTriggerType) {
+    case StopTriggerType.LAST_PRICE:
+      return RemoteStopTriggerType.LastPrice
+    case StopTriggerType.MARK_PRICE:
+      return RemoteStopTriggerType.MarkPrice
+    default:
+      break
+  }
+  return null
 }
