@@ -1,9 +1,9 @@
-query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSetInput!, $limit: Int, $offset: Int) {
+query GetGroupOrderSetDetails($groupInput: GroupInput!, $orderSetInput: OrderSetInput!, $limit: Int, $offset: Int, $stopOrderType: StopOrderType) {
   group(input: $groupInput) {
     id
     orderSet(input: $orderSetInput) {
       ...OrderSetDetails
-      orders(limit: $limit, offset: $offset)  {
+      orders(limit: $limit, offset: $offset, stopOrderType: $stopOrderType)  {
         totalCount
         orders {
           ...OrderDetails

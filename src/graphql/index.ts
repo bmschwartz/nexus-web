@@ -528,10 +528,12 @@ export type OrderSet = {
 export type OrderSetOrdersArgs = {
   limit?: Maybe<Scalars['Int']>
   offset?: Maybe<Scalars['Int']>
+  stopOrderType?: Maybe<StopOrderType>
 }
 
 export type OrderSetInput = {
   id: Scalars['ID']
+  stopOrderType?: Maybe<StopOrderType>
 }
 
 export type OrderSetOrders = {
@@ -578,6 +580,12 @@ export type PositionInput = {
 export enum PositionSide {
   Long = 'LONG',
   Short = 'SHORT',
+}
+
+export enum StopOrderType {
+  None = 'NONE',
+  StopLimit = 'STOP_LIMIT',
+  TrailingStop = 'TRAILING_STOP',
 }
 
 export enum StopTriggerType {
@@ -1230,6 +1238,7 @@ export type GetGroupOrderSetDetailsQueryVariables = Exact<{
   orderSetInput: OrderSetInput
   limit?: Maybe<Scalars['Int']>
   offset?: Maybe<Scalars['Int']>
+  stopOrderType?: Maybe<StopOrderType>
 }>
 
 export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
@@ -2657,12 +2666,13 @@ export const GetGroupOrderSetDetailsDocument = gql`
     $orderSetInput: OrderSetInput!
     $limit: Int
     $offset: Int
+    $stopOrderType: StopOrderType
   ) {
     group(input: $groupInput) {
       id
       orderSet(input: $orderSetInput) {
         ...OrderSetDetails
-        orders(limit: $limit, offset: $offset) {
+        orders(limit: $limit, offset: $offset, stopOrderType: $stopOrderType) {
           totalCount
           orders {
             ...OrderDetails
@@ -2700,6 +2710,7 @@ export const GetGroupOrderSetDetailsDocument = gql`
  *      orderSetInput: // value for 'orderSetInput'
  *      limit: // value for 'limit'
  *      offset: // value for 'offset'
+ *      stopOrderType: // value for 'stopOrderType'
  *   },
  * });
  */

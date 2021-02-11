@@ -165,10 +165,10 @@ export function transformStopOrdersData(ordersData: any[]): StopOrderTableRow[] 
 
 export function transformTrailingStopOrdersData(ordersData: any[]): TrailingStopOrderTableRow[] {
   return ordersData.map(order => {
-    const { id, percent, status, quantity, filledQty, updatedAt } = order
+    const { id, trailingStopPercent, status, quantity, filledQty, updatedAt } = order
     return {
       id,
-      percent,
+      percent: trailingStopPercent,
       quantity,
       filledQty,
       updatedAt: displayTimeBeforeNow(updatedAt),

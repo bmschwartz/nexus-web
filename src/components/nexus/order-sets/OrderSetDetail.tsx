@@ -2,8 +2,15 @@ import React, { FC } from 'react'
 import { Divider, PageHeader, Spin, Table } from 'antd'
 
 /* eslint-disable */
-import { OrderType, useGetGroupOrderSetDetailsQuery } from '../../../graphql'
-import { OrdersTableColumns, transformOrdersData } from './orderSetDetailUtils'
+import { OrderType, StopOrderType, useGetGroupOrderSetDetailsQuery } from '../../../graphql'
+import {
+  OrdersTableColumns,
+  StopOrdersTableColumns,
+  TrailingOrdersTableColumns,
+  transformOrdersData,
+  transformStopOrdersData,
+  transformTrailingStopOrdersData,
+} from './orderSetDetailUtils'
 import { displayTimeBeforeNow } from '../dateUtil'
 import {
   convertToLocalOrderSide,
@@ -33,11 +40,12 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
       limit: PAGE_SIZE,
+      stopOrderType: StopOrderType.None,
     },
     notifyOnNetworkStatusChange: true,
   })
 
-  const onChangePage = (page: number, pageSize?: number) => {
+  const onChangeOrdersPage = (page: number, pageSize?: number) => {
     const offset = pageSize ? pageSize * (page - 1) : 0
     fetchMore({
       variables: { offset },
@@ -50,8 +58,70 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
     })
   }
 
-  const totalCount = orderSetDetailData?.group?.orderSet?.orders.totalCount
+  const {
+    data: stopOrderSetDetailData,
+    loading: stopOrderSetDetailLoading,
+    fetchMore: fetchMoreStopOrders,
+  } = useGetGroupOrderSetDetailsQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      groupInput: { groupId },
+      orderSetInput: { id: orderSetId },
+      limit: PAGE_SIZE,
+      stopOrderType: StopOrderType.StopLimit,
+    },
+    notifyOnNetworkStatusChange: true,
+  })
+
+  const onChangeStopOrdersPage = (page: number, pageSize?: number) => {
+    const offset = pageSize ? pageSize * (page - 1) : 0
+    fetchMoreStopOrders({
+      variables: { offset },
+      updateQuery: (prev, result) => {
+        if (!result.fetchMoreResult) {
+          return prev
+        }
+        return { ...result.fetchMoreResult }
+      },
+    })
+  }
+
+  const {
+    data: trailingStopOrderSetDetailData,
+    loading: trailingStopOrderSetDetailLoading,
+    fetchMore: fetchMoreTrailingStopOrders,
+  } = useGetGroupOrderSetDetailsQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      groupInput: { groupId },
+      orderSetInput: { id: orderSetId },
+      limit: PAGE_SIZE,
+      stopOrderType: StopOrderType.TrailingStop,
+    },
+    notifyOnNetworkStatusChange: true,
+  })
+
+  const onChangeTrailingStopOrdersPage = (page: number, pageSize?: number) => {
+    const offset = pageSize ? pageSize * (page - 1) : 0
+    fetchMoreTrailingStopOrders({
+      variables: { offset },
+      updateQuery: (prev, result) => {
+        if (!result.fetchMoreResult) {
+          return prev
+        }
+        return { ...result.fetchMoreResult }
+      },
+    })
+  }
+
+  const totalNormalOrdersCount = orderSetDetailData?.group?.orderSet?.orders.totalCount
+  const totalStopOrdersCount = stopOrderSetDetailData?.group?.orderSet?.orders.totalCount
+  const totalTrailingStopOrdersCount =
+    trailingStopOrderSetDetailData?.group?.orderSet?.orders.totalCount
+
   const orderSet = orderSetDetailData?.group?.orderSet
+  const stopOrdersOrderSet = stopOrderSetDetailData?.group?.orderSet
+  const trailingStopOrdersOrderSet = trailingStopOrderSetDetailData?.group?.orderSet
 
   return (
     <>
@@ -60,7 +130,12 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
           <PageHeader className="site-page-header" title="Order Set Detail" onBack={onClickBack} />
         </div>
       </div>
-      <Spin spinning={orderSetDetailLoading} tip="Fetching Order Set...">
+      <Spin
+        spinning={
+          orderSetDetailLoading || stopOrderSetDetailLoading || trailingStopOrderSetDetailLoading
+        }
+        tip="Fetching Order Set..."
+      >
         <div className="card-body">
           <Divider orientation="left">General</Divider>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
@@ -131,8 +206,8 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
           pagination={{
             defaultCurrent: 1,
             defaultPageSize: PAGE_SIZE,
-            total: totalCount,
-            onChange: onChangePage,
+            total: totalNormalOrdersCount,
+            onChange: onChangeOrdersPage,
             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
           }}
         />
@@ -142,13 +217,13 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             <Table
               className="mr-5 ml-5"
               rowKey="id"
-              columns={OrdersTableColumns}
-              dataSource={transformOrdersData(orderSet?.orders.orders || [])}
+              columns={StopOrdersTableColumns}
+              dataSource={transformStopOrdersData(stopOrdersOrderSet?.orders.orders || [])}
               pagination={{
                 defaultCurrent: 1,
                 defaultPageSize: PAGE_SIZE,
-                total: totalCount,
-                onChange: onChangePage,
+                total: totalStopOrdersCount,
+                onChange: onChangeStopOrdersPage,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
@@ -160,13 +235,15 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             <Table
               className="mr-5 ml-5"
               rowKey="id"
-              columns={OrdersTableColumns}
-              dataSource={transformOrdersData(orderSet?.orders.orders || [])}
+              columns={TrailingOrdersTableColumns}
+              dataSource={transformTrailingStopOrdersData(
+                trailingStopOrdersOrderSet?.orders.orders || [],
+              )}
               pagination={{
                 defaultCurrent: 1,
                 defaultPageSize: PAGE_SIZE,
-                total: totalCount,
-                onChange: onChangePage,
+                total: totalTrailingStopOrdersCount,
+                onChange: onChangeTrailingStopOrdersPage,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
