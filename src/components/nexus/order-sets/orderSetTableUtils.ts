@@ -1,9 +1,10 @@
-import { GetGroupOrderSetsQuery } from 'graphql'
 import { convertToLocalExchange, Exchange } from 'types/exchange'
 import { convertToLocalOrderSide, convertToLocalOrderType, OrderSide, OrderType } from 'types/order'
 
 /* eslint-disable */
 import { displayTimeBeforeNow } from '../dateUtil'
+import { GetGroupOrderSetsQuery, OrderType as RemoteOrderType } from '../../../graphql'
+
 /* eslint-enable */
 
 export interface OrderSetTableItem {
@@ -30,9 +31,10 @@ export const createOrderSetTableData = (
 
   const orderSetTableItems: OrderSetTableItem[] = orderSets.map(orderSet => {
     const { id, symbol, price, exchange, side, orderType, closeOrderSet, createdAt } = orderSet
+    const displayPrice = orderType === RemoteOrderType.Market ? 'Market' : String(price) ?? ''
     return {
       id,
-      price: String(price) ?? '',
+      price: displayPrice,
       symbol,
       closeOrderSet,
       exchange: convertToLocalExchange(exchange),
