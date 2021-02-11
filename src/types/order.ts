@@ -23,6 +23,7 @@ export enum OrderStatus {
   NEW = 'New',
   FILLED = 'Filled',
   PARTIALLY_FILLED = 'Partially Filled',
+  REJECTED = 'Rejected',
   CANCELED = 'Canceled',
 }
 

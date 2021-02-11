@@ -552,6 +552,7 @@ export enum OrderStatus {
   Filled = 'FILLED',
   PartiallyFilled = 'PARTIALLY_FILLED',
   Canceled = 'CANCELED',
+  Rejected = 'REJECTED',
 }
 
 export enum OrderType {
