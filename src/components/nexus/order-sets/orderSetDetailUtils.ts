@@ -77,9 +77,9 @@ export const TrailingOrdersTableColumns = [
     dataIndex: 'username',
   },
   {
-    id: 'percent',
-    title: 'Trailing Percent',
-    dataIndex: 'trailingStopPercent',
+    id: 'stopPrice',
+    title: 'Stop Price',
+    dataIndex: 'stopPrice',
   },
   {
     id: 'quantity',
@@ -127,7 +127,7 @@ export interface TrailingStopOrderTableRow {
   id: string
   username: string
   status: string
-  percent?: string
+  stopPrice?: string
   quantity?: string
   filledQty?: string
   updatedAt?: string
@@ -165,10 +165,10 @@ export function transformStopOrdersData(ordersData: any[]): StopOrderTableRow[] 
 
 export function transformTrailingStopOrdersData(ordersData: any[]): TrailingStopOrderTableRow[] {
   return ordersData.map(order => {
-    const { id, trailingStopPercent, status, quantity, filledQty, updatedAt } = order
+    const { id, stopPrice, status, quantity, filledQty, updatedAt } = order
     return {
       id,
-      percent: trailingStopPercent,
+      stopPrice,
       quantity,
       filledQty,
       updatedAt: displayTimeBeforeNow(updatedAt),
