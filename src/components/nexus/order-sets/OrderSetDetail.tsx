@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Divider, PageHeader, Spin, Table } from 'antd'
+import { Button, Divider, PageHeader, Spin, Table } from 'antd'
 
 /* eslint-disable */
 import { OrderType, StopOrderType, useGetGroupOrderSetDetailsQuery } from '../../../graphql'
@@ -177,7 +177,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
               </div>
               <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
                 <strong className="mr-3">Trailing Stop Percent</strong>
-                {orderSet && orderSet.trailingStopPercent}
+                {orderSet && orderSet.trailingStopPercent && `${orderSet.trailingStopPercent}%`}
               </div>
               <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
                 <strong className="mr-3">Stop Trigger Type</strong>
@@ -192,7 +192,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             <strong className="mr-3">Description</strong>
             {orderSet && orderSet.description}
           </div>
-          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+          <div className="d-flex flex-nowrap align-items-end mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Created</strong>
             {orderSet && displayTimeBeforeNow(orderSet.createdAt)}
           </div>
@@ -211,6 +211,9 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
           }}
         />
+        <div className="text-right mt-1 pb-3 pl-4 mr-4 pr-4">
+          <Button className="btn btn-outline-danger">Cancel Open Orders</Button>
+        </div>
         {orderSet && orderSet.stopPrice && (
           <>
             <Divider orientation="left">Stop Orders</Divider>
@@ -227,6 +230,9 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
+            <div className="text-right mt-1 pb-3 pl-4 mr-4 pr-4">
+              <Button className="btn btn-outline-danger">Cancel Open Stop Orders</Button>
+            </div>
           </>
         )}
         {orderSet && orderSet.trailingStopPercent && (
@@ -247,6 +253,9 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
+            <div className="text-right mt-1 pb-3 pl-4 mr-4 pr-4">
+              <Button className="btn btn-outline-danger">Cancel Open Trailing Stop Orders</Button>
+            </div>
           </>
         )}
       </Spin>
