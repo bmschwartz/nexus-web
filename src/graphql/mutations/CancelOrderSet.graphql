@@ -1,0 +1,6 @@
+mutation CancelOrderSet($input: CancelOrderSetInput!) {
+  cancelOrderSet(input: $input) {
+    success
+    error
+  }
+}

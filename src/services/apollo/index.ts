@@ -5,7 +5,7 @@ export { createGroup, inviteMember, removeMember } from './group'
 
 export { currentAccount } from './user'
 
-export { createOrderSet, cancelOrder } from './order'
+export { createOrderSet, cancelOrder, cancelOrderSet } from './order'
 
 export { closePositions } from './position'
 

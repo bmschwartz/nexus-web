@@ -2,6 +2,7 @@
 import { client } from './client'
 import {
   CancelOrderDocument,
+  CancelOrderSetDocument,
   CreateOrderSetDocument,
   CreateOrderSetInput as RemoteCreateOrderSetInput,
   Exchange as RemoteExchange,
@@ -10,7 +11,7 @@ import {
   StopTriggerType as RemoteStopTriggerType,
 } from '../../graphql/index'
 import { Exchange } from 'types/exchange'
-import { OrderSide, OrderType, StopTriggerType } from 'types/order'
+import { OrderSide, OrderType, StopTriggerType, StopOrderType } from 'types/order'
 
 /* eslint-enable */
 
@@ -43,6 +44,16 @@ export interface CancelOrderResponse {
 
 export interface CancelOrderInput {
   orderId: string
+}
+
+export interface CancelOrderSetInput {
+  orderSetId: string
+  stopOrderTypes?: StopOrderType[]
+}
+
+export interface CancelOrderSetResponse {
+  success: boolean
+  error?: string
 }
 
 export const createOrderSet = async (
@@ -88,6 +99,29 @@ export const cancelOrder = async (input: CancelOrderInput): Promise<CancelOrderR
       },
     })
 
+    return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const cancelOrderSet = async (
+  input: CancelOrderSetInput,
+): Promise<CancelOrderSetResponse> => {
+  const { orderSetId, stopOrderTypes } = input
+
+  try {
+    const {
+      data: { success, error },
+    } = await client.mutate({
+      mutation: CancelOrderSetDocument,
+      variables: {
+        input: {
+          orderSetId,
+          stopOrderTypes,
+        },
+      },
+    })
     return { success, error }
   } catch (error) {
     return { success: false, error: error.message }

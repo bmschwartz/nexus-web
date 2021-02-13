@@ -286,7 +286,7 @@ export type BitmexCurrency = {
 }
 
 export type CancelOrderInput = {
-  id: Scalars['String']
+  id: Scalars['ID']
 }
 
 export type CancelOrderResponse = {
@@ -297,11 +297,12 @@ export type CancelOrderResponse = {
 
 export type CancelOrderSetInput = {
   orderSetId: Scalars['ID']
+  stopOrderTypes?: Maybe<Array<StopOrderType>>
 }
 
 export type CancelOrderSetResult = {
   __typename?: 'CancelOrderSetResult'
-  operationId?: Maybe<Scalars['ID']>
+  success: Scalars['Boolean']
   error?: Maybe<Scalars['String']>
 }
 
@@ -1002,6 +1003,16 @@ export type CancelOrderMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type CancelOrderSetMutationVariables = Exact<{
+  input: CancelOrderSetInput
+}>
+
+export type CancelOrderSetMutation = { __typename?: 'Mutation' } & {
+  cancelOrderSet?: Maybe<
+    { __typename?: 'CancelOrderSetResult' } & Pick<CancelOrderSetResult, 'success' | 'error'>
+  >
+}
+
 export type ClosePositionsMutationVariables = Exact<{
   input: ClosePositionsInput
 }>
@@ -1621,6 +1632,50 @@ export type CancelOrderMutationResult = Apollo.MutationResult<CancelOrderMutatio
 export type CancelOrderMutationOptions = Apollo.BaseMutationOptions<
   CancelOrderMutation,
   CancelOrderMutationVariables
+>
+export const CancelOrderSetDocument = gql`
+  mutation CancelOrderSet($input: CancelOrderSetInput!) {
+    cancelOrderSet(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type CancelOrderSetMutationFn = Apollo.MutationFunction<
+  CancelOrderSetMutation,
+  CancelOrderSetMutationVariables
+>
+
+/**
+ * __useCancelOrderSetMutation__
+ *
+ * To run a mutation, you first call `useCancelOrderSetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelOrderSetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelOrderSetMutation, { data, loading, error }] = useCancelOrderSetMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCancelOrderSetMutation(
+  baseOptions?: Apollo.MutationHookOptions<CancelOrderSetMutation, CancelOrderSetMutationVariables>,
+) {
+  return Apollo.useMutation<CancelOrderSetMutation, CancelOrderSetMutationVariables>(
+    CancelOrderSetDocument,
+    baseOptions,
+  )
+}
+export type CancelOrderSetMutationHookResult = ReturnType<typeof useCancelOrderSetMutation>
+export type CancelOrderSetMutationResult = Apollo.MutationResult<CancelOrderSetMutation>
+export type CancelOrderSetMutationOptions = Apollo.BaseMutationOptions<
+  CancelOrderSetMutation,
+  CancelOrderSetMutationVariables
 >
 export const ClosePositionsDocument = gql`
   mutation ClosePositions($input: ClosePositionsInput!) {

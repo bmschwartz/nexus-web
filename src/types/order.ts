@@ -27,7 +27,14 @@ export enum OrderStatus {
   CANCELED = 'Canceled',
 }
 
+export enum StopOrderType {
+  NONE = 'NONE',
+  STOP_LIMIT = 'STOP_LIMIT',
+  TRAILING_STOP = 'TRAILING_STOP',
+}
+
 export enum StopTriggerType {
+  NONE = 'None',
   LAST_PRICE = 'Last Price',
   MARK_PRICE = 'Mark Price',
 }

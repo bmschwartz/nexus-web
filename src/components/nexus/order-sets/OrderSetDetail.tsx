@@ -1,8 +1,13 @@
-import React, { FC } from 'react'
-import { Button, Divider, PageHeader, Spin, Table } from 'antd'
+import React, { FC, useState } from 'react'
+import { Button, Divider, message, Modal, PageHeader, Spin, Table } from 'antd'
 
 /* eslint-disable */
-import { OrderType, StopOrderType, useGetGroupOrderSetDetailsQuery } from '../../../graphql'
+import * as apollo from 'services/apollo'
+import {
+  OrderType,
+  StopOrderType as RemoteStopOrderType,
+  useGetGroupOrderSetDetailsQuery,
+} from '../../../graphql'
 import {
   OrdersTableColumns,
   StopOrdersTableColumns,
@@ -13,11 +18,13 @@ import {
 } from './orderSetDetailUtils'
 import { displayTimeBeforeNow } from '../dateUtil'
 import {
+  StopOrderType,
   convertToLocalOrderSide,
   convertToLocalOrderType,
   convertToLocalStopTriggerType,
 } from '../../../types/order'
 import { convertToLocalExchange } from '../../../types/exchange'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 /* eslint-enable */
 
@@ -28,8 +35,12 @@ interface OrderSetDetailProps {
 }
 
 const PAGE_SIZE = 50
+const MESSAGE_DURATION = 3
+const CANCEL_ORDER_SET_MESSAGE_KEY = 'cancel_order_set_message_key'
 
 export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, orderSetId }) => {
+  const [submittingCancelOrderSet, setSubmittingCancelOrderSet] = useState<boolean>(false)
+
   const {
     data: orderSetDetailData,
     loading: orderSetDetailLoading,
@@ -40,7 +51,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
       limit: PAGE_SIZE,
-      stopOrderType: StopOrderType.None,
+      stopOrderType: RemoteStopOrderType.None,
     },
     notifyOnNetworkStatusChange: true,
   })
@@ -68,7 +79,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
       limit: PAGE_SIZE,
-      stopOrderType: StopOrderType.StopLimit,
+      stopOrderType: RemoteStopOrderType.StopLimit,
     },
     notifyOnNetworkStatusChange: true,
   })
@@ -96,7 +107,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
       limit: PAGE_SIZE,
-      stopOrderType: StopOrderType.TrailingStop,
+      stopOrderType: RemoteStopOrderType.TrailingStop,
     },
     notifyOnNetworkStatusChange: true,
   })
@@ -111,6 +122,34 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
         }
         return { ...result.fetchMoreResult }
       },
+    })
+  }
+
+  const onClickCancelOrders = async (stopOrderTypes?: StopOrderType[]) => {
+    Modal.confirm({
+      title: `Canceling Open Orders`,
+      icon: <ExclamationCircleOutlined />,
+      content: `Open orders will be canceled`,
+      okText: 'OK',
+      okType: 'danger',
+      async onOk() {
+        setSubmittingCancelOrderSet(true)
+
+        const { success } = await apollo.cancelOrderSet({ orderSetId, stopOrderTypes })
+
+        if (success) {
+          message.success({ content: 'Canceled Orders' })
+        } else {
+          message.error({
+            content: 'Error Canceling Orders',
+            key: CANCEL_ORDER_SET_MESSAGE_KEY,
+            duration: MESSAGE_DURATION,
+          })
+        }
+
+        setSubmittingCancelOrderSet(false)
+      },
+      onCancel() {},
     })
   }
 
@@ -212,7 +251,13 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
           }}
         />
         <div className="text-right mt-1 pb-3 pl-4 mr-4 pr-4">
-          <Button className="btn btn-outline-danger">Cancel Open Orders</Button>
+          <Button
+            disabled={submittingCancelOrderSet}
+            className="btn btn-outline-danger"
+            onClick={async () => onClickCancelOrders([StopOrderType.NONE])}
+          >
+            Cancel Open Orders
+          </Button>
         </div>
         {orderSet && orderSet.stopPrice && (
           <>
@@ -231,7 +276,13 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
               }}
             />
             <div className="text-right mt-1 pb-3 pl-4 mr-4 pr-4">
-              <Button className="btn btn-outline-danger">Cancel Open Stop Orders</Button>
+              <Button
+                disabled={submittingCancelOrderSet}
+                className="btn btn-outline-danger"
+                onClick={async () => onClickCancelOrders([StopOrderType.STOP_LIMIT])}
+              >
+                Cancel Open Stop Limit Orders
+              </Button>
             </div>
           </>
         )}
@@ -254,7 +305,13 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
               }}
             />
             <div className="text-right mt-1 pb-3 pl-4 mr-4 pr-4">
-              <Button className="btn btn-outline-danger">Cancel Open Trailing Stop Orders</Button>
+              <Button
+                disabled={submittingCancelOrderSet}
+                className="btn btn-outline-danger"
+                onClick={async () => onClickCancelOrders([StopOrderType.TRAILING_STOP])}
+              >
+                Cancel Open Trailing Stop Orders
+              </Button>
             </div>
           </>
         )}
