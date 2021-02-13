@@ -46,6 +46,7 @@ export interface Order {
   exchange: Exchange
   status: OrderStatus
   price?: number
+  error?: string
   quantity?: number
   filledQty?: number
   stopPrice?: number
@@ -94,6 +95,9 @@ export function convertToLocalOrderStatus(orderStatus: RemoteOrderStatus): Order
 
     case RemoteOrderStatus.Canceled:
       return OrderStatus.CANCELED
+
+    case RemoteOrderStatus.Rejected:
+      return OrderStatus.REJECTED
 
     case RemoteOrderStatus.New:
     default:

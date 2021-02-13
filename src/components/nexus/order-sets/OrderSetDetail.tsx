@@ -135,10 +135,10 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       async onOk() {
         setSubmittingCancelOrderSet(true)
 
-        const { success } = await apollo.cancelOrderSet({ orderSetId, stopOrderTypes })
-
+        const { success, error } = await apollo.cancelOrderSet({ orderSetId, stopOrderTypes })
+        console.log(success, error)
         if (success) {
-          message.success({ content: 'Canceled Orders' })
+          message.success({ content: 'Canceling Orders...' })
         } else {
           message.error({
             content: 'Error Canceling Orders',

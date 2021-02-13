@@ -112,7 +112,9 @@ export const cancelOrderSet = async (
 
   try {
     const {
-      data: { success, error },
+      data: {
+        cancelOrderSet: { success, error },
+      },
     } = await client.mutate({
       mutation: CancelOrderSetDocument,
       variables: {

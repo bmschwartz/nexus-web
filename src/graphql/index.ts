@@ -496,6 +496,7 @@ export type Order = {
   stopTriggerType?: Maybe<StopTriggerType>
   filledQty?: Maybe<Scalars['Float']>
   symbol: Scalars['String']
+  error?: Maybe<Scalars['String']>
   lastTimestamp: Scalars['DateTime']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
@@ -959,6 +960,7 @@ export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
   | 'filledQty'
   | 'stopPrice'
   | 'orderType'
+  | 'error'
   | 'createdAt'
   | 'updatedAt'
 >
@@ -1505,6 +1507,7 @@ export const OrderDetailsFragmentDoc = gql`
     filledQty
     stopPrice
     orderType
+    error
     createdAt
     updatedAt
   }

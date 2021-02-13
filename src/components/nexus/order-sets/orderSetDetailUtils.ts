@@ -2,6 +2,7 @@ import { convertToLocalOrderStatus } from 'types/order'
 
 /* eslint-disable */
 import { displayTimeBeforeNow } from '../dateUtil'
+import { OrderType as RemoteOrderType } from '../../../graphql'
 /* eslint-enable */
 
 export const OrdersTableColumns = [
@@ -135,14 +136,19 @@ export interface TrailingStopOrderTableRow {
 
 export function transformOrdersData(ordersData: any[]): OrderTableRow[] {
   return ordersData.map(order => {
-    const { id, price, status, quantity, filledQty, updatedAt } = order
+    const { id, price, status, orderType, quantity, filledQty, error, updatedAt } = order
+
+    const localStatus = convertToLocalOrderStatus(status)
+    const displayStatus = error ? `${localStatus} - ${error}` : localStatus
+    const displayPrice = orderType === RemoteOrderType.Market ? 'Market' : price
+
     return {
       id,
-      price,
+      price: displayPrice,
       quantity,
       filledQty,
       updatedAt: displayTimeBeforeNow(updatedAt),
-      status: convertToLocalOrderStatus(status),
+      status: displayStatus,
       username: order.exchangeAccount.membership.member.username,
     }
   })
