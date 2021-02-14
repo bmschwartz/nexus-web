@@ -122,6 +122,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           stopOrderType: StopOrderOption.NONE,
           stopTriggerType: StopTriggerType.LAST_PRICE,
         }}
+        validateOnChange={false}
         validationSchema={CreateOrderSetSchema}
         onSubmit={async ({ stopOrderType, ...values }, { setSubmitting }) => {
           if (values.exchangeAccountIds.length === 0) {
