@@ -34,7 +34,6 @@ export enum StopOrderType {
 }
 
 export enum StopTriggerType {
-  NONE = 'None',
   LAST_PRICE = 'Last Price',
   MARK_PRICE = 'Mark Price',
 }

@@ -1,9 +1,10 @@
 import React, { FC, useState } from 'react'
 import { Formik } from 'formik'
 import { Form, Input, InputNumber, Select, SubmitButton, Transfer } from 'formik-antd'
-import { Divider, Modal, notification, PageHeader, Spin } from 'antd'
+import { Divider, Modal, notification, PageHeader, Spin, Tooltip } from 'antd'
 import { TransferItem } from 'antd/lib/transfer'
 import TextArea from 'antd/lib/input/TextArea'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 /* Local */
 import { OrderSide, OrderType, StopTriggerType } from 'types/order'
@@ -91,6 +92,17 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
     })
   }
 
+  const labelTooltip = (label: string, tooltipText: string) => {
+    return (
+      <>
+        <span className="mr-2">{label}</span>
+        <Tooltip title={tooltipText} color="blue">
+          <InfoCircleOutlined color="blue" />
+        </Tooltip>
+      </>
+    )
+  }
+
   return (
     <>
       <div className="card-header card-header-flex">
@@ -105,6 +117,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           side: OrderSide.BUY,
           orderType: OrderType.LIMIT,
           percent: 5,
+          leverage: 1,
           exchangeAccountIds: [],
           stopOrderType: StopOrderOption.NONE,
           stopTriggerType: StopTriggerType.LAST_PRICE,
@@ -121,7 +134,6 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           const { orderSetId, error }: CreateOrderSetResponse = await apollo.createOrderSet({
             groupId: group.id,
             closeOrderSet: false,
-            leverage: 1,
             ...values,
           })
           setSubmittingOrder(false)
@@ -241,7 +253,14 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   />
                 </Form.Item>
 
-                <Form.Item name="percent" label="Balance Percent" className="mb-3">
+                <Form.Item
+                  name="percent"
+                  label={labelTooltip(
+                    'Balance Percent',
+                    'Percent of available balance to use in the trade',
+                  )}
+                  className="mb-3"
+                >
                   <Input
                     name="percent"
                     min={0}
@@ -255,10 +274,36 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   />
                 </Form.Item>
 
+                <Form.Item
+                  name="leverage"
+                  label={labelTooltip(
+                    'Leverage',
+                    'Sets position leverage before placing the order',
+                  )}
+                  className="mb-3"
+                >
+                  <Tooltip title="Sets position leverage" color="blue">
+                    <Input
+                      name="leverage"
+                      min={0}
+                      max={100}
+                      size="large"
+                      style={{ width: 120 }}
+                      type="number"
+                      placeholder="1"
+                      onChange={handleChange}
+                    />
+                  </Tooltip>
+                </Form.Item>
+
                 <Divider orientation="left">
                   <strong>Stop Order</strong>
                 </Divider>
-                <Form.Item name="stopOrderType" label="Stop Order Type" className="mb-3">
+                <Form.Item
+                  name="stopOrderType"
+                  label={labelTooltip('Stop Order Type', 'Optional - Add a Stop Order')}
+                  className="mb-3"
+                >
                   <Select
                     name="stopOrderType"
                     style={{ width: 200 }}
@@ -334,7 +379,11 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                 <Divider orientation="left">
                   <strong>Members</strong>
                 </Divider>
-                <Form.Item name="exchangeAccountIds" label="Members" className="mb-3">
+                <Form.Item
+                  name="exchangeAccountIds"
+                  label={labelTooltip('Members', 'Use dropdown for more options')}
+                  className="mb-3"
+                >
                   <Transfer
                     name="exchangeAccountIds"
                     showSearch

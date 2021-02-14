@@ -82,6 +82,12 @@ export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {
       .min(1, 'Balance Percent must be at least 1')
       .max(100, 'Balance Percent must be less than 100')
       .required('Balance Percent is required'),
+    leverage: Yup.number()
+      .label('Leverage')
+      .positive()
+      .min(1, 'Leverage must be at least 1')
+      .max(100, 'Leverage must be less than 100')
+      .required('Leverage is required'),
     description: Yup.string()
       .label('Description')
       .max(500)
