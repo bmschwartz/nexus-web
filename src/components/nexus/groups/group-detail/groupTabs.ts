@@ -8,18 +8,18 @@ export interface Tab {
 export const availableTabs = (userRole: MembershipRole): Tab[] => {
   const allTabs: { key: string; name: string; requiredRole: MembershipRole[] }[] = [
     // Member tabs
-    { key: 'memberDashboard', name: 'Dashboard', requiredRole: [MembershipRole.Member] },
+    // { key: 'memberDashboard', name: 'Dashboard', requiredRole: [MembershipRole.Member] },
     { key: 'memberOrders', name: 'Orders', requiredRole: [MembershipRole.Member] },
     { key: 'memberPositions', name: 'Positions', requiredRole: [MembershipRole.Member] },
     { key: 'memberExchanges', name: 'Exchanges', requiredRole: [MembershipRole.Member] },
     { key: 'membershipTab', name: 'Membership', requiredRole: [MembershipRole.Member] },
 
     // Group admin/trader tabs
-    {
-      key: 'groupDashboard',
-      name: 'Dashboard',
-      requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
-    },
+    // {
+    //   key: 'groupDashboard',
+    //   name: 'Dashboard',
+    //   requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
+    // },
     {
       key: 'groupOrders',
       name: 'Orders',
@@ -35,11 +35,11 @@ export const availableTabs = (userRole: MembershipRole): Tab[] => {
       name: 'Members',
       requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
     },
-    {
-      key: 'groupProfile',
-      name: 'Profile',
-      requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
-    },
+    // {
+    //   key: 'groupProfile',
+    //   name: 'Profile',
+    //   requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
+    // },
     { key: 'groupSettings', name: 'Settings', requiredRole: [MembershipRole.Admin] },
   ]
 
