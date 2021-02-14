@@ -68,7 +68,6 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
 
   useEffect(() => {
     if (asyncOperationId && !pollingAsyncResult) {
-      console.log('starting polling')
       startPolling(500)
     }
   }, [asyncOperationId, pollingAsyncResult, startPolling, stopPolling])
@@ -125,8 +124,6 @@ export const CreateExchangeAccountForm: FC<CreateExchangeAccountFormProps> = ({
             membershipId: membership.id,
             ...values,
           })
-
-          console.log(operationId, error)
 
           if (operationId) {
             setAsyncOperationId(operationId)

@@ -62,7 +62,6 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
 
   const groupPositions = extractMemberPositions(exchange, groupPositionsData)
   const currencyData = extractCurrencyData(currencyResponse)
-  console.log(currencyData)
 
   const ClosePositionsSchema = getClosePositionsSchema()
   const formItemLayout = {
@@ -124,8 +123,6 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
             exchangeAccountIds,
           })
           setSubmittingClosePositions(false)
-
-          console.log(orderSetId, error)
 
           if (orderSetId) {
             notification.success({

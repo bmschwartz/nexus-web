@@ -115,7 +115,6 @@ export const GroupPositionTable: FC<PositionTableProps> = ({
     PositionSide.SHORT,
   )
   const symbolsData = extractSymbols(getSymbolsData)
-  console.log(symbolsData)
 
   const PositionsTable = (side: PositionSide) => (
     <div className="card-body">
