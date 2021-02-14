@@ -577,6 +577,7 @@ export type Position = {
   avgPrice?: Maybe<Scalars['Float']>
   symbol: Scalars['String']
   isOpen: Scalars['Boolean']
+  leverage?: Maybe<Scalars['Float']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
@@ -963,8 +964,10 @@ export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
   | 'exchange'
   | 'quantity'
   | 'filledQty'
-  | 'stopPrice'
   | 'orderType'
+  | 'stopPrice'
+  | 'trailingStopPercent'
+  | 'stopTriggerType'
   | 'error'
   | 'createdAt'
   | 'updatedAt'
@@ -996,6 +999,7 @@ export type PositionDetailsFragment = { __typename?: 'Position' } & Pick<
   | 'isOpen'
   | 'exchange'
   | 'quantity'
+  | 'leverage'
   | 'avgPrice'
   | 'createdAt'
   | 'updatedAt'
@@ -1512,8 +1516,10 @@ export const OrderDetailsFragmentDoc = gql`
     exchange
     quantity
     filledQty
-    stopPrice
     orderType
+    stopPrice
+    trailingStopPercent
+    stopTriggerType
     error
     createdAt
     updatedAt
@@ -1527,6 +1533,7 @@ export const PositionDetailsFragmentDoc = gql`
     isOpen
     exchange
     quantity
+    leverage
     avgPrice
     createdAt
     updatedAt

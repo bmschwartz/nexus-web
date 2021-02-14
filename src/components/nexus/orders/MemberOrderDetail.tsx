@@ -6,6 +6,13 @@ import * as apollo from 'services/apollo'
 import { displayTimeBeforeNow } from '../dateUtil'
 import { useGetOrderQuery, OrderStatus } from '../../../graphql'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+import {
+  convertToLocalOrderSide,
+  convertToLocalOrderStatus,
+  convertToLocalOrderType,
+  convertToLocalStopTriggerType,
+} from '../../../types/order'
+import { convertToLocalExchange } from '../../../types/exchange'
 /* eslint-enable */
 
 interface MemberOrderDetailProps {
@@ -60,6 +67,11 @@ export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack, ord
     })
   }
 
+  function getDisplayOrderStatus(orderStatus: OrderStatus, error?: string | null) {
+    const localStatus = convertToLocalOrderStatus(orderStatus)
+    return error ? `${localStatus} - ${error}` : localStatus
+  }
+
   const order = data?.order
 
   return (
@@ -73,7 +85,7 @@ export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack, ord
         <div className="card-body">
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Exchange</strong>
-            {order && order.exchange}
+            {order && convertToLocalExchange(order.exchange)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Symbol</strong>
@@ -85,15 +97,33 @@ export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack, ord
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Side</strong>
-            {order && order.side}
+            {order && convertToLocalOrderSide(order.side)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Order Type</strong>
-            {order && order.orderType}
+            {order && convertToLocalOrderType(order.orderType)}
           </div>
+          {order && order.stopPrice && (
+            <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+              <strong className="mr-3">Stop Price</strong>
+              {order && order.stopPrice}
+            </div>
+          )}
+          {order && order.trailingStopPercent && (
+            <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+              <strong className="mr-3">Trailing Stop Percent</strong>
+              {order && order.trailingStopPercent}%
+            </div>
+          )}
+          {order && order.stopTriggerType && (
+            <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+              <strong className="mr-3">Stop Trigger Type</strong>
+              {order && convertToLocalStopTriggerType(order.stopTriggerType)}
+            </div>
+          )}
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Status</strong>
-            {order && order.status}
+            {order && getDisplayOrderStatus(order.status, order.error)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Quantity</strong>
@@ -111,7 +141,6 @@ export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack, ord
             <strong className="mr-3">Last Updated</strong>
             {order && displayTimeBeforeNow(order.updatedAt)}
           </div>
-
           {order && canCancelOrder(order) && (
             <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
               <Button

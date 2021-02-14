@@ -28,6 +28,11 @@ const positionTableColumns = [
     key: 'username',
   },
   {
+    title: 'Leverage',
+    dataIndex: 'leverage',
+    key: 'leverage',
+  },
+  {
     title: 'Quantity',
     dataIndex: 'quantity',
     key: 'quantity',

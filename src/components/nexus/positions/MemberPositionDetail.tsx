@@ -4,6 +4,8 @@ import { PageHeader, Spin } from 'antd'
 /* eslint-disable */
 import { displayTimeBeforeNow } from '../dateUtil'
 import { useGetPositionQuery } from '../../../graphql'
+import { convertToLocalExchange } from '../../../types/exchange'
+import { convertToLocalPositionSide } from '../../../types/position'
 /* eslint-enable */
 
 interface MemberPositionDetailProps {
@@ -36,7 +38,7 @@ export const MemberPositionDetail: FC<MemberPositionDetailProps> = ({
         <div className="card-body">
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Exchange</strong>
-            {position && position.exchange}
+            {position && convertToLocalExchange(position.exchange)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Symbol</strong>
@@ -44,7 +46,11 @@ export const MemberPositionDetail: FC<MemberPositionDetailProps> = ({
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Side</strong>
-            {position && position.side}
+            {position && convertToLocalPositionSide(position.side)}
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Leverage</strong>
+            {position && position.leverage}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Quantity</strong>

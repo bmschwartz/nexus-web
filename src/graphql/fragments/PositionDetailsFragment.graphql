@@ -5,6 +5,7 @@ fragment PositionDetails on Position {
   isOpen
   exchange
   quantity
+  leverage
   avgPrice
   createdAt
   updatedAt

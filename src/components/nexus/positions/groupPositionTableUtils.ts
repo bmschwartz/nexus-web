@@ -9,6 +9,7 @@ export interface PositionTableItem {
   id: string
   symbol: string
   side: PositionSide
+  leverage: string
   quantity: string
   avgPrice: string
   updated: string
@@ -36,11 +37,12 @@ export const createPositionTableData = (
       return sidesMatch && position.isOpen
     })
     .map(position => {
-      const { id, symbol, avgPrice, quantity, side, updatedAt, username } = position
+      const { id, symbol, avgPrice, quantity, leverage, side, updatedAt, username } = position
       return {
         id,
         symbol,
         username,
+        leverage: String(leverage) ?? '',
         quantity: String(quantity) ?? '',
         avgPrice: String(avgPrice) ?? '',
         side: convertToLocalPositionSide(side),

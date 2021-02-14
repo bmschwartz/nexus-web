@@ -7,8 +7,10 @@ fragment OrderDetails on Order {
   exchange
   quantity
   filledQty
-  stopPrice
   orderType
+  stopPrice
+  trailingStopPercent
+  stopTriggerType
   error
   createdAt
   updatedAt

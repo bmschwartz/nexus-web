@@ -10,6 +10,7 @@ export interface PositionsTableItem {
   id: string
   exchange: Exchange
   symbol: string
+  leverage: string
   side: PositionSide
   updated: string
   quantity: string
@@ -31,10 +32,21 @@ export const createPositionTableData = (
   return positions
     .filter(position => position.isOpen)
     .map(position => {
-      const { id, symbol, avgPrice, exchange, side, quantity, updatedAt, isOpen } = position
+      const {
+        id,
+        symbol,
+        avgPrice,
+        leverage,
+        exchange,
+        side,
+        quantity,
+        updatedAt,
+        isOpen,
+      } = position
       return {
         id,
         symbol,
+        leverage: leverage ? String(leverage) : '',
         isOpen: isOpen ? 'Yes' : 'No',
         quantity: quantity ? String(quantity) : '',
         avgPrice: avgPrice ? String(avgPrice) : '',
