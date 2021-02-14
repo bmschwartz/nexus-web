@@ -186,6 +186,7 @@ export type MemberSubscription = {
   membership: GroupMembership
   groupSubscription: GroupSubscription
   outstandingBalance: Scalars['Float']
+  price: Scalars['Float']
   recurring: Scalars['Boolean']
   startDate: Scalars['DateTime']
   endDate: Scalars['DateTime']
@@ -1014,6 +1015,7 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
 export type MemberSubscriptionDetailsFragment = { __typename?: 'MemberSubscription' } & Pick<
   MemberSubscription,
   | 'id'
+  | 'price'
   | 'active'
   | 'recurring'
   | 'startDate'
@@ -1638,6 +1640,7 @@ export const GroupDetailsFragmentDoc = gql`
 export const MemberSubscriptionDetailsFragmentDoc = gql`
   fragment MemberSubscriptionDetails on MemberSubscription {
     id
+    price
     active
     recurring
     startDate

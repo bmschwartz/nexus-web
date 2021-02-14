@@ -1,5 +1,9 @@
 /* eslint-disable */
 import { ExchangeAccount } from './exchange'
+import {
+  MembershipRole as RemoteMembershipRole,
+  MembershipStatus as RemoteMembershipStatus,
+} from '../graphql'
 
 export interface Membership {
   id: string
@@ -14,47 +18,79 @@ export interface Membership {
 }
 
 export enum MembershipStatus {
-  Approved = 'APPROVED',
-  Denied = 'DENIED',
-  Pending = 'PENDING',
+  Approved = 'Approved',
+  Denied = 'Denied',
+  Pending = 'Pending',
 }
 
 export enum MembershipRole {
-  Member = 'MEMBER',
-  Trader = 'TRADER',
-  Admin = 'ADMIN',
+  Member = 'Member',
+  Trader = 'Trader',
+  Admin = 'Admin',
 }
 
 export interface MemberSubscription {
   id: string
   active: boolean
+  price: number
   recurring: boolean
   startDate: string
   endDate: string
   outstandingBalance: number
 }
 
-export const statusFromString = (status: string): MembershipStatus | null => {
-  switch (status) {
-    case 'APPROVED':
-      return MembershipStatus.Approved
-    case 'DENIED':
-      return MembershipStatus.Denied
-    case 'PENDING':
-      return MembershipStatus.Pending
+export function convertToLocalMembershipRole(role: RemoteMembershipRole): MembershipRole | null {
+  switch (role) {
+    case RemoteMembershipRole.Admin:
+      return MembershipRole.Admin
+    case RemoteMembershipRole.Trader:
+      return MembershipRole.Trader
+    case RemoteMembershipRole.Member:
+      return MembershipRole.Member
     default:
       return null
   }
 }
 
-export const roleFromString = (role: string): MembershipRole | null => {
+export function convertToLocalMembershipStatus(
+  status: RemoteMembershipStatus,
+): MembershipStatus | null {
+  console.log(status)
+  switch (status) {
+    case RemoteMembershipStatus.Approved:
+      return MembershipStatus.Approved
+    case RemoteMembershipStatus.Pending:
+      return MembershipStatus.Pending
+    case RemoteMembershipStatus.Denied:
+      return MembershipStatus.Denied
+    default:
+      return null
+  }
+}
+
+export function convertToRemoteMembershipRole(role: MembershipRole): RemoteMembershipRole | null {
   switch (role) {
-    case 'ADMIN':
-      return MembershipRole.Admin
-    case 'TRADER':
-      return MembershipRole.Trader
-    case 'MEMBER':
-      return MembershipRole.Member
+    case MembershipRole.Admin:
+      return RemoteMembershipRole.Admin
+    case MembershipRole.Trader:
+      return RemoteMembershipRole.Trader
+    case MembershipRole.Member:
+      return RemoteMembershipRole.Member
+    default:
+      return null
+  }
+}
+
+export function convertToRemoteMembershipStatus(
+  status: MembershipStatus,
+): RemoteMembershipStatus | null {
+  switch (status) {
+    case MembershipStatus.Approved:
+      return RemoteMembershipStatus.Approved
+    case MembershipStatus.Pending:
+      return RemoteMembershipStatus.Pending
+    case MembershipStatus.Denied:
+      return RemoteMembershipStatus.Denied
     default:
       return null
   }

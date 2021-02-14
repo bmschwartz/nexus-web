@@ -7,7 +7,11 @@ import { Group } from 'types/group'
 import { useGetGroupQuery, useGetMyMembershipQuery } from '../../../graphql/index'
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
 import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
-import { Membership, roleFromString, statusFromString } from 'types/membership'
+import {
+  convertToLocalMembershipRole,
+  convertToLocalMembershipStatus,
+  Membership,
+} from 'types/membership'
 import { ExchangeAccount } from 'types/exchange'
 /* eslint-enable */
 
@@ -46,9 +50,9 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     memberId: membership.member.id,
     username: membership.member.username,
     active: membership.active,
-    role: roleFromString(membership.role)!,
+    role: convertToLocalMembershipRole(membership.role)!,
     exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),
-    status: statusFromString(membership.status)!,
+    status: convertToLocalMembershipStatus(membership.status)!,
   })
 
   const transformExchangeAccount = (exchangeAccount: any): ExchangeAccount => {

@@ -1,5 +1,6 @@
 fragment MemberSubscriptionDetails on MemberSubscription {
   id
+  price
   active
   recurring
   startDate

@@ -4,7 +4,7 @@ import { Membership } from 'types/membership'
 /* eslint-disable */
 import { MembershipInfo } from './MembershipInfo'
 import { Divider, PageHeader } from 'antd'
-// import { CreateSubscriptionForm } from 'components/nexus/subscriptions/CreateSubscriptionForm'
+import { SubscriptionInfo } from './SubscriptionInfo'
 /* eslint-enable */
 
 interface MembershipTabProps {
@@ -30,7 +30,7 @@ export const MembershipTab: FC<MembershipTabProps> = ({ membership, tabState }) 
   //   setTabState(MembershipTabTabState.VIEW_ALL)
   // }
 
-  // const onClickSubscription = (exchangeAccountId: string) => {
+  // const onClickCreateSubscription = (membership: string) => {
   //   setSelectedSubscriptionId(exchangeAccountId)
   //   setTabState(MembershipTabTabState.VIEW_DETAIL_SUBSCRIPTION)
   // }
@@ -56,6 +56,11 @@ export const MembershipTab: FC<MembershipTabProps> = ({ membership, tabState }) 
               <strong>General</strong>
             </Divider>
             <MembershipInfo membership={membership} />
+
+            <Divider orientation="left">
+              <strong>Subscription</strong>
+            </Divider>
+            <SubscriptionInfo membership={membership} />
           </div>
         </>
       )}
