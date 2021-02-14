@@ -15,18 +15,14 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
         <>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Active</strong>
-            {subscription.active ? 'Active' : 'Inactive'}
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Auto Renew</strong>
-            {subscription.recurring ? 'Yes' : 'No'}
+            {subscription.active ? 'Yes' : 'No'}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Price</strong>${subscription.price} USD
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Outstanding Balance</strong>${subscription.outstandingBalance}{' '}
-            USD
+            <strong className="mr-3">Paid</strong>
+            {subscription.outstandingBalance === 0 ? 'Yes' : 'No'}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Start Date</strong>
@@ -37,8 +33,17 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
             {subscription.endDate}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <Button type="primary" onClick={() => console.log('clicked make payment!')}>
+            <Button
+              type={subscription.outstandingBalance === 0 ? 'default' : 'primary'}
+              disabled={subscription.outstandingBalance === 0}
+              onClick={() => console.log('clicked make payment!')}
+            >
               Make a Payment
+            </Button>
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
+            <Button danger onClick={() => console.log('clicked cancel subscription!')}>
+              Cancel Subscription
             </Button>
           </div>
         </>
