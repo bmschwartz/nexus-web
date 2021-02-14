@@ -251,6 +251,10 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             <strong className="mr-3">Percent</strong>
             {orderSet && `${orderSet.percent}%`}
           </div>
+          <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Leverage</strong>
+            {orderSet && `${orderSet.leverage}`}
+          </div>
           {orderSet && (orderSet.stopPrice || orderSet.trailingStopPercent) && (
             <>
               <Divider orientation="left">Stop Order</Divider>

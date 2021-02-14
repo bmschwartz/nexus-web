@@ -11,5 +11,6 @@ fragment OrderSetDetails on OrderSet {
   trailingStopPercent
   stopTriggerType
   description
+  leverage
   createdAt
 }

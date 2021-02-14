@@ -984,6 +984,7 @@ export type OrderSetDetailsFragment = { __typename?: 'OrderSet' } & Pick<
   | 'trailingStopPercent'
   | 'stopTriggerType'
   | 'description'
+  | 'leverage'
   | 'createdAt'
 >
 
@@ -1595,6 +1596,7 @@ export const OrderSetDetailsFragmentDoc = gql`
     trailingStopPercent
     stopTriggerType
     description
+    leverage
     createdAt
   }
 `
