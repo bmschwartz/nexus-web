@@ -12,6 +12,7 @@ interface MemberExchangesProps {
   membership: Membership
   tabState: MemberExchangesTabState
   setTabState: (tabState: MemberExchangesTabState) => void
+  onClickAddSubscription: () => void
 }
 
 export enum MemberExchangesTabState {
@@ -24,6 +25,7 @@ export const MemberExchanges: FC<MemberExchangesProps> = ({
   membership,
   tabState,
   setTabState,
+  onClickAddSubscription,
 }) => {
   const [selectedExchangeName, setSelectedExchangeName] = useState<string>()
   const [selectedExchangeAccountId, setSelectedExchangeAccountId] = useState<string>()
@@ -55,7 +57,9 @@ export const MemberExchanges: FC<MemberExchangesProps> = ({
   }
   return (
     <div>
-      {!hasActiveSubscription(membership) && NoActiveSubscription}
+      {!hasActiveSubscription(membership) && (
+        <NoActiveSubscription onClickAddSubscription={onClickAddSubscription} />
+      )}
       {shouldShowViewAll() && (
         <>
           {membership.status === MembershipStatus.Approved && (

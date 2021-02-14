@@ -5,42 +5,56 @@ export interface Tab {
   name: string
 }
 
+export enum TabKey {
+  MemberDashboard = 'memberDashboard',
+  MemberOrders = 'memberOrders',
+  MemberPositions = 'memberPositions',
+  MemberExchanges = 'memberExchanges',
+  MemberMembership = 'membershipTab',
+  GroupDashboard = 'groupDashboard',
+  GroupOrders = 'groupOrders',
+  GroupPositions = 'groupPositions',
+  GroupMembers = 'groupMembers',
+  GroupProfile = 'groupProfile',
+  GroupSettings = 'groupSettings',
+}
+
 export const availableTabs = (userRole: MembershipRole): Tab[] => {
-  const allTabs: { key: string; name: string; requiredRole: MembershipRole[] }[] = [
+  const allTabs: { key: TabKey; name: string; requiredRole: MembershipRole[] }[] = [
     // Member tabs
-    // { key: 'memberDashboard', name: 'Dashboard', requiredRole: [MembershipRole.Member] },
-    { key: 'memberOrders', name: 'Orders', requiredRole: [MembershipRole.Member] },
-    { key: 'memberPositions', name: 'Positions', requiredRole: [MembershipRole.Member] },
-    { key: 'memberExchanges', name: 'Exchanges', requiredRole: [MembershipRole.Member] },
-    { key: 'membershipTab', name: 'Membership', requiredRole: [MembershipRole.Member] },
+    // { key: TabKey.MemberDashboard, name: 'Dashboard', requiredRole: [MembershipRole.Member] },
+    { key: TabKey.MemberOrders, name: 'Orders', requiredRole: [MembershipRole.Member] },
+    { key: TabKey.MemberPositions, name: 'Positions', requiredRole: [MembershipRole.Member] },
+    { key: TabKey.MemberExchanges, name: 'Exchanges', requiredRole: [MembershipRole.Member] },
+    { key: TabKey.MemberMembership, name: 'Membership', requiredRole: [MembershipRole.Member] },
 
     // Group admin/trader tabs
     // {
-    //   key: 'groupDashboard',
+    //   key: TabKey.GroupDashboard,
     //   name: 'Dashboard',
     //   requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
     // },
     {
-      key: 'groupOrders',
+      key: TabKey.GroupOrders,
       name: 'Orders',
       requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
     },
     {
-      key: 'groupPositions',
+      key: TabKey.GroupPositions,
       name: 'Positions',
       requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
     },
     {
-      key: 'groupMembers',
+      key: TabKey.GroupMembers,
       name: 'Members',
       requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
     },
     // {
-    //   key: 'groupProfile',
+    //   key: TabKey.GroupProfile,
     //   name: 'Profile',
     //   requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
     // },
-    { key: 'groupSettings', name: 'Settings', requiredRole: [MembershipRole.Admin] },
+    { key: TabKey.GroupSettings, name: 'Settings', requiredRole: [MembershipRole.Admin] },
   ]
 
   return allTabs

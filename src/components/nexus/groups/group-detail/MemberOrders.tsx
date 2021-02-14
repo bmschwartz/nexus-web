@@ -9,6 +9,7 @@ interface MemberOrdersProps {
   membership: Membership
   tabState: MemberOrdersTabState
   setTabState: (tabState: MemberOrdersTabState) => void
+  onClickAddSubscription: () => void
 }
 
 export enum MemberOrdersTabState {
@@ -16,7 +17,12 @@ export enum MemberOrdersTabState {
   VIEW_DETAIL,
 }
 
-export const MemberOrders: FC<MemberOrdersProps> = ({ membership, tabState, setTabState }) => {
+export const MemberOrders: FC<MemberOrdersProps> = ({
+  membership,
+  tabState,
+  setTabState,
+  onClickAddSubscription,
+}) => {
   const [selectedOrderId, setSelectedOrderId] = useState<string>()
 
   const onClickBack = () => {
@@ -38,7 +44,9 @@ export const MemberOrders: FC<MemberOrdersProps> = ({ membership, tabState, setT
 
   return (
     <div>
-      {!hasActiveSubscription(membership) && NoActiveSubscription}
+      {!hasActiveSubscription(membership) && (
+        <NoActiveSubscription onClickAddSubscription={onClickAddSubscription} />
+      )}
       {shouldShowViewAll() && (
         <MemberOrdersTable membershipId={membership.id} onClickOrder={onClickOrder} />
       )}

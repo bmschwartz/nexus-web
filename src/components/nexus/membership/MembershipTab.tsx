@@ -1,8 +1,9 @@
 import React, { FC } from 'react'
-import { Membership, MembershipStatus } from 'types/membership'
+import { Membership } from 'types/membership'
 
 /* eslint-disable */
 import { MembershipInfo } from './MembershipInfo'
+import { Divider, PageHeader } from 'antd'
 // import { CreateSubscriptionForm } from 'components/nexus/subscriptions/CreateSubscriptionForm'
 /* eslint-enable */
 
@@ -45,10 +46,17 @@ export const MembershipTab: FC<MembershipTabProps> = ({ membership, tabState }) 
     <div>
       {shouldShowViewAll() && (
         <>
-          <MembershipInfo membership={membership} />
-          {membership.status === MembershipStatus.Approved && (
-            <MemberSubscriptionInfo membership={membership} />
-          )}
+          <div className="card-header card-header-flex">
+            <div className="d-flex flex-column justify-content-center mr-auto">
+              <PageHeader className="site-page-header" title="Membership" backIcon={false} />
+            </div>
+          </div>
+          <div className="card-body">
+            <Divider orientation="left">
+              <strong>General</strong>
+            </Divider>
+            <MembershipInfo membership={membership} />
+          </div>
         </>
       )}
       {tabState === MembershipTabTabState.CREATE_SUBSCRIPTION && (

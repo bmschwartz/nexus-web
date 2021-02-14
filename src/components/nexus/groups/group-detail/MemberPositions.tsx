@@ -11,6 +11,7 @@ interface MemberPositionsProps {
   membership: Membership
   tabState: MemberPositionsTabState
   setTabState: (tabState: MemberPositionsTabState) => void
+  onClickAddSubscription: () => void
 }
 
 export enum MemberPositionsTabState {
@@ -22,6 +23,7 @@ export const MemberPositions: FC<MemberPositionsProps> = ({
   membership,
   setTabState,
   tabState,
+  onClickAddSubscription,
 }) => {
   const [selectedPositionId, setSelectedPositionId] = useState<string>()
 
@@ -43,7 +45,9 @@ export const MemberPositions: FC<MemberPositionsProps> = ({
 
   return (
     <div>
-      {!hasActiveSubscription(membership) && NoActiveSubscription}
+      {!hasActiveSubscription(membership) && (
+        <NoActiveSubscription onClickAddSubscription={onClickAddSubscription} />
+      )}
       {shouldShowViewAll() && (
         <MemberPositionsTable membershipId={membership.id} onClickPosition={onClickPosition} />
       )}

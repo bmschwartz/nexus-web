@@ -4,7 +4,7 @@ import { Membership } from 'types/membership'
 import { Tabs } from 'antd'
 
 /* eslint-disable */
-import { availableTabs, Tab } from './groupTabs'
+import { availableTabs, Tab, TabKey } from './groupTabs'
 import { GroupDashboard } from './GroupDashboard'
 import { GroupOrderSets, OrderSetTabState } from './GroupOrderSet'
 import { GroupPositions, GroupPositionsTabState } from './GroupPositions'
@@ -17,6 +17,7 @@ import { MemberExchanges, MemberExchangesTabState } from './MemberExchanges'
 import { GroupProfile } from './GroupProfile'
 import { GroupMembers, GroupMembersTabState } from './GroupMembers'
 import { StringParam, useQueryParam, withDefault } from 'use-query-params'
+
 /* eslint-enable */
 
 interface GroupDetailCardProps {
@@ -56,6 +57,11 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
     setTabKey(key)
   }
 
+  const onClickAddSubscription = (): void => {
+    setMembershipTabTabState(MembershipTabTabState.VIEW_ALL)
+    changeTab(TabKey.MemberMembership)
+  }
+
   return (
     <div className="row">
       <div className="col-xl-12 col-lg-12">
@@ -79,6 +85,7 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
                     membership={myMembership}
                     tabState={memberOrdersTabState}
                     setTabState={setMemberOrdersTabState}
+                    onClickAddSubscription={onClickAddSubscription}
                   />
                 )}
                 {tabKey === 'memberPositions' && (
@@ -86,6 +93,7 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
                     membership={myMembership}
                     tabState={memberPositionsTabState}
                     setTabState={setMemberPositionsTabState}
+                    onClickAddSubscription={onClickAddSubscription}
                   />
                 )}
                 {tabKey === 'membershipTab' && (
@@ -100,6 +108,7 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
                     membership={myMembership}
                     tabState={memberExchangesTabState}
                     setTabState={setMemberExchangesTabState}
+                    onClickAddSubscription={onClickAddSubscription}
                   />
                 )}
 
