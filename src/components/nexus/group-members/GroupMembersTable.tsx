@@ -39,7 +39,7 @@ const groupMembersTableColumns = [
   },
 ]
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20
 
 export const GroupMembersTable: FC<GroupMembersTableProps> = ({
   groupId,
@@ -67,6 +67,7 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
       groupInput: { groupId },
       membersInput: { limit: PAGE_SIZE, offset: adminsOffset, roles: [MembershipRole.Admin] },
     },
+    fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
   })
 
@@ -75,6 +76,7 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
       groupInput: { groupId },
       membersInput: { limit: PAGE_SIZE, offset: tradersOffset, roles: [MembershipRole.Trader] },
     },
+    fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
   })
 
@@ -83,6 +85,7 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
       groupInput: { groupId },
       membersInput: { limit: PAGE_SIZE, offset: membersOffset, roles: [MembershipRole.Member] },
     },
+    fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
   })
 

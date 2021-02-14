@@ -101,6 +101,7 @@ export const inviteMember = async ({
     const { data: getUserData } = await client.query({
       query: GetUserIdByEmailDocument,
       variables: { input: { email } },
+      fetchPolicy: 'network-only',
     })
 
     if (!getUserData || !getUserData.userIdByEmail) {
