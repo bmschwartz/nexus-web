@@ -4,6 +4,7 @@ import { Membership } from 'types/membership'
 /* eslint-disable */
 import { MemberPositionsTable } from '../../positions/MemberPositionsTable'
 import { MemberPositionDetail } from '../../positions/MemberPositionDetail'
+import { hasActiveSubscription, NoActiveSubscription } from '../../membership/common'
 /* eslint-enable */
 
 interface MemberPositionsProps {
@@ -35,13 +36,14 @@ export const MemberPositions: FC<MemberPositionsProps> = ({
 
   function shouldShowViewAll() {
     return (
-      tabState === MemberPositionsTabState.VIEW_ALL ||
+      (hasActiveSubscription(membership) && tabState === MemberPositionsTabState.VIEW_ALL) ||
       (tabState === MemberPositionsTabState.VIEW_DETAIL && !selectedPositionId)
     )
   }
 
   return (
-    <div className="card">
+    <div>
+      {!hasActiveSubscription(membership) && NoActiveSubscription}
       {shouldShowViewAll() && (
         <MemberPositionsTable membershipId={membership.id} onClickPosition={onClickPosition} />
       )}

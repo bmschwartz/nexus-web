@@ -48,7 +48,7 @@ export const GroupMembers: FC<GroupMembersProps> = ({ group, tabState, setTabSta
   }
 
   return (
-    <div className="card">
+    <div>
       {shouldShowViewAll() && (
         <GroupMembersTable
           groupId={group.id}

@@ -182,6 +182,7 @@ export enum MembershipStatus {
 export type MemberSubscription = {
   __typename?: 'MemberSubscription'
   id: Scalars['ID']
+  active: Scalars['Boolean']
   membership: GroupMembership
   groupSubscription: GroupSubscription
   outstandingBalance: Scalars['Float']
@@ -1007,7 +1008,20 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
     group: { __typename?: 'Group' } & Pick<Group, 'id' | 'name'>
     orders: { __typename?: 'MemberOrdersResult' } & Pick<MemberOrdersResult, 'totalCount'>
     exchangeAccounts: Array<{ __typename?: 'ExchangeAccount' } & Pick<ExchangeAccount, 'id'>>
+    subscription?: Maybe<{ __typename?: 'MemberSubscription' } & MemberSubscriptionDetailsFragment>
   }
+
+export type MemberSubscriptionDetailsFragment = { __typename?: 'MemberSubscription' } & Pick<
+  MemberSubscription,
+  | 'id'
+  | 'active'
+  | 'recurring'
+  | 'startDate'
+  | 'endDate'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'outstandingBalance'
+>
 
 export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
   Order,
@@ -1621,6 +1635,18 @@ export const GroupDetailsFragmentDoc = gql`
     active
   }
 `
+export const MemberSubscriptionDetailsFragmentDoc = gql`
+  fragment MemberSubscriptionDetails on MemberSubscription {
+    id
+    active
+    recurring
+    startDate
+    endDate
+    createdAt
+    updatedAt
+    outstandingBalance
+  }
+`
 export const GroupMembershipDetailsFragmentDoc = gql`
   fragment GroupMembershipDetails on GroupMembership {
     id
@@ -1642,7 +1668,11 @@ export const GroupMembershipDetailsFragmentDoc = gql`
     exchangeAccounts {
       id
     }
+    subscription {
+      ...MemberSubscriptionDetails
+    }
   }
+  ${MemberSubscriptionDetailsFragmentDoc}
 `
 export const OrderSetDetailsFragmentDoc = gql`
   fragment OrderSetDetails on OrderSet {

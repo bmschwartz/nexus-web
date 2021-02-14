@@ -10,6 +10,7 @@ export interface Membership {
   exchangeAccounts: ExchangeAccount[]
   role: MembershipRole
   status: MembershipStatus
+  subscription?: MemberSubscription
 }
 
 export enum MembershipStatus {
@@ -22,6 +23,15 @@ export enum MembershipRole {
   Member = 'MEMBER',
   Trader = 'TRADER',
   Admin = 'ADMIN',
+}
+
+export interface MemberSubscription {
+  id: string
+  active: boolean
+  recurring: boolean
+  startDate: string
+  endDate: string
+  outstandingBalance: number
 }
 
 export const statusFromString = (status: string): MembershipStatus | null => {

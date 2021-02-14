@@ -1,0 +1,11 @@
+query GetMemberSubscriptions($membershipInput: MembershipInput!) {
+  myMembership(input: $membershipInput) {
+    id
+    orders(input: $ordersInput) {
+      totalCount
+      orders {
+        ...OrderDetails
+      }
+    }
+  }
+}

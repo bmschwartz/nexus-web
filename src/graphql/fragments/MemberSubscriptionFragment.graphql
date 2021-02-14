@@ -1,0 +1,10 @@
+fragment MemberSubscriptionDetails on MemberSubscription {
+  id
+  active
+  recurring
+  startDate
+  endDate
+  createdAt
+  updatedAt
+  outstandingBalance
+}

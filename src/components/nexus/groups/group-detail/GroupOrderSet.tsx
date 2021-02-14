@@ -41,7 +41,7 @@ export const GroupOrderSets: FC<GroupOrderSetsProps> = ({ tabState, group, setTa
   }
 
   return (
-    <div className="card">
+    <div>
       {shouldShowViewAll() && (
         <OrderSetTable
           groupId={group.id}

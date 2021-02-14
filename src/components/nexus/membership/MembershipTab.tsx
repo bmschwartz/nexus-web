@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
-import { Membership } from 'types/membership'
+import { Membership, MembershipStatus } from 'types/membership'
 
 /* eslint-disable */
 import { MembershipInfo } from './MembershipInfo'
-// import { SubscriptionTable } from 'components/nexus/subscriptions/SubscriptionTable'
 // import { CreateSubscriptionForm } from 'components/nexus/subscriptions/CreateSubscriptionForm'
 /* eslint-enable */
 
@@ -25,13 +24,9 @@ export const MembershipTab: FC<MembershipTabProps> = ({ membership, tabState }) 
   // const onClickBack = () => {
   //   setTabState(MembershipTabTabState.VIEW_ALL)
   // }
-
+  //
   // const onSubscriptionCreated = () => {
   //   setTabState(MembershipTabTabState.VIEW_ALL)
-  // }
-
-  // const onClickCreateSubscription = () => {
-  //   setTabState(MembershipTabTabState.CREATE_SUBSCRIPTION)
   // }
 
   // const onClickSubscription = (exchangeAccountId: string) => {
@@ -51,13 +46,9 @@ export const MembershipTab: FC<MembershipTabProps> = ({ membership, tabState }) 
       {shouldShowViewAll() && (
         <>
           <MembershipInfo membership={membership} />
-          {/* {membership.status === MembershipStatus.Approved && (
-            <SubscriptionTable
-              membership={membership}
-              onClickCreate={onClickCreateSubscription}
-              onClickSubscription={onClickSubscription}
-            />
-          )} */}
+          {membership.status === MembershipStatus.Approved && (
+            <MemberSubscriptionInfo membership={membership} />
+          )}
         </>
       )}
       {tabState === MembershipTabTabState.CREATE_SUBSCRIPTION && (
@@ -68,10 +59,10 @@ export const MembershipTab: FC<MembershipTabProps> = ({ membership, tabState }) 
         //   onCreated={onSubscriptionCreated}
         // />
       )}
-      {/* {tabState === MembershipTabTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT && selectedSubscriptionId && (
+      {/* {tabState === MembershipTabTabState.VIEW_DETAIL_SUBSCRIPTION && selectedSubscriptionId && (
         <SubscriptionDetail
           onClickBack={onClickBack}
-          exchangeAccountId={selectedSubscriptionId}
+          subscriptionId={selectedSubscriptionId}
         />
       )} */}
     </div>

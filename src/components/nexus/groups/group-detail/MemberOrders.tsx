@@ -3,6 +3,7 @@ import React, { FC, useState } from 'react'
 import { Membership } from 'types/membership'
 import { MemberOrdersTable } from 'components/nexus/orders/MemberOrdersTable'
 import { MemberOrderDetail } from 'components/nexus/orders/MemberOrderDetail'
+import { hasActiveSubscription, NoActiveSubscription } from 'components/nexus/membership/common'
 
 interface MemberOrdersProps {
   membership: Membership
@@ -29,13 +30,15 @@ export const MemberOrders: FC<MemberOrdersProps> = ({ membership, tabState, setT
 
   function shouldShowViewAll() {
     return (
-      tabState === MemberOrdersTabState.VIEW_ALL ||
-      (tabState === MemberOrdersTabState.VIEW_DETAIL && !selectedOrderId)
+      hasActiveSubscription(membership) &&
+      (tabState === MemberOrdersTabState.VIEW_ALL ||
+        (tabState === MemberOrdersTabState.VIEW_DETAIL && !selectedOrderId))
     )
   }
 
   return (
-    <div className="card">
+    <div>
+      {!hasActiveSubscription(membership) && NoActiveSubscription}
       {shouldShowViewAll() && (
         <MemberOrdersTable membershipId={membership.id} onClickOrder={onClickOrder} />
       )}

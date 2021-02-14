@@ -8,7 +8,7 @@ interface MembershipInfoProps {
 
 export const MembershipInfo: FC<MembershipInfoProps> = ({ membership }) => {
   return (
-    <div className="card">
+    <div>
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Membership" backIcon={false} />

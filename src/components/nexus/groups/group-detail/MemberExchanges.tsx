@@ -5,6 +5,7 @@ import { Membership, MembershipStatus } from 'types/membership'
 import { ExchangeAccountTable } from 'components/nexus/exchange-accounts/ExchangeAccountTable'
 import { CreateExchangeAccountForm } from 'components/nexus/exchange-accounts/CreateExchangeAccountForm'
 import { ExchangeAccountDetail } from 'components/nexus/exchange-accounts/ExchangeAccountDetail'
+import { hasActiveSubscription, NoActiveSubscription } from '../../membership/common'
 /* eslint-enable */
 
 interface MemberExchangesProps {
@@ -47,13 +48,14 @@ export const MemberExchanges: FC<MemberExchangesProps> = ({
 
   function shouldShowViewAll() {
     return (
-      tabState === MemberExchangesTabState.VIEW_ALL ||
+      (hasActiveSubscription(membership) && tabState === MemberExchangesTabState.VIEW_ALL) ||
       (tabState === MemberExchangesTabState.VIEW_DETAIL_EXCHANGE_ACCOUNT &&
         !selectedExchangeAccountId)
     )
   }
   return (
     <div>
+      {!hasActiveSubscription(membership) && NoActiveSubscription}
       {shouldShowViewAll() && (
         <>
           {membership.status === MembershipStatus.Approved && (

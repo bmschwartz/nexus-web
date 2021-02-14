@@ -12,7 +12,7 @@ import { GroupSettings } from './GroupSettings'
 import { MemberDashboard } from './MemberDashboard'
 import { MemberPositions, MemberPositionsTabState } from './MemberPositions'
 import { MemberOrders, MemberOrdersTabState } from './MemberOrders'
-import { MembershipTab, MembershipTabTabState } from './MembershipTab'
+import { MembershipTab, MembershipTabTabState } from '../../membership/MembershipTab'
 import { MemberExchanges, MemberExchangesTabState } from './MemberExchanges'
 import { GroupProfile } from './GroupProfile'
 import { GroupMembers, GroupMembersTabState } from './GroupMembers'
@@ -59,7 +59,7 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
   return (
     <div className="row">
       <div className="col-xl-12 col-lg-12">
-        <div className="card">
+        <div>
           <div className="card-header card-header-flex flex-column">
             <Tabs activeKey={tabKey} className="mr-auto kit-tabs-bold" onChange={changeTab}>
               {menuTabs.map(({ key, name }: Tab) => {

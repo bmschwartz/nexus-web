@@ -83,7 +83,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
   }
 
   return (
-    <div className="card">
+    <div>
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Groups" />

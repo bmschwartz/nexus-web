@@ -142,7 +142,7 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
       }}
     >
       {({ errors, handleBlur, handleChange, handleSubmit, setFieldValue, touched, values }) => (
-        <div className="card">
+        <div>
           <div className="card-body">
             <Form {...formItemLayout} labelAlign="left">
               <Divider orientation="left">

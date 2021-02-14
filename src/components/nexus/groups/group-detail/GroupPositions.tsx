@@ -40,7 +40,7 @@ export const GroupPositions: FC<GroupPositionsProps> = ({ tabState, setTabState,
   }
 
   return (
-    <div className="card">
+    <div>
       {shouldShowViewAll() && (
         <GroupPositionTable
           groupId={group.id}
