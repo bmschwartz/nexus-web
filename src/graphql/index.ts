@@ -22,7 +22,6 @@ export type CreateGroupInput = {
   telegram?: Maybe<Scalars['String']>
   discord?: Maybe<Scalars['String']>
   email?: Maybe<Scalars['String']>
-  membershipLength: Scalars['Int']
   membershipFee: Scalars['Float']
   payInPlatform: Scalars['Boolean']
   payoutCurrency?: Maybe<Scalars['String']>
@@ -38,6 +37,28 @@ export type CreateGroupMembershipInput = {
 
 export type CreateGroupMembershipResult = {
   __typename?: 'CreateGroupMembershipResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
+export type CreateGroupSubscriptionInput = {
+  groupId: Scalars['ID']
+  fee: Scalars['Float']
+}
+
+export type CreateGroupSubscriptionResult = {
+  __typename?: 'CreateGroupSubscriptionResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
+export type CreateMemberSubscriptionInput = {
+  membershipId: Scalars['ID']
+  groupSubscriptionId: Scalars['ID']
+}
+
+export type CreateMemberSubscriptionResult = {
+  __typename?: 'CreateMemberSubscriptionResult'
   success: Scalars['Boolean']
   error?: Maybe<Scalars['String']>
 }
@@ -100,6 +121,7 @@ export type GroupMembership = {
   active: Scalars['Boolean']
   role: MembershipRole
   status: MembershipStatus
+  subscription?: Maybe<MemberSubscription>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   orders: MemberOrdersResult
@@ -127,6 +149,16 @@ export type GroupMembersResult = {
   totalCount: Scalars['Int']
 }
 
+export type GroupSubscription = {
+  __typename?: 'GroupSubscription'
+  id: Scalars['ID']
+  group: Group
+  active: Scalars['Boolean']
+  fee: Scalars['Float']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
 export type MembershipInput = {
   membershipId: Scalars['ID']
 }
@@ -145,6 +177,19 @@ export enum MembershipStatus {
   Approved = 'APPROVED',
   Denied = 'DENIED',
   Pending = 'PENDING',
+}
+
+export type MemberSubscription = {
+  __typename?: 'MemberSubscription'
+  id: Scalars['ID']
+  membership: GroupMembership
+  groupSubscription: GroupSubscription
+  outstandingBalance: Scalars['Float']
+  recurring: Scalars['Boolean']
+  startDate: Scalars['DateTime']
+  endDate: Scalars['DateTime']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
 }
 
 export type MyMembershipInput = {
@@ -772,6 +817,8 @@ export type Mutation = {
   updateMembershipStatus?: Maybe<GroupMembership>
   updateMembershipActive?: Maybe<GroupMembership>
   deleteMembership?: Maybe<DeleteMembershipResult>
+  createGroupSubscription?: Maybe<CreateGroupSubscriptionResult>
+  createMemberSubscription?: Maybe<CreateMemberSubscriptionResult>
   createOrderSet?: Maybe<CreateOrderSetResult>
   updateOrderSet?: Maybe<UpdateOrderSetResult>
   cancelOrderSet?: Maybe<CancelOrderSetResult>
@@ -825,6 +872,14 @@ export type MutationUpdateMembershipActiveArgs = {
 
 export type MutationDeleteMembershipArgs = {
   input: DeleteMembershipInput
+}
+
+export type MutationCreateGroupSubscriptionArgs = {
+  input: CreateGroupSubscriptionInput
+}
+
+export type MutationCreateMemberSubscriptionArgs = {
+  input: CreateMemberSubscriptionInput
 }
 
 export type MutationCreateOrderSetArgs = {

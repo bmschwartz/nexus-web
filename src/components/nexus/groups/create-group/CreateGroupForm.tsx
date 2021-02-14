@@ -2,11 +2,12 @@
 import React, { FC, useState } from 'react'
 import { connect } from 'react-redux'
 import { Formik } from 'formik'
-import { Form, Input, Checkbox, InputNumber, Select, SubmitButton } from 'formik-antd'
+import { Form, Input, Checkbox, Select, SubmitButton } from 'formik-antd'
 import * as Yup from 'yup'
-import { Divider } from 'antd'
+import { Divider, Tooltip } from 'antd'
 import { validateAddress } from '../validation'
 import { groupExists } from 'services/apollo/group'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 const validPayoutCurrencies = ['BTC', 'ETH', 'LTC']
 
@@ -14,6 +15,17 @@ interface CreateGroupFormProps {
   // redux
   group: any
   dispatch: any
+}
+
+const labelTooltip = (label: string, tooltipText: string) => {
+  return (
+    <>
+      <span className="mr-2">{label}</span>
+      <Tooltip title={tooltipText} color="blue">
+        <InfoCircleOutlined color="blue" />
+      </Tooltip>
+    </>
+  )
 }
 
 const mapStateToProps = ({ group, dispatch }: any) => ({ group, dispatch })
@@ -67,12 +79,6 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
           .nullable()
           .notRequired(),
       }),
-    membershipLength: Yup.number()
-      .label('Membership Length')
-      .min(1)
-      .max(12)
-      .integer()
-      .required(),
     membershipFee: Yup.number()
       .label('Membership Fee')
       .when('payInPlatform', {
@@ -83,12 +89,9 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
           .integer()
           .required('Membership Fee must be greater than 0 when "Pay in Platform" is turned on'),
         otherwise: Yup.number()
-          .min(0)
-          .max(100000)
-          .integer()
-          .required('Membership Fee is required'),
-      })
-      .required(),
+          .nullable()
+          .notRequired(),
+      }),
     email: Yup.string()
       .label('Email')
       .max(255)
@@ -125,8 +128,7 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
         telegram: '',
         discord: '',
         email: '',
-        membershipLength: 1,
-        membershipFee: 0.0,
+        membershipFee: 100.0,
         payInPlatform: true,
         payoutCurrency: 'BTC',
         payoutAddress: '',
@@ -167,16 +169,31 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
               <Divider orientation="left">
                 <strong>Membership</strong>
               </Divider>
-              <Form.Item name="membershipFee" label="Membership Fee" className="mb-3">
-                <Input name="membershipFee" type="number" placeholder="0.00" addonBefore="$" />
+              <p className="mt-3 mb-3">Membership details can be changed at any time</p>
+              <Form.Item
+                name="membershipFee"
+                label={labelTooltip('Membership Fee', 'Monthly fee for Membership')}
+                className="mb-3"
+              >
+                <Input name="membershipFee" type="number" placeholder="100.00" addonBefore="$" />
               </Form.Item>
-              <Form.Item name="membershipLength" label="Length (Months)" className="mb-3">
-                <InputNumber name="membershipLength" min={1} max={12} defaultValue={1} />
-              </Form.Item>
-              <Form.Item name="payInPlatform" label="Pay In Platform">
+              <Form.Item
+                name="payInPlatform"
+                label={labelTooltip(
+                  'Pay In Platform',
+                  'Members will pay for access through the website',
+                )}
+              >
                 <Checkbox value={values.payInPlatform} name="payInPlatform" />
               </Form.Item>
-              <Form.Item name="payoutCurrency" label="Payout Currency" className="mb-3">
+              <Form.Item
+                name="payoutCurrency"
+                label={labelTooltip(
+                  'Payout Currency',
+                  'You will receive your funds with this currency',
+                )}
+                className="mb-3"
+              >
                 <Select
                   name="payoutCurrency"
                   defaultValue="BTC"
@@ -192,7 +209,10 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
                   <Select.Option value="LTC">LTC</Select.Option>
                 </Select>
               </Form.Item>
-              <Form.Item name="payoutAddress" label="Payout Address">
+              <Form.Item
+                name="payoutAddress"
+                label={labelTooltip('Payout Address', 'Wallet address to send funds')}
+              >
                 <Input
                   name="payoutAddress"
                   disabled={!values.payInPlatform}
