@@ -156,14 +156,18 @@ export function transformOrdersData(ordersData: any[]): OrderTableRow[] {
 
 export function transformStopOrdersData(ordersData: any[]): StopOrderTableRow[] {
   return ordersData.map(order => {
-    const { id, stopPrice, status, quantity, filledQty, updatedAt } = order
+    const { id, stopPrice, status, quantity, error, filledQty, updatedAt } = order
+
+    const localStatus = convertToLocalOrderStatus(status)
+    const displayStatus = error ? `${localStatus} - ${error}` : localStatus
+
     return {
       id,
       stopPrice,
       quantity,
       filledQty,
       updatedAt: displayTimeBeforeNow(updatedAt),
-      status: convertToLocalOrderStatus(status),
+      status: displayStatus,
       username: order.exchangeAccount.membership.member.username,
     }
   })
@@ -171,14 +175,18 @@ export function transformStopOrdersData(ordersData: any[]): StopOrderTableRow[] 
 
 export function transformTrailingStopOrdersData(ordersData: any[]): TrailingStopOrderTableRow[] {
   return ordersData.map(order => {
-    const { id, stopPrice, status, quantity, filledQty, updatedAt } = order
+    const { id, stopPrice, status, quantity, error, filledQty, updatedAt } = order
+
+    const localStatus = convertToLocalOrderStatus(status)
+    const displayStatus = error ? `${localStatus} - ${error}` : localStatus
+
     return {
       id,
       stopPrice,
       quantity,
       filledQty,
       updatedAt: displayTimeBeforeNow(updatedAt),
-      status: convertToLocalOrderStatus(status),
+      status: displayStatus,
       username: order.exchangeAccount.membership.member.username,
     }
   })
