@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Button, Divider, message, Modal, PageHeader, Spin, Table } from 'antd'
+import { Button, Divider, message, Modal, PageHeader, Spin, Table, Select } from 'antd'
 
 /* eslint-disable */
 import * as apollo from 'services/apollo'
@@ -18,9 +18,11 @@ import {
 } from './orderSetDetailUtils'
 import { displayTimeBeforeNow } from '../dateUtil'
 import {
+  OrderStatus,
   StopOrderType,
   convertToLocalOrderSide,
   convertToLocalOrderType,
+  convertToRemoteOrderStatus,
   convertToLocalStopTriggerType,
 } from '../../../types/order'
 import { convertToLocalExchange } from '../../../types/exchange'
@@ -34,12 +36,23 @@ interface OrderSetDetailProps {
   onClickBack: () => void
 }
 
+const OrderStatusFilters = ['All', ...Object.values(OrderStatus)]
+
 const PAGE_SIZE = 50
 const MESSAGE_DURATION = 3
 const CANCEL_ORDER_SET_MESSAGE_KEY = 'cancel_order_set_message_key'
 
 export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, orderSetId }) => {
   const [submittingCancelOrderSet, setSubmittingCancelOrderSet] = useState<boolean>(false)
+  const [selectedOrderStatusFilter, setSelectedOrderStatusFilter] = useState<
+    OrderStatus | undefined
+  >()
+  const [selectedStopOrderStatusFilter, setSelectedStopOrderStatusFilter] = useState<
+    OrderStatus | undefined
+  >()
+  const [selectedTslOrderStatusFilter, setSelectedTslOrderStatusFilter] = useState<
+    OrderStatus | undefined
+  >()
 
   const {
     data: orderSetDetailData,
@@ -50,11 +63,33 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
     variables: {
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
-      limit: PAGE_SIZE,
-      stopOrderType: RemoteStopOrderType.None,
+      ordersInput: {
+        limit: PAGE_SIZE,
+        stopOrderType: RemoteStopOrderType.None,
+        orderStatus: convertToRemoteOrderStatus(selectedOrderStatusFilter),
+      },
     },
     notifyOnNetworkStatusChange: true,
   })
+
+  const onChangeOrderStatusFilter = async (
+    stopOrderType: StopOrderType,
+    selectedStatus?: OrderStatus,
+  ) => {
+    switch (stopOrderType) {
+      case StopOrderType.NONE:
+        setSelectedOrderStatusFilter(selectedStatus)
+        break
+      case StopOrderType.STOP_LIMIT:
+        setSelectedStopOrderStatusFilter(selectedStatus)
+        break
+      case StopOrderType.TRAILING_STOP:
+        setSelectedTslOrderStatusFilter(selectedStatus)
+        break
+      default:
+        break
+    }
+  }
 
   const onChangeOrdersPage = (page: number, pageSize?: number) => {
     const offset = pageSize ? pageSize * (page - 1) : 0
@@ -64,7 +99,8 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
         if (!result.fetchMoreResult) {
           return prev
         }
-        return { ...result.fetchMoreResult }
+        const fetchedResult: object = result.fetchMoreResult as object
+        return { ...fetchedResult }
       },
     })
   }
@@ -78,8 +114,11 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
     variables: {
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
-      limit: PAGE_SIZE,
-      stopOrderType: RemoteStopOrderType.StopLimit,
+      ordersInput: {
+        limit: PAGE_SIZE,
+        stopOrderType: RemoteStopOrderType.StopLimit,
+        orderStatus: convertToRemoteOrderStatus(selectedStopOrderStatusFilter),
+      },
     },
     notifyOnNetworkStatusChange: true,
   })
@@ -92,7 +131,8 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
         if (!result.fetchMoreResult) {
           return prev
         }
-        return { ...result.fetchMoreResult }
+        const fetchedResult: object = result.fetchMoreResult as object
+        return { ...fetchedResult }
       },
     })
   }
@@ -106,8 +146,11 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
     variables: {
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
-      limit: PAGE_SIZE,
-      stopOrderType: RemoteStopOrderType.TrailingStop,
+      ordersInput: {
+        limit: PAGE_SIZE,
+        stopOrderType: RemoteStopOrderType.TrailingStop,
+        orderStatus: convertToRemoteOrderStatus(selectedTslOrderStatusFilter),
+      },
     },
     notifyOnNetworkStatusChange: true,
   })
@@ -120,7 +163,8 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
         if (!result.fetchMoreResult) {
           return prev
         }
-        return { ...result.fetchMoreResult }
+        const fetchedResult: object = result.fetchMoreResult as object
+        return { ...fetchedResult }
       },
     })
   }
@@ -237,6 +281,24 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
           </div>
         </div>
         <Divider orientation="left">Orders</Divider>
+        <div className="mr-5 ml-5 mb-2">
+          Filter by Order Status
+          <Select
+            style={{ width: 200 }}
+            size="large"
+            className="ml-2"
+            value={selectedOrderStatusFilter}
+            onChange={async status => {
+              await onChangeOrderStatusFilter(StopOrderType.NONE, status)
+            }}
+          >
+            {OrderStatusFilters.map(val => (
+              <Select.Option key={val || 'All'} value={val || 'All'}>
+                {val || 'All'}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
         <Table
           className="mr-5 ml-5"
           rowKey="id"
@@ -262,6 +324,24 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
         {orderSet && orderSet.stopPrice && (
           <>
             <Divider orientation="left">Stop Orders</Divider>
+            <div className="mr-5 ml-5 mb-2">
+              Filter by Order Status
+              <Select
+                style={{ width: 200 }}
+                size="large"
+                className="ml-2"
+                value={selectedStopOrderStatusFilter}
+                onChange={async status => {
+                  await onChangeOrderStatusFilter(StopOrderType.STOP_LIMIT, status)
+                }}
+              >
+                {OrderStatusFilters.map(val => (
+                  <Select.Option key={val || 'All'} value={val || 'All'}>
+                    {val || 'All'}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
             <Table
               className="mr-5 ml-5"
               rowKey="id"
@@ -289,6 +369,24 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
         {orderSet && orderSet.trailingStopPercent && (
           <>
             <Divider orientation="left">Trailing Stop Orders</Divider>
+            <div className="mr-5 ml-5 mb-2">
+              Filter by Order Status
+              <Select
+                style={{ width: 200 }}
+                size="large"
+                className="ml-2"
+                value={selectedTslOrderStatusFilter}
+                onChange={async status => {
+                  await onChangeOrderStatusFilter(StopOrderType.TRAILING_STOP, status)
+                }}
+              >
+                {OrderStatusFilters.map(val => (
+                  <Select.Option key={val || 'All'} value={val || 'All'}>
+                    {val || 'All'}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
             <Table
               className="mr-5 ml-5"
               rowKey="id"

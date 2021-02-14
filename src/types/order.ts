@@ -117,3 +117,27 @@ export function convertToLocalStopTriggerType(
       return null
   }
 }
+
+export function convertToRemoteOrderStatus(orderStatus?: OrderStatus): RemoteOrderStatus | null {
+  switch (orderStatus) {
+    case OrderStatus.NEW:
+      return RemoteOrderStatus.New
+
+    case OrderStatus.PARTIALLY_FILLED:
+      return RemoteOrderStatus.PartiallyFilled
+
+    case OrderStatus.FILLED:
+      return RemoteOrderStatus.Filled
+
+    case OrderStatus.CANCELED:
+      return RemoteOrderStatus.Canceled
+
+    case OrderStatus.REJECTED:
+      return RemoteOrderStatus.Rejected
+
+    default:
+      break
+  }
+
+  return null
+}

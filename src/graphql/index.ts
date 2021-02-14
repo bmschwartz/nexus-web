@@ -516,7 +516,7 @@ export type OrderSet = {
   side: OrderSide
   orderType: OrderType
   closeOrderSet: Scalars['Boolean']
-  orders: OrderSetOrders
+  orders: OrderSetOrdersResult
   percent: Scalars['Float']
   leverage: Scalars['Float']
   stopPrice?: Maybe<Scalars['Float']>
@@ -528,9 +528,7 @@ export type OrderSet = {
 }
 
 export type OrderSetOrdersArgs = {
-  limit?: Maybe<Scalars['Int']>
-  offset?: Maybe<Scalars['Int']>
-  stopOrderType?: Maybe<StopOrderType>
+  input: OrderSetOrdersInput
 }
 
 export type OrderSetInput = {
@@ -538,8 +536,15 @@ export type OrderSetInput = {
   stopOrderType?: Maybe<StopOrderType>
 }
 
-export type OrderSetOrders = {
-  __typename?: 'OrderSetOrders'
+export type OrderSetOrdersInput = {
+  limit?: Maybe<Scalars['Int']>
+  offset?: Maybe<Scalars['Int']>
+  orderStatus?: Maybe<OrderStatus>
+  stopOrderType?: Maybe<StopOrderType>
+}
+
+export type OrderSetOrdersResult = {
+  __typename?: 'OrderSetOrdersResult'
   totalCount: Scalars['Int']
   orders: Array<Order>
 }
@@ -1250,9 +1255,7 @@ export type GetGroupMembersQuery = { __typename?: 'Query' } & {
 export type GetGroupOrderSetDetailsQueryVariables = Exact<{
   groupInput: GroupInput
   orderSetInput: OrderSetInput
-  limit?: Maybe<Scalars['Int']>
-  offset?: Maybe<Scalars['Int']>
-  stopOrderType?: Maybe<StopOrderType>
+  ordersInput: OrderSetOrdersInput
 }>
 
 export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
@@ -1260,7 +1263,10 @@ export type GetGroupOrderSetDetailsQuery = { __typename?: 'Query' } & {
     { __typename?: 'Group' } & Pick<Group, 'id'> & {
         orderSet?: Maybe<
           { __typename?: 'OrderSet' } & {
-            orders: { __typename?: 'OrderSetOrders' } & Pick<OrderSetOrders, 'totalCount'> & {
+            orders: { __typename?: 'OrderSetOrdersResult' } & Pick<
+              OrderSetOrdersResult,
+              'totalCount'
+            > & {
                 orders: Array<
                   { __typename?: 'Order' } & {
                     exchangeAccount: { __typename?: 'ExchangeAccount' } & Pick<
@@ -2723,15 +2729,13 @@ export const GetGroupOrderSetDetailsDocument = gql`
   query GetGroupOrderSetDetails(
     $groupInput: GroupInput!
     $orderSetInput: OrderSetInput!
-    $limit: Int
-    $offset: Int
-    $stopOrderType: StopOrderType
+    $ordersInput: OrderSetOrdersInput!
   ) {
     group(input: $groupInput) {
       id
       orderSet(input: $orderSetInput) {
         ...OrderSetDetails
-        orders(limit: $limit, offset: $offset, stopOrderType: $stopOrderType) {
+        orders(input: $ordersInput) {
           totalCount
           orders {
             ...OrderDetails
@@ -2767,9 +2771,7 @@ export const GetGroupOrderSetDetailsDocument = gql`
  *   variables: {
  *      groupInput: // value for 'groupInput'
  *      orderSetInput: // value for 'orderSetInput'
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *      stopOrderType: // value for 'stopOrderType'
+ *      ordersInput: // value for 'ordersInput'
  *   },
  * });
  */
