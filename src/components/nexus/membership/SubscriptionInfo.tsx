@@ -18,6 +18,10 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
             {subscription.active ? 'Yes' : 'No'}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
+            <strong className="mr-3">Auto Renew</strong>
+            {subscription.recurring ? 'Yes' : 'No'}
+          </div>
+          <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Price</strong>${subscription.price} USD
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
@@ -29,7 +33,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
             {subscription.startDate}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Next Payment Due</strong>
+            <strong className="mr-3">End Date</strong>
             {subscription.endDate}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
