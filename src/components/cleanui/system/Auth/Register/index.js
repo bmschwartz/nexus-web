@@ -62,7 +62,7 @@ const Register = ({ dispatch, user }) => {
       </div>
       <div className="text-center pt-2 mb-auto">
         <span className="mr-2">Already have an account?</span>
-        <Link to="/auth/login" className="kit__utils__link font-size-16">
+        <Link to="/login" className="kit__utils__link font-size-16">
           Sign in
         </Link>
       </div>

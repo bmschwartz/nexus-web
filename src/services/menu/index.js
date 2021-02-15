@@ -192,32 +192,32 @@ export default async function getMenuData() {
         {
           title: 'Login',
           key: 'authLogin',
-          url: '/auth/login',
+          url: '/login',
         },
         {
           title: 'Forgot Password',
           key: 'authForgotPassword',
-          url: '/auth/forgot-password',
+          url: '/forgot-password',
         },
         {
           title: 'Register',
           key: 'authRegister',
-          url: '/auth/register',
+          url: '/register',
         },
         {
           title: 'Lockscreen',
           key: 'authLockscreen',
-          url: '/auth/lockscreen',
+          url: '/lockscreen',
         },
         {
           title: 'Page 404',
           key: 'auth404',
-          url: '/auth/404',
+          url: '/404',
         },
         {
           title: 'Page 500',
           key: 'auth500',
-          url: '/auth/500',
+          url: '/500',
         },
       ],
     },

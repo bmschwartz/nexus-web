@@ -27,32 +27,32 @@ const routes = [
 
   // Auth Pages
   {
-    path: '/auth/login',
+    path: '/login',
     Component: lazy(() => import('pages/auth/login')),
     exact: true,
   },
   {
-    path: '/auth/forgot-password',
+    path: '/forgot-password',
     Component: lazy(() => import('pages/auth/forgot-password')),
     exact: true,
   },
   {
-    path: '/auth/register',
+    path: '/register',
     Component: lazy(() => import('pages/auth/register')),
     exact: true,
   },
   {
-    path: '/auth/lockscreen',
+    path: '/lockscreen',
     Component: lazy(() => import('pages/auth/lockscreen')),
     exact: true,
   },
   {
-    path: '/auth/404',
+    path: '/404',
     Component: lazy(() => import('pages/auth/404')),
     exact: true,
   },
   {
-    path: '/auth/500',
+    path: '/500',
     Component: lazy(() => import('pages/auth/500')),
     exact: true,
   },
@@ -83,7 +83,7 @@ const Router = ({ history, routerAnimation }) => {
                     timeout={routerAnimation === 'none' ? 0 : 300}
                   >
                     <Switch location={location}>
-                      <Route exact path="/" render={() => <Redirect to="/auth/login" />} />
+                      <Route exact path="/" render={() => <Redirect to="/login" />} />
                       {routes.map(({ path, Component, exact }) => (
                         <Route
                           path={path}
@@ -100,7 +100,7 @@ const Router = ({ history, routerAnimation }) => {
                           }}
                         />
                       ))}
-                      <Redirect to="/auth/404" />
+                      <Redirect to="/404" />
                     </Switch>
                   </CSSTransition>
                 </SwitchTransition>

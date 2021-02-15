@@ -35,7 +35,7 @@ const ForgotPassword = () => {
             <strong>Reset my password</strong>
           </Button>
         </Form>
-        <Link to="/auth/login" className="kit__utils__link font-size-16">
+        <Link to="/login" className="kit__utils__link font-size-16">
           <i className="fe fe-arrow-left mr-1 align-middle" />
           Go to Sign in
         </Link>

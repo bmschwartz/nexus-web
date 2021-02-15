@@ -8,7 +8,7 @@ const mapStateToProps = ({ user }) => ({ user })
 const ACL = ({
   user: { role },
   redirect = false,
-  defaultRedirect = '/auth/404',
+  defaultRedirect = '/404',
   roles = [],
   children,
 }) => {

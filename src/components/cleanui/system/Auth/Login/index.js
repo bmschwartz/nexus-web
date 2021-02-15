@@ -62,13 +62,13 @@ const Login = ({ dispatch, user, logo }) => {
             <strong>Sign in</strong>
           </Button>
         </Form>
-        <Link to="/auth/forgot-password" className="kit__utils__link font-size-16">
+        <Link to="/forgot-password" className="kit__utils__link font-size-16">
           Forgot Password?
         </Link>
       </div>
       <div className="text-center pt-2 mb-auto">
         <span className="mr-2">Don&#39;t have an account?</span>
-        <Link to="/auth/register" className="kit__utils__link font-size-16">
+        <Link to="/register" className="kit__utils__link font-size-16">
           Sign up
         </Link>
       </div>

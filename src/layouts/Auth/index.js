@@ -52,7 +52,7 @@ const AuthLayout = ({
             </div>
             <div className="d-none d-sm-block">
               <span className="mr-2">Don&#39;t have an account?</span>
-              <Link to="/auth/register" className="font-size-16 kit__utils__link">
+              <Link to="/register" className="font-size-16 kit__utils__link">
                 Sign up
               </Link>
             </div>
