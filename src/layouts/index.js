@@ -14,13 +14,15 @@ const Layouts = {
 
 const mapStateToProps = ({ user }) => ({ user })
 
+const authPaths = ['/login', '/forgot-password', '/register', '/lockscreen', '/404', '/500']
+
 const Layout = ({ user, children, location: { pathname } }) => {
   // Layout Rendering
   const getLayout = () => {
     if (pathname === '/') {
       return 'public'
     }
-    if (/^\/auth(?=\/|$)/i.test(pathname)) {
+    if (authPaths.includes(pathname.trimRight('/'))) {
       return 'auth'
     }
     return 'main'
