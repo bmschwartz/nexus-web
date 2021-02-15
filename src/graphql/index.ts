@@ -16,6 +16,26 @@ export type Scalars = {
   _FieldSet: any
 }
 
+export type ActivateMemberSubscriptionInput = {
+  subscriptionId: Scalars['ID']
+}
+
+export type ActivateMemberSubscriptionResult = {
+  __typename?: 'ActivateMemberSubscriptionResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
+export type CancelMemberSubscriptionInput = {
+  subscriptionId: Scalars['ID']
+}
+
+export type CancelMemberSubscriptionResult = {
+  __typename?: 'CancelMemberSubscriptionResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
 export type CreateGroupInput = {
   name: Scalars['String']
   description: Scalars['String']
@@ -48,17 +68,6 @@ export type CreateGroupSubscriptionInput = {
 
 export type CreateGroupSubscriptionResult = {
   __typename?: 'CreateGroupSubscriptionResult'
-  success: Scalars['Boolean']
-  error?: Maybe<Scalars['String']>
-}
-
-export type CreateMemberSubscriptionInput = {
-  groupId: Scalars['ID']
-  membershipId: Scalars['ID']
-}
-
-export type CreateMemberSubscriptionResult = {
-  __typename?: 'CreateMemberSubscriptionResult'
   success: Scalars['Boolean']
   error?: Maybe<Scalars['String']>
 }
@@ -820,7 +829,8 @@ export type Mutation = {
   updateMembershipActive?: Maybe<GroupMembership>
   deleteMembership?: Maybe<DeleteMembershipResult>
   createGroupSubscription?: Maybe<CreateGroupSubscriptionResult>
-  createMemberSubscription?: Maybe<CreateMemberSubscriptionResult>
+  activateMemberSubscription?: Maybe<ActivateMemberSubscriptionResult>
+  cancelMemberSubscription?: Maybe<CancelMemberSubscriptionResult>
   createOrderSet?: Maybe<CreateOrderSetResult>
   updateOrderSet?: Maybe<UpdateOrderSetResult>
   cancelOrderSet?: Maybe<CancelOrderSetResult>
@@ -880,8 +890,12 @@ export type MutationCreateGroupSubscriptionArgs = {
   input: CreateGroupSubscriptionInput
 }
 
-export type MutationCreateMemberSubscriptionArgs = {
-  input: CreateMemberSubscriptionInput
+export type MutationActivateMemberSubscriptionArgs = {
+  input: ActivateMemberSubscriptionInput
+}
+
+export type MutationCancelMemberSubscriptionArgs = {
+  input: CancelMemberSubscriptionInput
 }
 
 export type MutationCreateOrderSetArgs = {
@@ -1075,6 +1089,32 @@ export type PositionDetailsFragment = { __typename?: 'Position' } & Pick<
   | 'createdAt'
   | 'updatedAt'
 >
+
+export type ActivateMemberSubscriptionMutationVariables = Exact<{
+  input: ActivateMemberSubscriptionInput
+}>
+
+export type ActivateMemberSubscriptionMutation = { __typename?: 'Mutation' } & {
+  activateMemberSubscription?: Maybe<
+    { __typename?: 'ActivateMemberSubscriptionResult' } & Pick<
+      ActivateMemberSubscriptionResult,
+      'success' | 'error'
+    >
+  >
+}
+
+export type CancelMemberSubscriptionMutationVariables = Exact<{
+  input: CancelMemberSubscriptionInput
+}>
+
+export type CancelMemberSubscriptionMutation = { __typename?: 'Mutation' } & {
+  cancelMemberSubscription?: Maybe<
+    { __typename?: 'CancelMemberSubscriptionResult' } & Pick<
+      CancelMemberSubscriptionResult,
+      'success' | 'error'
+    >
+  >
+}
 
 export type CancelOrderMutationVariables = Exact<{
   input: CancelOrderInput
@@ -1695,6 +1735,108 @@ export const OrderSetDetailsFragmentDoc = gql`
     createdAt
   }
 `
+export const ActivateMemberSubscriptionDocument = gql`
+  mutation ActivateMemberSubscription($input: ActivateMemberSubscriptionInput!) {
+    activateMemberSubscription(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type ActivateMemberSubscriptionMutationFn = Apollo.MutationFunction<
+  ActivateMemberSubscriptionMutation,
+  ActivateMemberSubscriptionMutationVariables
+>
+
+/**
+ * __useActivateMemberSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useActivateMemberSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActivateMemberSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [activateMemberSubscriptionMutation, { data, loading, error }] = useActivateMemberSubscriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useActivateMemberSubscriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ActivateMemberSubscriptionMutation,
+    ActivateMemberSubscriptionMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    ActivateMemberSubscriptionMutation,
+    ActivateMemberSubscriptionMutationVariables
+  >(ActivateMemberSubscriptionDocument, baseOptions)
+}
+export type ActivateMemberSubscriptionMutationHookResult = ReturnType<
+  typeof useActivateMemberSubscriptionMutation
+>
+export type ActivateMemberSubscriptionMutationResult = Apollo.MutationResult<
+  ActivateMemberSubscriptionMutation
+>
+export type ActivateMemberSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  ActivateMemberSubscriptionMutation,
+  ActivateMemberSubscriptionMutationVariables
+>
+export const CancelMemberSubscriptionDocument = gql`
+  mutation CancelMemberSubscription($input: CancelMemberSubscriptionInput!) {
+    cancelMemberSubscription(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type CancelMemberSubscriptionMutationFn = Apollo.MutationFunction<
+  CancelMemberSubscriptionMutation,
+  CancelMemberSubscriptionMutationVariables
+>
+
+/**
+ * __useCancelMemberSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useCancelMemberSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelMemberSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelMemberSubscriptionMutation, { data, loading, error }] = useCancelMemberSubscriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCancelMemberSubscriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CancelMemberSubscriptionMutation,
+    CancelMemberSubscriptionMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    CancelMemberSubscriptionMutation,
+    CancelMemberSubscriptionMutationVariables
+  >(CancelMemberSubscriptionDocument, baseOptions)
+}
+export type CancelMemberSubscriptionMutationHookResult = ReturnType<
+  typeof useCancelMemberSubscriptionMutation
+>
+export type CancelMemberSubscriptionMutationResult = Apollo.MutationResult<
+  CancelMemberSubscriptionMutation
+>
+export type CancelMemberSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  CancelMemberSubscriptionMutation,
+  CancelMemberSubscriptionMutationVariables
+>
 export const CancelOrderDocument = gql`
   mutation CancelOrder($input: CancelOrderInput!) {
     cancelOrder(input: $input) {

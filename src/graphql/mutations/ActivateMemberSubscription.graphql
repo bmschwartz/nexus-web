@@ -1,0 +1,6 @@
+mutation ActivateMemberSubscription($input: ActivateMemberSubscriptionInput!) {
+  activateMemberSubscription(input: $input) {
+    success
+    error
+  }
+}

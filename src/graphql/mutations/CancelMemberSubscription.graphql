@@ -1,0 +1,6 @@
+mutation CancelMemberSubscription($input: CancelMemberSubscriptionInput!) {
+  cancelMemberSubscription(input: $input) {
+    success
+    error
+  }
+}
