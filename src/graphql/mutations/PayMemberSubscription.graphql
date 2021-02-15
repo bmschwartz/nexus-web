@@ -1,0 +1,6 @@
+mutation PayMemberSubscription($input: PayMemberSubscriptionInput!) {
+  payMemberSubscription(input: $input) {
+    success
+    error
+  }
+}

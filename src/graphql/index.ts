@@ -212,6 +212,16 @@ export type MyMembershipsInput = {
   statuses?: Maybe<Array<MembershipStatus>>
 }
 
+export type PayMemberSubscriptionInput = {
+  subscriptionId: Scalars['ID']
+}
+
+export type PayMemberSubscriptionResult = {
+  __typename?: 'PayMemberSubscriptionResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
 export type RenameGroupInput = {
   groupId: Scalars['ID']
   name: Scalars['String']
@@ -829,8 +839,9 @@ export type Mutation = {
   updateMembershipActive?: Maybe<GroupMembership>
   deleteMembership?: Maybe<DeleteMembershipResult>
   createGroupSubscription?: Maybe<CreateGroupSubscriptionResult>
-  activateMemberSubscription?: Maybe<ActivateMemberSubscriptionResult>
+  payMemberSubscription?: Maybe<PayMemberSubscriptionResult>
   cancelMemberSubscription?: Maybe<CancelMemberSubscriptionResult>
+  activateMemberSubscription?: Maybe<ActivateMemberSubscriptionResult>
   createOrderSet?: Maybe<CreateOrderSetResult>
   updateOrderSet?: Maybe<UpdateOrderSetResult>
   cancelOrderSet?: Maybe<CancelOrderSetResult>
@@ -890,12 +901,16 @@ export type MutationCreateGroupSubscriptionArgs = {
   input: CreateGroupSubscriptionInput
 }
 
-export type MutationActivateMemberSubscriptionArgs = {
-  input: ActivateMemberSubscriptionInput
+export type MutationPayMemberSubscriptionArgs = {
+  input: PayMemberSubscriptionInput
 }
 
 export type MutationCancelMemberSubscriptionArgs = {
   input: CancelMemberSubscriptionInput
+}
+
+export type MutationActivateMemberSubscriptionArgs = {
+  input: ActivateMemberSubscriptionInput
 }
 
 export type MutationCreateOrderSetArgs = {
@@ -1212,6 +1227,19 @@ export type DeleteMembershipMutationVariables = Exact<{
 export type DeleteMembershipMutation = { __typename?: 'Mutation' } & {
   deleteMembership?: Maybe<
     { __typename?: 'DeleteMembershipResult' } & Pick<DeleteMembershipResult, 'success' | 'error'>
+  >
+}
+
+export type PayMemberSubscriptionMutationVariables = Exact<{
+  input: PayMemberSubscriptionInput
+}>
+
+export type PayMemberSubscriptionMutation = { __typename?: 'Mutation' } & {
+  payMemberSubscription?: Maybe<
+    { __typename?: 'PayMemberSubscriptionResult' } & Pick<
+      PayMemberSubscriptionResult,
+      'success' | 'error'
+    >
   >
 }
 
@@ -2257,6 +2285,57 @@ export type DeleteMembershipMutationResult = Apollo.MutationResult<DeleteMembers
 export type DeleteMembershipMutationOptions = Apollo.BaseMutationOptions<
   DeleteMembershipMutation,
   DeleteMembershipMutationVariables
+>
+export const PayMemberSubscriptionDocument = gql`
+  mutation PayMemberSubscription($input: PayMemberSubscriptionInput!) {
+    payMemberSubscription(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type PayMemberSubscriptionMutationFn = Apollo.MutationFunction<
+  PayMemberSubscriptionMutation,
+  PayMemberSubscriptionMutationVariables
+>
+
+/**
+ * __usePayMemberSubscriptionMutation__
+ *
+ * To run a mutation, you first call `usePayMemberSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePayMemberSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [payMemberSubscriptionMutation, { data, loading, error }] = usePayMemberSubscriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function usePayMemberSubscriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    PayMemberSubscriptionMutation,
+    PayMemberSubscriptionMutationVariables
+  >,
+) {
+  return Apollo.useMutation<PayMemberSubscriptionMutation, PayMemberSubscriptionMutationVariables>(
+    PayMemberSubscriptionDocument,
+    baseOptions,
+  )
+}
+export type PayMemberSubscriptionMutationHookResult = ReturnType<
+  typeof usePayMemberSubscriptionMutation
+>
+export type PayMemberSubscriptionMutationResult = Apollo.MutationResult<
+  PayMemberSubscriptionMutation
+>
+export type PayMemberSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  PayMemberSubscriptionMutation,
+  PayMemberSubscriptionMutationVariables
 >
 export const ToggleExchangeAccountActiveDocument = gql`
   mutation ToggleExchangeAccountActive($input: ToggleExchangeAccountActiveInput!) {
