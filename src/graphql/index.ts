@@ -53,8 +53,8 @@ export type CreateGroupSubscriptionResult = {
 }
 
 export type CreateMemberSubscriptionInput = {
+  groupId: Scalars['ID']
   membershipId: Scalars['ID']
-  groupSubscriptionId: Scalars['ID']
 }
 
 export type CreateMemberSubscriptionResult = {
@@ -188,8 +188,8 @@ export type MemberSubscription = {
   outstandingBalance: Scalars['Float']
   price: Scalars['Float']
   recurring: Scalars['Boolean']
-  startDate: Scalars['DateTime']
-  endDate: Scalars['DateTime']
+  startDate?: Maybe<Scalars['DateTime']>
+  endDate?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }

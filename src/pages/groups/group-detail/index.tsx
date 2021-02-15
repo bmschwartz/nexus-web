@@ -50,6 +50,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     memberId: membership.member.id,
     username: membership.member.username,
     active: membership.active,
+    subscription: membership.subscription,
     role: convertToLocalMembershipRole(membership.role)!,
     exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),
     status: convertToLocalMembershipStatus(membership.status)!,

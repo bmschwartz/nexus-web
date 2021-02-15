@@ -20,7 +20,7 @@ export const NoActiveSubscription: FC<NoActiveSubscriptionProps> = ({ onClickAdd
       title="You do not have an active subscription"
       extra={
         <Button type="primary" key="subscription" onClick={onClickAddSubscription}>
-          Go to Subscriptions
+          Go to Subscription
         </Button>
       }
     />

@@ -29,7 +29,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
             {subscription.startDate}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">End Date</strong>
+            <strong className="mr-3">Next Payment Due</strong>
             {subscription.endDate}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
@@ -42,7 +42,11 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
             </Button>
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <Button danger onClick={() => console.log('clicked cancel subscription!')}>
+            <Button
+              danger
+              disabled={!subscription.active}
+              onClick={() => console.log('clicked cancel subscription!')}
+            >
               Cancel Subscription
             </Button>
           </div>

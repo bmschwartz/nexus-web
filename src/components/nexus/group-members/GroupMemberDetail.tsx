@@ -3,9 +3,9 @@ import { Button, Divider, Modal, PageHeader, Spin, notification } from 'antd'
 import * as apollo from 'services/apollo'
 
 /* eslint-disable */
-import { useGetGroupMemberQuery } from '../../../graphql'
+import { useGetGroupMemberQuery, MembershipRole as RemoteMembershipRole } from '../../../graphql'
 import { displayTimeBeforeNow } from '../dateUtil'
-import { MembershipRole } from 'types/membership'
+import { convertToLocalMembershipRole, MembershipRole } from 'types/membership'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 /* eslint-enable */
 
@@ -15,8 +15,12 @@ interface GroupMemberDetailProps {
   onRemovedMember: () => void
 }
 
-const canRemoveMember = (memberRole: MembershipRole) => {
-  return [MembershipRole.Member, MembershipRole.Trader].includes(memberRole)
+const canRemoveMember = (memberRole: RemoteMembershipRole) => {
+  const localRole = convertToLocalMembershipRole(memberRole)
+  if (!localRole) {
+    return false
+  }
+  return [MembershipRole.Member, MembershipRole.Trader].includes(localRole)
 }
 
 export const GroupMemberDetail: FC<GroupMemberDetailProps> = ({
@@ -84,7 +88,7 @@ export const GroupMemberDetail: FC<GroupMemberDetailProps> = ({
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Role</strong>
-            {membership && membership.role}
+            {membership && convertToLocalMembershipRole(membership.role)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Status</strong>
