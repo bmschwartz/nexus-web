@@ -24,12 +24,6 @@ const Register = ({ dispatch, user }) => {
         <div className="text-dark font-size-24 mb-4">
           <strong>Create your account</strong>
         </div>
-        <div className="mb-4">
-          <p>
-            And start spending more time on your projects and less time managing your
-            infrastructure.
-          </p>
-        </div>
         <Form
           layout="vertical"
           hideRequiredMark
@@ -65,16 +59,6 @@ const Register = ({ dispatch, user }) => {
             <strong>Sign up</strong>
           </Button>
         </Form>
-        <div>
-          <span className="mr-1">By signing up, you agree to the</span>
-          <a href="#" onClick={e => e.preventDefault()} className="kit__utils__link">
-            Terms of Service
-          </a>{' '}
-          and{' '}
-          <a href="#" onClick={e => e.preventDefault()} className="kit__utils__link">
-            Privacy Policy
-          </a>
-        </div>
       </div>
       <div className="text-center pt-2 mb-auto">
         <span className="mr-2">Already have an account?</span>

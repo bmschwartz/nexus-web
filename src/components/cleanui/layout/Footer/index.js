@@ -15,12 +15,7 @@ const Footer = () => {
           <span />
         </a>
         <br />
-        <p className="mb-0">
-          Copyright © 2017-2020 Mdtk Soft |{' '}
-          <a href="https://www.mediatec.org/privacy" target="_blank" rel="noopener noreferrer">
-            Privacy Policy
-          </a>
-        </p>
+        <p className="mb-0">Copyright © 2021 Trade Nexus</p>
       </div>
     </div>
   )

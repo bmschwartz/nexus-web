@@ -28,14 +28,6 @@ const Login = ({ dispatch, user, logo }) => {
         <h1 className="mb-5 px-3">
           <strong>Welcome to {logo}</strong>
         </h1>
-        <p>
-          Pluggable enterprise-level application framework.
-          <br />
-          An excellent front-end solution for web applications built upon Ant Design.
-          <br />
-          Credentials for testing purposes - <strong>ben@example.com</strong> /{' '}
-          <strong>demo123</strong>
-        </p>
       </div>
       <div className={`card ${style.container}`}>
         <div className="text-dark font-size-24 mb-3">
@@ -47,7 +39,6 @@ const Login = ({ dispatch, user, logo }) => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           className="mb-4"
-          initialValues={{ email: 'ben@example.com', password: 'P@ssword123' }}
         >
           <Form.Item
             name="email"

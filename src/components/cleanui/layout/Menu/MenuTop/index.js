@@ -19,7 +19,6 @@ const MenuTop = ({
   location: { pathname },
 
   menuColor,
-  logo,
   role,
 }) => {
   const [selectedKeys, setSelectedKeys] = useState(store.get('app.menu.selectedKeys') || [])
@@ -130,11 +129,11 @@ const MenuTop = ({
       })}
     >
       <div className={style.logoContainer}>
-        <div className={style.logo}>
+        {/* <div className={style.logo}>
           <img src="resources/images/logo.svg" className="mr-2" alt="Clean UI" />
           <div className={style.name}>{logo}</div>
           {logo === 'Clean UI Pro' && <div className={style.descr}>React</div>}
-        </div>
+        </div> */}
       </div>
       <div className={style.navigation}>
         <Menu onClick={handleClick} selectedKeys={selectedKeys} mode="horizontal">

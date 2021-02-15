@@ -18,7 +18,7 @@ export function* LOGIN({ payload }) {
     yield put({
       type: 'user/LOAD_CURRENT_ACCOUNT',
     })
-    yield history.push('/')
+    yield history.push('/groups')
     notification.success({
       message: 'Logged In',
       description: 'You have successfully logged in!',
@@ -52,7 +52,7 @@ export function* REGISTER({ payload }) {
     yield put({
       type: 'user/LOAD_CURRENT_ACCOUNT',
     })
-    yield history.push('/')
+    yield history.push('/groups')
     notification.success({
       message: 'Succesful Registration',
       description: 'You have successfully registered!',

@@ -5,7 +5,7 @@ import style from './style.module.scss'
 const TopBar = () => {
   return (
     <div className={style.topbar}>
-      <div className="">
+      <div className="mr-1">
         <UserMenu />
       </div>
     </div>

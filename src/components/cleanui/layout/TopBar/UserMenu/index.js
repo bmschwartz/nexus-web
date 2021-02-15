@@ -1,15 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import { UserOutlined } from '@ant-design/icons'
-import { Menu, Dropdown, Avatar, Badge } from 'antd'
+import { Menu, Dropdown, Avatar } from 'antd'
 import styles from './style.module.scss'
 
 const mapStateToProps = ({ user }) => ({ user })
 
-const ProfileMenu = ({ dispatch, user }) => {
-  const [count, setCount] = useState(7)
-
+const ProfileMenu = ({ dispatch }) => {
   const logout = e => {
     e.preventDefault()
     dispatch({
@@ -17,51 +15,8 @@ const ProfileMenu = ({ dispatch, user }) => {
     })
   }
 
-  const addCount = () => {
-    setCount(count + 1)
-  }
-
   const menu = (
     <Menu selectable={false}>
-      <Menu.Item>
-        <strong>
-          <FormattedMessage id="topBar.profileMenu.hello" />, {user.name || 'Anonymous'}
-        </strong>
-        <div>
-          <strong className="mr-1">
-            <FormattedMessage id="topBar.profileMenu.billingPlan" />:{' '}
-          </strong>
-          Professional
-        </div>
-        <div>
-          <strong>
-            <FormattedMessage id="topBar.profileMenu.role" />:{' '}
-          </strong>
-          {user.role || '—'}
-        </div>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item>
-        <div>
-          <strong>
-            <FormattedMessage id="topBar.profileMenu.email" />:{' '}
-          </strong>
-          {user.email || '—'}
-          <br />
-          <strong>
-            <FormattedMessage id="topBar.profileMenu.phone" />:{' '}
-          </strong>
-          {user.phone || '—'}
-        </div>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item>
-        <a href="#" onClick={e => e.preventDefault()}>
-          <i className="fe fe-user mr-2" />
-          <FormattedMessage id="topBar.profileMenu.editProfile" />
-        </a>
-      </Menu.Item>
-      <Menu.Divider />
       <Menu.Item>
         <a href="#" onClick={logout}>
           <i className="fe fe-log-out mr-2" />
@@ -71,11 +26,9 @@ const ProfileMenu = ({ dispatch, user }) => {
     </Menu>
   )
   return (
-    <Dropdown overlay={menu} trigger={['click']} onVisibleChange={addCount}>
+    <Dropdown overlay={menu} trigger={['click']}>
       <div className={styles.dropdown}>
-        <Badge count={count}>
-          <Avatar className={styles.avatar} shape="square" size="large" icon={<UserOutlined />} />
-        </Badge>
+        <Avatar className={styles.avatar} shape="square" size="large" icon={<UserOutlined />} />
       </div>
     </Dropdown>
   )
