@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { ExchangeAccount } from './exchange'
 import {
+  PaymentStatus as RemotePaymentStatus,
   MembershipRole as RemoteMembershipRole,
   MembershipStatus as RemoteMembershipStatus,
 } from '../graphql'
@@ -14,7 +15,7 @@ export interface Membership {
   exchangeAccounts: ExchangeAccount[]
   role: MembershipRole
   status: MembershipStatus
-  subscription?: MemberSubscription
+  subscription: MemberSubscription
 }
 
 export enum MembershipStatus {
@@ -37,6 +38,12 @@ export interface MemberSubscription {
   startDate: string
   endDate: string
   outstandingBalance: number
+  paymentStatus?: PaymentStatus
+}
+
+export enum PaymentStatus {
+  Pending = 'Pending',
+  Approved = 'Approved',
 }
 
 export function convertToLocalMembershipRole(role: RemoteMembershipRole): MembershipRole | null {
@@ -91,6 +98,32 @@ export function convertToRemoteMembershipStatus(
       return RemoteMembershipStatus.Pending
     case MembershipStatus.Denied:
       return RemoteMembershipStatus.Denied
+    default:
+      return null
+  }
+}
+
+export function convertToLocalPaymentStatus(
+  paymentStatus: RemotePaymentStatus,
+): PaymentStatus | null {
+  switch (paymentStatus) {
+    case RemotePaymentStatus.Approved:
+      return PaymentStatus.Approved
+    case RemotePaymentStatus.Pending:
+      return PaymentStatus.Pending
+    default:
+      return null
+  }
+}
+
+export function convertToRemotePaymentStatus(
+  paymentStatus: PaymentStatus,
+): RemotePaymentStatus | null {
+  switch (paymentStatus) {
+    case PaymentStatus.Approved:
+      return RemotePaymentStatus.Approved
+    case PaymentStatus.Pending:
+      return RemotePaymentStatus.Pending
     default:
       return null
   }

@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
-import { Membership } from 'types/membership'
-import { Button } from 'antd'
+import { Button, Modal } from 'antd'
+import { Membership, PaymentStatus } from 'types/membership'
 
 /* eslint-disable */
 import * as apollo from '../../../services/apollo'
+
 /* eslint-enable */
 
 interface SubscriptionInfoProps {
@@ -18,6 +19,13 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
   }
 
   const onClickMakePayment = async (subscriptionId: string) => {
+    console.log(subscriptionId)
+    Modal.success({
+      title: `Make a Payment`,
+      content: `An invoice will be sent to your email with payment instructions`,
+      okText: 'OK',
+      okType: 'primary',
+    })
     await apollo.payMemberSubscription({ subscriptionId })
   }
 
@@ -27,7 +35,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
 
   return (
     <>
-      {subscription && subscription.id ? (
+      {subscription.outstandingBalance === 0 ? (
         <>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Active</strong>
@@ -52,13 +60,6 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
             <strong className="mr-3">End Date</strong>
             {subscription.endDate}
           </div>
-          {subscription.outstandingBalance > 0 && (
-            <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-              <Button type="primary" onClick={() => onClickMakePayment(subscription.id)}>
-                Make a Payment
-              </Button>
-            </div>
-          )}
           {subscription.active && subscription.recurring && (
             <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
               <Button
@@ -88,11 +89,26 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
           )}
         </>
       ) : (
-        <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-          <Button type="primary" onClick={() => console.log('clicked create subscription!')}>
-            Create Subscription
-          </Button>
-        </div>
+        <>
+          {subscription.paymentStatus === PaymentStatus.Pending ? (
+            <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
+              <strong className="mr-3 font-italic">
+                -- Awaiting Payment. Check email for invoice --
+              </strong>
+              <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
+                <Button type="primary" onClick={() => onClickMakePayment(subscription.id)}>
+                  Resend Payment Invoice
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
+              <Button type="primary" onClick={() => onClickMakePayment(subscription.id)}>
+                Make a Payment
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </>
   )

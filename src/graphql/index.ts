@@ -193,9 +193,10 @@ export type MemberSubscription = {
   id: Scalars['ID']
   active: Scalars['Boolean']
   membership: GroupMembership
-  groupSubscription: GroupSubscription
-  outstandingBalance: Scalars['Float']
   price: Scalars['Float']
+  outstandingBalance: Scalars['Float']
+  groupSubscription: GroupSubscription
+  paymentStatus?: Maybe<PaymentStatus>
   recurring: Scalars['Boolean']
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
@@ -220,6 +221,11 @@ export type PayMemberSubscriptionResult = {
   __typename?: 'PayMemberSubscriptionResult'
   success: Scalars['Boolean']
   error?: Maybe<Scalars['String']>
+}
+
+export enum PaymentStatus {
+  Pending = 'PENDING',
+  Approved = 'APPROVED',
 }
 
 export type RenameGroupInput = {
@@ -1051,6 +1057,7 @@ export type MemberSubscriptionDetailsFragment = { __typename?: 'MemberSubscripti
   | 'endDate'
   | 'createdAt'
   | 'updatedAt'
+  | 'paymentStatus'
   | 'outstandingBalance'
 >
 
@@ -1715,6 +1722,7 @@ export const MemberSubscriptionDetailsFragmentDoc = gql`
     endDate
     createdAt
     updatedAt
+    paymentStatus
     outstandingBalance
   }
 `
