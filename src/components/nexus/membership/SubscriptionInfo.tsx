@@ -19,12 +19,14 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
   }
 
   const onClickMakePayment = async (subscriptionId: string) => {
-    console.log(subscriptionId)
     Modal.success({
       title: `Make a Payment`,
       content: `An invoice will be sent to your email with payment instructions`,
       okText: 'OK',
       okType: 'primary',
+      onOk: () => {
+        window.location.reload()
+      },
     })
     await apollo.payMemberSubscription({ subscriptionId })
   }
@@ -91,16 +93,18 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
       ) : (
         <>
           {subscription.paymentStatus === PaymentStatus.Pending ? (
-            <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-              <strong className="mr-3 font-italic">
-                -- Awaiting Payment. Check email for invoice --
-              </strong>
+            <>
+              <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
+                <strong className="mr-3 font-italic">
+                  -- Awaiting Payment. Check email for invoice --
+                </strong>
+              </div>
               <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
                 <Button type="primary" onClick={() => onClickMakePayment(subscription.id)}>
                   Resend Payment Invoice
                 </Button>
               </div>
-            </div>
+            </>
           ) : (
             <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
               <Button type="primary" onClick={() => onClickMakePayment(subscription.id)}>

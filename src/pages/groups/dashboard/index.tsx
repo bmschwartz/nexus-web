@@ -3,7 +3,7 @@ import GroupTable from 'components/nexus/groups/group-table/GroupTable'
 import { Helmet } from 'react-helmet'
 
 import { Group } from 'types/group'
-import { Membership } from 'types/membership'
+import { convertToLocalPaymentStatus, Membership } from 'types/membership'
 // eslint-disable-next-line
 import { useGetAllGroupsQuery, useMyMembershipsQuery } from '../../../graphql/index'
 
@@ -27,7 +27,10 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
       role: membership.role,
       status: membership.status,
       orders: membership.orders,
-      subscription: membership.subscription,
+      subscription: {
+        ...membership.subscription,
+        paymentStatus: convertToLocalPaymentStatus(membership.subscription.paymentStatus),
+      },
       exchangeAccounts: membership.exchangeAccounts,
     }))
   }

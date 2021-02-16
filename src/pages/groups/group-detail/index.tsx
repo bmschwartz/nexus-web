@@ -10,6 +10,7 @@ import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetai
 import {
   convertToLocalMembershipRole,
   convertToLocalMembershipStatus,
+  convertToLocalPaymentStatus,
   Membership,
 } from 'types/membership'
 import { ExchangeAccount } from 'types/exchange'
@@ -50,7 +51,10 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     memberId: membership.member.id,
     username: membership.member.username,
     active: membership.active,
-    subscription: membership.subscription,
+    subscription: {
+      ...membership.subscription,
+      paymentStatus: convertToLocalPaymentStatus(membership.subscription.paymentStatus),
+    },
     role: convertToLocalMembershipRole(membership.role)!,
     exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),
     status: convertToLocalMembershipStatus(membership.status)!,

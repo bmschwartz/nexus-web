@@ -104,7 +104,7 @@ export function convertToRemoteMembershipStatus(
 }
 
 export function convertToLocalPaymentStatus(
-  paymentStatus: RemotePaymentStatus,
+  paymentStatus?: RemotePaymentStatus,
 ): PaymentStatus | null {
   switch (paymentStatus) {
     case RemotePaymentStatus.Approved:
@@ -117,7 +117,7 @@ export function convertToLocalPaymentStatus(
 }
 
 export function convertToRemotePaymentStatus(
-  paymentStatus: PaymentStatus,
+  paymentStatus?: PaymentStatus,
 ): RemotePaymentStatus | null {
   switch (paymentStatus) {
     case PaymentStatus.Approved:
