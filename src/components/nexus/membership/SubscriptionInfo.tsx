@@ -36,6 +36,8 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
     await apollo.cancelMemberSubscription({ subscriptionId })
   }
 
+  const currentBillStatus = getCurrentBillStatus(subscription.bills)
+
   return (
     <>
       {subscription.active ? (
@@ -86,7 +88,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
         </>
       ) : (
         <>
-          {getCurrentBillStatus(subscription.bills) !== BillStatus.Complete ? (
+          {currentBillStatus !== BillStatus.Complete && currentBillStatus !== null ? (
             <>
               <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
                 <strong className="mr-3 font-italic">
