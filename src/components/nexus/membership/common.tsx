@@ -2,7 +2,8 @@ import { Button, Result } from 'antd'
 import React, { FC } from 'react'
 
 /* eslint-disable */
-import { Membership } from '../../../types/membership'
+import { BillStatus, Membership, SubscriptionBill } from '../../../types/membership'
+
 /* eslint-enable */
 
 export function hasActiveSubscription(membership: Membership) {
@@ -25,4 +26,16 @@ export const NoActiveSubscription: FC<NoActiveSubscriptionProps> = ({ onClickAdd
       }
     />
   )
+}
+
+export const getCurrentBillStatus = (bills: SubscriptionBill[]): BillStatus | null => {
+  if (bills.length === 0) {
+    return null
+  }
+
+  const orderedBills = bills.sort((a, b) =>
+    new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1,
+  )
+
+  return orderedBills[0].billStatus
 }

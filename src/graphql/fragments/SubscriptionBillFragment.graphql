@@ -1,0 +1,14 @@
+fragment SubscriptionBillDetails on SubscriptionBill {
+  id
+  email
+  amountPaid
+  amountCharged
+  billStatus
+  remoteBillId
+  billToken
+  periodStart
+  periodEnd
+  expiresAt
+  createdAt
+  updatedAt
+}

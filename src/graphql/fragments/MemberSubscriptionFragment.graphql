@@ -1,12 +1,13 @@
 fragment MemberSubscriptionDetails on MemberSubscription {
   id
-  price
   active
   recurring
   startDate
   endDate
   createdAt
   updatedAt
-  paymentStatus
-  outstandingBalance
+
+  bills {
+    ...SubscriptionBillDetails
+  }
 }

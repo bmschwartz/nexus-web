@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
 import { Button, Modal } from 'antd'
-import { Membership, PaymentStatus } from 'types/membership'
+import { BillStatus, Membership } from 'types/membership'
 
 /* eslint-disable */
 import * as apollo from '../../../services/apollo'
+import { getCurrentBillStatus } from './common'
 
 /* eslint-enable */
 
@@ -21,7 +22,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
   const onClickMakePayment = async (subscriptionId: string) => {
     Modal.success({
       title: `Make a Payment`,
-      content: `An invoice will be sent to your email with payment instructions`,
+      content: `A bill will be sent to your email with payment instructions`,
       okText: 'OK',
       okType: 'primary',
       onOk: () => {
@@ -37,7 +38,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
 
   return (
     <>
-      {subscription.outstandingBalance === 0 ? (
+      {subscription.active ? (
         <>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Active</strong>
@@ -46,13 +47,6 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Auto Renew</strong>
             {subscription.recurring ? 'Yes' : 'No'}
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Price</strong>${subscription.price} USD
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Paid</strong>
-            {subscription.outstandingBalance === 0 ? 'Yes' : 'No'}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong className="mr-3">Start Date</strong>
@@ -84,7 +78,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
                   disabled={!subscription.active && !subscription.recurring}
                   onClick={() => onClickActivateSubscription(subscription.id)}
                 >
-                  Activate Subscription
+                  Reactivate Subscription
                 </Button>
               </div>
             </>
@@ -92,16 +86,16 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
         </>
       ) : (
         <>
-          {subscription.paymentStatus === PaymentStatus.Pending ? (
+          {getCurrentBillStatus(subscription.bills) !== BillStatus.Complete ? (
             <>
               <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
                 <strong className="mr-3 font-italic">
-                  -- Awaiting Payment. Check email for invoice --
+                  -- Awaiting Payment. Check email for bill --
                 </strong>
               </div>
               <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
                 <Button type="primary" onClick={() => onClickMakePayment(subscription.id)}>
-                  Resend Payment Invoice
+                  Resend Bill
                 </Button>
               </div>
             </>

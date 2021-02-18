@@ -3,9 +3,12 @@ import GroupTable from 'components/nexus/groups/group-table/GroupTable'
 import { Helmet } from 'react-helmet'
 
 import { Group } from 'types/group'
-import { convertToLocalPaymentStatus, Membership } from 'types/membership'
-// eslint-disable-next-line
+import { Membership } from 'types/membership'
+
+/* eslint-disable */
 import { useGetAllGroupsQuery, useMyMembershipsQuery } from '../../../graphql/index'
+import { transformBills } from '../group-detail'
+/* eslint-enable */
 
 interface GroupsDashboardProps {
   children?: ReactNode
@@ -18,21 +21,25 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
   })
 
   const transformMemberships = (memberships: any[]): Membership[] => {
-    return memberships.map(membership => ({
-      id: membership.id,
-      groupId: membership.group.id,
-      active: membership.active,
-      memberId: membership.member.id,
-      username: membership.member.username,
-      role: membership.role,
-      status: membership.status,
-      orders: membership.orders,
-      subscription: {
-        ...membership.subscription,
-        paymentStatus: convertToLocalPaymentStatus(membership.subscription.paymentStatus),
-      },
-      exchangeAccounts: membership.exchangeAccounts,
-    }))
+    return memberships.map(membership => {
+      const { subscription } = membership
+      if (subscription) {
+        subscription.bills = transformBills(subscription.bills)
+      }
+
+      return {
+        id: membership.id,
+        groupId: membership.group.id,
+        active: membership.active,
+        memberId: membership.member.id,
+        username: membership.member.username,
+        role: membership.role,
+        status: membership.status,
+        orders: membership.orders,
+        subscription,
+        exchangeAccounts: membership.exchangeAccounts,
+      }
+    })
   }
   const transformGroups = (groups: any[]): Group[] => {
     return groups.map(group => ({

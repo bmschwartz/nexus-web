@@ -4,14 +4,19 @@ import { Helmet } from 'react-helmet'
 import { Spin } from 'antd'
 import { Group } from 'types/group'
 /* eslint-disable */
-import { useGetGroupQuery, useGetMyMembershipQuery } from '../../../graphql/index'
+import {
+  SubscriptionBill as RemoteSubscriptionBill,
+  useGetGroupQuery,
+  useGetMyMembershipQuery,
+} from '../../../graphql/index'
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
 import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
 import {
   convertToLocalMembershipRole,
   convertToLocalMembershipStatus,
-  convertToLocalPaymentStatus,
+  SubscriptionBill,
   Membership,
+  convertToLocalBillStatus,
 } from 'types/membership'
 import { ExchangeAccount } from 'types/exchange'
 /* eslint-enable */
@@ -22,6 +27,40 @@ interface GroupDetailProps {
 
 interface RouteParams {
   groupId: string
+}
+
+export const transformBills = (bills: RemoteSubscriptionBill[]): SubscriptionBill[] => {
+  return bills.map((bill: RemoteSubscriptionBill) => {
+    const {
+      id,
+      email,
+      amountPaid,
+      amountCharged,
+      billStatus,
+      remoteBillId,
+      billToken,
+      periodStart,
+      periodEnd,
+      expiresAt,
+      createdAt,
+      updatedAt,
+    } = bill
+
+    return {
+      id,
+      email,
+      amountPaid,
+      amountCharged,
+      billStatus: convertToLocalBillStatus(billStatus),
+      createdAt,
+      updatedAt,
+      remoteBillId,
+      billToken,
+      periodStart,
+      periodEnd,
+      expiresAt,
+    }
+  })
 }
 
 const GroupDetailPage: FC<GroupDetailProps> = () => {
@@ -53,7 +92,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     active: membership.active,
     subscription: {
       ...membership.subscription,
-      paymentStatus: convertToLocalPaymentStatus(membership.subscription.paymentStatus),
+      bills: transformBills(membership.subscription.bills),
     },
     role: convertToLocalMembershipRole(membership.role)!,
     exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),

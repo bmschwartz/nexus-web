@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { ExchangeAccount } from './exchange'
 import {
-  PaymentStatus as RemotePaymentStatus,
+  BillStatus as RemoteBillStatus,
   MembershipRole as RemoteMembershipRole,
   MembershipStatus as RemoteMembershipStatus,
 } from '../graphql'
@@ -33,17 +33,35 @@ export enum MembershipRole {
 export interface MemberSubscription {
   id: string
   active: boolean
-  price: number
   recurring: boolean
   startDate: string
   endDate: string
-  outstandingBalance: number
-  paymentStatus?: PaymentStatus
+  bills: SubscriptionBill[]
 }
 
-export enum PaymentStatus {
-  Pending = 'Pending',
-  Approved = 'Approved',
+export interface SubscriptionBill {
+  id: string
+  email: string
+  amountPaid: number
+  amountCharged: number
+
+  billStatus: BillStatus | null
+  billToken?: string | null
+  remoteBillId?: string | null
+
+  periodStart?: Date | null
+  periodEnd?: Date | null
+  expiresAt?: Date | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+export enum BillStatus {
+  Draft = 'Draft',
+  New = 'New',
+  Sent = 'Sent',
+  Paid = 'Paid',
+  Complete = 'Complete',
 }
 
 export function convertToLocalMembershipRole(role: RemoteMembershipRole): MembershipRole | null {
@@ -103,27 +121,35 @@ export function convertToRemoteMembershipStatus(
   }
 }
 
-export function convertToLocalPaymentStatus(
-  paymentStatus?: RemotePaymentStatus,
-): PaymentStatus | null {
-  switch (paymentStatus) {
-    case RemotePaymentStatus.Approved:
-      return PaymentStatus.Approved
-    case RemotePaymentStatus.Pending:
-      return PaymentStatus.Pending
+export function convertToLocalBillStatus(billStatus?: RemoteBillStatus): BillStatus | null {
+  switch (billStatus) {
+    case RemoteBillStatus.Draft:
+      return BillStatus.Draft
+    case RemoteBillStatus.New:
+      return BillStatus.New
+    case RemoteBillStatus.Sent:
+      return BillStatus.Sent
+    case RemoteBillStatus.Paid:
+      return BillStatus.Paid
+    case RemoteBillStatus.Complete:
+      return BillStatus.Complete
     default:
       return null
   }
 }
 
-export function convertToRemotePaymentStatus(
-  paymentStatus?: PaymentStatus,
-): RemotePaymentStatus | null {
-  switch (paymentStatus) {
-    case PaymentStatus.Approved:
-      return RemotePaymentStatus.Approved
-    case PaymentStatus.Pending:
-      return RemotePaymentStatus.Pending
+export function convertToRemoteBillStatus(billStatus?: BillStatus): RemoteBillStatus | null {
+  switch (billStatus) {
+    case BillStatus.Draft:
+      return RemoteBillStatus.Draft
+    case BillStatus.New:
+      return RemoteBillStatus.New
+    case BillStatus.Sent:
+      return RemoteBillStatus.Sent
+    case BillStatus.Paid:
+      return RemoteBillStatus.Paid
+    case BillStatus.Complete:
+      return RemoteBillStatus.Complete
     default:
       return null
   }
