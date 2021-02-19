@@ -84,20 +84,26 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     }
   }
 
-  const transformMembershipData = (membership: any): Membership => ({
-    id: membership.id,
-    groupId: membership.group.id,
-    memberId: membership.member.id,
-    username: membership.member.username,
-    active: membership.active,
-    subscription: {
-      ...membership.subscription,
-      bills: transformBills(membership.subscription.bills),
-    },
-    role: convertToLocalMembershipRole(membership.role)!,
-    exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),
-    status: convertToLocalMembershipStatus(membership.status)!,
-  })
+  const transformMembershipData = (membership: any): Membership => {
+    const { subscription } = membership
+
+    const bills = subscription && subscription.bills ? subscription.bills : []
+
+    return {
+      id: membership.id,
+      groupId: membership.group.id,
+      memberId: membership.member.id,
+      username: membership.member.username,
+      active: membership.active,
+      subscription: {
+        ...membership.subscription,
+        bills: transformBills(bills),
+      },
+      role: convertToLocalMembershipRole(membership.role)!,
+      exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),
+      status: convertToLocalMembershipStatus(membership.status)!,
+    }
+  }
 
   const transformExchangeAccount = (exchangeAccount: any): ExchangeAccount => {
     const { id, active, createdAt, exchange, orders } = exchangeAccount
