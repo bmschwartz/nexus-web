@@ -3,7 +3,13 @@ import GroupTable from 'components/nexus/groups/group-table/GroupTable'
 import { Helmet } from 'react-helmet'
 
 import { Group } from 'types/group'
-import { Membership } from 'types/membership'
+import {
+  convertToLocalMembershipRole,
+  convertToLocalMembershipStatus,
+  Membership,
+  MembershipRole,
+  MembershipStatus,
+} from 'types/membership'
 
 /* eslint-disable */
 import { useGetAllGroupsQuery, useMyMembershipsQuery } from '../../../graphql/index'
@@ -33,8 +39,8 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
         active: membership.active,
         memberId: membership.member.id,
         username: membership.member.username,
-        role: membership.role,
-        status: membership.status,
+        role: convertToLocalMembershipRole(membership.role) as MembershipRole,
+        status: convertToLocalMembershipStatus(membership.status) as MembershipStatus,
         orders: membership.orders,
         subscription,
         exchangeAccounts: membership.exchangeAccounts,

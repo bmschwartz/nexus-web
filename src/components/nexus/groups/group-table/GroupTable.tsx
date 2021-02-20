@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { PageHeader, Table } from 'antd'
+import { Button, PageHeader, Table } from 'antd'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 // import { TablePaginationConfig } from 'antd/lib/table'
@@ -7,15 +7,14 @@ import { Link } from 'react-router-dom'
 
 import { history } from 'index'
 import { Group } from 'types/group'
-import { Membership, MembershipRole } from 'types/membership'
+import { Membership } from 'types/membership'
 
 /* eslint-disable */
 import {
   GroupTableItem,
   createGroupTableData,
   badgeForIsActiveGroup,
-  badgeForRole,
-  badgeForIsMember,
+  renderIsMember,
 } from './groupTableUtils'
 /* eslint-enable */
 
@@ -41,25 +40,18 @@ const columns = [
     dataIndex: 'name',
     key: 'name',
     sorter: (a: GroupTableItem, b: GroupTableItem) => (a.name > b.name ? -1 : 1),
-    render: (text: string) => (
-      <a className="btn btn-md btn-light" href="#">
-        {text}
-      </a>
-    ),
-  },
-  {
-    title: 'Member',
-    dataIndex: 'isMember',
-    key: 'isMember',
-    render: (isMember: boolean, record: GroupTableItem) => {
-      return badgeForIsMember(isMember, record)
-    },
+    render: (text: string) => <Button type="link">{text}</Button>,
   },
   {
     title: 'Role',
     dataIndex: 'role',
     key: 'role',
-    render: (text: MembershipRole, record: GroupTableItem) => badgeForRole(record),
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+    render: (_: boolean, record: GroupTableItem) => renderIsMember(record),
   },
 ]
 
@@ -69,6 +61,10 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
   const onRow = (row: GroupTableItem) => {
     return {
       onClick: () => {
+        if (!row.isMember) {
+          return
+        }
+
         dispatch({
           type: 'group/SET_GROUP_DETAIL_STATE',
           payload: {
