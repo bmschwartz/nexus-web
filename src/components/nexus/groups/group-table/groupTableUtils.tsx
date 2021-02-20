@@ -47,7 +47,7 @@ export const badgeForIsMember = (isMember: boolean, record: GroupTableItem) => {
     return <span />
   }
 
-  const style = record.activeMembership ? 'badge-success' : ''
+  const style = record.activeMembership ? 'primary' : ''
 
   return (
     <span className={`font-size-12 badge ${style}`}>
@@ -58,7 +58,7 @@ export const badgeForIsMember = (isMember: boolean, record: GroupTableItem) => {
 export const badgeForIsActiveGroup = (active: boolean) => {
   return (
     <span
-      className={active ? 'font-size-12 badge badge-success' : 'font-size-12 badge badge-default'}
+      className={active ? 'font-size-12 badge badge-primary' : 'font-size-12 badge badge-default'}
     >
       {active ? 'Active' : 'Inactive'}
     </span>

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 
 import { history } from 'index'
 import { Group } from 'types/group'
-import { Membership } from 'types/membership'
+import { Membership, MembershipStatus } from 'types/membership'
 
 /* eslint-disable */
 import {
@@ -61,7 +61,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
   const onRow = (row: GroupTableItem) => {
     return {
       onClick: () => {
-        if (!row.isMember) {
+        if (row.memberStatus !== MembershipStatus.Approved) {
           return
         }
 

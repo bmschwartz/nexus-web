@@ -5,7 +5,11 @@ import * as apollo from 'services/apollo'
 /* eslint-disable */
 import { useGetGroupMemberQuery, MembershipRole as RemoteMembershipRole } from '../../../graphql'
 import { displayTimeBeforeNow } from '../dateUtil'
-import { convertToLocalMembershipRole, MembershipRole } from 'types/membership'
+import {
+  convertToLocalMembershipRole,
+  convertToLocalMembershipStatus,
+  MembershipRole,
+} from 'types/membership'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 /* eslint-enable */
 
@@ -92,7 +96,7 @@ export const GroupMemberDetail: FC<GroupMemberDetailProps> = ({
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Status</strong>
-            {membership && membership.status}
+            {membership && convertToLocalMembershipStatus(membership.status)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Joined</strong>
