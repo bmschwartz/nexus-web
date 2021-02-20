@@ -77,7 +77,7 @@ export const createOrderSet = async (
     })
 
     if (!data) {
-      return { error: 'Unable to create the order set' }
+      return { error: 'Unable to create orders' }
     }
 
     return { orderSetId: data.createOrderSet.orderSet.id }

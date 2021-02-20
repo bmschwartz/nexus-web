@@ -1,0 +1,6 @@
+mutation UpdateMembershipStatus($input: UpdateMembershipStatusInput!) {
+  updateMembershipStatus(input: $input) {
+    id
+    status
+  }
+}

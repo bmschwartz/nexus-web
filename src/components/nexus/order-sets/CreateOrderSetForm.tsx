@@ -107,7 +107,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
     <>
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
-          <PageHeader className="site-page-header" title="Create Order Set" onBack={onClickBack} />
+          <PageHeader className="site-page-header" title="Create Orders" onBack={onClickBack} />
         </div>
       </div>
       <Formik
@@ -141,13 +141,13 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
 
           if (orderSetId) {
             notification.success({
-              message: 'Created Order Set',
+              message: 'Created Orders',
               description: `${values.symbol} on ${values.exchange}`,
             })
             onCreated()
           } else {
             notification.error({
-              message: 'Create Order Set Error',
+              message: 'Create Orders Error',
               description: error,
               duration: 3, // seconds
             })

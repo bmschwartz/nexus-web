@@ -9,6 +9,7 @@ import {
   MembershipRole,
   MembershipStatus,
   UpdateMembershipRoleDocument,
+  UpdateMembershipStatusDocument,
 } from '../../graphql/index'
 /* eslint-enable */
 
@@ -35,13 +36,24 @@ export interface CreateGroupInput {
   payoutAddress?: string
 }
 
-export interface UpdateMembershipInput {
+export interface UpdateMembershipRoleInput {
   membershipId: string
   role: MembershipRole
   groupId: string
 }
 
-export interface UpdateMembershipResponse {
+export interface UpdateMembershipRoleResponse {
+  success: boolean
+  error?: string
+}
+
+export interface UpdateMembershipStatusInput {
+  membershipId: string
+  status: MembershipStatus
+  groupId: string
+}
+
+export interface UpdateMembershipStatusResponse {
   success: boolean
   error?: string
 }
@@ -109,7 +121,7 @@ export const updateMembershipRole = async ({
   membershipId,
   role,
   groupId,
-}: UpdateMembershipInput): Promise<UpdateMembershipResponse> => {
+}: UpdateMembershipRoleInput): Promise<UpdateMembershipRoleResponse> => {
   try {
     const { data } = await client.mutate({
       mutation: UpdateMembershipRoleDocument,
@@ -124,6 +136,33 @@ export const updateMembershipRole = async ({
 
     if (!data) {
       return { success: false, error: 'Unable to change Role' }
+    }
+
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const updateMembershipStatus = async ({
+  membershipId,
+  groupId,
+  status,
+}: UpdateMembershipStatusInput): Promise<UpdateMembershipStatusResponse> => {
+  try {
+    const { data } = await client.mutate({
+      mutation: UpdateMembershipStatusDocument,
+      variables: {
+        input: {
+          membershipId,
+          status,
+          groupId,
+        },
+      },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Unable to change member status' }
     }
 
     return { success: true }

@@ -132,7 +132,7 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
             onClosePositions(orderSetId)
           } else {
             notification.error({
-              message: 'Create Order Set Error',
+              message: 'Create Orders Error',
               description: error,
               duration: 3, // seconds
             })

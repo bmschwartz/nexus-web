@@ -102,11 +102,11 @@ export const OrderSetTable: FC<OrderSetTableProps> = ({
     <>
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
-          <PageHeader className="site-page-header" title="Order Sets" backIcon={false} />
+          <PageHeader className="site-page-header" title="Orders" backIcon={false} />
         </div>
         <div className="d-flex flex-column justify-content-center">
           <Button className="btn btn-primary" onClick={onClickCreate}>
-            Create Order Set
+            Create Orders
           </Button>
         </div>
       </div>

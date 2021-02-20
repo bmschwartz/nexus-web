@@ -224,14 +224,14 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
     <>
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
-          <PageHeader className="site-page-header" title="Order Set Detail" onBack={onClickBack} />
+          <PageHeader className="site-page-header" title="Orders Detail" onBack={onClickBack} />
         </div>
       </div>
       <Spin
         spinning={
           orderSetDetailLoading || stopOrderSetDetailLoading || trailingStopOrderSetDetailLoading
         }
-        tip="Fetching Order Set..."
+        tip="Fetching Orders..."
       >
         <div className="card-body">
           <Divider orientation="left">General</Divider>
