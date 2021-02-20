@@ -80,7 +80,6 @@ export function convertToLocalMembershipRole(role: RemoteMembershipRole): Member
 export function convertToLocalMembershipStatus(
   status: RemoteMembershipStatus,
 ): MembershipStatus | null {
-  console.log(status)
   switch (status) {
     case RemoteMembershipStatus.Approved:
       return MembershipStatus.Approved
