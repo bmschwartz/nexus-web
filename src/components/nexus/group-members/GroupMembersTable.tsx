@@ -47,10 +47,15 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
   onClickGroupMember,
 }) => {
   const [adminsOffset, setAdminsOffset] = useState<number>(0)
+  const [tradersOffset, setTradersOffset] = useState<number>(0)
   const [membersOffset, setMembersOffset] = useState<number>(0)
 
   const onChangeAdminsPage = (page: number, pageSize?: number) => {
     setAdminsOffset(pageSize ? pageSize * (page - 1) : 0)
+  }
+
+  const onChangeTradersPage = (page: number, pageSize?: number) => {
+    setTradersOffset(pageSize ? pageSize * (page - 1) : 0)
   }
 
   const onChangeMembersPage = (page: number, pageSize?: number) => {
@@ -61,6 +66,19 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
     variables: {
       groupInput: { groupId },
       membersInput: { limit: PAGE_SIZE, offset: adminsOffset, roles: [RemoteMembershipRole.Admin] },
+    },
+    fetchPolicy: 'cache-and-network',
+    notifyOnNetworkStatusChange: true,
+  })
+
+  const { data: groupTradersData, loading: fetchingGroupTraders } = useGetGroupMembersQuery({
+    variables: {
+      groupInput: { groupId },
+      membersInput: {
+        limit: PAGE_SIZE,
+        offset: tradersOffset,
+        roles: [RemoteMembershipRole.Trader],
+      },
     },
     fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
@@ -80,9 +98,13 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
   })
 
   const adminsCount = groupAdminsData?.group?.members?.totalCount
+  const tradersCount = groupTradersData?.group?.members?.totalCount
   const membersCount = groupMembersData?.group?.members?.totalCount
 
   const groupAdminsTableData: GroupMembersTableRow[] = createGroupMembersTableData(groupAdminsData)
+  const groupTradersTableData: GroupMembersTableRow[] = createGroupMembersTableData(
+    groupTradersData,
+  )
   const groupMembersTableData: GroupMembersTableRow[] = createGroupMembersTableData(
     groupMembersData,
   )
@@ -123,6 +145,24 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
                 defaultPageSize: PAGE_SIZE,
                 total: adminsCount,
                 onChange: onChangeAdminsPage,
+                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+              }}
+            />
+          </Spin>
+          <Divider orientation="left">
+            <strong>Traders</strong>
+          </Divider>
+          <Spin spinning={fetchingGroupTraders}>
+            <Table
+              rowKey="id"
+              onRow={onRow}
+              columns={groupMembersTableColumns}
+              dataSource={groupTradersTableData}
+              pagination={{
+                defaultCurrent: 1,
+                defaultPageSize: PAGE_SIZE,
+                total: tradersCount,
+                onChange: onChangeTradersPage,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
