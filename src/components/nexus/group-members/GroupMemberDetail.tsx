@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react'
-import { Button, Divider, Modal, PageHeader, Spin, notification } from 'antd'
+import { Button, Divider, Modal, notification, PageHeader, Select, Spin } from 'antd'
 import * as apollo from 'services/apollo'
 
 /* eslint-disable */
-import { useGetGroupMemberQuery, MembershipRole as RemoteMembershipRole } from '../../../graphql'
+import { MembershipRole as RemoteMembershipRole, useGetGroupMemberQuery } from '../../../graphql'
 import { displayTimeBeforeNow } from '../dateUtil'
 import {
   convertToLocalMembershipRole,
@@ -11,6 +11,7 @@ import {
   MembershipRole,
 } from 'types/membership'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+
 /* eslint-enable */
 
 interface GroupMemberDetailProps {
@@ -33,11 +34,20 @@ export const GroupMemberDetail: FC<GroupMemberDetailProps> = ({
   onRemovedMember,
 }) => {
   const [removingMember, setRemovingMember] = useState<boolean>(false)
+  const [selectedMemberRole, setSelectedMemberRole] = useState<string | null>()
 
   const { data: memberData, loading: fetchingMemberData } = useGetGroupMemberQuery({
     variables: { input: { membershipId: groupMemberId } },
   })
   const membership = memberData?.membership
+
+  if (!selectedMemberRole && membership && membership.role) {
+    setSelectedMemberRole(convertToLocalMembershipRole(membership.role))
+  }
+
+  const onChangeMemberRole = async (role: string) => {
+    setSelectedMemberRole(role)
+  }
 
   const onClickRemoveMember = async () => {
     Modal.confirm({
@@ -92,7 +102,27 @@ export const GroupMemberDetail: FC<GroupMemberDetailProps> = ({
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Role</strong>
-            {membership && convertToLocalMembershipRole(membership.role)}
+            {membership &&
+            convertToLocalMembershipRole(membership.role) !== MembershipRole.Admin ? (
+              <Select
+                style={{ width: 100 }}
+                size="large"
+                value={selectedMemberRole ?? MembershipRole.Member}
+                onChange={async (role: string) => {
+                  await onChangeMemberRole(role)
+                }}
+              >
+                {[MembershipRole.Admin, MembershipRole.Trader, MembershipRole.Member].map(
+                  (role: MembershipRole) => (
+                    <Select.Option key={role} value={String(role)}>
+                      {role}
+                    </Select.Option>
+                  ),
+                )}
+              </Select>
+            ) : (
+              <>{membership && convertToLocalMembershipRole(membership.role)}</>
+            )}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Status</strong>
