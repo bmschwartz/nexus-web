@@ -66,16 +66,5 @@ export const badgeForIsActiveGroup = (active: boolean) => {
 }
 
 export const renderIsMember = (record: GroupTableItem) => {
-  if (record.memberStatus) {
-    console.log(record.memberStatus)
-    switch (record.memberStatus) {
-      case MembershipStatus.Approved:
-        return 'Yes'
-      case MembershipStatus.Pending:
-        return 'Pending'
-      default:
-        break
-    }
-  }
-  return <Button type="link">Request Access</Button>
+  return record.memberStatus ?? <Button type="link">Request Access</Button>
 }
