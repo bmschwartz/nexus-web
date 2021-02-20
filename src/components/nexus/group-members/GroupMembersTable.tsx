@@ -5,7 +5,6 @@ import { Table, Button, PageHeader, Spin, Divider } from 'antd'
 import {
   GroupMembersTableRow,
   badgeForRole,
-  badgeForIsActiveMember,
   createGroupMembersTableData,
 } from './groupMembersTableUtils'
 import { MembershipRole } from 'types/membership'
@@ -26,10 +25,9 @@ const groupMembersTableColumns = [
     render: (text: string) => <Button type="link">{text.split('-')[0]}</Button>,
   },
   {
-    title: 'Active',
-    dataIndex: 'active',
-    key: 'active',
-    render: (active: boolean) => badgeForIsActiveMember(active),
+    title: 'Trades',
+    dataIndex: 'trades',
+    key: 'trades',
   },
   {
     title: 'Role',

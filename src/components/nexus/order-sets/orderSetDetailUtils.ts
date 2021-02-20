@@ -1,4 +1,4 @@
-import { convertToLocalOrderStatus } from 'types/order'
+import { convertToLocalOrderStatus, OrderStatus } from 'types/order'
 
 /* eslint-disable */
 import { displayTimeBeforeNow } from '../dateUtil'
@@ -25,6 +25,11 @@ export const OrdersTableColumns = [
     id: 'filledQty',
     title: 'Filled',
     dataIndex: 'filledQty',
+  },
+  {
+    id: 'filledPrice',
+    title: 'Filled Price',
+    dataIndex: 'filledPrice',
   },
   {
     id: 'status',
@@ -60,6 +65,11 @@ export const StopOrdersTableColumns = [
     dataIndex: 'filledQty',
   },
   {
+    id: 'filledPrice',
+    title: 'Filled Price',
+    dataIndex: 'filledPrice',
+  },
+  {
     id: 'status',
     title: 'Status',
     dataIndex: 'status',
@@ -93,6 +103,11 @@ export const TrailingOrdersTableColumns = [
     dataIndex: 'filledQty',
   },
   {
+    id: 'filledPrice',
+    title: 'Filled Price',
+    dataIndex: 'filledPrice',
+  },
+  {
     id: 'status',
     title: 'Status',
     dataIndex: 'status',
@@ -111,6 +126,7 @@ export interface OrderTableRow {
   price?: string
   quantity?: string
   filledQty?: string
+  filledPrice?: string
   updatedAt?: string
 }
 
@@ -121,6 +137,7 @@ export interface StopOrderTableRow {
   stopPrice?: string
   quantity?: string
   filledQty?: string
+  filledPrice?: string
   updatedAt?: string
 }
 
@@ -131,12 +148,23 @@ export interface TrailingStopOrderTableRow {
   stopPrice?: string
   quantity?: string
   filledQty?: string
+  filledPrice?: string
   updatedAt?: string
 }
 
 export function transformOrdersData(ordersData: any[]): OrderTableRow[] {
   return ordersData.map(order => {
-    const { id, price, status, orderType, quantity, filledQty, error, updatedAt } = order
+    const {
+      id,
+      price,
+      status,
+      orderType,
+      quantity,
+      filledQty,
+      filledPrice,
+      error,
+      updatedAt,
+    } = order
 
     const localStatus = convertToLocalOrderStatus(status)
     const displayStatus = error ? `${localStatus} - ${error}` : localStatus
@@ -146,7 +174,8 @@ export function transformOrdersData(ordersData: any[]): OrderTableRow[] {
       id,
       price: displayPrice,
       quantity,
-      filledQty,
+      filledQty: localStatus === OrderStatus.FILLED ? quantity : filledQty,
+      filledPrice,
       updatedAt: displayTimeBeforeNow(updatedAt),
       status: displayStatus,
       username: order.exchangeAccount.membership.member.username,
@@ -156,7 +185,7 @@ export function transformOrdersData(ordersData: any[]): OrderTableRow[] {
 
 export function transformStopOrdersData(ordersData: any[]): StopOrderTableRow[] {
   return ordersData.map(order => {
-    const { id, stopPrice, status, quantity, error, filledQty, updatedAt } = order
+    const { id, stopPrice, status, quantity, error, filledQty, filledPrice, updatedAt } = order
 
     const localStatus = convertToLocalOrderStatus(status)
     const displayStatus = error ? `${localStatus} - ${error}` : localStatus
@@ -165,7 +194,8 @@ export function transformStopOrdersData(ordersData: any[]): StopOrderTableRow[] 
       id,
       stopPrice,
       quantity,
-      filledQty,
+      filledQty: localStatus === OrderStatus.FILLED ? quantity : filledQty,
+      filledPrice,
       updatedAt: displayTimeBeforeNow(updatedAt),
       status: displayStatus,
       username: order.exchangeAccount.membership.member.username,
@@ -175,7 +205,7 @@ export function transformStopOrdersData(ordersData: any[]): StopOrderTableRow[] 
 
 export function transformTrailingStopOrdersData(ordersData: any[]): TrailingStopOrderTableRow[] {
   return ordersData.map(order => {
-    const { id, stopPrice, status, quantity, error, filledQty, updatedAt } = order
+    const { id, stopPrice, status, quantity, error, filledQty, filledPrice, updatedAt } = order
 
     const localStatus = convertToLocalOrderStatus(status)
     const displayStatus = error ? `${localStatus} - ${error}` : localStatus
@@ -184,7 +214,8 @@ export function transformTrailingStopOrdersData(ordersData: any[]): TrailingStop
       id,
       stopPrice,
       quantity,
-      filledQty,
+      filledQty: localStatus === OrderStatus.FILLED ? quantity : filledQty,
+      filledPrice,
       updatedAt: displayTimeBeforeNow(updatedAt),
       status: displayStatus,
       username: order.exchangeAccount.membership.member.username,

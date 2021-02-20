@@ -7,6 +7,7 @@ export interface GroupMembersTableRow {
   id: string
   active: boolean
   username: string
+  trades: number
   role: MembershipRole
   status: MembershipStatus
 }
@@ -28,6 +29,7 @@ export const createGroupMembersTableData = (
     (membership): GroupMembersTableRow => ({
       id: membership.id,
       active: membership.active,
+      trades: membership.orders.totalCount,
       username: membership.member.username,
       role: membership.role,
       status: membership.status,
@@ -38,7 +40,7 @@ export const createGroupMembersTableData = (
 export const badgeForIsActiveMember = (active: boolean) => {
   return (
     <span
-      className={active ? 'font-size-12 badge badge-success' : 'font-size-12 badge badge-default'}
+      className={active ? 'font-size-12 badge badge-primary' : 'font-size-12 badge badge-default'}
     >
       {active ? 'Active' : 'Inactive'}
     </span>

@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Button, Divider, message, Modal, PageHeader, Spin, Table, Select } from 'antd'
+import { Button, Divider, message, Modal, PageHeader, Select, Spin, Table } from 'antd'
 
 /* eslint-disable */
 import * as apollo from 'services/apollo'
@@ -18,12 +18,12 @@ import {
 } from './orderSetDetailUtils'
 import { displayTimeBeforeNow } from '../dateUtil'
 import {
-  OrderStatus,
-  StopOrderType,
   convertToLocalOrderSide,
   convertToLocalOrderType,
-  convertToRemoteOrderStatus,
   convertToLocalStopTriggerType,
+  convertToRemoteOrderStatus,
+  OrderStatus,
+  StopOrderType,
 } from '../../../types/order'
 import { convertToLocalExchange } from '../../../types/exchange'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
@@ -58,6 +58,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
     data: orderSetDetailData,
     loading: orderSetDetailLoading,
     fetchMore,
+    refetch: refetchOrders,
   } = useGetGroupOrderSetDetailsQuery({
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -109,6 +110,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
     data: stopOrderSetDetailData,
     loading: stopOrderSetDetailLoading,
     fetchMore: fetchMoreStopOrders,
+    refetch: refetchStopOrders,
   } = useGetGroupOrderSetDetailsQuery({
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -141,6 +143,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
     data: trailingStopOrderSetDetailData,
     loading: trailingStopOrderSetDetailLoading,
     fetchMore: fetchMoreTrailingStopOrders,
+    refetch: refetchTrailingStopOrders,
   } = useGetGroupOrderSetDetailsQuery({
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -189,6 +192,18 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
             duration: MESSAGE_DURATION,
           })
         }
+
+        setTimeout(async () => {
+          if (stopOrderTypes?.includes(StopOrderType.NONE)) {
+            await refetchOrders()
+          }
+          if (stopOrderTypes?.includes(StopOrderType.STOP_LIMIT)) {
+            await refetchStopOrders()
+          }
+          if (stopOrderTypes?.includes(StopOrderType.TRAILING_STOP)) {
+            await refetchTrailingStopOrders()
+          }
+        }, 2500)
 
         setSubmittingCancelOrderSet(false)
       },
