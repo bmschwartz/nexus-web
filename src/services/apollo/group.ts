@@ -8,6 +8,7 @@ import {
   GetUserIdByEmailDocument,
   MembershipRole,
   MembershipStatus,
+  UpdateMembershipRoleDocument,
 } from '../../graphql/index'
 /* eslint-enable */
 
@@ -32,6 +33,17 @@ export interface CreateGroupInput {
   email?: string
   payoutCurrency?: string
   payoutAddress?: string
+}
+
+export interface UpdateMembershipInput {
+  membershipId: string
+  role: MembershipRole
+  groupId: string
+}
+
+export interface UpdateMembershipResponse {
+  success: boolean
+  error?: string
 }
 
 export interface InviteMemberInput {
@@ -91,6 +103,33 @@ export const groupExists = async (name: string): Promise<GroupExistsResponse> =>
   }
 
   return result
+}
+
+export const updateMembershipRole = async ({
+  membershipId,
+  role,
+  groupId,
+}: UpdateMembershipInput): Promise<UpdateMembershipResponse> => {
+  try {
+    const { data } = await client.mutate({
+      mutation: UpdateMembershipRoleDocument,
+      variables: {
+        input: {
+          membershipId,
+          role,
+          groupId,
+        },
+      },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Unable to change Role' }
+    }
+
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
 }
 
 export const inviteMember = async ({

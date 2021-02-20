@@ -202,6 +202,7 @@ export type MemberSubscription = {
   active: Scalars['Boolean']
   membership: GroupMembership
   groupSubscription: GroupSubscription
+  currentPrice?: Maybe<Scalars['Float']>
   recurring: Scalars['Boolean']
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
@@ -261,11 +262,12 @@ export type UpdateGroupDescriptionInput = {
 }
 
 export type UpdateMembershipActiveInput = {
-  membershipId: Scalars['ID']
   active: Scalars['Boolean']
+  membershipId: Scalars['ID']
 }
 
 export type UpdateMembershipRoleInput = {
+  groupId: Scalars['ID']
   membershipId: Scalars['ID']
   role: MembershipRole
 }
@@ -1294,6 +1296,16 @@ export type UpdateExchangeAccountMutation = { __typename?: 'Mutation' } & {
   updateExchangeAccount: { __typename?: 'UpdateExchangeAccountResult' } & Pick<
     UpdateExchangeAccountResult,
     'operationId' | 'error'
+  >
+}
+
+export type UpdateMembershipRoleMutationVariables = Exact<{
+  input: UpdateMembershipRoleInput
+}>
+
+export type UpdateMembershipRoleMutation = { __typename?: 'Mutation' } & {
+  updateMembershipRole?: Maybe<
+    { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id' | 'role'>
   >
 }
 
@@ -2488,6 +2500,55 @@ export type UpdateExchangeAccountMutationResult = Apollo.MutationResult<
 export type UpdateExchangeAccountMutationOptions = Apollo.BaseMutationOptions<
   UpdateExchangeAccountMutation,
   UpdateExchangeAccountMutationVariables
+>
+export const UpdateMembershipRoleDocument = gql`
+  mutation UpdateMembershipRole($input: UpdateMembershipRoleInput!) {
+    updateMembershipRole(input: $input) {
+      id
+      role
+    }
+  }
+`
+export type UpdateMembershipRoleMutationFn = Apollo.MutationFunction<
+  UpdateMembershipRoleMutation,
+  UpdateMembershipRoleMutationVariables
+>
+
+/**
+ * __useUpdateMembershipRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateMembershipRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMembershipRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMembershipRoleMutation, { data, loading, error }] = useUpdateMembershipRoleMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateMembershipRoleMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateMembershipRoleMutation,
+    UpdateMembershipRoleMutationVariables
+  >,
+) {
+  return Apollo.useMutation<UpdateMembershipRoleMutation, UpdateMembershipRoleMutationVariables>(
+    UpdateMembershipRoleDocument,
+    baseOptions,
+  )
+}
+export type UpdateMembershipRoleMutationHookResult = ReturnType<
+  typeof useUpdateMembershipRoleMutation
+>
+export type UpdateMembershipRoleMutationResult = Apollo.MutationResult<UpdateMembershipRoleMutation>
+export type UpdateMembershipRoleMutationOptions = Apollo.BaseMutationOptions<
+  UpdateMembershipRoleMutation,
+  UpdateMembershipRoleMutationVariables
 >
 export const UserLoginDocument = gql`
   mutation UserLogin($input: LoginUserInput!) {
