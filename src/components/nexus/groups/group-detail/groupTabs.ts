@@ -17,6 +17,7 @@ export enum TabKey {
   GroupMembers = 'groupMembers',
   GroupProfile = 'groupProfile',
   GroupSettings = 'groupSettings',
+  GroupRequests = 'groupRequests',
 }
 
 export const availableTabs = (userRole: MembershipRole): Tab[] => {
@@ -49,11 +50,12 @@ export const availableTabs = (userRole: MembershipRole): Tab[] => {
       name: 'Members',
       requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
     },
-    // {
-    //   key: TabKey.GroupProfile,
-    //   name: 'Profile',
-    //   requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
-    // },
+    { key: TabKey.GroupRequests, name: 'Requests', requiredRole: [MembershipRole.Admin] },
+    {
+      key: TabKey.GroupProfile,
+      name: 'Profile',
+      requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
+    },
     { key: TabKey.GroupSettings, name: 'Settings', requiredRole: [MembershipRole.Admin] },
   ]
 

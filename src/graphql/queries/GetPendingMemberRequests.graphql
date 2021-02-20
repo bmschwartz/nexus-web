@@ -1,0 +1,15 @@
+query GetPendingMemberRequests($groupInput: GroupInput!, $membersInput: GroupMembersInput!) {
+  group(input: $groupInput) {
+    id
+    members(input: $membersInput) {
+      totalCount
+      members {
+        id
+        member {
+          id
+          username
+        }
+      }
+    }
+  }
+}

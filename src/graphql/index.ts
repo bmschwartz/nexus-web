@@ -158,6 +158,7 @@ export type GroupMembersInput = {
   limit?: Maybe<Scalars['Int']>
   offset?: Maybe<Scalars['Int']>
   roles?: Maybe<Array<MembershipRole>>
+  statuses?: Maybe<Array<MembershipStatus>>
 }
 
 export type GroupMembersResult = {
@@ -1588,6 +1589,27 @@ export type GetOrderQueryVariables = Exact<{
 
 export type GetOrderQuery = { __typename?: 'Query' } & {
   order?: Maybe<{ __typename?: 'Order' } & OrderDetailsFragment>
+}
+
+export type GetPendingMemberRequestsQueryVariables = Exact<{
+  groupInput: GroupInput
+  membersInput: GroupMembersInput
+}>
+
+export type GetPendingMemberRequestsQuery = { __typename?: 'Query' } & {
+  group?: Maybe<
+    { __typename?: 'Group' } & Pick<Group, 'id'> & {
+        members?: Maybe<
+          { __typename?: 'GroupMembersResult' } & Pick<GroupMembersResult, 'totalCount'> & {
+              members: Array<
+                { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
+                    member: { __typename?: 'User' } & Pick<User, 'id' | 'username'>
+                  }
+              >
+            }
+        >
+      }
+  >
 }
 
 export type GetPositionQueryVariables = Exact<{
@@ -3665,6 +3687,73 @@ export function useGetOrderLazyQuery(
 export type GetOrderQueryHookResult = ReturnType<typeof useGetOrderQuery>
 export type GetOrderLazyQueryHookResult = ReturnType<typeof useGetOrderLazyQuery>
 export type GetOrderQueryResult = Apollo.QueryResult<GetOrderQuery, GetOrderQueryVariables>
+export const GetPendingMemberRequestsDocument = gql`
+  query GetPendingMemberRequests($groupInput: GroupInput!, $membersInput: GroupMembersInput!) {
+    group(input: $groupInput) {
+      id
+      members(input: $membersInput) {
+        totalCount
+        members {
+          id
+          member {
+            id
+            username
+          }
+        }
+      }
+    }
+  }
+`
+
+/**
+ * __useGetPendingMemberRequestsQuery__
+ *
+ * To run a query within a React component, call `useGetPendingMemberRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPendingMemberRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPendingMemberRequestsQuery({
+ *   variables: {
+ *      groupInput: // value for 'groupInput'
+ *      membersInput: // value for 'membersInput'
+ *   },
+ * });
+ */
+export function useGetPendingMemberRequestsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetPendingMemberRequestsQuery,
+    GetPendingMemberRequestsQueryVariables
+  >,
+) {
+  return Apollo.useQuery<GetPendingMemberRequestsQuery, GetPendingMemberRequestsQueryVariables>(
+    GetPendingMemberRequestsDocument,
+    baseOptions,
+  )
+}
+export function useGetPendingMemberRequestsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetPendingMemberRequestsQuery,
+    GetPendingMemberRequestsQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<GetPendingMemberRequestsQuery, GetPendingMemberRequestsQueryVariables>(
+    GetPendingMemberRequestsDocument,
+    baseOptions,
+  )
+}
+export type GetPendingMemberRequestsQueryHookResult = ReturnType<
+  typeof useGetPendingMemberRequestsQuery
+>
+export type GetPendingMemberRequestsLazyQueryHookResult = ReturnType<
+  typeof useGetPendingMemberRequestsLazyQuery
+>
+export type GetPendingMemberRequestsQueryResult = Apollo.QueryResult<
+  GetPendingMemberRequestsQuery,
+  GetPendingMemberRequestsQueryVariables
+>
 export const GetPositionDocument = gql`
   query GetPosition($input: PositionInput!) {
     position(input: $input) {

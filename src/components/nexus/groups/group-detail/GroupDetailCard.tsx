@@ -15,6 +15,7 @@ import { MemberOrders, MemberOrdersTabState } from './MemberOrders'
 import { MembershipTab, MembershipTabTabState } from '../../membership/MembershipTab'
 import { MemberExchanges, MemberExchangesTabState } from './MemberExchanges'
 import { GroupProfile } from './GroupProfile'
+import { GroupRequests } from './GroupRequests'
 import { GroupMembers, GroupMembersTabState } from './GroupMembers'
 import { StringParam, useQueryParam, withDefault } from 'use-query-params'
 
@@ -135,6 +136,7 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
                     setTabState={setGroupPositionsTabState}
                   />
                 )}
+                {tabKey === 'groupRequests' && <GroupRequests group={group} />}
                 {tabKey === 'groupProfile' && <GroupProfile group={group} />}
                 {tabKey === 'groupSettings' && <GroupSettings group={group} />}
               </>
