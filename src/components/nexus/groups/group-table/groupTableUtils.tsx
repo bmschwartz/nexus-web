@@ -12,6 +12,7 @@ export interface GroupTableItem {
   activeMembership?: boolean
   memberRole?: MembershipRole
   memberStatus?: MembershipStatus
+  description: string
 }
 
 export const createGroupTableData = (
@@ -31,7 +32,7 @@ export const createGroupTableData = (
     })
   })
 
-  const groupTableItems: GroupTableItem[] = groups.map((group: Group) => {
+  return groups.map((group: Group) => {
     const membership = groupMembershipMap[group.id]
 
     return {
@@ -39,7 +40,6 @@ export const createGroupTableData = (
       ...membership,
     }
   })
-  return groupTableItems
 }
 
 export const badgeForIsMember = (isMember: boolean, record: GroupTableItem) => {

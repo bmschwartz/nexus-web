@@ -58,9 +58,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
   ]
 
   const onClickRequestAccess = async (groupId: string) => {
-    console.log('requesting access', groupId)
     const { success, error } = await apollo.requestGroupAccess({ groupId })
-    console.log(success, error)
     if (success) {
       notification.success({
         message: 'Requested Membership',
@@ -112,7 +110,16 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Table rowKey="id" onRow={onRow} columns={columns} dataSource={mergedTableData} />
+          <Table
+            rowKey="id"
+            onRow={onRow}
+            columns={columns}
+            dataSource={mergedTableData}
+            expandable={{
+              rowExpandable: record => !!record.description,
+              expandedRowRender: (record: GroupTableItem) => record.description,
+            }}
+          />
         </div>
       </div>
     </div>
