@@ -51,7 +51,7 @@ export const GroupProfile: FC<GroupProfileProps> = ({ group }) => {
           disabled={saving}
           value={profileContent}
           onChange={e => setProfileContent(e.target.value)}
-          maxLength={2000}
+          maxLength={500}
           autoSize={{
             minRows: 10,
             maxRows: 20,

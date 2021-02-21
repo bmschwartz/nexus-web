@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Button, Modal, notification, PageHeader, Table } from 'antd'
+import { Button, Comment, Modal, notification, PageHeader, Table } from 'antd'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import * as apollo from 'services/apollo'
@@ -128,7 +128,9 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
             dataSource={mergedTableData}
             expandable={{
               rowExpandable: record => !!record.description,
-              expandedRowRender: (record: GroupTableItem) => record.description,
+              expandedRowRender: (record: GroupTableItem) => (
+                <Comment content={<p>{record.description}</p>} />
+              ),
             }}
           />
         </div>
