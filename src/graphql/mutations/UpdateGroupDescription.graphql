@@ -1,0 +1,5 @@
+mutation UpdateGroupDescription($input: UpdateGroupDescriptionInput!) {
+  updateGroupDescription(input: $input) {
+    description
+  }
+}

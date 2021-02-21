@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client'
 import * as Apollo from '@apollo/client'
-
 export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> }
@@ -1311,6 +1310,14 @@ export type UpdateExchangeAccountMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type UpdateGroupDescriptionMutationVariables = Exact<{
+  input: UpdateGroupDescriptionInput
+}>
+
+export type UpdateGroupDescriptionMutation = { __typename?: 'Mutation' } & {
+  updateGroupDescription?: Maybe<{ __typename?: 'Group' } & Pick<Group, 'description'>>
+}
+
 export type UpdateMembershipRoleMutationVariables = Exact<{
   input: UpdateMembershipRoleInput
 }>
@@ -2590,6 +2597,56 @@ export type UpdateExchangeAccountMutationResult = Apollo.MutationResult<
 export type UpdateExchangeAccountMutationOptions = Apollo.BaseMutationOptions<
   UpdateExchangeAccountMutation,
   UpdateExchangeAccountMutationVariables
+>
+export const UpdateGroupDescriptionDocument = gql`
+  mutation UpdateGroupDescription($input: UpdateGroupDescriptionInput!) {
+    updateGroupDescription(input: $input) {
+      description
+    }
+  }
+`
+export type UpdateGroupDescriptionMutationFn = Apollo.MutationFunction<
+  UpdateGroupDescriptionMutation,
+  UpdateGroupDescriptionMutationVariables
+>
+
+/**
+ * __useUpdateGroupDescriptionMutation__
+ *
+ * To run a mutation, you first call `useUpdateGroupDescriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGroupDescriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGroupDescriptionMutation, { data, loading, error }] = useUpdateGroupDescriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateGroupDescriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateGroupDescriptionMutation,
+    UpdateGroupDescriptionMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    UpdateGroupDescriptionMutation,
+    UpdateGroupDescriptionMutationVariables
+  >(UpdateGroupDescriptionDocument, baseOptions)
+}
+export type UpdateGroupDescriptionMutationHookResult = ReturnType<
+  typeof useUpdateGroupDescriptionMutation
+>
+export type UpdateGroupDescriptionMutationResult = Apollo.MutationResult<
+  UpdateGroupDescriptionMutation
+>
+export type UpdateGroupDescriptionMutationOptions = Apollo.BaseMutationOptions<
+  UpdateGroupDescriptionMutation,
+  UpdateGroupDescriptionMutationVariables
 >
 export const UpdateMembershipRoleDocument = gql`
   mutation UpdateMembershipRole($input: UpdateMembershipRoleInput!) {
