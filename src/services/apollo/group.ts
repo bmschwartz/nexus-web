@@ -8,6 +8,7 @@ import {
   GetUserIdByEmailDocument,
   MembershipRole,
   MembershipStatus,
+  UpdateGroupDescriptionDocument,
 } from '../../graphql/index'
 /* eslint-enable */
 
@@ -50,6 +51,16 @@ export interface RemoveMemberInput {
 }
 
 export interface RemoveMemberResponse {
+  success: boolean
+  error?: string
+}
+
+export interface UpdateGroupDescriptionInput {
+  groupId: string
+  description: string
+}
+
+export interface UpdateGroupDescriptionResponse {
   success: boolean
   error?: string
 }
@@ -148,6 +159,26 @@ export const removeMember = async ({
 
     const { success, error } = data.deleteMembership
     return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const updateGroupDescription = async ({
+  groupId,
+  description,
+}: UpdateGroupDescriptionInput): Promise<UpdateGroupDescriptionResponse> => {
+  try {
+    const { data } = await client.mutate({
+      mutation: UpdateGroupDescriptionDocument,
+      variables: { input: { groupId, description } },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Unable to update profile' }
+    }
+
+    return { success: true }
   } catch (error) {
     return { success: false, error: error.message }
   }
