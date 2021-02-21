@@ -86,7 +86,7 @@ export function extractCurrenciesData(
           minPrice: 0,
           maxPrice: Number(maxPrice),
           tickSize: Number(tickSize),
-          otherInfo,
+          ...otherInfo,
         },
       }),
       {},
