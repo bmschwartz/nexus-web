@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Button, notification, PageHeader, Table } from 'antd'
+import { Button, Modal, notification, PageHeader, Table } from 'antd'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import * as apollo from 'services/apollo'
@@ -10,11 +10,12 @@ import { Membership, MembershipStatus } from 'types/membership'
 
 /* eslint-disable */
 import {
-  GroupTableItem,
-  createGroupTableData,
   badgeForIsActiveGroup,
+  createGroupTableData,
+  GroupTableItem,
   renderIsMember,
 } from './groupTableUtils'
+
 /* eslint-enable */
 
 interface GroupTableProps {
@@ -80,6 +81,16 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
     return {
       onClick: () => {
         if (row.memberStatus !== MembershipStatus.Approved) {
+          const content =
+            row.memberStatus === MembershipStatus.Pending
+              ? 'Membership Approval is Pending'
+              : 'Request access to become a member'
+
+          Modal.info({
+            title: 'Not a Member',
+            content,
+            maskClosable: true,
+          })
           return
         }
 
