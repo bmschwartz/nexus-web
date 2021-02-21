@@ -998,18 +998,28 @@ export type AsyncOperationDetailsFragment = { __typename?: 'AsyncOperation' } & 
   'id' | 'success' | 'complete' | 'error' | 'opType'
 >
 
-export type BinanceCurrencyDetailsFragment = { __typename?: 'BinanceCurrency' } & Pick<
+export type BinanceCurrencyBasicDetailsFragment = { __typename?: 'BinanceCurrency' } & Pick<
   BinanceCurrency,
   | 'id'
   | 'symbol'
   | 'status'
   | 'lastPrice'
-  | 'openPrice'
-  | 'highPrice'
-  | 'lowPrice'
   | 'minPrice'
   | 'maxPrice'
   | 'tickSize'
+  | 'allowsLimit'
+  | 'allowsMarket'
+  | 'allowsStopLoss'
+  | 'allowsTakeProfit'
+  | 'allowsStopLossLimit'
+  | 'allowsTakeProfitLimit'
+>
+
+export type BinanceCurrencyDetailsFragment = { __typename?: 'BinanceCurrency' } & Pick<
+  BinanceCurrency,
+  | 'openPrice'
+  | 'highPrice'
+  | 'lowPrice'
   | 'priceChange'
   | 'priceChangePercent'
   | 'baseAsset'
@@ -1019,13 +1029,8 @@ export type BinanceCurrencyDetailsFragment = { __typename?: 'BinanceCurrency' } 
   | 'quoteAssetPrecision'
   | 'baseCommissionPrecision'
   | 'quoteCommissionPrecision'
-  | 'allowsLimit'
-  | 'allowsMarket'
-  | 'allowsStopLoss'
-  | 'allowsStopLossLimit'
-  | 'allowsTakeProfit'
-  | 'allowsTakeProfitLimit'
->
+> &
+  BinanceCurrencyBasicDetailsFragment
 
 export type BitmexCurrencyDetailsFragment = { __typename?: 'BitmexCurrency' } & Pick<
   BitmexCurrency,
@@ -1379,6 +1384,13 @@ export type GetCurrenciesQuery = { __typename?: 'Query' } & {
   binanceCurrencies: Array<{ __typename?: 'BinanceCurrency' } & BinanceCurrencyDetailsFragment>
 }
 
+export type GetCurrenciesBasicQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetCurrenciesBasicQuery = { __typename?: 'Query' } & {
+  bitmexCurrencies: Array<{ __typename?: 'BitmexCurrency' } & BitmexCurrencyDetailsFragment>
+  binanceCurrencies: Array<{ __typename?: 'BinanceCurrency' } & BinanceCurrencyBasicDetailsFragment>
+}
+
 export type GetCurrencyQueryVariables = Exact<{
   input: CurrencyInput
 }>
@@ -1697,18 +1709,29 @@ export const AsyncOperationDetailsFragmentDoc = gql`
     opType
   }
 `
-export const BinanceCurrencyDetailsFragmentDoc = gql`
-  fragment BinanceCurrencyDetails on BinanceCurrency {
+export const BinanceCurrencyBasicDetailsFragmentDoc = gql`
+  fragment BinanceCurrencyBasicDetails on BinanceCurrency {
     id
     symbol
     status
     lastPrice
-    openPrice
-    highPrice
-    lowPrice
     minPrice
     maxPrice
     tickSize
+    allowsLimit
+    allowsMarket
+    allowsStopLoss
+    allowsTakeProfit
+    allowsStopLossLimit
+    allowsTakeProfitLimit
+  }
+`
+export const BinanceCurrencyDetailsFragmentDoc = gql`
+  fragment BinanceCurrencyDetails on BinanceCurrency {
+    ...BinanceCurrencyBasicDetails
+    openPrice
+    highPrice
+    lowPrice
     priceChange
     priceChangePercent
     baseAsset
@@ -1718,13 +1741,8 @@ export const BinanceCurrencyDetailsFragmentDoc = gql`
     quoteAssetPrecision
     baseCommissionPrecision
     quoteCommissionPrecision
-    allowsLimit
-    allowsMarket
-    allowsStopLoss
-    allowsStopLossLimit
-    allowsTakeProfit
-    allowsTakeProfitLimit
   }
+  ${BinanceCurrencyBasicDetailsFragmentDoc}
 `
 export const BitmexCurrencyDetailsFragmentDoc = gql`
   fragment BitmexCurrencyDetails on BitmexCurrency {
@@ -2988,6 +3006,61 @@ export type GetCurrenciesLazyQueryHookResult = ReturnType<typeof useGetCurrencie
 export type GetCurrenciesQueryResult = Apollo.QueryResult<
   GetCurrenciesQuery,
   GetCurrenciesQueryVariables
+>
+export const GetCurrenciesBasicDocument = gql`
+  query GetCurrenciesBasic {
+    bitmexCurrencies {
+      ...BitmexCurrencyDetails
+    }
+    binanceCurrencies {
+      ...BinanceCurrencyBasicDetails
+    }
+  }
+  ${BitmexCurrencyDetailsFragmentDoc}
+  ${BinanceCurrencyBasicDetailsFragmentDoc}
+`
+
+/**
+ * __useGetCurrenciesBasicQuery__
+ *
+ * To run a query within a React component, call `useGetCurrenciesBasicQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrenciesBasicQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrenciesBasicQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCurrenciesBasicQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetCurrenciesBasicQuery, GetCurrenciesBasicQueryVariables>,
+) {
+  return Apollo.useQuery<GetCurrenciesBasicQuery, GetCurrenciesBasicQueryVariables>(
+    GetCurrenciesBasicDocument,
+    baseOptions,
+  )
+}
+export function useGetCurrenciesBasicLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetCurrenciesBasicQuery,
+    GetCurrenciesBasicQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<GetCurrenciesBasicQuery, GetCurrenciesBasicQueryVariables>(
+    GetCurrenciesBasicDocument,
+    baseOptions,
+  )
+}
+export type GetCurrenciesBasicQueryHookResult = ReturnType<typeof useGetCurrenciesBasicQuery>
+export type GetCurrenciesBasicLazyQueryHookResult = ReturnType<
+  typeof useGetCurrenciesBasicLazyQuery
+>
+export type GetCurrenciesBasicQueryResult = Apollo.QueryResult<
+  GetCurrenciesBasicQuery,
+  GetCurrenciesBasicQueryVariables
 >
 export const GetCurrencyDocument = gql`
   query GetCurrency($input: CurrencyInput!) {

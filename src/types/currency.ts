@@ -3,7 +3,7 @@ import { Exchange } from 'types/exchange'
 /* eslint-disable */
 import {
   BinanceSymbolStatus,
-  GetCurrenciesQuery,
+  GetCurrenciesBasicQuery,
   GetCurrencyQuery,
   GetSymbolsQuery,
 } from '../graphql'
@@ -14,21 +14,9 @@ export interface IBinanceCurrency {
   symbol: string
   status: BinanceSymbolStatus
   lastPrice?: number
-  openPrice?: number
-  highPrice?: number
-  lowPrice?: number
-  priceChange?: number
-  priceChangePercent?: number
   minPrice: number
   maxPrice: number
   tickSize: number
-  baseAsset: string
-  quoteAsset: string
-  baseAssetPrecision: number
-  quotePrecision: number
-  quoteAssetPrecision: number
-  baseCommissionPrecision: number
-  quoteCommissionPrecision: number
   allowsLimit: boolean
   allowsMarket: boolean
   allowsStopLoss: boolean
@@ -70,7 +58,9 @@ export function extractCurrencyData(currencyInfo: GetCurrencyQuery | undefined) 
   return {}
 }
 
-export function extractCurrenciesData(currencyInfo: GetCurrenciesQuery | undefined): ICurrencyMap {
+export function extractCurrenciesData(
+  currencyInfo: GetCurrenciesBasicQuery | undefined,
+): ICurrencyMap {
   const exchanges = [Exchange.BITMEX, Exchange.BINANCE]
 
   let bitmexCurrencies = {}
@@ -124,6 +114,7 @@ function getSymbolPriceInfo(currencyInfo: ICurrencyMap, exchange: Exchange, symb
     minPrice: 0,
     maxPrice: 1,
     tickSize: 0.1,
+    lastPrice: null,
   }
 
   if (!symbol) {
@@ -131,24 +122,30 @@ function getSymbolPriceInfo(currencyInfo: ICurrencyMap, exchange: Exchange, symb
   }
   switch (exchange) {
     case Exchange.BINANCE: {
-      const { minPrice, maxPrice, tickSize } = currencyInfo.Binance[symbol]
+      const { minPrice, maxPrice, tickSize, lastPrice } = currencyInfo.Binance[symbol]
       return {
         minPrice,
         maxPrice,
         tickSize,
+        lastPrice,
       }
     }
     case Exchange.BITMEX: {
-      const { minPrice, maxPrice, tickSize } = currencyInfo.Bitmex[symbol]
+      const { minPrice, maxPrice, tickSize, lastPrice } = currencyInfo.Bitmex[symbol]
       return {
         minPrice,
         maxPrice,
         tickSize,
+        lastPrice,
       }
     }
     default:
       return defaultPriceInfo
   }
+}
+
+export function getCurrentPrice(currencyInfo: ICurrencyMap, exchange: Exchange, symbol: string) {
+  return getSymbolPriceInfo(currencyInfo, exchange, symbol).lastPrice
 }
 
 export function getMinPrice(currencyInfo: ICurrencyMap, exchange: Exchange, symbol: string) {

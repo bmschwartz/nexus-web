@@ -15,8 +15,17 @@ import { Group } from 'types/group'
 import { getCreateOrderSetSchema, StopOrderOption } from './createOrderFormUtils'
 import * as apollo from 'services/apollo'
 import { CreateOrderSetResponse } from 'services/apollo/order'
-import { useGetCurrenciesQuery, useGetGroupExchangeAccountsQuery } from '../../../graphql/index'
-import { extractCurrenciesData, getMinPrice, getMaxPrice, getPriceTickSize } from 'types/currency'
+import {
+  useGetCurrenciesBasicQuery,
+  useGetGroupExchangeAccountsQuery,
+} from '../../../graphql/index'
+import {
+  extractCurrenciesData,
+  getCurrentPrice,
+  getMinPrice,
+  getMaxPrice,
+  getPriceTickSize,
+} from 'types/currency'
 /* eslint-enable */
 
 interface CreateOrderSetFormProps {
@@ -30,7 +39,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
   onClickBack,
   onCreated,
 }) => {
-  const { data: currenciesResponse } = useGetCurrenciesQuery()
+  const { data: currenciesResponse } = useGetCurrenciesBasicQuery()
   const {
     data: groupExchangeAccountsData,
     loading: fetchingGroupExchangeAccounts,
@@ -193,7 +202,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                       handleChange(e)
                       setFieldValue(
                         'price',
-                        getMinPrice(currencyData, values.exchange, values.symbol),
+                        getCurrentPrice(currencyData, values.exchange, values.symbol),
                       )
                     }}
                   >

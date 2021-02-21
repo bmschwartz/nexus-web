@@ -1,14 +1,25 @@
-fragment BinanceCurrencyDetails on BinanceCurrency {
+fragment BinanceCurrencyBasicDetails on BinanceCurrency {
   id
   symbol
   status
   lastPrice
-  openPrice
-  highPrice
-  lowPrice
   minPrice
   maxPrice
   tickSize
+  allowsLimit
+  allowsMarket
+  allowsStopLoss
+  allowsTakeProfit
+  allowsStopLossLimit
+  allowsTakeProfitLimit
+}
+
+fragment BinanceCurrencyDetails on BinanceCurrency {
+  ...BinanceCurrencyBasicDetails
+
+  openPrice
+  highPrice
+  lowPrice
   priceChange
   priceChangePercent
   baseAsset
@@ -18,10 +29,4 @@ fragment BinanceCurrencyDetails on BinanceCurrency {
   quoteAssetPrecision
   baseCommissionPrecision
   quoteCommissionPrecision
-  allowsLimit
-  allowsMarket
-  allowsStopLoss
-  allowsStopLossLimit
-  allowsTakeProfit
-  allowsTakeProfitLimit
 }
