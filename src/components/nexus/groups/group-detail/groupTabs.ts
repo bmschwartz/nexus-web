@@ -48,7 +48,7 @@ export const availableTabs = (userRole: MembershipRole): Tab[] => {
     {
       key: TabKey.GroupMembers,
       name: 'Members',
-      requiredRole: [MembershipRole.Admin, MembershipRole.Trader],
+      requiredRole: [MembershipRole.Admin],
     },
     { key: TabKey.GroupRequests, name: 'Requests', requiredRole: [MembershipRole.Admin] },
     {

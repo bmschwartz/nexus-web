@@ -8,7 +8,11 @@ import {
   createGroupMembersTableData,
 } from './groupMembersTableUtils'
 import { MembershipRole } from 'types/membership'
-import { useGetGroupMembersQuery, MembershipRole as RemoteMembershipRole } from '../../../graphql'
+import {
+  useGetGroupMembersQuery,
+  MembershipRole as RemoteMembershipRole,
+  MembershipStatus as RemoteMembershipStatus,
+} from '../../../graphql'
 /* eslint-enable */
 
 interface GroupMembersTableProps {
@@ -63,7 +67,12 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
   const { data: groupAdminsData, loading: fetchingGroupAdmins } = useGetGroupMembersQuery({
     variables: {
       groupInput: { groupId },
-      membersInput: { limit: PAGE_SIZE, offset: adminsOffset, roles: [RemoteMembershipRole.Admin] },
+      membersInput: {
+        limit: PAGE_SIZE,
+        offset: adminsOffset,
+        roles: [RemoteMembershipRole.Admin],
+        statuses: [RemoteMembershipStatus.Approved],
+      },
     },
     fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
@@ -76,6 +85,7 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
         limit: PAGE_SIZE,
         offset: tradersOffset,
         roles: [RemoteMembershipRole.Trader],
+        statuses: [RemoteMembershipStatus.Approved],
       },
     },
     fetchPolicy: 'cache-and-network',
@@ -89,6 +99,7 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
         limit: PAGE_SIZE,
         offset: membersOffset,
         roles: [RemoteMembershipRole.Member],
+        statuses: [RemoteMembershipStatus.Approved],
       },
     },
     fetchPolicy: 'cache-and-network',

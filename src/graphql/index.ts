@@ -1281,6 +1281,14 @@ export type PayMemberSubscriptionMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type RequestGroupAccessMutationVariables = Exact<{
+  input: RequestGroupAccessInput
+}>
+
+export type RequestGroupAccessMutation = { __typename?: 'Mutation' } & {
+  requestGroupAccess?: Maybe<{ __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'>>
+}
+
 export type ToggleExchangeAccountActiveMutationVariables = Exact<{
   input: ToggleExchangeAccountActiveInput
 }>
@@ -2434,6 +2442,52 @@ export type PayMemberSubscriptionMutationResult = Apollo.MutationResult<
 export type PayMemberSubscriptionMutationOptions = Apollo.BaseMutationOptions<
   PayMemberSubscriptionMutation,
   PayMemberSubscriptionMutationVariables
+>
+export const RequestGroupAccessDocument = gql`
+  mutation RequestGroupAccess($input: RequestGroupAccessInput!) {
+    requestGroupAccess(input: $input) {
+      id
+    }
+  }
+`
+export type RequestGroupAccessMutationFn = Apollo.MutationFunction<
+  RequestGroupAccessMutation,
+  RequestGroupAccessMutationVariables
+>
+
+/**
+ * __useRequestGroupAccessMutation__
+ *
+ * To run a mutation, you first call `useRequestGroupAccessMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestGroupAccessMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestGroupAccessMutation, { data, loading, error }] = useRequestGroupAccessMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRequestGroupAccessMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RequestGroupAccessMutation,
+    RequestGroupAccessMutationVariables
+  >,
+) {
+  return Apollo.useMutation<RequestGroupAccessMutation, RequestGroupAccessMutationVariables>(
+    RequestGroupAccessDocument,
+    baseOptions,
+  )
+}
+export type RequestGroupAccessMutationHookResult = ReturnType<typeof useRequestGroupAccessMutation>
+export type RequestGroupAccessMutationResult = Apollo.MutationResult<RequestGroupAccessMutation>
+export type RequestGroupAccessMutationOptions = Apollo.BaseMutationOptions<
+  RequestGroupAccessMutation,
+  RequestGroupAccessMutationVariables
 >
 export const ToggleExchangeAccountActiveDocument = gql`
   mutation ToggleExchangeAccountActive($input: ToggleExchangeAccountActiveInput!) {

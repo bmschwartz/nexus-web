@@ -5,7 +5,7 @@ import { Membership, MembershipRole, MembershipStatus } from 'types/membership'
 import { Button } from 'antd'
 
 export interface GroupTableItem {
-  id: number
+  id: string
   name: string
   active: boolean
   isMember?: boolean
@@ -65,6 +65,15 @@ export const badgeForIsActiveGroup = (active: boolean) => {
   )
 }
 
-export const renderIsMember = (record: GroupTableItem) => {
-  return record.memberStatus ?? <Button type="link">Request Access</Button>
+export const renderIsMember = (
+  record: GroupTableItem,
+  onClickRequestAccess: (groupId: string) => void,
+) => {
+  return (
+    record.memberStatus ?? (
+      <Button type="link" onClick={async () => onClickRequestAccess(record.id)}>
+        Request Access
+      </Button>
+    )
+  )
 }

@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
-import { Button, PageHeader, Table } from 'antd'
+import { Button, notification, PageHeader, Table } from 'antd'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-// import { TablePaginationConfig } from 'antd/lib/table'
-// import { SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface'
+import * as apollo from 'services/apollo'
 
 import { history } from 'index'
 import { Group } from 'types/group'
@@ -28,35 +27,56 @@ const mapStateToProps = ({ dispatch }: any) => ({
   dispatch,
 })
 
-const columns = [
-  {
-    title: 'Active',
-    dataIndex: 'active',
-    key: 'active',
-    render: (active: boolean) => badgeForIsActiveGroup(active),
-  },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-    sorter: (a: GroupTableItem, b: GroupTableItem) => (a.name > b.name ? -1 : 1),
-    render: (text: string) => <Button type="link">{text}</Button>,
-  },
-  {
-    title: 'Role',
-    dataIndex: 'role',
-    key: 'role',
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-    render: (_: boolean, record: GroupTableItem) => renderIsMember(record),
-  },
-]
-
 const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
   const mergedTableData: GroupTableItem[] = createGroupTableData(groups, memberships)
+
+  const columns = [
+    {
+      title: 'Active',
+      dataIndex: 'active',
+      key: 'active',
+      render: (active: boolean) => badgeForIsActiveGroup(active),
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      sorter: (a: GroupTableItem, b: GroupTableItem) => (a.name > b.name ? -1 : 1),
+      render: (text: string) => <Button type="link">{text}</Button>,
+    },
+    {
+      title: 'Role',
+      dataIndex: 'role',
+      key: 'role',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (_: boolean, record: GroupTableItem) => renderIsMember(record, onClickRequestAccess),
+    },
+  ]
+
+  const onClickRequestAccess = async (groupId: string) => {
+    console.log('requesting access', groupId)
+    const { success, error } = await apollo.requestGroupAccess({ groupId })
+    console.log(success, error)
+    if (success) {
+      notification.success({
+        message: 'Requested Membership',
+        duration: 3, // seconds
+      })
+      setTimeout(() => {
+        window.location.reload()
+      }, 2000)
+    } else {
+      notification.error({
+        message: 'Error',
+        description: error,
+        duration: 3, // seconds
+      })
+    }
+  }
 
   const onRow = (row: GroupTableItem) => {
     return {
