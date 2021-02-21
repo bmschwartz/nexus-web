@@ -398,10 +398,10 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                       height: 350,
                     }}
                     dataSource={createTransferData(values.exchange)}
-                    render={item =>
+                    render={(item: TransferItem) =>
                       item.disabled ? `${item.title} (No account)` : `${item.title}`
                     }
-                    onChange={(keys, direction, moveKeys) => {
+                    onChange={(keys: string[], direction: string, moveKeys: string[]) => {
                       if (direction === 'right') {
                         // extend selected keys with new keys
                         setSelectedAccountKeys([...selectedAccountKeys, ...moveKeys])

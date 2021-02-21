@@ -24,6 +24,7 @@ import { extractCurrencyData } from 'types/currency'
 import { Group } from 'types/group'
 import TextArea from 'antd/lib/input/TextArea'
 import { PositionSide } from 'types/position'
+import { TransferItem } from 'antd/es/transfer'
 /* eslint-enable */
 
 interface ClosePositionsFormProps {
@@ -243,10 +244,10 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
                       height: 350,
                     }}
                     dataSource={createTransferData(selectedPositionSide, groupPositions)}
-                    render={item =>
+                    render={(item: TransferItem) =>
                       item.disabled ? `${item.title} (No account)` : `${item.title}`
                     }
-                    onChange={(keys, direction, moveKeys) => {
+                    onChange={(keys: string[], direction: string, moveKeys: string[]) => {
                       if (direction === 'right') {
                         // extend selected keys with new keys
                         setSelectedAccountKeys([...selectedAccountKeys, ...moveKeys])
