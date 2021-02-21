@@ -67,7 +67,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
       })
       setTimeout(() => {
         window.location.reload()
-      }, 2000)
+      }, 1500)
     } else {
       notification.error({
         message: 'Error',
@@ -79,7 +79,11 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
 
   const onRow = (row: GroupTableItem) => {
     return {
-      onClick: () => {
+      onClick: (event: any) => {
+        if (event.target.innerText === 'Request Access') {
+          return
+        }
+
         if (row.memberStatus !== MembershipStatus.Approved) {
           const content =
             row.memberStatus === MembershipStatus.Pending
