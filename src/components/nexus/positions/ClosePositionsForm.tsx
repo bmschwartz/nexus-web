@@ -79,6 +79,7 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
     Modal.error({
       title: 'Select Members',
       content: 'Select one or more members',
+      maskClosable: true,
     })
   }
 

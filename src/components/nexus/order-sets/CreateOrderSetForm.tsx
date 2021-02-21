@@ -89,6 +89,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
     Modal.error({
       title: 'Select Members',
       content: 'Select one or more members for order',
+      maskClosable: true,
     })
   }
 
