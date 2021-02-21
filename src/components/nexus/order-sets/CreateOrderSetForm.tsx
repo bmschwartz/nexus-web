@@ -22,10 +22,11 @@ import {
 import {
   extractCurrenciesData,
   getCurrentPrice,
-  getMinPrice,
   getMaxPrice,
+  getMinPrice,
   getPriceTickSize,
 } from 'types/currency'
+
 /* eslint-enable */
 
 interface CreateOrderSetFormProps {
@@ -198,11 +199,11 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                     name="symbol"
                     style={{ width: 200 }}
                     size="large"
-                    onChange={e => {
-                      handleChange(e)
+                    onChange={newSymbol => {
+                      handleChange(newSymbol)
                       setFieldValue(
                         'price',
-                        getCurrentPrice(currencyData, values.exchange, values.symbol),
+                        getCurrentPrice(currencyData, values.exchange, newSymbol),
                       )
                     }}
                   >
