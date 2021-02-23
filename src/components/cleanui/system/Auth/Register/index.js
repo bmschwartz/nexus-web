@@ -1,16 +1,16 @@
 import { notification } from 'antd'
 import React, { useState } from 'react'
 import { Link, Redirect } from 'react-router-dom'
-import Amplify, { Auth as AmplifyAuth } from 'aws-amplify'
 import * as Yup from 'yup'
 import YupPass from 'yup-password'
 import { Formik } from 'formik'
 import { Form, Input, SubmitButton } from 'formik-antd'
 import { UserOutlined } from '@ant-design/icons'
-import style from '../style.module.scss'
-import awsExports from '../../../../../aws-exports'
 
-Amplify.configure(awsExports)
+import style from '../style.module.scss'
+/* eslint-disable */
+import auth from '../../../../../services/amplify/auth'
+/* eslint-enable */
 
 // Add password validation to Yup
 YupPass(Yup)
@@ -52,16 +52,9 @@ const Register = () => {
           onSubmit={async values => {
             setSubmittingRegistration(true)
             const { password } = values
-            try {
-              console.log('signup!')
-              const res = await AmplifyAuth.signUp({
-                username: email,
-                password,
-                attributes: {
-                  email,
-                },
-              })
-              console.log(res)
+
+            const { success, error } = await auth.register(email, password)
+            if (success) {
               notification.success({
                 duration: 1,
                 message: 'Registration Success',
@@ -69,10 +62,10 @@ const Register = () => {
                 onClose: () => setRedirectToVerifyToken(true),
               })
               // do not set submittingRegistration to false because we don't want the user to do anything
-            } catch (e) {
-              console.log('error', e)
+            } else {
               notification.error({
                 message: 'Registration Error',
+                description: error,
                 duration: 3, // seconds
               })
               setSubmittingRegistration(false)

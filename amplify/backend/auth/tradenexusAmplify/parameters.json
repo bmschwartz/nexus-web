@@ -8,9 +8,9 @@
     "mfaTypes": [
         "SMS Text Message"
     ],
-    "smsAuthenticationMessage": "Your authentication code is {####}",
-    "smsVerificationMessage": "Your verification code is {####}",
-    "emailVerificationSubject": "Your verification code",
+    "smsAuthenticationMessage": "Trade Nexus authentication code is {####}",
+    "smsVerificationMessage": "Trade Nexus verification code is {####}",
+    "emailVerificationSubject": "Trade Nexus Registration Code",
     "emailVerificationMessage": "Your verification code is {####}",
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,

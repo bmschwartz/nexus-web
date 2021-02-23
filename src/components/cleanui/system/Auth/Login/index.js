@@ -1,8 +1,20 @@
-import React from 'react'
+import { history } from 'index'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { Input, Button, Form } from 'antd'
+import { notification } from 'antd'
 import { Link } from 'react-router-dom'
+import { UserOutlined } from '@ant-design/icons'
+import { SubmitButton, Input, Form } from 'formik-antd'
+import { Formik } from 'formik'
+import * as Yup from 'yup'
+import YupPass from 'yup-password'
+
 import style from '../style.module.scss'
+/* eslint-disable */
+import auth from '../../../../../services/amplify/auth'
+/* eslint-enable */
+
+YupPass(Yup)
 
 const mapStateToProps = ({ user, settings, dispatch }) => ({
   dispatch,
@@ -10,17 +22,21 @@ const mapStateToProps = ({ user, settings, dispatch }) => ({
   logo: settings.logo,
 })
 
-const Login = ({ dispatch, user, logo }) => {
-  const onFinish = values => {
-    dispatch({
-      type: 'user/LOGIN',
-      payload: values,
-    })
-  }
+const getLoginFormSchema = () => {
+  return Yup.object().shape({
+    email: Yup.string()
+      .label('Email')
+      .email('Not a valid email')
+      .required(),
+    password: Yup.string()
+      .label('Password')
+      .password()
+      .required(),
+  })
+}
 
-  const onFinishFailed = errorInfo => {
-    console.log('Failed:', errorInfo)
-  }
+const Login = ({ logo }) => {
+  const [submittingLogin, setSubmittingLogin] = useState(false)
 
   return (
     <div>
@@ -33,35 +49,55 @@ const Login = ({ dispatch, user, logo }) => {
         <div className="text-dark font-size-24 mb-4">
           <strong>Sign in to your account</strong>
         </div>
-        <Form
-          layout="vertical"
-          hideRequiredMark
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          className="mb-4"
+        <Formik
+          initialValues={{
+            email: '',
+            password: '',
+          }}
+          validationSchema={getLoginFormSchema}
+          onSubmit={async values => {
+            const { email, password } = values
+            setSubmittingLogin(true)
+
+            const { success } = await auth.login(email, password)
+            if (success) {
+              notification.success({
+                duration: 1.5,
+                message: 'Login Success!',
+                onClose: () => history.push('/home'),
+              })
+            } else {
+              notification.error({
+                message: 'Login Error',
+                description: 'Incorrect username or password combination',
+                duration: 3, // seconds
+              })
+            }
+
+            setSubmittingLogin(false)
+          }}
         >
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: 'Please input your e-mail address' }]}
-          >
-            <Input size="large" placeholder="Email" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Please input your password' }]}
-          >
-            <Input size="large" type="password" placeholder="Password" />
-          </Form.Item>
-          <Button
-            type="primary"
-            size="large"
-            className="text-center w-100"
-            htmlType="submit"
-            loading={user.loading}
-          >
-            <strong>Sign in</strong>
-          </Button>
-        </Form>
+          {() => (
+            <div className="card-body">
+              <Form layout="vertical" className="mb-4">
+                <Form.Item name="email" className="mb-4">
+                  <Input
+                    size="large"
+                    name="email"
+                    placeholder="Enter Email"
+                    prefix={<UserOutlined className="site-form-item-icon" />}
+                  />
+                </Form.Item>
+                <Form.Item name="password" className="mb-4">
+                  <Input.Password size="large" name="password" placeholder="Enter Password" />
+                </Form.Item>
+                <SubmitButton loading={submittingLogin} size="large" block>
+                  Submit
+                </SubmitButton>
+              </Form>
+            </div>
+          )}
+        </Formik>
         <Link to="/forgot-password" className="kit__utils__link font-size-16">
           Forgot Password?
         </Link>

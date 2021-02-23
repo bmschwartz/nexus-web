@@ -1,16 +1,18 @@
-import React from 'react'
-// import {notification} from 'antd'
-import { Link, useLocation } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, Redirect, useLocation } from 'react-router-dom'
 import { SubmitButton, Form, Input } from 'formik-antd'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { UserOutlined } from '@ant-design/icons'
+import { notification } from 'antd'
+import auth from 'services/amplify/auth'
 import style from '../style.module.scss'
 
-const getRegisterFormSchema = () => {
+const getValidateCodeFormSchema = () => {
   return Yup.object().shape({
     email: Yup.string()
       .label('Email')
+      .email('Not a valid email')
       .required(),
     verificationCode: Yup.string()
       .label('Verify Code')
@@ -19,10 +21,9 @@ const getRegisterFormSchema = () => {
 }
 
 const VerifyCode = () => {
-  // const [verificationCode, setVerificationCode] = useState
+  const [submittingCode, setSubmittingCode] = useState<boolean>(false)
+  const [redirectToLogin, setRedirectToLogin] = useState<boolean>(false)
   const searchParams = new URLSearchParams(useLocation().search)
-  const email = searchParams.get('email')
-  console.log(email)
 
   return (
     <div>
@@ -33,11 +34,32 @@ const VerifyCode = () => {
         <div className="text-center">You should receive a registration code by email shortly</div>
         <Formik
           initialValues={{
+            email: searchParams.get('email') ?? '',
             verificationCode: '',
           }}
-          validationSchema={getRegisterFormSchema}
+          validationSchema={getValidateCodeFormSchema}
           onSubmit={async values => {
-            console.log(values)
+            const { email, verificationCode } = values
+            setSubmittingCode(true)
+
+            const { success, error } = await auth.verifyRegistrationCode(email, verificationCode)
+            if (success) {
+              notification.success({
+                duration: 1,
+                message: 'Successfully Confirmed!',
+                description: 'You will be redirected to login',
+                onClose: () => setRedirectToLogin(true),
+              })
+            } else {
+              console.error(error)
+              notification.error({
+                message: 'Invalid Code!',
+                description: 'That registration code is invalid',
+                duration: 3, // seconds
+              })
+            }
+
+            setSubmittingCode(false)
           }}
         >
           {() => (
@@ -52,22 +74,9 @@ const VerifyCode = () => {
                   />
                 </Form.Item>
                 <Form.Item name="verificationCode" className="mb-4">
-                  <Input
-                    size="large"
-                    name="verificationCode"
-                    placeholder="Enter Code"
-                    // onChange={(e) => {
-                    //   handleChange(e)
-                    //   setEmail(e.target.value)
-                    // }}
-                    // prefix={<UserOutlined className="site-form-item-icon" />}
-                  />
+                  <Input size="large" name="verificationCode" placeholder="Enter Code" />
                 </Form.Item>
-                <SubmitButton
-                  // loading={submittingRegistration}
-                  size="large"
-                  block
-                >
+                <SubmitButton loading={submittingCode} size="large" block>
                   Submit
                 </SubmitButton>
               </Form>
@@ -81,6 +90,13 @@ const VerifyCode = () => {
           Sign in
         </Link>
       </div>
+      {redirectToLogin && (
+        <Redirect
+          to={{
+            pathname: '/',
+          }}
+        />
+      )}
     </div>
   )
 }
