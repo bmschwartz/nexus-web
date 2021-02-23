@@ -35,6 +35,7 @@
     "@apollo/client": "^3.1.4",
     "@swyftx/api-crypto-address-validator": "^1.13.1",
     "antd": "^4.12.3",
+    "aws-amplify": "^3.3.20",
     "axios": "^0.19.2",
     "axios-mock-adapter": "^1.18.1",
     "bootstrap": "^4.4.1",
@@ -56,9 +57,12 @@
     "graphql-tag": "^2.11.0",
     "history": "^4.10.1",
     "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^1.12.2",
+    "jwt-decode": "^3.1.2",
     "lodash": "^4.17.20",
     "moment": "2.24.0",
     "nprogress": "^0.2.0",
+    "password-validator": "^5.1.1",
     "prop-types": "^15.7.2",
     "qs": "^6.9.3",
     "query-string": "^6.13.5",
@@ -90,7 +94,8 @@
     "sortablejs": "1.10.2",
     "store": "^2.0.12",
     "use-query-params": "^1.1.8",
-    "yup": "^0.29.3"
+    "yup": "^0.29.3",
+    "yup-password": "^0.2.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.8.3",

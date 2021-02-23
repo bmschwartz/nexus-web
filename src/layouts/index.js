@@ -14,7 +14,15 @@ const Layouts = {
 
 const mapStateToProps = ({ user }) => ({ user })
 
-const authPaths = ['/login', '/forgot-password', '/register', '/lockscreen', '/404', '/500']
+const authPaths = [
+  '/login',
+  '/forgot-password',
+  '/register',
+  '/lockscreen',
+  '/404',
+  '/500',
+  '/verify',
+]
 
 const Layout = ({ user, children, location: { pathname } }) => {
   // Layout Rendering

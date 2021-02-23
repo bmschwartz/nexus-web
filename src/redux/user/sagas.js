@@ -1,5 +1,6 @@
 import { all, takeEvery, put, call } from 'redux-saga/effects'
 import { notification } from 'antd'
+import { Auth as AmplifyAuth } from 'aws-amplify'
 import { history } from 'index'
 import * as apollo from 'services/apollo'
 import actions from './actions'
@@ -39,16 +40,24 @@ export function* LOGIN({ payload }) {
 }
 
 export function* REGISTER({ payload }) {
-  const { email, password, username } = payload
+  const { email, password } = payload
   yield put({
     type: 'user/SET_STATE',
     payload: {
       loading: true,
     },
   })
-  const { success, error } = yield call(apollo.register, { email, username, password })
 
-  if (success) {
+  const signUpParams = {
+    username: email,
+    password,
+    attributes: {
+      email,
+    },
+  }
+  try {
+    yield call(AmplifyAuth.signUp, signUpParams)
+
     yield put({
       type: 'user/LOAD_CURRENT_ACCOUNT',
     })
@@ -57,7 +66,7 @@ export function* REGISTER({ payload }) {
       message: 'Succesful Registration',
       description: 'You have successfully registered!',
     })
-  } else if (error) {
+  } catch (e) {
     yield put({
       type: 'user/SET_STATE',
       payload: {
@@ -66,7 +75,7 @@ export function* REGISTER({ payload }) {
     })
     notification.error({
       message: 'Signup Error',
-      description: error,
+      description: '',
       duration: 3, // seconds
     })
   }

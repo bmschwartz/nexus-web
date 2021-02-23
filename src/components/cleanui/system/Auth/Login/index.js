@@ -30,7 +30,7 @@ const Login = ({ dispatch, user, logo }) => {
         </h1>
       </div>
       <div className={`card ${style.container}`}>
-        <div className="text-dark font-size-24 mb-3">
+        <div className="text-dark font-size-24 mb-4">
           <strong>Sign in to your account</strong>
         </div>
         <Form

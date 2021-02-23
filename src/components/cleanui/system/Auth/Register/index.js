@@ -1,22 +1,42 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { Input, Button, Form } from 'antd'
-import { Link } from 'react-router-dom'
+import { notification } from 'antd'
+import React, { useState } from 'react'
+import { Link, Redirect } from 'react-router-dom'
+import Amplify, { Auth as AmplifyAuth } from 'aws-amplify'
+import * as Yup from 'yup'
+import YupPass from 'yup-password'
+import { Formik } from 'formik'
+import { Form, Input, SubmitButton } from 'formik-antd'
+import { UserOutlined } from '@ant-design/icons'
 import style from '../style.module.scss'
+import awsExports from '../../../../../aws-exports'
 
-const mapStateToProps = ({ user, dispatch }) => ({ user, dispatch })
+Amplify.configure(awsExports)
 
-const Register = ({ dispatch, user }) => {
-  const onFinish = values => {
-    dispatch({
-      type: 'user/REGISTER',
-      payload: values,
-    })
-  }
+// Add password validation to Yup
+YupPass(Yup)
 
-  const onFinishFailed = errorInfo => {
-    console.log('Failed:', errorInfo)
-  }
+const getRegisterFormSchema = () => {
+  return Yup.object().shape({
+    email: Yup.string()
+      .label('Email')
+      .email()
+      .required(),
+    password: Yup.string()
+      .label('Password')
+      .password()
+      .required(),
+    confirmPassword: Yup.string()
+      .label('Confirm Password')
+      .password()
+      .oneOf([Yup.ref('password'), null], "Passwords don't match!")
+      .required(),
+  })
+}
+
+const Register = () => {
+  const [email, setEmail] = useState('')
+  const [submittingRegistration, setSubmittingRegistration] = useState(false)
+  const [redirectToVerifyToken, setRedirectToVerifyToken] = useState(false)
 
   return (
     <div>
@@ -24,41 +44,73 @@ const Register = ({ dispatch, user }) => {
         <div className="text-dark font-size-24 mb-4">
           <strong>Create your account</strong>
         </div>
-        <Form
-          layout="vertical"
-          hideRequiredMark
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          className="mb-4"
+        <Formik
+          initialValues={{
+            email,
+          }}
+          validationSchema={getRegisterFormSchema}
+          onSubmit={async values => {
+            setSubmittingRegistration(true)
+            const { password } = values
+            try {
+              console.log('signup!')
+              const res = await AmplifyAuth.signUp({
+                username: email,
+                password,
+                attributes: {
+                  email,
+                },
+              })
+              console.log(res)
+              notification.success({
+                duration: 1,
+                message: 'Registration Success',
+                description: 'You have successfully registered!',
+                onClose: () => setRedirectToVerifyToken(true),
+              })
+              // do not set submittingRegistration to false because we don't want the user to do anything
+            } catch (e) {
+              console.log('error', e)
+              notification.error({
+                message: 'Registration Error',
+                duration: 3, // seconds
+              })
+              setSubmittingRegistration(false)
+            }
+          }}
         >
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: 'Please input your e-mail address' }]}
-          >
-            <Input size="large" placeholder="Email Address" />
-          </Form.Item>
-          <Form.Item
-            name="username"
-            rules={[{ required: true, message: 'Please input your username' }]}
-          >
-            <Input size="large" placeholder="Username" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Please input your password' }]}
-          >
-            <Input type="password" size="large" placeholder="Password" />
-          </Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            size="large"
-            className="text-center w-100"
-            loading={user.loading}
-          >
-            <strong>Sign up</strong>
-          </Button>
-        </Form>
+          {({ handleChange }) => (
+            <div className="card-body">
+              <Form layout="vertical" className="mb-4">
+                <Form.Item name="email" className="mb-4">
+                  <Input
+                    size="large"
+                    name="email"
+                    placeholder="Enter Email"
+                    onChange={e => {
+                      handleChange(e)
+                      setEmail(e.target.value)
+                    }}
+                    prefix={<UserOutlined className="site-form-item-icon" />}
+                  />
+                </Form.Item>
+                <Form.Item name="password" className="mb-4">
+                  <Input.Password size="large" name="password" placeholder="Enter Password" />
+                </Form.Item>
+                <Form.Item name="confirmPassword" className="mb-4">
+                  <Input.Password
+                    size="large"
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                  />
+                </Form.Item>
+                <SubmitButton loading={submittingRegistration} size="large" block="block">
+                  Sign Up
+                </SubmitButton>
+              </Form>
+            </div>
+          )}
+        </Formik>
       </div>
       <div className="text-center pt-2 mb-auto">
         <span className="mr-2">Already have an account?</span>
@@ -66,8 +118,16 @@ const Register = ({ dispatch, user }) => {
           Sign in
         </Link>
       </div>
+      {redirectToVerifyToken && (
+        <Redirect
+          to={{
+            pathname: '/verify',
+            search: `?email=${email}`,
+          }}
+        />
+      )}
     </div>
   )
 }
 
-export default connect(mapStateToProps)(Register)
+export default Register

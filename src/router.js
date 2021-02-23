@@ -42,6 +42,11 @@ const routes = [
     exact: true,
   },
   {
+    path: '/verify',
+    Component: lazy(() => import('pages/auth/verify-code')),
+    exact: true,
+  },
+  {
     path: '/lockscreen',
     Component: lazy(() => import('pages/auth/lockscreen')),
     exact: true,
