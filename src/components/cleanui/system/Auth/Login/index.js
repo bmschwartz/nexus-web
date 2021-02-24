@@ -1,8 +1,7 @@
-import { history } from 'index'
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { notification } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { MailOutlined } from '@ant-design/icons'
 import { SubmitButton, Input, Form } from 'formik-antd'
 import { Formik } from 'formik'
@@ -37,6 +36,7 @@ const getLoginFormSchema = () => {
 }
 
 const Login = ({ logo }) => {
+  const [redirect, setRedirect] = useState(false)
   const [submittingLogin, setSubmittingLogin] = useState(false)
 
   return (
@@ -65,7 +65,7 @@ const Login = ({ logo }) => {
               notification.success({
                 duration: 1.5,
                 message: 'Login Success!',
-                onClose: () => history.push('/home'),
+                onClose: () => setRedirect(true),
               })
             } else {
               notification.error({
@@ -109,6 +109,13 @@ const Login = ({ logo }) => {
           Sign up
         </Link>
       </div>
+      {redirect && (
+        <Redirect
+          to={{
+            pathname: '/groups',
+          }}
+        />
+      )}
     </div>
   )
 }
