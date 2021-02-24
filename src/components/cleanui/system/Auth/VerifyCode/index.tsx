@@ -3,9 +3,9 @@ import { Link, Redirect, useLocation } from 'react-router-dom'
 import { SubmitButton, Form, Input } from 'formik-antd'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
-import { UserOutlined } from '@ant-design/icons'
+import { MailOutlined } from '@ant-design/icons'
 import { notification } from 'antd'
-import auth from 'services/amplify/auth'
+import * as apollo from 'services/apollo'
 import style from '../style.module.scss'
 
 const getValidateCodeFormSchema = () => {
@@ -39,10 +39,10 @@ const VerifyCode = () => {
           }}
           validationSchema={getValidateCodeFormSchema}
           onSubmit={async values => {
-            const { email, verificationCode } = values
+            const { email, verificationCode: code } = values
             setSubmittingCode(true)
 
-            const { success, error } = await auth.verifyRegistrationCode(email, verificationCode)
+            const { success, error } = await apollo.verifySignUpCode({ email, code })
             if (success) {
               notification.success({
                 duration: 1,
@@ -70,7 +70,7 @@ const VerifyCode = () => {
                     size="large"
                     name="email"
                     placeholder="Enter Email"
-                    prefix={<UserOutlined className="site-form-item-icon" />}
+                    prefix={<MailOutlined className="site-form-item-icon" />}
                   />
                 </Form.Item>
                 <Form.Item name="verificationCode" className="mb-4">

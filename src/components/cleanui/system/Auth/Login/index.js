@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { notification } from 'antd'
 import { Link } from 'react-router-dom'
-import { UserOutlined } from '@ant-design/icons'
+import { MailOutlined } from '@ant-design/icons'
 import { SubmitButton, Input, Form } from 'formik-antd'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
@@ -11,7 +11,7 @@ import YupPass from 'yup-password'
 
 import style from '../style.module.scss'
 /* eslint-disable */
-import auth from '../../../../../services/amplify/auth'
+import * as apollo from '../../../../../services/apollo'
 /* eslint-enable */
 
 YupPass(Yup)
@@ -31,6 +31,7 @@ const getLoginFormSchema = () => {
     password: Yup.string()
       .label('Password')
       .password()
+      .minSymbols(0)
       .required(),
   })
 }
@@ -59,7 +60,7 @@ const Login = ({ logo }) => {
             const { email, password } = values
             setSubmittingLogin(true)
 
-            const { success } = await auth.login(email, password)
+            const { success } = await apollo.login({ email, password })
             if (success) {
               notification.success({
                 duration: 1.5,
@@ -85,7 +86,7 @@ const Login = ({ logo }) => {
                     size="large"
                     name="email"
                     placeholder="Enter Email"
-                    prefix={<UserOutlined className="site-form-item-icon" />}
+                    prefix={<MailOutlined className="site-form-item-icon" />}
                   />
                 </Form.Item>
                 <Form.Item name="password" className="mb-4">

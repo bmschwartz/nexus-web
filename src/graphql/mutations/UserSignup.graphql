@@ -1,5 +1,6 @@
 mutation SignupUser($input: SignupUserInput!) {
   signupUser(input: $input) {
-    token
+    success
+    error
   }
 }

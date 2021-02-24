@@ -1,0 +1,6 @@
+mutation VerifySignUpCode($input: VerifySignUpCodeInput!) {
+  verifySignUpCode(input: $input) {
+    success
+    error
+  }
+}

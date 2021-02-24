@@ -34,10 +34,6 @@ type AsyncOperationStatus {
   operation: AsyncOperation!
 }
 
-type AuthPayload {
-  token: String!
-}
-
 type BinanceCurrency {
   allowsLimit: Boolean!
   allowsMarket: Boolean!
@@ -205,6 +201,10 @@ type GroupSubscription {
   updatedAt: DateTime!
 }
 
+type LoginResponse {
+  token: String
+}
+
 type MemberOrdersResult {
   orders: [Order!]!
   totalCount: Int!
@@ -245,11 +245,11 @@ type Mutation {
   deleteExchangeAccount(input: DeleteExchangeAccountInput!): DeleteExchangeAccountResult!
   deleteMembership(input: DeleteMembershipInput!): DeleteMembershipResult
   disableGroup(input: DisableGroupInput!): Group
-  loginUser(input: LoginUserInput!): AuthPayload!
+  loginUser(input: LoginUserInput!): LoginResponse!
   payMemberSubscription(input: PayMemberSubscriptionInput!): PayMemberSubscriptionResult
   renameGroup(input: RenameGroupInput!): Group
   requestGroupAccess(input: RequestGroupAccessInput!): GroupMembership
-  signupUser(input: SignupUserInput!): AuthPayload!
+  signupUser(input: SignupUserInput!): SignUpResponse!
   toggleExchangeAccountActive(input: ToggleExchangeAccountActiveInput!): ToggleExchangeAccountActiveResult!
   updateExchangeAccount(input: UpdateExchangeAccountInput!): UpdateExchangeAccountResult!
   updateGroupDescription(input: UpdateGroupDescriptionInput!): Group
@@ -257,6 +257,7 @@ type Mutation {
   updateMembershipRole(input: UpdateMembershipRoleInput!): GroupMembership
   updateMembershipStatus(input: UpdateMembershipStatusInput!): GroupMembership
   updateOrderSet(input: UpdateOrderSetInput!): UpdateOrderSetResult
+  verifySignUpCode(input: VerifySignUpCodeInput!): VerifySignUpCodeResponse!
 }
 
 type Order {
@@ -348,6 +349,11 @@ type Query {
   userIdByEmail(input: UserIdByEmailInput!): ID
 }
 
+type SignUpResponse {
+  error: String
+  success: Boolean!
+}
+
 type SubscriptionBill {
   amountCharged: Float!
   amountPaid: Float!
@@ -392,6 +398,11 @@ type User {
   memberships: [GroupMembership!]!
   updatedAt: DateTime!
   username: String!
+}
+
+type VerifySignUpCodeResponse {
+  error: String
+  success: Boolean!
 }
 
 enum BillStatus {
@@ -736,6 +747,11 @@ input UpdateOrderSetInput {
 }
 
 input UserIdByEmailInput {
+  email: String!
+}
+
+input VerifySignUpCodeInput {
+  code: String!
   email: String!
 }
 

@@ -1,6 +1,10 @@
 /* eslint-disable */
 import { client } from './client'
-import { UserLoginDocument, SignupUserDocument } from '../../graphql/index'
+import {
+  UserLoginDocument,
+  SignupUserDocument,
+  VerifySignUpCodeDocument,
+} from '../../graphql/index'
 /* eslint-enable */
 
 const ACCESS_TOKEN_KEY = 'accessToken'
@@ -16,28 +20,52 @@ interface RegisterInput {
   password: string
 }
 
+interface RegisterResponse {
+  success: boolean
+  error?: string
+}
+
 interface LoginInput {
   email: string
   password: string
 }
 
-export const register = async (input: RegisterInput): Promise<AuthResponse> => {
+interface VerifySignUpCodeInput {
+  email: string
+  code: string
+}
+
+interface VerifySignUpCodeResponse {
+  success: boolean
+  error?: string
+}
+
+export const register = async (input: RegisterInput): Promise<RegisterResponse> => {
   try {
     const response = await client.mutate({
       mutation: SignupUserDocument,
       variables: { input },
     })
 
-    const token = response.data?.signupUser.token
+    const { success, error } = response.data?.signupUser
+    return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
 
-    let error = null
-    if (token) {
-      localStorage.setItem(ACCESS_TOKEN_KEY, token)
-    } else {
-      error = 'Error registering'
-    }
+export const verifySignUpCode = async (
+  input: VerifySignUpCodeInput,
+): Promise<VerifySignUpCodeResponse> => {
+  try {
+    const response = await client.mutate({
+      mutation: VerifySignUpCodeDocument,
+      variables: { input },
+    })
 
-    return { success: !!token, error }
+    const { success, error } = response.data?.verifySignUpCode
+
+    return { success, error }
   } catch (error) {
     return { success: false, error: error.message }
   }

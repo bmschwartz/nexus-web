@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client'
 import * as Apollo from '@apollo/client'
-
 export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> }
@@ -741,14 +740,20 @@ export type UpdateOrderSetResult = {
   error?: Maybe<Scalars['String']>
 }
 
-export type AuthPayload = {
-  __typename?: 'AuthPayload'
-  token: Scalars['String']
+export type LoginResponse = {
+  __typename?: 'LoginResponse'
+  token?: Maybe<Scalars['String']>
 }
 
 export type LoginUserInput = {
   email: Scalars['String']
   password: Scalars['String']
+}
+
+export type SignUpResponse = {
+  __typename?: 'SignUpResponse'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
 }
 
 export type SignupUserInput = {
@@ -770,6 +775,17 @@ export type User = {
 
 export type UserIdByEmailInput = {
   email: Scalars['String']
+}
+
+export type VerifySignUpCodeInput = {
+  email: Scalars['String']
+  code: Scalars['String']
+}
+
+export type VerifySignUpCodeResponse = {
+  __typename?: 'VerifySignUpCodeResponse'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
 }
 
 export type Query = {
@@ -882,8 +898,9 @@ export type Mutation = {
   deleteExchangeAccount: DeleteExchangeAccountResult
   updateExchangeAccount: UpdateExchangeAccountResult
   toggleExchangeAccountActive: ToggleExchangeAccountActiveResult
-  loginUser: AuthPayload
-  signupUser: AuthPayload
+  loginUser: LoginResponse
+  signupUser: SignUpResponse
+  verifySignUpCode: VerifySignUpCodeResponse
 }
 
 export type MutationCreateGroupArgs = {
@@ -992,6 +1009,10 @@ export type MutationLoginUserArgs = {
 
 export type MutationSignupUserArgs = {
   input: SignupUserInput
+}
+
+export type MutationVerifySignUpCodeArgs = {
+  input: VerifySignUpCodeInput
 }
 
 export type AsyncOperationDetailsFragment = { __typename?: 'AsyncOperation' } & Pick<
@@ -1349,7 +1370,7 @@ export type UserLoginMutationVariables = Exact<{
 }>
 
 export type UserLoginMutation = { __typename?: 'Mutation' } & {
-  loginUser: { __typename?: 'AuthPayload' } & Pick<AuthPayload, 'token'>
+  loginUser: { __typename?: 'LoginResponse' } & Pick<LoginResponse, 'token'>
 }
 
 export type SignupUserMutationVariables = Exact<{
@@ -1357,7 +1378,18 @@ export type SignupUserMutationVariables = Exact<{
 }>
 
 export type SignupUserMutation = { __typename?: 'Mutation' } & {
-  signupUser: { __typename?: 'AuthPayload' } & Pick<AuthPayload, 'token'>
+  signupUser: { __typename?: 'SignUpResponse' } & Pick<SignUpResponse, 'success' | 'error'>
+}
+
+export type VerifySignUpCodeMutationVariables = Exact<{
+  input: VerifySignUpCodeInput
+}>
+
+export type VerifySignUpCodeMutation = { __typename?: 'Mutation' } & {
+  verifySignUpCode: { __typename?: 'VerifySignUpCodeResponse' } & Pick<
+    VerifySignUpCodeResponse,
+    'success' | 'error'
+  >
 }
 
 export type GetAllGroupsQueryVariables = Exact<{ [key: string]: never }>
@@ -2813,7 +2845,8 @@ export type UserLoginMutationOptions = Apollo.BaseMutationOptions<
 export const SignupUserDocument = gql`
   mutation SignupUser($input: SignupUserInput!) {
     signupUser(input: $input) {
-      token
+      success
+      error
     }
   }
 `
@@ -2852,6 +2885,53 @@ export type SignupUserMutationResult = Apollo.MutationResult<SignupUserMutation>
 export type SignupUserMutationOptions = Apollo.BaseMutationOptions<
   SignupUserMutation,
   SignupUserMutationVariables
+>
+export const VerifySignUpCodeDocument = gql`
+  mutation VerifySignUpCode($input: VerifySignUpCodeInput!) {
+    verifySignUpCode(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type VerifySignUpCodeMutationFn = Apollo.MutationFunction<
+  VerifySignUpCodeMutation,
+  VerifySignUpCodeMutationVariables
+>
+
+/**
+ * __useVerifySignUpCodeMutation__
+ *
+ * To run a mutation, you first call `useVerifySignUpCodeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifySignUpCodeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifySignUpCodeMutation, { data, loading, error }] = useVerifySignUpCodeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useVerifySignUpCodeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    VerifySignUpCodeMutation,
+    VerifySignUpCodeMutationVariables
+  >,
+) {
+  return Apollo.useMutation<VerifySignUpCodeMutation, VerifySignUpCodeMutationVariables>(
+    VerifySignUpCodeDocument,
+    baseOptions,
+  )
+}
+export type VerifySignUpCodeMutationHookResult = ReturnType<typeof useVerifySignUpCodeMutation>
+export type VerifySignUpCodeMutationResult = Apollo.MutationResult<VerifySignUpCodeMutation>
+export type VerifySignUpCodeMutationOptions = Apollo.BaseMutationOptions<
+  VerifySignUpCodeMutation,
+  VerifySignUpCodeMutationVariables
 >
 export const GetAllGroupsDocument = gql`
   query GetAllGroups {

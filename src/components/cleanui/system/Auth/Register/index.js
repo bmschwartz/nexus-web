@@ -5,11 +5,11 @@ import * as Yup from 'yup'
 import YupPass from 'yup-password'
 import { Formik } from 'formik'
 import { Form, Input, SubmitButton } from 'formik-antd'
-import { UserOutlined } from '@ant-design/icons'
+import { UserOutlined, MailOutlined } from '@ant-design/icons'
 
 import style from '../style.module.scss'
 /* eslint-disable */
-import auth from '../../../../../services/amplify/auth'
+import * as apollo from '../../../../../services/apollo'
 /* eslint-enable */
 
 // Add password validation to Yup
@@ -21,13 +21,18 @@ const getRegisterFormSchema = () => {
       .label('Email')
       .email()
       .required(),
+    username: Yup.string()
+      .label('Username')
+      .required(),
     password: Yup.string()
       .label('Password')
       .password()
+      .minSymbols(0)
       .required(),
     confirmPassword: Yup.string()
       .label('Confirm Password')
       .password()
+      .minSymbols(0)
       .oneOf([Yup.ref('password'), null], "Passwords don't match!")
       .required(),
   })
@@ -47,13 +52,14 @@ const Register = () => {
         <Formik
           initialValues={{
             email,
+            username: '',
           }}
           validationSchema={getRegisterFormSchema}
           onSubmit={async values => {
             setSubmittingRegistration(true)
-            const { password } = values
+            const { username, password } = values
 
-            const { success, error } = await auth.register(email, password)
+            const { success, error } = await apollo.register({ email, username, password })
             if (success) {
               notification.success({
                 duration: 1,
@@ -84,6 +90,14 @@ const Register = () => {
                       handleChange(e)
                       setEmail(e.target.value)
                     }}
+                    prefix={<MailOutlined className="site-form-item-icon" />}
+                  />
+                </Form.Item>
+                <Form.Item name="username" className="mb-4">
+                  <Input
+                    size="large"
+                    name="username"
+                    placeholder="Enter Username"
                     prefix={<UserOutlined className="site-form-item-icon" />}
                   />
                 </Form.Item>
