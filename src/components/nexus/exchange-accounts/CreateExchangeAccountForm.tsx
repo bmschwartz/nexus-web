@@ -19,7 +19,7 @@ interface CreateExchangeAccountFormProps {
   onCreated: () => void
 }
 
-const EXCHANGES = [Exchange.BINANCE, Exchange.BITMEX]
+const EXCHANGES = [Exchange.BITMEX]
 
 const getCreateExchangeAccountSchema = () => {
   return Yup.object().shape({

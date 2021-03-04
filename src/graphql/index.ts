@@ -1421,7 +1421,6 @@ export type GetCurrenciesBasicQueryVariables = Exact<{ [key: string]: never }>
 
 export type GetCurrenciesBasicQuery = { __typename?: 'Query' } & {
   bitmexCurrencies: Array<{ __typename?: 'BitmexCurrency' } & BitmexCurrencyDetailsFragment>
-  binanceCurrencies: Array<{ __typename?: 'BinanceCurrency' } & BinanceCurrencyBasicDetailsFragment>
 }
 
 export type GetCurrencyQueryVariables = Exact<{
@@ -3093,12 +3092,8 @@ export const GetCurrenciesBasicDocument = gql`
     bitmexCurrencies {
       ...BitmexCurrencyDetails
     }
-    binanceCurrencies {
-      ...BinanceCurrencyBasicDetails
-    }
   }
   ${BitmexCurrencyDetailsFragmentDoc}
-  ${BinanceCurrencyBasicDetailsFragmentDoc}
 `
 
 /**

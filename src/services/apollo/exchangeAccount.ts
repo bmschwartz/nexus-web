@@ -169,8 +169,6 @@ export const updateExchangeAccount = async (
 
 function convertExchange(exchange: Exchange): RemoteExchange {
   switch (exchange) {
-    case Exchange.BINANCE:
-      return RemoteExchange.Binance
     case Exchange.BITMEX:
     default:
       return RemoteExchange.Bitmex

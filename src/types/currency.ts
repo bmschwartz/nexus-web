@@ -43,14 +43,10 @@ export interface ICurrencyMap {
   [Exchange.BITMEX]: {
     [key: string]: IBitmexCurrency
   }
-  [Exchange.BINANCE]: {
-    [key: string]: IBinanceCurrency
-  }
 }
 
 export interface ISymbolMap {
   [Exchange.BITMEX]: string[]
-  [Exchange.BINANCE]: string[]
 }
 
 export function extractCurrencyData(currencyInfo: GetCurrencyQuery | undefined) {
@@ -61,24 +57,11 @@ export function extractCurrencyData(currencyInfo: GetCurrencyQuery | undefined) 
 export function extractCurrenciesData(
   currencyInfo: GetCurrenciesBasicQuery | undefined,
 ): ICurrencyMap {
-  const exchanges = [Exchange.BITMEX, Exchange.BINANCE]
+  const exchanges = [Exchange.BITMEX]
 
   let bitmexCurrencies = {}
-  let binanceCurrencies = {}
 
   if (currencyInfo) {
-    binanceCurrencies = currencyInfo.binanceCurrencies.reduce(
-      (acc, { symbol, minPrice, maxPrice, tickSize, ...otherInfo }) => ({
-        ...acc,
-        [symbol]: {
-          minPrice: Number(minPrice),
-          maxPrice: Number(maxPrice),
-          tickSize: Number(tickSize),
-          ...otherInfo,
-        },
-      }),
-      {},
-    )
     bitmexCurrencies = currencyInfo.bitmexCurrencies.reduce(
       (acc, { symbol, markPrice, maxPrice, tickSize, ...otherInfo }) => ({
         ...acc,
@@ -96,16 +79,13 @@ export function extractCurrenciesData(
   return {
     exchanges,
     Bitmex: bitmexCurrencies,
-    Binance: binanceCurrencies,
   }
 }
 
 export function extractSymbols(symbolInfo: GetSymbolsQuery | undefined): ISymbolMap {
   const bitmexSymbols = symbolInfo?.bitmexCurrencies.map(currency => currency.symbol) || []
-  const binanceSymbols = symbolInfo?.binanceCurrencies.map(currency => currency.symbol) || []
   return {
     Bitmex: bitmexSymbols,
-    Binance: binanceSymbols,
   }
 }
 
@@ -121,15 +101,6 @@ function getSymbolPriceInfo(currencyInfo: ICurrencyMap, exchange: Exchange, symb
     return defaultPriceInfo
   }
   switch (exchange) {
-    case Exchange.BINANCE: {
-      const { minPrice, maxPrice, tickSize, lastPrice } = currencyInfo.Binance[symbol]
-      return {
-        minPrice,
-        maxPrice,
-        tickSize,
-        lastPrice,
-      }
-    }
     case Exchange.BITMEX: {
       const { minPrice, maxPrice, tickSize, lastPrice } = currencyInfo.Bitmex[symbol]
       return {

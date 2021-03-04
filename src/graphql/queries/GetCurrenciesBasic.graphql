@@ -2,8 +2,4 @@ query GetCurrenciesBasic {
   bitmexCurrencies {
     ...BitmexCurrencyDetails
   }
-
-  binanceCurrencies {
-    ...BinanceCurrencyBasicDetails
-  }
 }

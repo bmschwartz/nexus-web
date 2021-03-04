@@ -33,10 +33,6 @@ export const GroupPositionExchangeTable: FC<GroupPositionExchangeTableProps> = (
 }) => {
   const exchangeTableData = [
     {
-      exchange: Exchange.BINANCE,
-      members: 0,
-    },
-    {
       exchange: Exchange.BITMEX,
       members: 0,
     },
