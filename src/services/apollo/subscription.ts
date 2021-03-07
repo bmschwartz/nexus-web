@@ -26,11 +26,12 @@ export interface CancelMemberSubscriptionResponse {
 }
 
 export interface PayMemberSubscriptionInput {
-  subscriptionId: string
+  groupId: string
+  membershipId: string
 }
 
 export interface PayMemberSubscriptionResponse {
-  success: boolean
+  invoiceId?: string
   error?: string
 }
 
@@ -85,23 +86,25 @@ export const cancelMemberSubscription = async (
 export const payMemberSubscription = async (
   input: PayMemberSubscriptionInput,
 ): Promise<PayMemberSubscriptionResponse> => {
-  const { subscriptionId } = input
+  const { membershipId, groupId } = input
   try {
     const { data } = await client.mutate({
       mutation: PayMemberSubscriptionDocument,
       variables: {
-        input: { subscriptionId },
+        input: { membershipId, groupId },
       },
     })
 
     if (!data) {
-      return { success: false, error: 'Error paying subscription' }
+      return { error: 'Error paying subscription' }
     }
 
-    const { success, error } = data
+    const {
+      payMemberSubscription: { invoiceId, error },
+    } = data
 
-    return { success, error }
+    return { invoiceId, error }
   } catch (error) {
-    return { success: false, error: error.message }
+    return { error: error.message }
   }
 }

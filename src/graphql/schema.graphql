@@ -217,7 +217,7 @@ type MemberPositionsResult {
 
 type MemberSubscription {
   active: Boolean!
-  bills: [SubscriptionBill!]!
+  invoices: [SubscriptionInvoice!]!
   createdAt: DateTime!
   currentPrice: Float
   endDate: DateTime

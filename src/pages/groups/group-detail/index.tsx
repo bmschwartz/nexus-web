@@ -5,7 +5,7 @@ import { Spin } from 'antd'
 import { Group } from 'types/group'
 /* eslint-disable */
 import {
-  SubscriptionBill as RemoteSubscriptionBill,
+  SubscriptionInvoice as RemoteSubscriptionInvoice,
   useGetGroupQuery,
   useGetMyMembershipQuery,
 } from '../../../graphql/index'
@@ -14,9 +14,9 @@ import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetai
 import {
   convertToLocalMembershipRole,
   convertToLocalMembershipStatus,
-  SubscriptionBill,
+  SubscriptionInvoice,
   Membership,
-  convertToLocalBillStatus,
+  convertToLocalInvoiceStatus,
 } from 'types/membership'
 import { ExchangeAccount } from 'types/exchange'
 /* eslint-enable */
@@ -29,36 +29,12 @@ interface RouteParams {
   groupId: string
 }
 
-export const transformBills = (bills: RemoteSubscriptionBill[]): SubscriptionBill[] => {
-  return bills.map((bill: RemoteSubscriptionBill) => {
-    const {
-      id,
-      email,
-      amountPaid,
-      amountCharged,
-      billStatus,
-      remoteBillId,
-      billToken,
-      periodStart,
-      periodEnd,
-      expiresAt,
-      createdAt,
-      updatedAt,
-    } = bill
-
+export const transformInvoices = (invoices: RemoteSubscriptionInvoice[]): SubscriptionInvoice[] => {
+  return invoices.map((invoice: RemoteSubscriptionInvoice) => {
+    const { status, ...rest } = invoice
     return {
-      id,
-      email,
-      amountPaid,
-      amountCharged,
-      billStatus: convertToLocalBillStatus(billStatus),
-      createdAt,
-      updatedAt,
-      remoteBillId,
-      billToken,
-      periodStart,
-      periodEnd,
-      expiresAt,
+      status: convertToLocalInvoiceStatus(status),
+      ...rest,
     }
   })
 }
@@ -87,7 +63,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
   const transformMembershipData = (membership: any): Membership => {
     const { subscription } = membership
 
-    const bills = subscription && subscription.bills ? subscription.bills : []
+    const invoices = subscription && subscription.invoices ? subscription.invoices : []
 
     return {
       id: membership.id,
@@ -97,7 +73,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
       active: membership.active,
       subscription: {
         ...membership.subscription,
-        bills: transformBills(bills),
+        invoices: transformInvoices(invoices),
       },
       role: convertToLocalMembershipRole(membership.role)!,
       exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),

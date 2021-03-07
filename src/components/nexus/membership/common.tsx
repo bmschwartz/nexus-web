@@ -2,7 +2,7 @@ import { Button, Result } from 'antd'
 import React, { FC } from 'react'
 
 /* eslint-disable */
-import { BillStatus, Membership, SubscriptionBill } from '../../../types/membership'
+import { InvoiceStatus, Membership, SubscriptionInvoice } from '../../../types/membership'
 
 /* eslint-enable */
 
@@ -28,14 +28,14 @@ export const NoActiveSubscription: FC<NoActiveSubscriptionProps> = ({ onClickAdd
   )
 }
 
-export const getCurrentBillStatus = (bills: SubscriptionBill[]): BillStatus | null => {
-  if (bills.length === 0) {
+export const getCurrentInvoiceStatus = (invoices: SubscriptionInvoice[]): InvoiceStatus | null => {
+  if (invoices.length === 0) {
     return null
   }
 
-  const orderedBills = bills.sort((a, b) =>
+  const orderedInvoices = invoices.sort((a, b) =>
     new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1,
   )
 
-  return orderedBills[0].billStatus
+  return orderedInvoices[0].status
 }

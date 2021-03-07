@@ -1,6 +1,6 @@
 mutation PayMemberSubscription($input: PayMemberSubscriptionInput!) {
   payMemberSubscription(input: $input) {
-    success
+    invoiceId
     error
   }
 }

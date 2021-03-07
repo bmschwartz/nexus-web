@@ -1,11 +1,11 @@
-fragment SubscriptionBillDetails on SubscriptionBill {
+fragment SubscriptionInvoiceDetails on SubscriptionInvoice {
   id
   email
   amountPaid
   amountCharged
-  billStatus
-  remoteBillId
-  billToken
+  status
+  remoteId
+  token
   periodStart
   periodEnd
   expiresAt

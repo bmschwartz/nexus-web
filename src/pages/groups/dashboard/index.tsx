@@ -13,7 +13,7 @@ import {
 
 /* eslint-disable */
 import { useGetAllGroupsQuery, useMyMembershipsQuery } from '../../../graphql/index'
-import { transformBills } from '../group-detail'
+import { transformInvoices } from '../group-detail'
 /* eslint-enable */
 
 interface GroupsDashboardProps {
@@ -30,7 +30,7 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
     return memberships.map(membership => {
       const { subscription } = membership
       if (subscription) {
-        subscription.bills = transformBills(subscription.bills)
+        subscription.invoices = transformInvoices(subscription.invoices)
       }
 
       return {

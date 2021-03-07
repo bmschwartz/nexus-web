@@ -25,14 +25,6 @@ export type ActivateMemberSubscriptionResult = {
   error?: Maybe<Scalars['String']>
 }
 
-export enum BillStatus {
-  Draft = 'DRAFT',
-  Sent = 'SENT',
-  New = 'NEW',
-  Paid = 'PAID',
-  Complete = 'COMPLETE',
-}
-
 export type CancelMemberSubscriptionInput = {
   subscriptionId: Scalars['ID']
 }
@@ -176,6 +168,15 @@ export type GroupSubscription = {
   updatedAt: Scalars['DateTime']
 }
 
+export enum InvoiceStatus {
+  New = 'NEW',
+  Paid = 'PAID',
+  Confirmed = 'CONFIRMED',
+  Complete = 'COMPLETE',
+  Expired = 'EXPIRED',
+  Invalid = 'INVALID',
+}
+
 export type MembershipInput = {
   membershipId: Scalars['ID']
 }
@@ -208,7 +209,7 @@ export type MemberSubscription = {
   endDate?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-  bills: Array<SubscriptionBill>
+  invoices: Array<SubscriptionInvoice>
 }
 
 export type MyMembershipInput = {
@@ -221,12 +222,13 @@ export type MyMembershipsInput = {
 }
 
 export type PayMemberSubscriptionInput = {
-  subscriptionId: Scalars['ID']
+  groupId: Scalars['ID']
+  membershipId: Scalars['ID']
 }
 
 export type PayMemberSubscriptionResult = {
   __typename?: 'PayMemberSubscriptionResult'
-  success: Scalars['Boolean']
+  invoiceId?: Maybe<Scalars['String']>
   error?: Maybe<Scalars['String']>
 }
 
@@ -239,16 +241,16 @@ export type RequestGroupAccessInput = {
   groupId: Scalars['ID']
 }
 
-export type SubscriptionBill = {
-  __typename?: 'SubscriptionBill'
+export type SubscriptionInvoice = {
+  __typename?: 'SubscriptionInvoice'
   id: Scalars['ID']
   email: Scalars['String']
   amountPaid: Scalars['Float']
   amountCharged: Scalars['Float']
-  billStatus: BillStatus
+  status: InvoiceStatus
   subscription: MemberSubscription
-  remoteBillId?: Maybe<Scalars['ID']>
-  billToken?: Maybe<Scalars['ID']>
+  remoteId?: Maybe<Scalars['ID']>
+  token?: Maybe<Scalars['ID']>
   periodStart?: Maybe<Scalars['DateTime']>
   periodEnd?: Maybe<Scalars['DateTime']>
   expiresAt?: Maybe<Scalars['DateTime']>
@@ -1099,7 +1101,7 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
 export type MemberSubscriptionDetailsFragment = { __typename?: 'MemberSubscription' } & Pick<
   MemberSubscription,
   'id' | 'active' | 'recurring' | 'startDate' | 'endDate' | 'createdAt' | 'updatedAt'
-> & { bills: Array<{ __typename?: 'SubscriptionBill' } & SubscriptionBillDetailsFragment> }
+> & { invoices: Array<{ __typename?: 'SubscriptionInvoice' } & SubscriptionInvoiceDetailsFragment> }
 
 export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
   Order,
@@ -1153,15 +1155,15 @@ export type PositionDetailsFragment = { __typename?: 'Position' } & Pick<
   | 'updatedAt'
 >
 
-export type SubscriptionBillDetailsFragment = { __typename?: 'SubscriptionBill' } & Pick<
-  SubscriptionBill,
+export type SubscriptionInvoiceDetailsFragment = { __typename?: 'SubscriptionInvoice' } & Pick<
+  SubscriptionInvoice,
   | 'id'
   | 'email'
   | 'amountPaid'
   | 'amountCharged'
-  | 'billStatus'
-  | 'remoteBillId'
-  | 'billToken'
+  | 'status'
+  | 'remoteId'
+  | 'token'
   | 'periodStart'
   | 'periodEnd'
   | 'expiresAt'
@@ -1302,7 +1304,7 @@ export type PayMemberSubscriptionMutation = { __typename?: 'Mutation' } & {
   payMemberSubscription?: Maybe<
     { __typename?: 'PayMemberSubscriptionResult' } & Pick<
       PayMemberSubscriptionResult,
-      'success' | 'error'
+      'invoiceId' | 'error'
     >
   >
 }
@@ -1601,7 +1603,7 @@ export type GetGroupPositionsQuery = { __typename?: 'Query' } & {
 export type MeQueryVariables = Exact<{ [key: string]: never }>
 
 export type MeQuery = { __typename?: 'Query' } & {
-  me?: Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'email' | 'admin' | 'username'>>
+  me?: Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'email' | 'username'>>
 }
 
 export type GetMemberOrdersQueryVariables = Exact<{
@@ -1850,15 +1852,15 @@ export const GroupDetailsFragmentDoc = gql`
     active
   }
 `
-export const SubscriptionBillDetailsFragmentDoc = gql`
-  fragment SubscriptionBillDetails on SubscriptionBill {
+export const SubscriptionInvoiceDetailsFragmentDoc = gql`
+  fragment SubscriptionInvoiceDetails on SubscriptionInvoice {
     id
     email
     amountPaid
     amountCharged
-    billStatus
-    remoteBillId
-    billToken
+    status
+    remoteId
+    token
     periodStart
     periodEnd
     expiresAt
@@ -1875,11 +1877,11 @@ export const MemberSubscriptionDetailsFragmentDoc = gql`
     endDate
     createdAt
     updatedAt
-    bills {
-      ...SubscriptionBillDetails
+    invoices {
+      ...SubscriptionInvoiceDetails
     }
   }
-  ${SubscriptionBillDetailsFragmentDoc}
+  ${SubscriptionInvoiceDetailsFragmentDoc}
 `
 export const GroupMembershipDetailsFragmentDoc = gql`
   fragment GroupMembershipDetails on GroupMembership {
@@ -2452,7 +2454,7 @@ export type DeleteMembershipMutationOptions = Apollo.BaseMutationOptions<
 export const PayMemberSubscriptionDocument = gql`
   mutation PayMemberSubscription($input: PayMemberSubscriptionInput!) {
     payMemberSubscription(input: $input) {
-      success
+      invoiceId
       error
     }
   }
@@ -3714,7 +3716,6 @@ export const MeDocument = gql`
     me {
       id
       email
-      admin
       username
     }
   }

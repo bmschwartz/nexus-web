@@ -1,42 +1,63 @@
 import React, { FC } from 'react'
 import { Button, Modal } from 'antd'
-import { BillStatus, Membership } from 'types/membership'
+import { InvoiceStatus, Membership } from 'types/membership'
 
 /* eslint-disable */
+import * as dotenv from 'dotenv'
 import * as apollo from '../../../services/apollo'
-import { getCurrentBillStatus } from './common'
+import { getCurrentInvoiceStatus } from './common'
+import useScript from '../hooks'
 
 /* eslint-enable */
+
+dotenv.config()
 
 interface SubscriptionInfoProps {
   membership: Membership
 }
 
 export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
+  console.log('script', process.env.REACT_APP_BTCPAY_SCRIPT_URL)
+  useScript(process.env.REACT_APP_BTCPAY_SCRIPT_URL || '')
+
   const { subscription } = membership
 
-  const onClickActivateSubscription = async (subscriptionId: string) => {
-    await apollo.activateMemberSubscription({ subscriptionId })
+  const onClickActivateSubscription = async () => {
+    await apollo.activateMemberSubscription({ subscriptionId: subscription.id })
   }
 
-  const onClickMakePayment = async (subscriptionId: string) => {
-    Modal.success({
-      title: `Make a Payment`,
-      content: `A bill will be sent to your email with payment instructions`,
-      okText: 'OK',
-      okType: 'primary',
-      onOk: () => {
-        window.location.reload()
-      },
+  const onClickMakePayment = async () => {
+    // Modal.success({
+    //   title: `Make a Payment`,
+    //   content: `A bill will be sent to your email with payment instructions`,
+    //   okText: 'OK',
+    //   okType: 'primary',
+    //   onOk: () => {
+    //     window.location.reload()
+    //   },
+    // })
+    const { invoiceId, error } = await apollo.payMemberSubscription({
+      groupId: membership.groupId,
+      membershipId: membership.id,
     })
-    await apollo.payMemberSubscription({ subscriptionId })
+
+    if (error) {
+      Modal.error({
+        title: 'Make a Payment',
+        content: error,
+        maskClosable: true,
+      })
+    } else {
+      // @ts-ignore
+      window.btcpay.showInvoice(invoiceId)
+    }
   }
 
-  const onClickCancelSubscription = async (subscriptionId: string) => {
-    await apollo.cancelMemberSubscription({ subscriptionId })
+  const onClickCancelSubscription = async () => {
+    await apollo.cancelMemberSubscription({ subscriptionId: subscription.id })
   }
 
-  const currentBillStatus = getCurrentBillStatus(subscription.bills)
+  const currentInvoiceStatus = getCurrentInvoiceStatus(subscription.invoices)
 
   return (
     <>
@@ -63,7 +84,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
               <Button
                 danger
                 disabled={!subscription.active || !subscription.recurring}
-                onClick={() => onClickCancelSubscription(subscription.id)}
+                onClick={() => onClickCancelSubscription()}
               >
                 Cancel Subscription
               </Button>
@@ -78,7 +99,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
                 <Button
                   type="primary"
                   disabled={!subscription.active && !subscription.recurring}
-                  onClick={() => onClickActivateSubscription(subscription.id)}
+                  onClick={() => onClickActivateSubscription()}
                 >
                   Reactivate Subscription
                 </Button>
@@ -88,7 +109,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
         </>
       ) : (
         <>
-          {currentBillStatus !== BillStatus.Complete && currentBillStatus !== null ? (
+          {currentInvoiceStatus !== InvoiceStatus.Complete && currentInvoiceStatus !== null ? (
             <>
               <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
                 <strong className="mr-3 font-italic">
@@ -96,14 +117,14 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
                 </strong>
               </div>
               <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-                <Button type="primary" onClick={() => onClickMakePayment(subscription.id)}>
+                <Button type="primary" onClick={() => onClickMakePayment()}>
                   Resend Bill
                 </Button>
               </div>
             </>
           ) : (
             <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-              <Button type="primary" onClick={() => onClickMakePayment(subscription.id)}>
+              <Button type="primary" onClick={() => onClickMakePayment()}>
                 Make a Payment
               </Button>
             </div>
