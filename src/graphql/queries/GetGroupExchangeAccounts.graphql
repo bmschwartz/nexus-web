@@ -1,4 +1,4 @@
-query GetGroupExchangeAccounts($groupInput: GroupInput!) {
+query GetGroupExchangeAccounts($groupInput: GroupInput!, $exchangeAccountsInput: MemberExchangeAccountsInput) {
   group(input: $groupInput) {
     id
     members {
@@ -8,7 +8,7 @@ query GetGroupExchangeAccounts($groupInput: GroupInput!) {
           id
           username
         }
-        exchangeAccounts {
+        exchangeAccounts(input: $exchangeAccountsInput) {
           id
           active
           exchange

@@ -61,7 +61,7 @@ export function extractCurrenciesData(
 
   let bitmexCurrencies = {}
 
-  if (currencyInfo) {
+  if (currencyInfo && currencyInfo.bitmexCurrencies) {
     bitmexCurrencies = currencyInfo.bitmexCurrencies.reduce(
       (acc, { symbol, markPrice, maxPrice, tickSize, ...otherInfo }) => ({
         ...acc,

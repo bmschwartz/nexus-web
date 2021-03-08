@@ -12,7 +12,11 @@ import { Exchange } from 'types/exchange'
 import { Group } from 'types/group'
 
 /* eslint-disable */
-import { getCreateOrderSetSchema, StopOrderOption } from './createOrderFormUtils'
+import {
+  getCreateOrderSetSchema,
+  MemberSelectionType,
+  StopOrderOption,
+} from './createOrderFormUtils'
 import * as apollo from 'services/apollo'
 import { CreateOrderSetResponse } from 'services/apollo/order'
 import {
@@ -45,13 +49,22 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
     data: groupExchangeAccountsData,
     loading: fetchingGroupExchangeAccounts,
   } = useGetGroupExchangeAccountsQuery({
-    variables: { groupInput: { groupId: group.id } },
+    variables: {
+      groupInput: { groupId: group.id },
+      exchangeAccountsInput: { activeOnly: true },
+    },
   })
+
+  const [selectedExchange, setSelectedExchange] = useState<Exchange>(Exchange.BITMEX)
+  const [selectedMemberSelectionType, setSelectedMemberSelectionType] = useState<
+    MemberSelectionType
+  >(MemberSelectionType.ALL)
   const [submittingOrder, setSubmittingOrder] = useState<boolean>(false)
   const [selectedAccountKeys, setSelectedAccountKeys] = useState<string[]>([])
 
   const currencyData = extractCurrenciesData(currenciesResponse)
   const CreateOrderSetSchema = getCreateOrderSetSchema(currencyData)
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -61,6 +74,11 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
       xs: { span: 24 },
       sm: { span: 12 },
     },
+  }
+
+  const getExchangeAccountIds = (exchange?: Exchange): string[] => {
+    const accountsTransferData = createTransferData(exchange)
+    return Object.values(accountsTransferData).map(item => item.key) as string[]
   }
 
   const createTransferData = (exchange?: Exchange): TransferItem[] => {
@@ -86,13 +104,14 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
       })
       .filter(Boolean)
 
-    // @ts-ignore
-    return memberAccounts.map(({ accountId, username }) => {
-      return {
-        key: accountId,
-        title: username,
-      }
-    })
+    return memberAccounts
+      .filter(item => item !== undefined && item !== null)
+      .map(item => {
+        return {
+          key: item!.accountId,
+          title: item!.username,
+        }
+      })
   }
 
   const handleNoMembersSelected = () => {
@@ -101,6 +120,18 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
       content: 'Select one or more members for order',
       maskClosable: true,
     })
+  }
+
+  const onChangeMemberSelectionType = async (selectionType: MemberSelectionType) => {
+    setSelectedMemberSelectionType(selectionType)
+
+    switch (selectionType) {
+      case MemberSelectionType.MANUAL:
+        setSelectedAccountKeys([])
+        break
+      default:
+        break
+    }
   }
 
   const labelTooltip = (label: string, tooltipText: string) => {
@@ -123,20 +154,29 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
       </div>
       <Formik
         initialValues={{
-          exchange: currencyData?.exchanges[0],
+          exchange: selectedExchange,
           symbol: '',
           side: OrderSide.BUY,
           orderType: OrderType.LIMIT,
           percent: 5,
           leverage: 1,
+          memberSelectionType: selectedMemberSelectionType,
           exchangeAccountIds: [],
           stopOrderType: StopOrderOption.NONE,
           stopTriggerType: StopTriggerType.LAST_PRICE,
         }}
         validateOnChange={false}
         validationSchema={CreateOrderSetSchema}
-        onSubmit={async ({ stopOrderType, ...values }, { setSubmitting }) => {
-          if (values.exchangeAccountIds.length === 0) {
+        onSubmit={async (
+          { stopOrderType, exchangeAccountIds, memberSelectionType, ...values },
+          { setSubmitting },
+        ) => {
+          let exchangeAccountIdsToSend: string[] = exchangeAccountIds
+
+          if (memberSelectionType === MemberSelectionType.ALL) {
+            exchangeAccountIdsToSend = getExchangeAccountIds(values.exchange)
+          }
+          if (exchangeAccountIdsToSend.length === 0) {
             setSubmitting(false)
             handleNoMembersSelected()
             return
@@ -146,6 +186,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           const { orderSetId, error }: CreateOrderSetResponse = await apollo.createOrderSet({
             groupId: group.id,
             closeOrderSet: false,
+            exchangeAccountIds: exchangeAccountIdsToSend,
             ...values,
           })
           setSubmittingOrder(false)
@@ -177,10 +218,12 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                     name="exchange"
                     size="large"
                     style={{ width: 120 }}
-                    onChange={e => {
-                      handleChange(e)
-                      setSelectedAccountKeys([])
+                    onChange={(exchange: Exchange) => {
                       setFieldValue('symbol', '')
+                      setSelectedAccountKeys([])
+                      setSelectedExchange(exchange)
+                      setSelectedMemberSelectionType(MemberSelectionType.ALL)
+                      handleChange(exchange)
                     }}
                   >
                     {currencyData &&
@@ -200,11 +243,11 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                     style={{ width: 200 }}
                     size="large"
                     onChange={newSymbol => {
-                      handleChange(newSymbol)
                       setFieldValue(
                         'price',
                         getCurrentPrice(currencyData, values.exchange, newSymbol),
                       )
+                      handleChange(newSymbol)
                     }}
                   >
                     {currencyData &&
@@ -391,10 +434,37 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                 <Divider orientation="left">
                   <strong>Members</strong>
                 </Divider>
+
                 <Form.Item
-                  name="exchangeAccountIds"
-                  label={labelTooltip('Members', 'Use dropdown for more options')}
+                  name="memberSelectionType"
+                  label={labelTooltip(
+                    'Member Selection',
+                    'Include all members or select members manually',
+                  )}
                   className="mb-3"
+                >
+                  <Select
+                    name="memberSelectionType"
+                    style={{ width: 200 }}
+                    size="large"
+                    onChange={async (selectionType: MemberSelectionType) => {
+                      await onChangeMemberSelectionType(selectionType)
+                      handleChange(selectionType)
+                    }}
+                  >
+                    {Object.values(MemberSelectionType).map(type => (
+                      <Select.Option key={type} value={type}>
+                        {type}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  className="mb-3"
+                  name="exchangeAccountIds"
+                  hidden={values.memberSelectionType !== MemberSelectionType.MANUAL}
+                  label={labelTooltip('Members', 'Use dropdown for more options')}
                 >
                   <Transfer
                     name="exchangeAccountIds"

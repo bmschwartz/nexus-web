@@ -145,6 +145,10 @@ export type GroupMembershipPositionsArgs = {
   input: MemberPositionsInput
 }
 
+export type GroupMembershipExchangeAccountsArgs = {
+  input?: Maybe<MemberExchangeAccountsInput>
+}
+
 export type GroupMembersInput = {
   limit?: Maybe<Scalars['Int']>
   offset?: Maybe<Scalars['Int']>
@@ -531,6 +535,11 @@ export type GroupOrderSets = {
   __typename?: 'GroupOrderSets'
   orderSets: Array<OrderSet>
   totalCount: Scalars['Int']
+}
+
+export type MemberExchangeAccountsInput = {
+  exchange?: Maybe<Exchange>
+  activeOnly?: Maybe<Scalars['Boolean']>
 }
 
 export type MemberOrdersInput = {
@@ -1466,6 +1475,7 @@ export type GetGroupQuery = { __typename?: 'Query' } & {
 
 export type GetGroupExchangeAccountsQueryVariables = Exact<{
   groupInput: GroupInput
+  exchangeAccountsInput?: Maybe<MemberExchangeAccountsInput>
 }>
 
 export type GetGroupExchangeAccountsQuery = { __typename?: 'Query' } & {
@@ -3332,7 +3342,10 @@ export type GetGroupQueryHookResult = ReturnType<typeof useGetGroupQuery>
 export type GetGroupLazyQueryHookResult = ReturnType<typeof useGetGroupLazyQuery>
 export type GetGroupQueryResult = Apollo.QueryResult<GetGroupQuery, GetGroupQueryVariables>
 export const GetGroupExchangeAccountsDocument = gql`
-  query GetGroupExchangeAccounts($groupInput: GroupInput!) {
+  query GetGroupExchangeAccounts(
+    $groupInput: GroupInput!
+    $exchangeAccountsInput: MemberExchangeAccountsInput
+  ) {
     group(input: $groupInput) {
       id
       members {
@@ -3342,7 +3355,7 @@ export const GetGroupExchangeAccountsDocument = gql`
             id
             username
           }
-          exchangeAccounts {
+          exchangeAccounts(input: $exchangeAccountsInput) {
             id
             active
             exchange
@@ -3366,6 +3379,7 @@ export const GetGroupExchangeAccountsDocument = gql`
  * const { data, loading, error } = useGetGroupExchangeAccountsQuery({
  *   variables: {
  *      groupInput: // value for 'groupInput'
+ *      exchangeAccountsInput: // value for 'exchangeAccountsInput'
  *   },
  * });
  */

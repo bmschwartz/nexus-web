@@ -10,11 +10,18 @@ export enum StopOrderOption {
   TRAILING_STOP = 'Trailing Stop',
 }
 
+export enum MemberSelectionType {
+  ALL = 'All',
+  MANUAL = 'Manual',
+}
+
 export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {
+  const availableExchanges = currencyData?.exchanges ?? []
+
   return Yup.object().shape({
     exchange: Yup.string()
       .label('Exchange')
-      .oneOf(currencyData.exchanges)
+      .oneOf(availableExchanges)
       .required('Exchange is Required'),
     symbol: Yup.string()
       .label('Symbol')
@@ -92,6 +99,18 @@ export const getCreateOrderSetSchema = (currencyData: ICurrencyMap) => {
       .label('Description')
       .max(500)
       .optional(),
-    exchangeAccountIds: Yup.array().label('Members'),
+    memberSelectionType: Yup.string()
+      .label('Member Selection Type')
+      .oneOf(Object.values(MemberSelectionType))
+      .required('Member Selection Type is Required'),
+    exchangeAccountIds: Yup.array()
+      .label('Members')
+      .when('memberSelectionType', {
+        is: memberSelectionType => memberSelectionType === MemberSelectionType.MANUAL,
+        then: Yup.array(),
+        otherwise: Yup.array()
+          .nullable()
+          .notRequired(),
+      }),
   })
 }
