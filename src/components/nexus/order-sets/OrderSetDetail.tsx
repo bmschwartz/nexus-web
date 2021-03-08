@@ -38,11 +38,15 @@ interface OrderSetDetailProps {
 
 const OrderStatusFilters = ['All', ...Object.values(OrderStatus)]
 
-const PAGE_SIZE = 50
+const DEFAULT_PAGE_SIZE = 20
 const MESSAGE_DURATION = 3
 const CANCEL_ORDER_SET_MESSAGE_KEY = 'cancel_order_set_message_key'
 
 export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, orderSetId }) => {
+  const [ordersPageSize, setOrdersPageSize] = useState<number>(DEFAULT_PAGE_SIZE)
+  const [tslOrdersPageSize, setTslOrdersPageSize] = useState<number>(DEFAULT_PAGE_SIZE)
+  const [stopOrdersPageSize, setStopOrdersPageSize] = useState<number>(DEFAULT_PAGE_SIZE)
+
   const [submittingCancelOrderSet, setSubmittingCancelOrderSet] = useState<boolean>(false)
   const [selectedOrderStatusFilter, setSelectedOrderStatusFilter] = useState<
     OrderStatus | undefined
@@ -65,7 +69,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
       ordersInput: {
-        limit: PAGE_SIZE,
+        limit: DEFAULT_PAGE_SIZE,
         stopOrderType: RemoteStopOrderType.None,
         orderStatus: convertToRemoteOrderStatus(selectedOrderStatusFilter),
       },
@@ -94,12 +98,24 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
 
   const onChangeOrdersPage = (page: number, pageSize?: number) => {
     const offset = pageSize ? pageSize * (page - 1) : 0
+    console.log(page, pageSize, offset)
     fetchMore({
-      variables: { offset },
+      variables: {
+        groupInput: { groupId },
+        orderSetInput: { id: orderSetId },
+        ordersInput: {
+          offset,
+          limit: ordersPageSize,
+          stopOrderType: RemoteStopOrderType.None,
+          orderStatus: convertToRemoteOrderStatus(selectedOrderStatusFilter),
+        },
+      },
       updateQuery: (prev, result) => {
         if (!result.fetchMoreResult) {
+          console.log('No fetchMore result')
           return prev
         }
+        console.log('Got fetchMore result', result.fetchMoreResult)
         const fetchedResult: object = result.fetchMoreResult as object
         return { ...fetchedResult }
       },
@@ -117,7 +133,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
       ordersInput: {
-        limit: PAGE_SIZE,
+        limit: DEFAULT_PAGE_SIZE,
         stopOrderType: RemoteStopOrderType.StopLimit,
         orderStatus: convertToRemoteOrderStatus(selectedStopOrderStatusFilter),
       },
@@ -128,7 +144,16 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
   const onChangeStopOrdersPage = (page: number, pageSize?: number) => {
     const offset = pageSize ? pageSize * (page - 1) : 0
     fetchMoreStopOrders({
-      variables: { offset },
+      variables: {
+        groupInput: { groupId },
+        orderSetInput: { id: orderSetId },
+        ordersInput: {
+          offset,
+          limit: stopOrdersPageSize,
+          stopOrderType: RemoteStopOrderType.StopLimit,
+          orderStatus: convertToRemoteOrderStatus(selectedStopOrderStatusFilter),
+        },
+      },
       updateQuery: (prev, result) => {
         if (!result.fetchMoreResult) {
           return prev
@@ -150,7 +175,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       groupInput: { groupId },
       orderSetInput: { id: orderSetId },
       ordersInput: {
-        limit: PAGE_SIZE,
+        limit: DEFAULT_PAGE_SIZE,
         stopOrderType: RemoteStopOrderType.TrailingStop,
         orderStatus: convertToRemoteOrderStatus(selectedTslOrderStatusFilter),
       },
@@ -161,7 +186,16 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
   const onChangeTrailingStopOrdersPage = (page: number, pageSize?: number) => {
     const offset = pageSize ? pageSize * (page - 1) : 0
     fetchMoreTrailingStopOrders({
-      variables: { offset },
+      variables: {
+        groupInput: { groupId },
+        orderSetInput: { id: orderSetId },
+        ordersInput: {
+          offset,
+          limit: tslOrdersPageSize,
+          stopOrderType: RemoteStopOrderType.TrailingStop,
+          orderStatus: convertToRemoteOrderStatus(selectedTslOrderStatusFilter),
+        },
+      },
       updateQuery: (prev, result) => {
         if (!result.fetchMoreResult) {
           return prev
@@ -324,9 +358,10 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
           dataSource={transformOrdersData(orderSet?.orders.orders || [])}
           pagination={{
             defaultCurrent: 1,
-            defaultPageSize: PAGE_SIZE,
+            pageSize: ordersPageSize,
             total: totalNormalOrdersCount,
             onChange: onChangeOrdersPage,
+            onShowSizeChange: (current, size) => setOrdersPageSize(size),
             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
           }}
         />
@@ -367,9 +402,10 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
               dataSource={transformStopOrdersData(stopOrdersOrderSet?.orders.orders || [])}
               pagination={{
                 defaultCurrent: 1,
-                defaultPageSize: PAGE_SIZE,
+                pageSize: stopOrdersPageSize,
                 total: totalStopOrdersCount,
                 onChange: onChangeStopOrdersPage,
+                onShowSizeChange: (current, size) => setStopOrdersPageSize(size),
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
@@ -414,9 +450,10 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
               )}
               pagination={{
                 defaultCurrent: 1,
-                defaultPageSize: PAGE_SIZE,
+                pageSize: tslOrdersPageSize,
                 total: totalTrailingStopOrdersCount,
                 onChange: onChangeTrailingStopOrdersPage,
+                onShowSizeChange: (current, size) => setTslOrdersPageSize(size),
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
