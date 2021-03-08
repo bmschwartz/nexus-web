@@ -98,7 +98,7 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
 
   const onChangeOrdersPage = (page: number, pageSize?: number) => {
     const offset = pageSize ? pageSize * (page - 1) : 0
-    console.log(page, pageSize, offset)
+
     fetchMore({
       variables: {
         groupInput: { groupId },
@@ -112,10 +112,8 @@ export const OrderSetDetail: FC<OrderSetDetailProps> = ({ onClickBack, groupId, 
       },
       updateQuery: (prev, result) => {
         if (!result.fetchMoreResult) {
-          console.log('No fetchMore result')
           return prev
         }
-        console.log('Got fetchMore result', result.fetchMoreResult)
         const fetchedResult: object = result.fetchMoreResult as object
         return { ...fetchedResult }
       },
