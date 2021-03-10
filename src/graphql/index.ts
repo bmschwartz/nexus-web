@@ -781,6 +781,7 @@ export type User = {
   updatedAt: Scalars['DateTime']
   email: Scalars['String']
   username: Scalars['String']
+  userType: UserType
   admin: Scalars['Boolean']
   memberships: Array<GroupMembership>
 }
@@ -1620,7 +1621,7 @@ export type GetGroupPositionsQuery = { __typename?: 'Query' } & {
 export type MeQueryVariables = Exact<{ [key: string]: never }>
 
 export type MeQuery = { __typename?: 'Query' } & {
-  me?: Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'email' | 'username'>>
+  me?: Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'email' | 'username' | 'userType'>>
 }
 
 export type GetMemberOrdersQueryVariables = Exact<{
@@ -3738,6 +3739,7 @@ export const MeDocument = gql`
       id
       email
       username
+      userType
     }
   }
 `

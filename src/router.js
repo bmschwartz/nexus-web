@@ -4,6 +4,7 @@ import { ConnectedRouter } from 'connected-react-router'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
 import { QueryParamProvider, transformSearchStringJsonSafe } from 'use-query-params'
+import * as apollo from 'services/apollo'
 
 import Layout from 'layouts'
 
@@ -94,7 +95,7 @@ const Router = ({ history, routerAnimation }) => {
                     timeout={routerAnimation === 'none' ? 0 : 300}
                   >
                     <Switch location={location}>
-                      <Route exact path="/" render={() => <Redirect to="/login" />} />
+                      <Route exact path="/" render={redirectFromSiteRoot} />
                       {routes.map(({ path, Component, exact }) => (
                         <Route
                           path={path}
@@ -122,6 +123,10 @@ const Router = ({ history, routerAnimation }) => {
       </QueryParamProvider>
     </ConnectedRouter>
   )
+}
+
+const redirectFromSiteRoot = () => {
+  return <Redirect to={apollo.isAuthenticated() ? '/home' : '/login'} />
 }
 
 export default connect(mapStateToProps)(Router)

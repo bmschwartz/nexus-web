@@ -39,6 +39,10 @@ const Login = ({ logo }) => {
   const [redirect, setRedirect] = useState(false)
   const [submittingLogin, setSubmittingLogin] = useState(false)
 
+  if (apollo.isAuthenticated()) {
+    return <Redirect to="/" />
+  }
+
   return (
     <div>
       <div className="text-center mb-5">

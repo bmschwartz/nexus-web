@@ -5,6 +5,7 @@ import {
   SignupUserDocument,
   VerifySignUpCodeDocument,
 } from '../../graphql/index'
+import jwtDecode from 'jwt-decode'
 /* eslint-enable */
 
 const ACCESS_TOKEN_KEY = 'accessToken'
@@ -39,6 +40,35 @@ interface VerifySignUpCodeInput {
 interface VerifySignUpCodeResponse {
   success: boolean
   error?: string
+}
+
+interface TokenData {
+  exp?: number
+  iat?: number
+  userId?: string
+  userType?: string
+}
+
+export const isAuthenticated = () => {
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY)
+  if (!token) {
+    return false
+  }
+
+  const decoded = jwtDecode(token)
+  if (decoded === null || decoded === undefined) {
+    return false
+  }
+  const data = decoded as TokenData
+  if (!data.iat || !data.exp) {
+    return false
+  }
+
+  const currentTime = Math.round(new Date().getTime() / 1000)
+  if (data.iat < currentTime && currentTime < data.exp) {
+    return !!data.userId
+  }
+  return false
 }
 
 export const register = async (input: RegisterInput): Promise<RegisterResponse> => {
