@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Button, Divider, Modal, notification, PageHeader, Select, Spin } from 'antd'
+import { Button, Divider, Modal, notification, PageHeader, Spin } from 'antd'
 import * as apollo from 'services/apollo'
 
 /* eslint-disable */
@@ -8,11 +8,9 @@ import { displayTimeBeforeNow } from '../dateUtil'
 import {
   convertToLocalMembershipRole,
   convertToLocalMembershipStatus,
-  convertToRemoteMembershipRole,
   MembershipRole,
 } from 'types/membership'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { updateMembershipRole } from 'services/apollo'
 
 /* eslint-enable */
 
@@ -37,8 +35,6 @@ export const GroupMemberDetail: FC<GroupMemberDetailProps> = ({
 }) => {
   const [removingMember, setRemovingMember] = useState<boolean>(false)
   const [selectedMemberRole, setSelectedMemberRole] = useState<MembershipRole | null>()
-  const [editingMemberRole, setEditingMemberRole] = useState<boolean>(false)
-  const [savingMemberRole, setSavingMemberRole] = useState<boolean>(false)
 
   const { data: memberData, loading: fetchingMemberData } = useGetGroupMemberQuery({
     variables: { input: { membershipId: groupMemberId } },
@@ -47,48 +43,6 @@ export const GroupMemberDetail: FC<GroupMemberDetailProps> = ({
 
   if (!selectedMemberRole && membership && membership.role) {
     setSelectedMemberRole(convertToLocalMembershipRole(membership.role))
-    setEditingMemberRole(false)
-    setSavingMemberRole(false)
-  }
-
-  const onClickSaveRole = async () => {
-    if (!membership || !selectedMemberRole) {
-      return
-    }
-    const currentRole = convertToLocalMembershipRole(membership.role)
-
-    if (currentRole === selectedMemberRole) {
-      setEditingMemberRole(false)
-      return
-    }
-    setSavingMemberRole(true)
-
-    const newRole = convertToRemoteMembershipRole(selectedMemberRole)
-    if (!newRole) {
-      return
-    }
-
-    const { success, error } = await updateMembershipRole({
-      membershipId: membership.id,
-      groupId: membership.group.id,
-      role: newRole,
-    })
-
-    if (success) {
-      notification.success({
-        message: `Changed Role to ${selectedMemberRole}`,
-        duration: 3, // seconds
-      })
-    } else {
-      notification.error({
-        message: `Error`,
-        description: error,
-        duration: 3, // seconds
-      })
-    }
-
-    setEditingMemberRole(false)
-    setSavingMemberRole(false)
   }
 
   const onClickRemoveMember = async () => {
@@ -144,43 +98,7 @@ export const GroupMemberDetail: FC<GroupMemberDetailProps> = ({
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Role</strong>
-            {membership &&
-            convertToLocalMembershipRole(membership.role) !== MembershipRole.Admin ? (
-              <>
-                {editingMemberRole ? (
-                  <>
-                    <Select
-                      disabled={savingMemberRole}
-                      loading={savingMemberRole}
-                      style={{ width: 100 }}
-                      size="large"
-                      value={selectedMemberRole ?? MembershipRole.Member}
-                      onChange={setSelectedMemberRole}
-                    >
-                      {[MembershipRole.Trader, MembershipRole.Member].map(
-                        (role: MembershipRole) => (
-                          <Select.Option key={role} value={String(role)}>
-                            {role}
-                          </Select.Option>
-                        ),
-                      )}
-                    </Select>
-                    <Button type="link" disabled={savingMemberRole} onClick={onClickSaveRole}>
-                      Save
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    {membership && convertToLocalMembershipRole(membership.role)}
-                    <Button type="link" onClick={() => setEditingMemberRole(true)}>
-                      Edit
-                    </Button>
-                  </>
-                )}
-              </>
-            ) : (
-              <>{membership && convertToLocalMembershipRole(membership.role)}</>
-            )}
+            {membership && convertToLocalMembershipRole(membership.role)}
           </div>
           <div className="d-flex flex-nowrap align-items-center mt-1 pb-3 pl-4 pr-4">
             <strong className="mr-3">Status</strong>
