@@ -7,7 +7,7 @@ import * as apollo from '../../services/apollo'
 
 const Subscriptions = () => {
   if (!apollo.isGroupOwnerOrTraderUserType()) {
-    return <Redirect to="/" />
+    return <Redirect to="/home" />
   }
 
   return (

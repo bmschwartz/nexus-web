@@ -2,29 +2,19 @@ import React from 'react'
 import { Spin } from 'antd'
 
 /* eslint-disable */
-import { MembershipRole, MembershipStatus, useMyMembershipsQuery } from '../../graphql'
-import { transformMemberships } from '../../types/membership'
+import { useGetMyGroupQuery } from '../../graphql'
 import CreateGroupForm from '../../components/nexus/groups/create-group/CreateGroupForm'
 import GroupHome from './GroupHome'
+import { transformGroups } from '../../types/group'
 /* eslint-enable */
 
 export const GroupOwnerTraderHome = () => {
-  const { data, loading, error } = useMyMembershipsQuery({
-    fetchPolicy: 'network-only',
-    variables: {
-      input: {
-        roles: [MembershipRole.Admin, MembershipRole.Trader],
-        statuses: [MembershipStatus.Approved],
-      },
-    },
-  })
-
-  if (loading || error || !data?.myMemberships) {
+  const { data, loading } = useGetMyGroupQuery({ fetchPolicy: 'cache-and-network' })
+  if (loading || !data?.myGroup) {
     return <Spin />
   }
 
-  const memberships = transformMemberships(data?.myMemberships)
-  const groupId = memberships.length > 0 ? memberships[0].groupId : ''
+  const group = transformGroups([data.myGroup])[0]
 
-  return memberships.length === 0 ? <CreateGroupForm /> : <GroupHome groupId={groupId} />
+  return group ? <GroupHome group={group} /> : <CreateGroupForm />
 }

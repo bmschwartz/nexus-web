@@ -2,6 +2,7 @@ import React, { Fragment } from 'react'
 import { withRouter, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
+import * as apollo from 'services/apollo'
 import PublicLayout from './Public'
 import AuthLayout from './Auth'
 import MainLayout from './Main'
@@ -37,7 +38,7 @@ const Layout = ({ user, children, location: { pathname } }) => {
   }
 
   const Container = Layouts[getLayout()]
-  const isUserAuthorized = user.authorized
+  const isUserAuthorized = apollo.isAuthenticated()
   const isUserLoading = user.loading
   const isAuthLayout = getLayout() === 'auth'
 

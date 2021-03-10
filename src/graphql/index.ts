@@ -1619,6 +1619,21 @@ export type GetGroupPositionsQuery = { __typename?: 'Query' } & {
   >
 }
 
+export type GetGroupStatsQueryVariables = Exact<{
+  input: GroupInput
+}>
+
+export type GetGroupStatsQuery = { __typename?: 'Query' } & {
+  group?: Maybe<
+    { __typename?: 'Group' } & Pick<Group, 'id'> & {
+        orderSets: { __typename?: 'GroupOrderSets' } & Pick<GroupOrderSets, 'totalCount'>
+        members?: Maybe<
+          { __typename?: 'GroupMembersResult' } & Pick<GroupMembersResult, 'totalCount'>
+        >
+      }
+  >
+}
+
 export type MeQueryVariables = Exact<{ [key: string]: never }>
 
 export type MeQuery = { __typename?: 'Query' } & {
@@ -3739,6 +3754,58 @@ export type GetGroupPositionsLazyQueryHookResult = ReturnType<typeof useGetGroup
 export type GetGroupPositionsQueryResult = Apollo.QueryResult<
   GetGroupPositionsQuery,
   GetGroupPositionsQueryVariables
+>
+export const GetGroupStatsDocument = gql`
+  query GetGroupStats($input: GroupInput!) {
+    group(input: $input) {
+      id
+      orderSets {
+        totalCount
+      }
+      members {
+        totalCount
+      }
+    }
+  }
+`
+
+/**
+ * __useGetGroupStatsQuery__
+ *
+ * To run a query within a React component, call `useGetGroupStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGroupStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGroupStatsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetGroupStatsQuery(
+  baseOptions: Apollo.QueryHookOptions<GetGroupStatsQuery, GetGroupStatsQueryVariables>,
+) {
+  return Apollo.useQuery<GetGroupStatsQuery, GetGroupStatsQueryVariables>(
+    GetGroupStatsDocument,
+    baseOptions,
+  )
+}
+export function useGetGroupStatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetGroupStatsQuery, GetGroupStatsQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetGroupStatsQuery, GetGroupStatsQueryVariables>(
+    GetGroupStatsDocument,
+    baseOptions,
+  )
+}
+export type GetGroupStatsQueryHookResult = ReturnType<typeof useGetGroupStatsQuery>
+export type GetGroupStatsLazyQueryHookResult = ReturnType<typeof useGetGroupStatsLazyQuery>
+export type GetGroupStatsQueryResult = Apollo.QueryResult<
+  GetGroupStatsQuery,
+  GetGroupStatsQueryVariables
 >
 export const MeDocument = gql`
   query Me {

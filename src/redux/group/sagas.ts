@@ -39,7 +39,7 @@ export function* CREATE_GROUP({ payload }: { payload: CreateGroupState }) {
         },
       },
     })
-    yield history.push(`/profile`)
+    yield history.push(`/home`)
     notification.success({
       message: 'Created Group',
       description: `You created ${input.name}`,

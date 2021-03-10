@@ -1,0 +1,11 @@
+query GetGroupStats($input: GroupInput!) {
+  group(input: $input) {
+    id
+    orderSets {
+      totalCount
+    }
+    members {
+      totalCount
+    }
+  }
+}

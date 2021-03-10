@@ -17,7 +17,6 @@ interface SubscriptionInfoProps {
 }
 
 export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
-  console.log('script', process.env.REACT_APP_BTCPAY_SCRIPT_URL)
   useScript(process.env.REACT_APP_BTCPAY_SCRIPT_URL || '')
 
   const { subscription } = membership

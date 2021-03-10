@@ -22,7 +22,7 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
   })
 
   if (!apollo.isGroupMemberUserType()) {
-    return <Redirect to="/" />
+    return <Redirect to="/home" />
   }
 
   return (

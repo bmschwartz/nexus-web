@@ -25,7 +25,7 @@ const Orders = () => {
   const group = transformGroups([data.myGroup])[0]
 
   if (!apollo.isGroupOwnerOrTraderUserType()) {
-    return <Redirect to="/" />
+    return <Redirect to="/home" />
   }
 
   return (

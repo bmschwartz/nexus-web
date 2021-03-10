@@ -11,7 +11,7 @@ export default async function getMenuData() {
     {
       title: 'Profile',
       key: 'profile',
-      icon: 'fe fe-menu',
+      icon: 'fe fe-camera',
       url: '/profile',
       memberPage: false,
       ownerTraderPage: true,
@@ -19,7 +19,7 @@ export default async function getMenuData() {
     {
       title: 'Orders',
       key: 'orders',
-      icon: 'fe fe-menu',
+      icon: 'fe fe-book-open',
       url: '/orders',
       memberPage: false,
       ownerTraderPage: true,
@@ -27,7 +27,7 @@ export default async function getMenuData() {
     {
       title: 'Positions',
       key: 'positions',
-      icon: 'fe fe-menu',
+      icon: 'fe fe-layers',
       url: '/positions',
       memberPage: false,
       ownerTraderPage: true,
@@ -35,7 +35,7 @@ export default async function getMenuData() {
     {
       title: 'Members',
       key: 'members',
-      icon: 'fe fe-menu',
+      icon: 'fe fe-users',
       url: '/members',
       memberPage: false,
       ownerTraderPage: true,
@@ -43,7 +43,7 @@ export default async function getMenuData() {
     {
       title: 'Groups',
       key: 'groups',
-      icon: 'fe fe-menu',
+      icon: 'fe fe-users',
       url: '/groups',
       memberPage: true,
       ownerTraderPage: false,
@@ -51,7 +51,7 @@ export default async function getMenuData() {
     {
       title: 'Subscriptions',
       key: 'subscriptions',
-      icon: 'fe fe-menu',
+      icon: 'fe fe-dollar-sign',
       url: '/subscriptions',
       memberPage: false,
       ownerTraderPage: true,
@@ -59,7 +59,7 @@ export default async function getMenuData() {
     {
       title: 'Settings',
       key: 'settings',
-      icon: 'fe fe-menu',
+      icon: 'fe fe-settings',
       url: '/settings',
       memberPage: false,
       ownerTraderPage: true,

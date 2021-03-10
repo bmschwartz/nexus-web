@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom'
 
 const Profile = () => {
   if (!apollo.isGroupOwnerOrTraderUserType()) {
-    return <Redirect to="/" />
+    return <Redirect to="/home" />
   }
 
   return (
