@@ -13,7 +13,7 @@ import {
 /* eslint-enable */
 
 const Orders = () => {
-  const { data, loading } = useGetMyGroupQuery({ fetchPolicy: 'network-only' })
+  const { data, loading } = useGetMyGroupQuery({ fetchPolicy: 'cache-and-network' })
   const [groupOrdersTabState, setGroupOrdersTabState] = useState<OrderSetTabState>(
     OrderSetTabState.VIEW_ALL,
   )

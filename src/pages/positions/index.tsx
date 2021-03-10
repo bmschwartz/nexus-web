@@ -13,7 +13,7 @@ import { transformGroups } from '../../types/group'
 /* eslint-enable */
 
 const Positions = () => {
-  const { data, loading } = useGetMyGroupQuery({ fetchPolicy: 'network-only' })
+  const { data, loading } = useGetMyGroupQuery({ fetchPolicy: 'cache-and-network' })
   const [groupPositionsTabState, setGroupPositionsTabState] = useState<GroupPositionsTabState>(
     GroupPositionsTabState.VIEW_ALL,
   )
