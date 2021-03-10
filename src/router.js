@@ -8,6 +8,12 @@ import { QueryParamProvider, transformSearchStringJsonSafe } from 'use-query-par
 import Layout from 'layouts'
 
 const routes = [
+  // Home
+  {
+    exact: true,
+    path: '/home',
+    Component: lazy(() => import('pages/home')),
+  },
   // Groups
   {
     exact: true,

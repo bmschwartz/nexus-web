@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import classNames from 'classnames'
 import TopBar from 'components/cleanui/layout/TopBar'
+import MenuLeft from 'components/cleanui/layout/Menu/MenuLeft'
 
 const mapStateToProps = ({ settings }) => ({
   isContentMaxWidth: settings.isContentMaxWidth,
@@ -39,6 +40,7 @@ const MainLayout = ({
           cui__layout__borderless: isBorderless,
         })}
       >
+        <MenuLeft />
         <Layout>
           <Layout.Header
             className={classNames('cui__layout__header', {
