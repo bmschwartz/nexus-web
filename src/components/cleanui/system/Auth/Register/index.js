@@ -4,7 +4,7 @@ import { Link, Redirect } from 'react-router-dom'
 import * as Yup from 'yup'
 import YupPass from 'yup-password'
 import { Formik } from 'formik'
-import { Form, Input, SubmitButton } from 'formik-antd'
+import { Form, Input, SubmitButton, Select } from 'formik-antd'
 import { UserOutlined, MailOutlined } from '@ant-design/icons'
 
 import style from '../style.module.scss'
@@ -29,19 +29,16 @@ const getRegisterFormSchema = () => {
       .password()
       .minSymbols(0)
       .required(),
-    confirmPassword: Yup.string()
-      .label('Confirm Password')
-      .password()
-      .minSymbols(0)
-      .oneOf([Yup.ref('password'), null], "Passwords don't match!")
-      .required(),
+    userType: Yup.string()
+      .label('Role')
+      .required('User role is required'),
   })
 }
 
 const Register = () => {
   const [email, setEmail] = useState('')
-  const [submittingRegistration, setSubmittingRegistration] = useState(false)
   const [redirectToVerifyToken, setRedirectToVerifyToken] = useState(false)
+  const [submittingRegistration, setSubmittingRegistration] = useState(false)
 
   return (
     <div>
@@ -57,9 +54,14 @@ const Register = () => {
           validationSchema={getRegisterFormSchema}
           onSubmit={async values => {
             setSubmittingRegistration(true)
-            const { username, password } = values
+            const { username, password, userType } = values
 
-            const { success, error } = await apollo.register({ email, username, password })
+            const { success, error } = await apollo.register({
+              email,
+              username,
+              password,
+              userType,
+            })
             if (success) {
               notification.success({
                 duration: 1,
@@ -104,12 +106,15 @@ const Register = () => {
                 <Form.Item name="password" className="mb-4">
                   <Input.Password size="large" name="password" placeholder="Enter Password" />
                 </Form.Item>
-                <Form.Item name="confirmPassword" className="mb-4">
-                  <Input.Password
+                <Form.Item name="userType" className="mb-5">
+                  <Select
+                    name="userType"
                     size="large"
-                    name="confirmPassword"
-                    placeholder="Confirm Password"
-                  />
+                    placeholder="Select the role that best describes you"
+                  >
+                    <Select.Option value="MEMBER">Group Member</Select.Option>
+                    <Select.Option value="OWNER">Group Owner</Select.Option>
+                  </Select>
                 </Form.Item>
                 <SubmitButton loading={submittingRegistration} size="large" block="block">
                   Sign Up

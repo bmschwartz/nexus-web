@@ -18,6 +18,7 @@ interface RegisterInput {
   email: string
   username: string
   password: string
+  userType: string
 }
 
 interface RegisterResponse {

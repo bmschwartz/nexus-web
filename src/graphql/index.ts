@@ -771,6 +771,7 @@ export type SignupUserInput = {
   email: Scalars['String']
   username: Scalars['String']
   password: Scalars['String']
+  userType: UserType
 }
 
 export type User = {
@@ -786,6 +787,12 @@ export type User = {
 
 export type UserIdByEmailInput = {
   email: Scalars['String']
+}
+
+export enum UserType {
+  Owner = 'OWNER',
+  Trader = 'TRADER',
+  Member = 'MEMBER',
 }
 
 export type VerifySignUpCodeInput = {
