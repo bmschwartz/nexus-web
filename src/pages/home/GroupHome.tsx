@@ -6,11 +6,15 @@ import OrderStats from '../../components/nexus/OrderStats'
 import { Group } from '../../types/group'
 import MemberStats from '../../components/nexus/MemberStats'
 import { useGetGroupStatsQuery } from '../../graphql'
+import IncomeStats from '../../components/nexus/IncomeStats'
 /* eslint-enable */
 
 interface GroupHomeProps {
   group: Group
 }
+
+class OurCustomElement extends HTMLElement {}
+window.customElements.define('coingecko-coin-list-widget', OurCustomElement)
 
 const GroupHome = ({ group }: GroupHomeProps) => {
   const { data } = useGetGroupStatsQuery({
@@ -29,16 +33,65 @@ const GroupHome = ({ group }: GroupHomeProps) => {
 
   return (
     <div>
-      <h3>{group.name}</h3>
+      <h3 className="mb-5">{group.name}</h3>
       <div className="row">
-        <div className="col-lg-6 col-md-12">
+        <div className="col-lg-12">
+          <div className="card">
+            <div className="card-body">
+              <div
+                style={{
+                  height: '250px',
+                  backgroundColor: '#FFFFFF',
+                  overflow: 'hidden',
+                  boxSizing: 'border-box',
+                  border: '1px solid #56667F',
+                  borderRadius: '4px',
+                  textAlign: 'right',
+                  lineHeight: '14px',
+                  blockSize: '62px',
+                  fontSize: '12px',
+                  fontFeatureSettings: 'normal',
+                  textSizeAdjust: '100%',
+                  boxShadow: 'inset 0 -20px 0 0 #56667F',
+                  padding: '0px',
+                  margin: '0px',
+                  width: '100%',
+                }}
+              >
+                <div style={{ height: '200px', padding: '0px', margin: '0px', width: '100%' }}>
+                  <iframe
+                    title="widget-iframe"
+                    src="https://widget.coinlib.io/widget?type=horizontal_v2&theme=light&pref_coin_id=1505&invert_hover=no"
+                    width="100%"
+                    height="36px"
+                    scrolling="auto"
+                    marginWidth={0}
+                    marginHeight={0}
+                    frameBorder={0}
+                    style={{ border: 0, margin: 0, padding: 0 }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-lg-4 col-md-12">
           <div className="card">
             <div className="card-body">
               <OrderStats totalOrders={orderSetCount} />
             </div>
           </div>
         </div>
-        <div className="col-lg-6 col-md-12">
+        <div className="col-lg-4 col-md-12">
+          <div className="card">
+            <div className="card-body">
+              <IncomeStats />
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-4 col-md-12">
           <div className="card">
             <div className="card-body">
               <MemberStats totalMembers={membersCount} />
