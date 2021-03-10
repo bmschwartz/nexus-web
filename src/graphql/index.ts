@@ -809,6 +809,7 @@ export type VerifySignUpCodeResponse = {
 
 export type Query = {
   __typename?: 'Query'
+  myGroup?: Maybe<Group>
   allGroups: Array<Group>
   group?: Maybe<Group>
   groupExists: Scalars['Boolean']
@@ -1649,6 +1650,12 @@ export type GetMemberPositionsQuery = { __typename?: 'Query' } & {
         'totalCount'
       > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
     }
+}
+
+export type GetMyGroupQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMyGroupQuery = { __typename?: 'Query' } & {
+  myGroup?: Maybe<{ __typename?: 'Group' } & GroupDetailsFragment>
 }
 
 export type GetMyGroupPositionsQueryVariables = Exact<{
@@ -3886,6 +3893,46 @@ export type GetMemberPositionsQueryResult = Apollo.QueryResult<
   GetMemberPositionsQuery,
   GetMemberPositionsQueryVariables
 >
+export const GetMyGroupDocument = gql`
+  query GetMyGroup {
+    myGroup {
+      ...GroupDetails
+    }
+  }
+  ${GroupDetailsFragmentDoc}
+`
+
+/**
+ * __useGetMyGroupQuery__
+ *
+ * To run a query within a React component, call `useGetMyGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyGroupQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyGroupQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetMyGroupQuery, GetMyGroupQueryVariables>,
+) {
+  return Apollo.useQuery<GetMyGroupQuery, GetMyGroupQueryVariables>(GetMyGroupDocument, baseOptions)
+}
+export function useGetMyGroupLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetMyGroupQuery, GetMyGroupQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetMyGroupQuery, GetMyGroupQueryVariables>(
+    GetMyGroupDocument,
+    baseOptions,
+  )
+}
+export type GetMyGroupQueryHookResult = ReturnType<typeof useGetMyGroupQuery>
+export type GetMyGroupLazyQueryHookResult = ReturnType<typeof useGetMyGroupLazyQuery>
+export type GetMyGroupQueryResult = Apollo.QueryResult<GetMyGroupQuery, GetMyGroupQueryVariables>
 export const GetMyGroupPositionsDocument = gql`
   query GetMyGroupPositions(
     $membershipInput: MyMembershipInput!

@@ -2,18 +2,13 @@ import React, { FC, ReactNode } from 'react'
 import GroupTable from 'components/nexus/groups/group-table/GroupTable'
 import { Helmet } from 'react-helmet'
 
-import { Group } from 'types/group'
-import {
-  convertToLocalMembershipRole,
-  convertToLocalMembershipStatus,
-  Membership,
-  MembershipRole,
-  MembershipStatus,
-} from 'types/membership'
+import { transformGroups } from 'types/group'
+import { transformMemberships } from 'types/membership'
 
 /* eslint-disable */
+import * as apollo from 'services/apollo'
 import { useGetAllGroupsQuery, useMyMembershipsQuery } from '../../../graphql/index'
-import { transformInvoices } from '../group-detail'
+import { Redirect } from 'react-router-dom'
 /* eslint-enable */
 
 interface GroupsDashboardProps {
@@ -26,36 +21,10 @@ const GroupsDashboard: FC<GroupsDashboardProps> = () => {
     variables: { input: { roles: null, statuses: null } },
   })
 
-  const transformMemberships = (memberships: any[]): Membership[] => {
-    return memberships.map(membership => {
-      const { subscription } = membership
-      if (subscription) {
-        subscription.invoices = transformInvoices(subscription.invoices)
-      }
+  if (!apollo.isGroupMemberUserType()) {
+    return <Redirect to="/" />
+  }
 
-      return {
-        id: membership.id,
-        groupId: membership.group.id,
-        active: membership.active,
-        memberId: membership.member.id,
-        username: membership.member.username,
-        role: convertToLocalMembershipRole(membership.role) as MembershipRole,
-        status: convertToLocalMembershipStatus(membership.status) as MembershipStatus,
-        orders: membership.orders,
-        subscription,
-        exchangeAccounts: membership.exchangeAccounts,
-      }
-    })
-  }
-  const transformGroups = (groups: any[]): Group[] => {
-    return groups.map(group => ({
-      id: group.id,
-      name: group.name,
-      description: group.description,
-      active: group.active,
-      memberships: [],
-    }))
-  }
   return (
     <div>
       <Helmet title="Groups" />

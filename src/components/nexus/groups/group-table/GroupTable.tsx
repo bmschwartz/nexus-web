@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { Button, Comment, Modal, notification, PageHeader, Table } from 'antd'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
 import * as apollo from 'services/apollo'
 
 import { history } from 'index'
@@ -116,11 +115,6 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
       <div className="card-header card-header-flex">
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Groups" />
-        </div>
-        <div className="d-flex flex-column justify-content-center">
-          <Link className="btn btn-primary" to="/groups/create">
-            Create Group
-          </Link>
         </div>
       </div>
       <div className="card-body">

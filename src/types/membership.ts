@@ -5,6 +5,7 @@ import {
   MembershipRole as RemoteMembershipRole,
   MembershipStatus as RemoteMembershipStatus,
 } from '../graphql'
+import { transformInvoices } from '../pages/groups/group-detail'
 
 export interface Membership {
   id: string
@@ -63,6 +64,28 @@ export enum InvoiceStatus {
   Complete = 'Complete',
   Expired = 'Expired',
   Invalid = 'Invalid',
+}
+
+export function transformMemberships(memberships: any[]): Membership[] {
+  return memberships.map(membership => {
+    const { subscription } = membership
+    if (subscription) {
+      subscription.invoices = transformInvoices(subscription.invoices)
+    }
+
+    return {
+      id: membership.id,
+      groupId: membership.group.id,
+      active: membership.active,
+      memberId: membership.member.id,
+      username: membership.member.username,
+      role: convertToLocalMembershipRole(membership.role) as MembershipRole,
+      status: convertToLocalMembershipStatus(membership.status) as MembershipStatus,
+      orders: membership.orders,
+      subscription,
+      exchangeAccounts: membership.exchangeAccounts,
+    }
+  })
 }
 
 export function convertToLocalMembershipRole(role: RemoteMembershipRole): MembershipRole | null {

@@ -8,6 +8,10 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import { find } from 'lodash'
 import style from './style.module.scss'
 
+/* eslint-disable */
+import * as apollo from '../../../../../services/apollo'
+/* eslint-enable */
+
 const mapStateToProps = ({ menu, settings, user }) => ({
   menuData: menu.menuData,
   isMenuCollapsed: settings.isMenuCollapsed,
@@ -136,6 +140,14 @@ const MenuLeft = ({
       if (menuItem.roles && !menuItem.roles.includes(role)) {
         return null
       }
+      if (apollo.isGroupOwnerOrTraderUserType() && !menuItem.ownerTraderPage) {
+        return null
+      }
+
+      if (apollo.isGroupMemberUserType() && !menuItem.memberPage) {
+        return null
+      }
+
       if (menuItem.children) {
         const subMenuTitle = (
           <span key={menuItem.key}>
@@ -163,7 +175,7 @@ const MenuLeft = ({
       }
     : {
         width: leftMenuWidth,
-        collapsible: true,
+        collapsible: false,
         collapsed: isMenuCollapsed,
         onCollapse,
         breakpoint: 'lg',

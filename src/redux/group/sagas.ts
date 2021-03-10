@@ -39,7 +39,7 @@ export function* CREATE_GROUP({ payload }: { payload: CreateGroupState }) {
         },
       },
     })
-    yield history.push(`/groups/${groupId}`)
+    yield history.push(`/profile`)
     notification.success({
       message: 'Created Group',
       description: `You created ${input.name}`,
@@ -54,7 +54,7 @@ export function* CREATE_GROUP({ payload }: { payload: CreateGroupState }) {
       },
     })
     notification.error({
-      message: 'Login Error',
+      message: 'Create Group Error',
       description: error,
       duration: 3, // seconds
     })

@@ -15,10 +15,42 @@ const routes = [
     path: '/home',
     Component: lazy(() => import('pages/home')),
   },
+  {
+    exact: true,
+    path: '/profile',
+    Component: lazy(() => import('pages/profile')),
+  },
+  {
+    exact: true,
+    path: '/orders',
+    Component: lazy(() => import('pages/orders')),
+  },
+  {
+    exact: true,
+    path: '/positions',
+    Component: lazy(() => import('pages/positions')),
+  },
+  {
+    exact: true,
+    path: '/members',
+    Component: lazy(() => import('pages/members')),
+  },
+  {
+    exact: true,
+    path: '/subscriptions',
+    Component: lazy(() => import('pages/subscriptions')),
+  },
+  {
+    exact: true,
+    path: '/settings',
+    Component: lazy(() => import('pages/settings')),
+  },
   // Groups
   {
     exact: true,
     path: '/groups',
+    memberPage: true,
+    ownerTraderPage: false,
     Component: lazy(() => import('pages/groups/dashboard')),
   },
   {

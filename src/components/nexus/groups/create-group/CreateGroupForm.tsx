@@ -121,111 +121,114 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
   }
 
   return (
-    <Formik
-      initialValues={{
-        name: '',
-        description: '',
-        telegram: '',
-        discord: '',
-        email: '',
-        membershipFee: 100.0,
-        payInPlatform: true,
-        payoutCurrency: 'BTC',
-        payoutAddress: '',
-      }}
-      validationSchema={CreateGroupSchema}
-      onSubmit={values => {
-        dispatch({
-          type: 'group/CREATE_GROUP',
-          payload: values,
-        })
-      }}
-    >
-      {({ errors, handleBlur, handleChange, handleSubmit, setFieldValue, touched, values }) => (
-        <div>
-          <div className="card-body">
-            <Form {...formItemLayout} labelAlign="left">
-              <Divider orientation="left">
-                <strong>General</strong>
-              </Divider>
-              <Form.Item name="name" label="Group Name">
-                <Input name="name" placeholder="Enter Group Name" />
-              </Form.Item>
-              <Form.Item name="description" label="Description">
-                <Input.TextArea name="description" placeholder="Enter Description..." />
-              </Form.Item>
-              <Divider orientation="left">
-                <strong>Contact</strong>
-              </Divider>
-              <Form.Item name="telegram" label="Telegram">
-                <Input name="telegram" placeholder="Enter Telegram (Optional)" />
-              </Form.Item>
-              <Form.Item name="discord" label="Discord">
-                <Input name="discord" placeholder="Enter Discord (Optional)" />
-              </Form.Item>
-              <Form.Item name="email" label="Email">
-                <Input name="email" placeholder="Enter Email (Optional)" />
-              </Form.Item>
-              <Divider orientation="left">
-                <strong>Membership</strong>
-              </Divider>
-              <p className="mt-3 mb-3">Membership details can be changed at any time</p>
-              <Form.Item
-                name="membershipFee"
-                label={labelTooltip('Membership Fee', 'Monthly fee for Membership')}
-                className="mb-3"
-              >
-                <Input name="membershipFee" type="number" placeholder="100.00" addonBefore="$" />
-              </Form.Item>
-              <Form.Item
-                name="payInPlatform"
-                label={labelTooltip(
-                  'Pay In Platform',
-                  'Members will pay for access through the website',
-                )}
-              >
-                <Checkbox value={values.payInPlatform} name="payInPlatform" />
-              </Form.Item>
-              <Form.Item
-                name="payoutCurrency"
-                label={labelTooltip(
-                  'Payout Currency',
-                  'You will receive your funds with this currency',
-                )}
-                className="mb-3"
-              >
-                <Select
-                  name="payoutCurrency"
-                  defaultValue="BTC"
-                  style={{ width: 120 }}
-                  onChange={e => {
-                    setCurrentPayoutCurrency(e)
-                    handleChange(e)
-                  }}
-                  disabled={!values.payInPlatform}
+    <>
+      <h3>Create a Group</h3>
+      <Formik
+        initialValues={{
+          name: '',
+          description: '',
+          telegram: '',
+          discord: '',
+          email: '',
+          membershipFee: 100.0,
+          payInPlatform: true,
+          payoutCurrency: 'BTC',
+          payoutAddress: '',
+        }}
+        validationSchema={CreateGroupSchema}
+        onSubmit={values => {
+          dispatch({
+            type: 'group/CREATE_GROUP',
+            payload: values,
+          })
+        }}
+      >
+        {({ errors, handleBlur, handleChange, handleSubmit, setFieldValue, touched, values }) => (
+          <div>
+            <div className="card-body">
+              <Form {...formItemLayout} labelAlign="left">
+                <Divider orientation="left">
+                  <strong>General</strong>
+                </Divider>
+                <Form.Item name="name" label="Group Name">
+                  <Input name="name" placeholder="Enter Group Name" />
+                </Form.Item>
+                <Form.Item name="description" label="Description">
+                  <Input.TextArea name="description" placeholder="Enter Description..." />
+                </Form.Item>
+                <Divider orientation="left">
+                  <strong>Contact</strong>
+                </Divider>
+                <Form.Item name="telegram" label="Telegram">
+                  <Input name="telegram" placeholder="Enter Telegram (Optional)" />
+                </Form.Item>
+                <Form.Item name="discord" label="Discord">
+                  <Input name="discord" placeholder="Enter Discord (Optional)" />
+                </Form.Item>
+                <Form.Item name="email" label="Email">
+                  <Input name="email" placeholder="Enter Email (Optional)" />
+                </Form.Item>
+                <Divider orientation="left">
+                  <strong>Membership</strong>
+                </Divider>
+                <p className="mt-3 mb-3">Membership details can be changed at any time</p>
+                <Form.Item
+                  name="membershipFee"
+                  label={labelTooltip('Membership Fee', 'Monthly fee for Membership')}
+                  className="mb-3"
                 >
-                  <Select.Option value="BTC">BTC</Select.Option>
-                  <Select.Option value="ETH">ETH</Select.Option>
-                  <Select.Option value="LTC">LTC</Select.Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name="payoutAddress"
-                label={labelTooltip('Payout Address', 'Wallet address to send funds')}
-              >
-                <Input
+                  <Input name="membershipFee" type="number" placeholder="100.00" addonBefore="$" />
+                </Form.Item>
+                <Form.Item
+                  name="payInPlatform"
+                  label={labelTooltip(
+                    'Pay In Platform',
+                    'Members will pay for access through the website',
+                  )}
+                >
+                  <Checkbox value={values.payInPlatform} name="payInPlatform" />
+                </Form.Item>
+                <Form.Item
+                  name="payoutCurrency"
+                  label={labelTooltip(
+                    'Payout Currency',
+                    'You will receive your funds with this currency',
+                  )}
+                  className="mb-3"
+                >
+                  <Select
+                    name="payoutCurrency"
+                    defaultValue="BTC"
+                    style={{ width: 120 }}
+                    onChange={e => {
+                      setCurrentPayoutCurrency(e)
+                      handleChange(e)
+                    }}
+                    disabled={!values.payInPlatform}
+                  >
+                    <Select.Option value="BTC">BTC</Select.Option>
+                    <Select.Option value="ETH">ETH</Select.Option>
+                    <Select.Option value="LTC">LTC</Select.Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item
                   name="payoutAddress"
-                  disabled={!values.payInPlatform}
-                  placeholder="e.g. 1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"
-                />
-              </Form.Item>
-              <Divider />
-              <SubmitButton disabled={group.createGroup.submitting}>Create Group</SubmitButton>
-            </Form>
+                  label={labelTooltip('Payout Address', 'Wallet address to send funds')}
+                >
+                  <Input
+                    name="payoutAddress"
+                    disabled={!values.payInPlatform}
+                    placeholder="e.g. 1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"
+                  />
+                </Form.Item>
+                <Divider />
+                <SubmitButton disabled={group.createGroup.submitting}>Create Group</SubmitButton>
+              </Form>
+            </div>
           </div>
-        </div>
-      )}
-    </Formik>
+        )}
+      </Formik>
+    </>
   )
 }
 

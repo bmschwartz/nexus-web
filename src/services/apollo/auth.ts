@@ -4,6 +4,7 @@ import {
   UserLoginDocument,
   SignupUserDocument,
   VerifySignUpCodeDocument,
+  UserType,
 } from '../../graphql/index'
 import jwtDecode from 'jwt-decode'
 /* eslint-enable */
@@ -47,28 +48,6 @@ interface TokenData {
   iat?: number
   userId?: string
   userType?: string
-}
-
-export const isAuthenticated = () => {
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY)
-  if (!token) {
-    return false
-  }
-
-  const decoded = jwtDecode(token)
-  if (decoded === null || decoded === undefined) {
-    return false
-  }
-  const data = decoded as TokenData
-  if (!data.iat || !data.exp) {
-    return false
-  }
-
-  const currentTime = Math.round(new Date().getTime() / 1000)
-  if (data.iat < currentTime && currentTime < data.exp) {
-    return !!data.userId
-  }
-  return false
 }
 
 export const register = async (input: RegisterInput): Promise<RegisterResponse> => {
@@ -128,4 +107,61 @@ export const login = async (input: LoginInput): Promise<AuthResponse> => {
 
 export const logout = (): void => {
   localStorage.removeItem(ACCESS_TOKEN_KEY)
+}
+
+const getTokenData = (): TokenData | null => {
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY)
+  if (!token) {
+    return null
+  }
+
+  const decoded = jwtDecode(token)
+  if (decoded === null || decoded === undefined) {
+    return null
+  }
+
+  return decoded as TokenData
+}
+
+export const isAuthenticated = () => {
+  const data = getTokenData()
+  if (!data) {
+    return false
+  }
+
+  if (!data.iat || !data.exp) {
+    return false
+  }
+
+  const currentTime = Math.round(new Date().getTime() / 1000)
+  if (data.iat < currentTime && currentTime < data.exp) {
+    return !!data.userId
+  }
+  return false
+}
+
+export const isGroupOwnerOrTraderUserType = (): boolean => {
+  if (!isAuthenticated()) {
+    return false
+  }
+
+  const data = getTokenData()
+  if (!data || data.userType === undefined) {
+    return false
+  }
+
+  return [UserType.Owner.valueOf(), UserType.Trader.valueOf()].includes(data.userType)
+}
+
+export const isGroupMemberUserType = (): boolean => {
+  if (!isAuthenticated()) {
+    return false
+  }
+
+  const data = getTokenData()
+  if (!data || data.userType === undefined) {
+    return false
+  }
+
+  return [UserType.Member.valueOf()].includes(data.userType)
 }
