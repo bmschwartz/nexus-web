@@ -1,0 +1,18 @@
+query GetMyOrders($ordersInput: MemberOrdersInput!) {
+  me {
+    id
+    memberships {
+      id
+      group {
+        id
+        name
+      }
+      orders(input: $ordersInput) {
+        totalCount
+        orders {
+          ...OrderDetails
+        }
+      }
+    }
+  }
+}

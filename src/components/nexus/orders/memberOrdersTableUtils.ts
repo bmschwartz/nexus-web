@@ -24,7 +24,7 @@ export interface OrdersTableItem {
   date: string
 }
 
-export const createOrderTableData = (
+export const createMemberOrderTableData = (
   ordersResponse: GetMemberOrdersQuery | undefined,
 ): OrdersTableItem[] => {
   if (!ordersResponse?.membership) {

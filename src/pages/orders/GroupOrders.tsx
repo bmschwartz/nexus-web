@@ -1,17 +1,22 @@
-import React from 'react'
 import { Spin } from 'antd'
-import { Helmet } from 'react-helmet'
-import * as apollo from 'services/apollo'
+import React, { useState } from 'react'
 import { Redirect } from 'react-router-dom'
 
 /* eslint-disable */
+import * as apollo from '../../services/apollo'
 import { useGetMyGroupQuery } from '../../graphql'
 import { transformGroups } from '../../types/group'
-import { GroupProfile } from '../../components/nexus/groups/group-detail/GroupProfile'
+import {
+  GroupOrderSets,
+  OrderSetTabState,
+} from '../../components/nexus/groups/group-detail/GroupOrderSet'
 /* eslint-enable */
 
-const Profile = () => {
+const GroupOrders = () => {
   const { data, loading } = useGetMyGroupQuery({ fetchPolicy: 'cache-and-network' })
+  const [groupOrdersTabState, setGroupOrdersTabState] = useState<OrderSetTabState>(
+    OrderSetTabState.VIEW_ALL,
+  )
 
   if (loading || !data?.myGroup) {
     return <Spin />
@@ -25,11 +30,13 @@ const Profile = () => {
 
   return (
     <div>
-      <Helmet title="Profile" />
-      <h3>Profile</h3>
-      <GroupProfile group={group} />
+      <GroupOrderSets
+        group={group}
+        tabState={groupOrdersTabState}
+        setTabState={setGroupOrdersTabState}
+      />
     </div>
   )
 }
 
-export default Profile
+export default GroupOrders

@@ -1695,6 +1695,26 @@ export type GetMyMembershipQuery = { __typename?: 'Query' } & {
   myMembership: { __typename?: 'GroupMembership' } & GroupMembershipDetailsFragment
 }
 
+export type GetMyOrdersQueryVariables = Exact<{
+  ordersInput: MemberOrdersInput
+}>
+
+export type GetMyOrdersQuery = { __typename?: 'Query' } & {
+  me?: Maybe<
+    { __typename?: 'User' } & Pick<User, 'id'> & {
+        memberships: Array<
+          { __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'> & {
+              group: { __typename?: 'Group' } & Pick<Group, 'id' | 'name'>
+              orders: { __typename?: 'MemberOrdersResult' } & Pick<
+                MemberOrdersResult,
+                'totalCount'
+              > & { orders: Array<{ __typename?: 'Order' } & OrderDetailsFragment> }
+            }
+        >
+      }
+  >
+}
+
 export type GetOrderQueryVariables = Exact<{
   input: OrderInput
 }>
@@ -4109,6 +4129,63 @@ export type GetMyMembershipQueryResult = Apollo.QueryResult<
   GetMyMembershipQuery,
   GetMyMembershipQueryVariables
 >
+export const GetMyOrdersDocument = gql`
+  query GetMyOrders($ordersInput: MemberOrdersInput!) {
+    me {
+      id
+      memberships {
+        id
+        group {
+          id
+          name
+        }
+        orders(input: $ordersInput) {
+          totalCount
+          orders {
+            ...OrderDetails
+          }
+        }
+      }
+    }
+  }
+  ${OrderDetailsFragmentDoc}
+`
+
+/**
+ * __useGetMyOrdersQuery__
+ *
+ * To run a query within a React component, call `useGetMyOrdersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyOrdersQuery({
+ *   variables: {
+ *      ordersInput: // value for 'ordersInput'
+ *   },
+ * });
+ */
+export function useGetMyOrdersQuery(
+  baseOptions: Apollo.QueryHookOptions<GetMyOrdersQuery, GetMyOrdersQueryVariables>,
+) {
+  return Apollo.useQuery<GetMyOrdersQuery, GetMyOrdersQueryVariables>(
+    GetMyOrdersDocument,
+    baseOptions,
+  )
+}
+export function useGetMyOrdersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetMyOrdersQuery, GetMyOrdersQueryVariables>,
+) {
+  return Apollo.useLazyQuery<GetMyOrdersQuery, GetMyOrdersQueryVariables>(
+    GetMyOrdersDocument,
+    baseOptions,
+  )
+}
+export type GetMyOrdersQueryHookResult = ReturnType<typeof useGetMyOrdersQuery>
+export type GetMyOrdersLazyQueryHookResult = ReturnType<typeof useGetMyOrdersLazyQuery>
+export type GetMyOrdersQueryResult = Apollo.QueryResult<GetMyOrdersQuery, GetMyOrdersQueryVariables>
 export const GetOrderDocument = gql`
   query GetOrder($input: OrderInput!) {
     order(input: $input) {

@@ -1,13 +1,12 @@
 import React, { FC } from 'react'
-import { Button, PageHeader, Spin, Table } from 'antd'
+import { Button, PageHeader, Spin } from 'antd'
 
 /* eslint-disable */
-import { createMemberOrderTableData, OrdersTableItem } from './memberOrdersTableUtils'
-import { useGetMemberOrdersQuery } from '../../../graphql'
+// import { createMemberOrderTableData, OrdersTableItem } from './memberOrdersTableUtils'
+import { useGetMyOrdersQuery } from '../../../graphql'
 /* eslint-enable */
 
-interface MemberOrdersTableProps {
-  membershipId: string
+interface MyOrdersTableProps {
   onClickOrder: (orderId: string) => void
 }
 
@@ -60,43 +59,52 @@ const orderTableColumns = [
   },
 ]
 
+console.log(orderTableColumns)
+
 const PAGE_SIZE = 15
 
-export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId, onClickOrder }) => {
-  const onChangePage = (page: number, pageSize?: number) => {
-    const offset = pageSize ? pageSize * (page - 1) : 0
-    fetchMore({
-      variables: { offset },
-      updateQuery: (prev, result) => {
-        if (!result.fetchMoreResult) {
-          return prev
-        }
-        const fetchedResult: object = result.fetchMoreResult as object
-        return { ...fetchedResult }
-      },
-    })
-  }
+export const MyOrdersTable: FC<MyOrdersTableProps> = () => {
+  // const onChangePage = (page: number, pageSize?: number) => {
+  //   const offset = pageSize ? pageSize * (page - 1) : 0
+  //   fetchMore({
+  //     variables: { offset },
+  //     updateQuery: (prev, result) => {
+  //       if (!result.fetchMoreResult) {
+  //         return prev
+  //       }
+  //       const fetchedResult: object = result.fetchMoreResult as object
+  //       return { ...fetchedResult }
+  //     },
+  //   })
+  // }
 
   const {
-    data: memberOrdersData,
-    loading: fetchingMemberOrders,
-    fetchMore,
-  } = useGetMemberOrdersQuery({
+    data: myOrdersData,
+    loading: fetchingMyOrders,
+    // fetchMore,
+  } = useGetMyOrdersQuery({
     fetchPolicy: 'cache-and-network',
-    variables: { membershipInput: { membershipId }, ordersInput: { limit: PAGE_SIZE } },
+    variables: { ordersInput: { limit: PAGE_SIZE } },
     notifyOnNetworkStatusChange: true,
   })
 
-  const totalCount = memberOrdersData?.membership.orders.totalCount
-  const orderTableData: OrdersTableItem[] = createMemberOrderTableData(memberOrdersData)
+  const memberships = myOrdersData?.me?.memberships
+  const totalCount = memberships?.reduce((total: number, current: any) => {
+    console.log(total, current)
+    return total + 1
+  }, 0)
 
-  const onRow = (row: OrdersTableItem) => {
-    return {
-      onClick: () => {
-        onClickOrder(row.id)
-      },
-    }
-  }
+  console.log(memberships, totalCount)
+
+  // const orderTableData: OrdersTableItem[] = createMyOrderTableData(myOrdersData)
+  //
+  // const onRow = (row: OrdersTableItem) => {
+  //   return {
+  //     onClick: () => {
+  //       onClickOrder(row.id)
+  //     },
+  //   }
+  // }
 
   return (
     <>
@@ -107,7 +115,8 @@ export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId, on
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Spin spinning={fetchingMemberOrders}>
+          <Spin spinning={fetchingMyOrders}>
+            {/*
             <Table
               rowKey="id"
               onRow={onRow}
@@ -121,6 +130,7 @@ export const MemberOrdersTable: FC<MemberOrdersTableProps> = ({ membershipId, on
                 showTotal: (total: any, range: any) => `${range[0]}-${range[1]} of ${total} items`,
               }}
             />
+            */}
           </Spin>
         </div>
       </div>
