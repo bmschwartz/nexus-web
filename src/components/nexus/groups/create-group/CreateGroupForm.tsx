@@ -175,28 +175,6 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
                 >
                   <Checkbox value={values.payInPlatform} name="payInPlatform" />
                 </Form.Item>
-                {/*<Form.Item*/}
-                {/*  name="payoutCurrency"*/}
-                {/*  label={labelTooltip(*/}
-                {/*    'Payout Currency',*/}
-                {/*    'You will receive your funds with this currency',*/}
-                {/*  )}*/}
-                {/*  className="mb-3"*/}
-                {/*  hidden={!values.payInPlatform}*/}
-                {/*>*/}
-                {/*  <Select*/}
-                {/*    name="payoutCurrency"*/}
-                {/*    defaultValue="BTC"*/}
-                {/*    style={{ width: 120 }}*/}
-                {/*    onChange={e => {*/}
-                {/*      setCurrentPayoutCurrency(e)*/}
-                {/*      handleChange(e)*/}
-                {/*    }}*/}
-                {/*    disabled={!values.payInPlatform}*/}
-                {/*  >*/}
-                {/*    <Select.Option value="BTC">BTC</Select.Option>*/}
-                {/*  </Select>*/}
-                {/*</Form.Item>*/}
                 <Form.Item
                   name="payoutAddress"
                   label={labelTooltip(
