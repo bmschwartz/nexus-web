@@ -3,7 +3,7 @@ import React, { FC, useState } from 'react'
 import { Membership } from 'types/membership'
 import { MemberOrdersTable } from 'components/nexus/orders/MemberOrdersTable'
 import { MemberOrderDetail } from 'components/nexus/orders/MemberOrderDetail'
-import { hasActiveSubscription, NoActiveSubscription } from 'components/nexus/membership/common'
+import { hasActiveSubscription, NoActiveSubscription } from 'components/nexus/subscription/common'
 
 interface MemberOrdersProps {
   membership: Membership

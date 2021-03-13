@@ -11,6 +11,10 @@ export interface Group {
 }
 
 export function transformGroups(groups: any[]): Group[] {
+  if (!groups) {
+    return []
+  }
+
   return groups.map(group => ({
     id: group.id,
     name: group.name,

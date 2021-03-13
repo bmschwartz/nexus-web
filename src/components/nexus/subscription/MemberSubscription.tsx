@@ -2,24 +2,23 @@ import React, { FC } from 'react'
 import { Membership } from 'types/membership'
 
 /* eslint-disable */
-import { MembershipInfo } from './MembershipInfo'
-import { Divider, PageHeader } from 'antd'
+import { PageHeader } from 'antd'
 import { SubscriptionInfo } from './SubscriptionInfo'
 /* eslint-enable */
 
-interface MembershipTabProps {
+interface MemberSubscriptionProps {
   membership: Membership
-  tabState: MembershipTabTabState
-  setTabState: (tabState: MembershipTabTabState) => void
+  tabState: MemberSubscriptionTabState
+  setTabState: (tabState: MemberSubscriptionTabState) => void
 }
 
-export enum MembershipTabTabState {
+export enum MemberSubscriptionTabState {
   VIEW_ALL,
   CREATE_SUBSCRIPTION,
   VIEW_DETAIL_SUBSCRIPTION,
 }
 
-export const MembershipTab: FC<MembershipTabProps> = ({ membership, tabState }) => {
+export const MemberSubscription: FC<MemberSubscriptionProps> = ({ membership, tabState }) => {
   // const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string>()
 
   // const onClickBack = () => {
@@ -37,7 +36,7 @@ export const MembershipTab: FC<MembershipTabProps> = ({ membership, tabState }) 
 
   function shouldShowViewAll() {
     return (
-      tabState === MembershipTabTabState.VIEW_ALL
+      tabState === MemberSubscriptionTabState.VIEW_ALL
       // (tabState === MembershipTabTabState.VIEW_DETAIL_SUBSCRIPTION &&
       //   !selectedSubscriptionId)
     )
@@ -48,23 +47,15 @@ export const MembershipTab: FC<MembershipTabProps> = ({ membership, tabState }) 
         <>
           <div className="card-header card-header-flex">
             <div className="d-flex flex-column justify-content-center mr-auto">
-              <PageHeader className="site-page-header" title="Membership" backIcon={false} />
+              <PageHeader className="site-page-header" title="Subscription" backIcon={false} />
             </div>
           </div>
           <div className="card-body">
-            <Divider orientation="left">
-              <strong>General</strong>
-            </Divider>
-            <MembershipInfo membership={membership} />
-
-            <Divider orientation="left">
-              <strong>Subscription</strong>
-            </Divider>
             <SubscriptionInfo membership={membership} />
           </div>
         </>
       )}
-      {tabState === MembershipTabTabState.CREATE_SUBSCRIPTION && (
+      {tabState === MemberSubscriptionTabState.CREATE_SUBSCRIPTION && (
         <div>CreateSubscriptionTable</div>
         // <CreateSubscriptionForm
         //   membership={membership}

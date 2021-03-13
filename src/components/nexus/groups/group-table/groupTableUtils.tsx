@@ -2,7 +2,6 @@ import React from 'react'
 import * as _ from 'lodash'
 import { Group } from 'types/group'
 import { Membership, MembershipRole, MembershipStatus } from 'types/membership'
-import { Button } from 'antd'
 
 export interface GroupTableItem {
   id: string
@@ -62,18 +61,5 @@ export const badgeForIsActiveGroup = (active: boolean) => {
     >
       {active ? 'Active' : 'Inactive'}
     </span>
-  )
-}
-
-export const renderIsMember = (
-  record: GroupTableItem,
-  onClickRequestAccess: (groupId: string) => void,
-) => {
-  return (
-    record.memberStatus ?? (
-      <Button type="link" onClick={async () => onClickRequestAccess(record.id)}>
-        Request Access
-      </Button>
-    )
   )
 }

@@ -11,6 +11,7 @@ export enum TabKey {
   MemberPositions = 'memberPositions',
   MemberExchanges = 'memberExchanges',
   MemberMembership = 'membershipTab',
+  MemberSubscription = 'memberSubscription',
   GroupDashboard = 'groupDashboard',
   GroupOrders = 'groupOrders',
   GroupPositions = 'groupPositions',
@@ -27,7 +28,8 @@ export const availableTabs = (userRole: MembershipRole): Tab[] => {
     { key: TabKey.MemberOrders, name: 'Orders', requiredRole: [MembershipRole.Member] },
     { key: TabKey.MemberPositions, name: 'Positions', requiredRole: [MembershipRole.Member] },
     { key: TabKey.MemberExchanges, name: 'Exchanges', requiredRole: [MembershipRole.Member] },
-    { key: TabKey.MemberMembership, name: 'Membership', requiredRole: [MembershipRole.Member] },
+    // { key: TabKey.MemberMembership, name: 'Membership', requiredRole: [MembershipRole.Member] },
+    { key: TabKey.MemberSubscription, name: 'Subscription', requiredRole: [MembershipRole.Member] },
 
     // Group admin/trader tabs
     // {

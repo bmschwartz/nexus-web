@@ -49,6 +49,13 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
     } else {
       // @ts-ignore
       window.btcpay.showInvoice(invoiceId)
+
+      // @ts-ignore
+      window.btcpay.onModalReceiveMessage((event: any) => {
+        if (event.data === 'close') {
+          window.location.reload()
+        }
+      })
     }
   }
 

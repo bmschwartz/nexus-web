@@ -1,9 +1,10 @@
 import React, { FC, useState } from 'react'
-import { Group } from 'types/group'
-import { Membership } from 'types/membership'
 import { Tabs } from 'antd'
+import { StringParam, useQueryParam, withDefault } from 'use-query-params'
 
 /* eslint-disable */
+import { Group } from 'types/group'
+import { Membership } from 'types/membership'
 import { availableTabs, Tab, TabKey } from './groupTabs'
 import { GroupDashboard } from './GroupDashboard'
 import { GroupOrderSets, OrderSetTabState } from './GroupOrderSet'
@@ -12,12 +13,14 @@ import { GroupSettings } from './GroupSettings'
 import { MemberDashboard } from './MemberDashboard'
 import { MemberPositions, MemberPositionsTabState } from './MemberPositions'
 import { MemberOrders, MemberOrdersTabState } from '../../orders/MemberOrders'
-import { MembershipTab, MembershipTabTabState } from '../../membership/MembershipTab'
+import {
+  MemberSubscription,
+  MemberSubscriptionTabState,
+} from '../../subscription/MemberSubscription'
 import { MemberExchanges, MemberExchangesTabState } from './MemberExchanges'
 import { GroupProfile } from './GroupProfile'
 import { GroupRequests } from './GroupRequests'
 import { GroupMembers, GroupMembersTabState } from './GroupMembers'
-import { StringParam, useQueryParam, withDefault } from 'use-query-params'
 
 /* eslint-enable */
 
@@ -41,9 +44,9 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
   const [groupPositionsTabState, setGroupPositionsTabState] = useState<GroupPositionsTabState>(
     GroupPositionsTabState.VIEW_ALL,
   )
-  const [membershipTabTabState, setMembershipTabTabState] = useState<MembershipTabTabState>(
-    MembershipTabTabState.VIEW_ALL,
-  )
+  const [memberSubscriptionTabState, setMemberSubscriptionTabState] = useState<
+    MemberSubscriptionTabState
+  >(MemberSubscriptionTabState.VIEW_ALL)
   const [memberExchangesTabState, setMemberExchangesTabState] = useState<MemberExchangesTabState>(
     MemberExchangesTabState.VIEW_ALL,
   )
@@ -59,7 +62,7 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
   }
 
   const onClickAddSubscription = (): void => {
-    setMembershipTabTabState(MembershipTabTabState.VIEW_ALL)
+    setMemberSubscriptionTabState(MemberSubscriptionTabState.VIEW_ALL)
     changeTab(TabKey.MemberMembership)
   }
 
@@ -97,11 +100,11 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
                     onClickAddSubscription={onClickAddSubscription}
                   />
                 )}
-                {tabKey === 'membershipTab' && (
-                  <MembershipTab
+                {tabKey === 'memberSubscription' && (
+                  <MemberSubscription
                     membership={myMembership}
-                    tabState={membershipTabTabState}
-                    setTabState={setMembershipTabTabState}
+                    tabState={memberSubscriptionTabState}
+                    setTabState={setMemberSubscriptionTabState}
                   />
                 )}
                 {tabKey === 'memberExchanges' && (

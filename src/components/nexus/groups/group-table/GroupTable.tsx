@@ -1,19 +1,13 @@
 import React, { FC } from 'react'
-import { Button, Comment, Modal, notification, PageHeader, Table } from 'antd'
+import { Button, Comment, PageHeader, Table } from 'antd'
 import { connect } from 'react-redux'
-import * as apollo from 'services/apollo'
 
 import { history } from 'index'
 import { Group } from 'types/group'
-import { Membership, MembershipStatus } from 'types/membership'
+import { Membership } from 'types/membership'
 
 /* eslint-disable */
-import {
-  badgeForIsActiveGroup,
-  createGroupTableData,
-  GroupTableItem,
-  renderIsMember,
-} from './groupTableUtils'
+import { badgeForIsActiveGroup, createGroupTableData, GroupTableItem } from './groupTableUtils'
 
 /* eslint-enable */
 
@@ -44,59 +38,11 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
       sorter: (a: GroupTableItem, b: GroupTableItem) => (a.name > b.name ? -1 : 1),
       render: (text: string) => <Button type="link">{text}</Button>,
     },
-    {
-      title: 'Role',
-      dataIndex: 'role',
-      key: 'role',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (_: boolean, record: GroupTableItem) => renderIsMember(record, onClickRequestAccess),
-    },
   ]
-
-  const onClickRequestAccess = async (groupId: string) => {
-    const { success, error } = await apollo.requestGroupAccess({ groupId })
-    if (success) {
-      notification.success({
-        message: 'Requested Membership',
-        duration: 3, // seconds
-      })
-      setTimeout(() => {
-        window.location.reload()
-      }, 1500)
-    } else {
-      notification.error({
-        message: 'Error',
-        description: error,
-        duration: 3, // seconds
-      })
-    }
-  }
 
   const onRow = (row: GroupTableItem) => {
     return {
-      onClick: (event: any) => {
-        if (event.target.innerText === 'Request Access') {
-          return
-        }
-
-        if (row.memberStatus !== MembershipStatus.Approved) {
-          const content =
-            row.memberStatus === MembershipStatus.Pending
-              ? 'Membership Approval is Pending'
-              : 'Request access to become a member'
-
-          Modal.info({
-            title: 'Not a Member',
-            content,
-            maskClosable: true,
-          })
-          return
-        }
-
+      onClick: () => {
         dispatch({
           type: 'group/SET_GROUP_DETAIL_STATE',
           payload: {

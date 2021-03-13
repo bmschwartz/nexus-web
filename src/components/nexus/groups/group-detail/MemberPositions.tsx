@@ -4,7 +4,7 @@ import { Membership } from 'types/membership'
 /* eslint-disable */
 import { MemberPositionsTable } from '../../positions/MemberPositionsTable'
 import { MemberPositionDetail } from '../../positions/MemberPositionDetail'
-import { hasActiveSubscription, NoActiveSubscription } from '../../membership/common'
+import { hasActiveSubscription, NoActiveSubscription } from '../../subscription/common'
 /* eslint-enable */
 
 interface MemberPositionsProps {

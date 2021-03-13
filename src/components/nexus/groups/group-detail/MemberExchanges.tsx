@@ -5,7 +5,7 @@ import { Membership, MembershipStatus } from 'types/membership'
 import { ExchangeAccountTable } from 'components/nexus/exchange-accounts/ExchangeAccountTable'
 import { CreateExchangeAccountForm } from 'components/nexus/exchange-accounts/CreateExchangeAccountForm'
 import { ExchangeAccountDetail } from 'components/nexus/exchange-accounts/ExchangeAccountDetail'
-import { hasActiveSubscription, NoActiveSubscription } from '../../membership/common'
+import { hasActiveSubscription, NoActiveSubscription } from '../../subscription/common'
 /* eslint-enable */
 
 interface MemberExchangesProps {

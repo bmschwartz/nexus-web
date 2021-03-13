@@ -10,8 +10,12 @@ import { transformGroups } from '../../types/group'
 
 export const GroupOwnerTraderHome = () => {
   const { data, loading } = useGetMyGroupQuery({ fetchPolicy: 'cache-and-network' })
-  if (loading || !data?.myGroup) {
+  if (loading || !data) {
     return <Spin />
+  }
+
+  if (!data.myGroup) {
+    return <CreateGroupForm />
   }
 
   const group = transformGroups([data.myGroup])[0]
