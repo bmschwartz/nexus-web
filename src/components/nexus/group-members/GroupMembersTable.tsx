@@ -4,15 +4,16 @@ import { Table, Button, PageHeader, Spin, Divider } from 'antd'
 /* eslint-disable */
 import {
   GroupMembersTableRow,
-  badgeForRole,
+  // badgeForRole,
   createGroupMembersTableData,
 } from './groupMembersTableUtils'
-import { MembershipRole } from 'types/membership'
+// import { MembershipRole } from 'types/membership'
 import {
   useGetGroupMembersQuery,
   MembershipRole as RemoteMembershipRole,
   MembershipStatus as RemoteMembershipStatus,
 } from '../../../graphql'
+import { ColumnType } from 'antd/lib/table'
 /* eslint-enable */
 
 interface GroupMembersTableProps {
@@ -21,25 +22,26 @@ interface GroupMembersTableProps {
   onClickGroupMember: (groupMemberId: string) => void
 }
 
-const groupMembersTableColumns = [
-  {
-    title: 'Username',
-    dataIndex: 'username',
-    key: 'username',
-    render: (text: string) => <Button type="link">{text.split('-')[0]}</Button>,
-  },
-  {
-    title: 'Trades',
-    dataIndex: 'trades',
-    key: 'trades',
-  },
-  {
-    title: 'Role',
-    dataIndex: 'role',
-    key: 'role',
-    render: (text: MembershipRole, record: GroupMembersTableRow) => badgeForRole(record),
-  },
-]
+const groupMembersTableColumns = (showTrades: boolean): ColumnType<GroupMembersTableRow>[] => {
+  const columns: ColumnType<GroupMembersTableRow>[] = [
+    {
+      title: 'Username',
+      dataIndex: 'username',
+      key: 'username',
+      render: (text: string) => <Button type="link">{text.split('-')[0]}</Button>,
+    },
+  ]
+
+  if (showTrades) {
+    columns.push({
+      title: 'Trades',
+      dataIndex: 'trades',
+      key: 'trades',
+    })
+  }
+
+  return columns
+}
 
 const PAGE_SIZE = 20
 
@@ -147,7 +149,7 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
             <Table
               rowKey="id"
               onRow={onRow}
-              columns={groupMembersTableColumns}
+              columns={groupMembersTableColumns(false)}
               dataSource={groupAdminsTableData}
               pagination={{
                 defaultCurrent: 1,
@@ -165,7 +167,7 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
             <Table
               rowKey="id"
               onRow={onRow}
-              columns={groupMembersTableColumns}
+              columns={groupMembersTableColumns(false)}
               dataSource={groupTradersTableData}
               pagination={{
                 defaultCurrent: 1,
@@ -183,7 +185,7 @@ export const GroupMembersTable: FC<GroupMembersTableProps> = ({
             <Table
               rowKey="id"
               onRow={onRow}
-              columns={groupMembersTableColumns}
+              columns={groupMembersTableColumns(true)}
               dataSource={groupMembersTableData}
               pagination={{
                 defaultCurrent: 1,
