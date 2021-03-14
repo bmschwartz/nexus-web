@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { Membership } from './membership'
+import { GroupSubscription } from './subscription'
 /* eslint-enable */
 
 export interface Group {
@@ -8,6 +9,7 @@ export interface Group {
   description?: string
   active: boolean
   memberships: Membership[]
+  subscriptionOptions: GroupSubscription[]
 }
 
 export function transformGroups(groups: any[]): Group[] {
@@ -21,5 +23,6 @@ export function transformGroups(groups: any[]): Group[] {
     description: group.description,
     active: group.active,
     memberships: [],
+    subscriptionOptions: group.subscriptionOptions,
   }))
 }

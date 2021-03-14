@@ -14,11 +14,11 @@ import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetai
 import {
   convertToLocalMembershipRole,
   convertToLocalMembershipStatus,
-  SubscriptionInvoice,
   Membership,
   convertToLocalInvoiceStatus,
 } from 'types/membership'
 import { ExchangeAccount } from 'types/exchange'
+import { SubscriptionInvoice } from 'types/subscription'
 /* eslint-enable */
 
 interface GroupDetailProps {
@@ -57,6 +57,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
       active: group.active,
       description: group.description,
       memberships: [],
+      subscriptionOptions: group.subscriptionOptions,
     }
   }
 

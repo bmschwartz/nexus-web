@@ -6,6 +6,7 @@ import {
   MembershipStatus as RemoteMembershipStatus,
 } from '../graphql'
 import { transformInvoices } from '../pages/groups/group-detail'
+import { InvoiceStatus, SubscriptionInvoice } from './subscription'
 
 export interface Membership {
   id: string
@@ -38,32 +39,6 @@ export interface MemberSubscription {
   startDate: string
   endDate: string
   invoices: SubscriptionInvoice[]
-}
-
-export interface SubscriptionInvoice {
-  id: string
-  email: string
-  amountPaid: number
-  amountCharged: number
-
-  status: InvoiceStatus | null
-  token?: string | null
-  remoteId?: string | null
-
-  periodStart?: Date | null
-  periodEnd?: Date | null
-  expiresAt?: Date | null
-  createdAt: Date
-  updatedAt: Date
-}
-
-export enum InvoiceStatus {
-  New = 'New',
-  Paid = 'Paid',
-  Confirmed = 'Confirmed',
-  Complete = 'Complete',
-  Expired = 'Expired',
-  Invalid = 'Invalid',
 }
 
 export function transformMemberships(memberships: any[]): Membership[] {

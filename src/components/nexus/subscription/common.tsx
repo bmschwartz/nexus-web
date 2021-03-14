@@ -2,7 +2,8 @@ import { Button, Result } from 'antd'
 import React, { FC } from 'react'
 
 /* eslint-disable */
-import { InvoiceStatus, Membership, SubscriptionInvoice } from '../../../types/membership'
+import { Membership } from '../../../types/membership'
+import { InvoiceStatus, SubscriptionInvoice } from '../../../types/subscription'
 
 /* eslint-enable */
 

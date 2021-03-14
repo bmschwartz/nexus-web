@@ -1,0 +1,9 @@
+fragment GroupSubscriptionDetails on GroupSubscription {
+  id
+  price
+  active
+  duration
+  description
+  createdAt
+  updatedAt
+}

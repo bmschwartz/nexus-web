@@ -169,7 +169,7 @@ export type GroupSubscription = {
   id: Scalars['ID']
   group: Group
   active: Scalars['Boolean']
-  fee: Scalars['Float']
+  price: Scalars['Float']
   duration: Scalars['Int']
   description?: Maybe<Scalars['String']>
   createdAt: Scalars['DateTime']
@@ -1113,7 +1113,11 @@ export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } 
 export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
   Group,
   'id' | 'name' | 'description' | 'active'
->
+> & {
+    subscriptionOptions: Array<
+      { __typename?: 'GroupSubscription' } & GroupSubscriptionDetailsFragment
+    >
+  }
 
 export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } & Pick<
   GroupMembership,
@@ -1125,6 +1129,11 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
     exchangeAccounts: Array<{ __typename?: 'ExchangeAccount' } & Pick<ExchangeAccount, 'id'>>
     subscription?: Maybe<{ __typename?: 'MemberSubscription' } & MemberSubscriptionDetailsFragment>
   }
+
+export type GroupSubscriptionDetailsFragment = { __typename?: 'GroupSubscription' } & Pick<
+  GroupSubscription,
+  'id' | 'price' | 'active' | 'duration' | 'description' | 'createdAt' | 'updatedAt'
+>
 
 export type MemberSubscriptionDetailsFragment = { __typename?: 'MemberSubscription' } & Pick<
   MemberSubscription,
@@ -1914,13 +1923,28 @@ export const ExchangeAccountDetailsFragmentDoc = gql`
   ${OrderDetailsFragmentDoc}
   ${PositionDetailsFragmentDoc}
 `
+export const GroupSubscriptionDetailsFragmentDoc = gql`
+  fragment GroupSubscriptionDetails on GroupSubscription {
+    id
+    price
+    active
+    duration
+    description
+    createdAt
+    updatedAt
+  }
+`
 export const GroupDetailsFragmentDoc = gql`
   fragment GroupDetails on Group {
     id
     name
     description
     active
+    subscriptionOptions {
+      ...GroupSubscriptionDetails
+    }
   }
+  ${GroupSubscriptionDetailsFragmentDoc}
 `
 export const SubscriptionInvoiceDetailsFragmentDoc = gql`
   fragment SubscriptionInvoiceDetails on SubscriptionInvoice {

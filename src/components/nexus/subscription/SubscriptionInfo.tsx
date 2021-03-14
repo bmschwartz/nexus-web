@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
 import { Button, Modal } from 'antd'
-import { InvoiceStatus, Membership } from 'types/membership'
+import { Membership } from 'types/membership'
 
 /* eslint-disable */
 import * as dotenv from 'dotenv'
 import * as apollo from '../../../services/apollo'
 import { getCurrentInvoiceStatus } from './common'
 import useScript from '../hooks'
+import { InvoiceStatus } from '../../../types/subscription'
 
 /* eslint-enable */
 
