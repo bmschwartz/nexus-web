@@ -2,12 +2,7 @@ import React, { FC, useState } from 'react'
 import { Table, Button, PageHeader, Spin, Divider } from 'antd'
 
 /* eslint-disable */
-import {
-  GroupMembersTableRow,
-  // badgeForRole,
-  createGroupMembersTableData,
-} from './groupMembersTableUtils'
-// import { MembershipRole } from 'types/membership'
+import { GroupMembersTableRow, createGroupMembersTableData } from './groupMembersTableUtils'
 import {
   useGetGroupMembersQuery,
   MembershipRole as RemoteMembershipRole,
