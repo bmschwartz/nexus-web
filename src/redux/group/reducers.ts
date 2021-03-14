@@ -7,18 +7,22 @@ export interface GroupState {
   createGroup: CreateGroupState
 }
 
+interface GroupSubscriptionOption {
+  fee: number
+  duration: number
+  description?: string
+}
+
 export interface CreateGroupState {
   name: string
-  description: string
-  telegram?: string
-  discord?: string
   email?: string
-  membershipLength: number
-  membershipFee: number
-  payInPlatform: boolean
-  payoutCurrency?: string
-  payoutAddress?: string
+  discord?: string
+  telegram?: string
   submitting: boolean
+  description: string
+  payInPlatform: boolean
+  payoutAddress?: string
+  subscriptionOptions: GroupSubscriptionOption[]
 }
 
 export enum GroupDetailsTab {
@@ -67,12 +71,10 @@ export const initialState: GroupState = {
     telegram: '',
     discord: '',
     email: '',
-    membershipLength: 1,
-    membershipFee: 0.0,
-    payInPlatform: true,
-    payoutCurrency: 'BTC',
     payoutAddress: '',
     submitting: false,
+    payInPlatform: true,
+    subscriptionOptions: [],
   },
   groupDetail: initialGroupDetailState,
 }

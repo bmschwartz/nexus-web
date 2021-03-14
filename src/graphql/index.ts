@@ -37,14 +37,13 @@ export type CancelMemberSubscriptionResult = {
 
 export type CreateGroupInput = {
   name: Scalars['String']
-  description: Scalars['String']
-  telegram?: Maybe<Scalars['String']>
-  discord?: Maybe<Scalars['String']>
   email?: Maybe<Scalars['String']>
-  membershipFee: Scalars['Float']
-  payInPlatform: Scalars['Boolean']
-  payoutCurrency?: Maybe<Scalars['String']>
+  discord?: Maybe<Scalars['String']>
+  telegram?: Maybe<Scalars['String']>
+  description: Scalars['String']
   payoutAddress?: Maybe<Scalars['String']>
+  payInPlatform: Scalars['Boolean']
+  subscriptionOptions: Array<GroupSubscriptionInput>
 }
 
 export type CreateGroupMembershipInput = {
@@ -63,6 +62,8 @@ export type CreateGroupMembershipResult = {
 export type CreateGroupSubscriptionInput = {
   groupId: Scalars['ID']
   fee: Scalars['Float']
+  duration: Scalars['Int']
+  description?: Maybe<Scalars['String']>
 }
 
 export type CreateGroupSubscriptionResult = {
@@ -93,6 +94,7 @@ export type Group = {
   active: Scalars['Boolean']
   description: Scalars['String']
   members?: Maybe<GroupMembersResult>
+  subscriptionOptions: Array<GroupSubscription>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   orderSets: GroupOrderSets
@@ -168,8 +170,16 @@ export type GroupSubscription = {
   group: Group
   active: Scalars['Boolean']
   fee: Scalars['Float']
+  duration: Scalars['Int']
+  description?: Maybe<Scalars['String']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+}
+
+export type GroupSubscriptionInput = {
+  fee: Scalars['Float']
+  duration: Scalars['Int']
+  description?: Maybe<Scalars['String']>
 }
 
 export enum InvoiceStatus {

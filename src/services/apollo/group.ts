@@ -22,17 +22,21 @@ export interface GroupExistsResponse {
   error: string | null
 }
 
+export interface GroupSubscriptionOption {
+  fee: number
+  duration: number
+  description?: string
+}
+
 export interface CreateGroupInput {
   name: string
   description: string
-  membershipLength: number
-  membershipFee: number
   payInPlatform: boolean
   telegram?: string
   discord?: string
   email?: string
-  payoutCurrency?: string
   payoutAddress?: string
+  subscriptionOptions: GroupSubscriptionOption[]
 }
 
 export interface InviteMemberInput {

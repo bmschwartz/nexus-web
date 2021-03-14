@@ -1,20 +1,14 @@
 /* eslint-disable */
-import React, { FC, useState } from 'react'
-import { connect } from 'react-redux'
+import React, { useState } from 'react'
 import { Formik } from 'formik'
-import { Button, Divider, Modal, Table, Tooltip } from 'antd'
+import { Button, Divider, Modal, notification, Table, Tooltip } from 'antd'
 import { Form, Input, Checkbox, SubmitButton } from 'formik-antd'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import * as Yup from 'yup'
 import { groupExists } from '../../../../services/apollo'
 import { validateAddress } from '../validation'
-import { membershipTableColumns, validPayoutCurrencies } from './createGroupFormUtils'
-
-interface CreateGroupFormProps {
-  // redux
-  group: any
-  dispatch: any
-}
+import { SubscriptionOption, subscriptionTableColumns } from './createGroupFormUtils'
+import * as apollo from '../../../../services/apollo'
 
 const labelTooltip = (label: string, tooltipText: string) => {
   return (
@@ -27,15 +21,38 @@ const labelTooltip = (label: string, tooltipText: string) => {
   )
 }
 
-const MAX_MEMBERSHIP_OPTIONS = 6
+const MAX_SUBSCRIPTION_OPTIONS = 10
 
-const defaultMembershipItem = { duration: 1, fee: 5, description: '' }
+const defaultSubscriptionOptionItem: SubscriptionOption = { duration: 1, fee: 100 }
 
-const mapStateToProps = ({ group, dispatch }: any) => ({ group, dispatch })
-
-const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
+const CreateGroupForm = () => {
   const [currentPayoutCurrency] = useState<string | null>('BTC')
-  const [membershipOptionsData, setMembershipOptionsData] = useState<any[]>([defaultMembershipItem])
+  const [submittingCreateGroup, setSubmittingCreateGroup] = useState<boolean>(false)
+  const [subscriptionOptionsData, setSubscriptionOptionsData] = useState<SubscriptionOption[]>([
+    { ...defaultSubscriptionOptionItem },
+  ])
+
+  const hasInvalidSubscriptionOption = (subscriptionOptions: SubscriptionOption[]): boolean => {
+    return subscriptionOptions
+      .map(option => option.fee >= 0 && option.duration >= 0)
+      .includes(false)
+  }
+
+  const onSubscriptionOptionChange = (index: number, field: string, value: any) => {
+    switch (field) {
+      case 'duration':
+        subscriptionOptionsData[index].duration = value
+        break
+      case 'fee':
+        subscriptionOptionsData[index].fee = value
+        break
+      case 'description':
+        subscriptionOptionsData[index].description = value
+        break
+      default:
+        return
+    }
+  }
 
   const CreateGroupSchema = Yup.object().shape({
     name: Yup.string()
@@ -58,15 +75,6 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
       .max(5000)
       .required(),
     payInPlatform: Yup.bool().required(),
-    payoutCurrency: Yup.string()
-      .label('Payout Currency')
-      .when('payInPlatform', {
-        is: true,
-        then: Yup.string()
-          .oneOf(validPayoutCurrencies)
-          .required('Choose a Payout Currency'),
-        otherwise: Yup.string().notRequired(),
-      }),
     payoutAddress: Yup.string()
       .label('Payout Address')
       .when('payInPlatform', {
@@ -123,15 +131,38 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
           discord: '',
           email: '',
           payInPlatform: true,
-          payoutCurrency: 'BTC',
           payoutAddress: '',
         }}
         validationSchema={CreateGroupSchema}
-        onSubmit={values => {
-          dispatch({
-            type: 'group/CREATE_GROUP',
-            payload: values,
+        onSubmit={async values => {
+          if (hasInvalidSubscriptionOption(subscriptionOptionsData)) {
+            Modal.error({
+              title: 'Subscription Options Error',
+              content: 'Duration and Fee are Required for All Subscription Options',
+            })
+            return
+          }
+
+          setSubmittingCreateGroup(true)
+
+          const { groupId, error } = await apollo.createGroup({
+            subscriptionOptions: subscriptionOptionsData,
+            ...values,
           })
+          if (groupId) {
+            notification.success({
+              duration: 1.5,
+              message: 'Created Group!',
+              onClose: () => window.location.reload(),
+            })
+          } else {
+            notification.error({
+              message: 'Create Group Error',
+              description: error,
+              duration: 3, // seconds
+            })
+            setSubmittingCreateGroup(false)
+          }
         }}
       >
         {({ values }) => (
@@ -178,7 +209,7 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
                 <Form.Item
                   name="payoutAddress"
                   label={labelTooltip(
-                    'Payout Address',
+                    'Payout Address (BTC)',
                     'Your earnings will be sent to this BTC address',
                   )}
                   hidden={!values.payInPlatform}
@@ -191,49 +222,51 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
                 </Form.Item>
                 <Form.Item
                   className="ml-auto"
-                  name="membershipOptions"
+                  name="subscriptionOptions"
                   label={labelTooltip(
-                    'Membership Options',
+                    'Subscription Options',
                     'Payment options available to group members',
                   )}
-                  hidden={!values.payInPlatform}
                 >
                   <Table
                     pagination={false}
-                    columns={membershipTableColumns}
-                    dataSource={membershipOptionsData}
+                    columns={subscriptionTableColumns(onSubscriptionOptionChange)}
+                    dataSource={subscriptionOptionsData}
                   />
                   <Button
                     type="primary"
                     className="mt-3 mr-2"
-                    name="addMembershipOption"
+                    name="addSubscriptionOption"
                     onClick={() => {
-                      if (membershipOptionsData.length >= MAX_MEMBERSHIP_OPTIONS) {
+                      if (subscriptionOptionsData.length >= MAX_SUBSCRIPTION_OPTIONS) {
                         Modal.error({
-                          title: 'Add Membership Option',
-                          content: `You can have at most ${MAX_MEMBERSHIP_OPTIONS} membership options`,
+                          title: 'Add Subscription Option',
+                          content: `You can have at most ${MAX_SUBSCRIPTION_OPTIONS} subscription options`,
                           maskClosable: true,
                         })
                         return
                       }
-                      setMembershipOptionsData([...membershipOptionsData, defaultMembershipItem])
+                      setSubscriptionOptionsData([
+                        ...subscriptionOptionsData,
+                        { ...defaultSubscriptionOptionItem },
+                      ])
                     }}
                   >
                     Add Option
                   </Button>
                   <Button
                     danger
-                    hidden={membershipOptionsData.length <= 1}
+                    hidden={subscriptionOptionsData.length <= 1}
                     className="mt-3"
                     onClick={() =>
-                      setMembershipOptionsData([...membershipOptionsData.slice(0, -1)])
+                      setSubscriptionOptionsData([...subscriptionOptionsData.slice(0, -1)])
                     }
                   >
                     Delete Last
                   </Button>
                 </Form.Item>
                 <Divider />
-                <SubmitButton disabled={group.createGroup.submitting}>Create Group</SubmitButton>
+                <SubmitButton disabled={submittingCreateGroup}>Create Group</SubmitButton>
               </Form>
             </div>
           </div>
@@ -243,4 +276,4 @@ const CreateGroupForm: FC<CreateGroupFormProps> = ({ group, dispatch }) => {
   )
 }
 
-export default connect(mapStateToProps)(CreateGroupForm)
+export default CreateGroupForm
