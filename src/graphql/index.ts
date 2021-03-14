@@ -1113,11 +1113,7 @@ export type ExchangeAccountDetailsFragment = { __typename?: 'ExchangeAccount' } 
 export type GroupDetailsFragment = { __typename?: 'Group' } & Pick<
   Group,
   'id' | 'name' | 'description' | 'active'
-> & {
-    subscriptionOptions: Array<
-      { __typename?: 'GroupSubscription' } & GroupSubscriptionDetailsFragment
-    >
-  }
+>
 
 export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } & Pick<
   GroupMembership,
@@ -1689,7 +1685,13 @@ export type GetMemberPositionsQuery = { __typename?: 'Query' } & {
 export type GetMyGroupQueryVariables = Exact<{ [key: string]: never }>
 
 export type GetMyGroupQuery = { __typename?: 'Query' } & {
-  myGroup?: Maybe<{ __typename?: 'Group' } & GroupDetailsFragment>
+  myGroup?: Maybe<
+    { __typename?: 'Group' } & {
+      subscriptionOptions: Array<
+        { __typename?: 'GroupSubscription' } & GroupSubscriptionDetailsFragment
+      >
+    } & GroupDetailsFragment
+  >
 }
 
 export type GetMyGroupPositionsQueryVariables = Exact<{
@@ -1923,28 +1925,13 @@ export const ExchangeAccountDetailsFragmentDoc = gql`
   ${OrderDetailsFragmentDoc}
   ${PositionDetailsFragmentDoc}
 `
-export const GroupSubscriptionDetailsFragmentDoc = gql`
-  fragment GroupSubscriptionDetails on GroupSubscription {
-    id
-    price
-    active
-    duration
-    description
-    createdAt
-    updatedAt
-  }
-`
 export const GroupDetailsFragmentDoc = gql`
   fragment GroupDetails on Group {
     id
     name
     description
     active
-    subscriptionOptions {
-      ...GroupSubscriptionDetails
-    }
   }
-  ${GroupSubscriptionDetailsFragmentDoc}
 `
 export const SubscriptionInvoiceDetailsFragmentDoc = gql`
   fragment SubscriptionInvoiceDetails on SubscriptionInvoice {
@@ -2003,6 +1990,17 @@ export const GroupMembershipDetailsFragmentDoc = gql`
     }
   }
   ${MemberSubscriptionDetailsFragmentDoc}
+`
+export const GroupSubscriptionDetailsFragmentDoc = gql`
+  fragment GroupSubscriptionDetails on GroupSubscription {
+    id
+    price
+    active
+    duration
+    description
+    createdAt
+    updatedAt
+  }
 `
 export const OrderSetDetailsFragmentDoc = gql`
   fragment OrderSetDetails on OrderSet {
@@ -4018,9 +4016,13 @@ export const GetMyGroupDocument = gql`
   query GetMyGroup {
     myGroup {
       ...GroupDetails
+      subscriptionOptions {
+        ...GroupSubscriptionDetails
+      }
     }
   }
   ${GroupDetailsFragmentDoc}
+  ${GroupSubscriptionDetailsFragmentDoc}
 `
 
 /**

@@ -3,7 +3,4 @@ fragment GroupDetails on Group {
   name
   description
   active
-  subscriptionOptions {
-    ...GroupSubscriptionDetails
-  }
 }
