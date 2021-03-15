@@ -1,19 +1,18 @@
 import React, { FC, useState } from 'react'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
-import { PageHeader } from 'antd'
+import { notification, PageHeader } from 'antd'
 import { Form, SubmitButton, Input, InputNumber } from 'formik-antd'
 
 /* Local */
 
 /* eslint-disable */
-// import * as apollo from 'services/apollo'
-// import { InviteMemberResponse } from 'services/apollo/group'
+import * as apollo from 'services/apollo'
 /* eslint-enable */
 
 interface CreateSubscriptionOptionFormProps {
   onClickBack: () => void
-  onSaved: () => void
+  onCreatedOption: () => void
 }
 
 export const getSubscriptionOptionFormSchema = () => {
@@ -34,7 +33,7 @@ export const getSubscriptionOptionFormSchema = () => {
 
 export const CreateSubscriptionOptionForm: FC<CreateSubscriptionOptionFormProps> = ({
   onClickBack,
-  // onSaved,
+  onCreatedOption,
 }) => {
   const [savingSubscriptionOption, setSavingSubscriptionOption] = useState<boolean>()
 
@@ -70,26 +69,26 @@ export const CreateSubscriptionOptionForm: FC<CreateSubscriptionOptionFormProps>
         validationSchema={SubscriptionOptionFormSchema}
         onSubmit={async values => {
           setSavingSubscriptionOption(true)
-          // const { success, error }: InviteMemberResponse = await apollo.inviteMember({
-          //   email: values.email,
-          //   groupId: group.id,
-          // })
-          console.log(values)
-          setSavingSubscriptionOption(false)
+          const { fee, duration, description } = values
+          const { success, error } = await apollo.createGroupSubscription({
+            fee,
+            duration,
+            description,
+          })
 
-          // if (success) {
-          //   notification.success({
-          //     message: 'Invited User',
-          //     description: `${values.email}`,
-          //   })
-          //   onInvited()
-          // } else {
-          //   notification.error({
-          //     message: 'Error',
-          //     description: error,
-          //     duration: 3, // seconds
-          //   })
-          // }
+          if (success) {
+            notification.success({
+              message: 'Created Subscription Option',
+            })
+            onCreatedOption()
+          } else {
+            notification.error({
+              message: 'Error',
+              description: error,
+              duration: 3, // seconds
+            })
+          }
+          setSavingSubscriptionOption(false)
         }}
       >
         {() => (

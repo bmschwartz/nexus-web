@@ -52,7 +52,7 @@ export interface SubscriptionTableColumnsProps {
   disabledState: boolean
   editingOptionId: string | null
   onClickEdit: (optionId: string) => void
-  onClickDelete: (optionId: string) => void
+  onClickDelete: (optionId: string, memberCount: number) => void
   onToggleActive: (optionId: string) => void
   onClickSave: (option: SubscriptionOptionTableItem) => void
   onChange: (index: number, field: string, value: any) => void
@@ -69,7 +69,7 @@ export const subscriptionTableColumns = ({
 }: SubscriptionTableColumnsProps) => {
   return [
     {
-      title: labelTooltip('Active', 'Active subscription options are available to new members'),
+      title: labelTooltip('Active', 'Available to new members'),
       dataIndex: 'active',
       key: 'active',
       width: '10%',
@@ -148,7 +148,7 @@ export const subscriptionTableColumns = ({
             danger
             type="link"
             disabled={disabledState}
-            onClick={() => onClickDelete(option.id)}
+            onClick={() => onClickDelete(option.id, option.memberCount)}
           >
             Delete
           </Button>

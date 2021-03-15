@@ -90,7 +90,15 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ onClickCreateOpt
     setEditingSubscriptionOption(optionId)
   }
 
-  const onClickDeleteSubscriptionOption = (subscriptionOptionId: string) => {
+  const onClickDeleteSubscriptionOption = (subscriptionOptionId: string, memberCount: number) => {
+    if (memberCount > 0) {
+      Modal.error({
+        title: 'Delete Error',
+        content: `This subscription option is being used by ${memberCount} members`,
+        maskClosable: true,
+      })
+      return
+    }
     Modal.confirm({
       title: `Deleting Subscription Option`,
       icon: <ExclamationCircleOutlined />,

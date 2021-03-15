@@ -23,7 +23,7 @@ const Subscriptions = () => {
     setTabState(GroupSubscriptionState.VIEW_ALL)
   }
 
-  const onSaved = () => {
+  const onCreatedOption = () => {
     setTabState(GroupSubscriptionState.VIEW_ALL)
   }
 
@@ -37,7 +37,7 @@ const Subscriptions = () => {
         <SubscriptionTable onClickCreateOption={onClickCreateOption} />
       )}
       {tabState === GroupSubscriptionState.CREATE_NEW && (
-        <CreateSubscriptionOptionForm onClickBack={onClickBack} onSaved={onSaved} />
+        <CreateSubscriptionOptionForm onClickBack={onClickBack} onCreatedOption={onCreatedOption} />
       )}
     </div>
   )

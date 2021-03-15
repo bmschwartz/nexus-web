@@ -130,6 +130,7 @@ const CreateGroupForm = () => {
             Modal.error({
               title: 'Subscription Options Error',
               content: 'Duration and Fee are Required for All Subscription Options',
+              maskClosable: true,
             })
             return
           }
