@@ -1,9 +1,12 @@
 import React, { FC, useState } from 'react'
-import { Table, PageHeader, Switch, InputNumber, Input, Button, Modal, notification } from 'antd'
+import { Table, PageHeader, Button, Modal, notification } from 'antd'
 
 /* eslint-disable */
-import { createSubscriptionTableData, SubscriptionOptionTableItem } from './subscriptionTableUtils'
-import labelTooltip from '../labelTooltip'
+import {
+  createSubscriptionTableData,
+  SubscriptionOptionTableItem,
+  subscriptionTableColumns,
+} from './subscriptionTableUtils'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import * as apollo from '../../../services/apollo'
 import { useGetGroupSubscriptionOptionsQuery } from '../../../graphql'
@@ -25,16 +28,18 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ onClickCreateOpt
   } = useGetGroupSubscriptionOptionsQuery({
     fetchPolicy: 'cache-and-network',
   })
+  const disabledState =
+    togglingSubscriptionActive || savingSubscriptionOption || deletingSubscriptionOption
 
   const subscriptionOptionTableData:
     | SubscriptionOptionTableItem[]
     | undefined = createSubscriptionTableData(subscriptionOptions)
 
-  const toggleSubscriptionActive = async (subscriptionOption: SubscriptionOptionTableItem) => {
+  const toggleSubscriptionActive = async (optionId: string) => {
     setTogglingSubscriptionActive(true)
 
     const { success, error } = await apollo.toggleSubscriptionActive({
-      subscriptionId: subscriptionOption.id,
+      subscriptionId: optionId,
     })
 
     if (success) {
@@ -55,7 +60,6 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ onClickCreateOpt
   }
 
   const onClickSaveSubscriptionOption = async (subscriptionOption: SubscriptionOptionTableItem) => {
-    setEditingSubscriptionOption(null)
     setSavingSubscriptionOption(true)
 
     const { success, error } = await apollo.updateGroupSubscription({
@@ -79,6 +83,11 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ onClickCreateOpt
 
     setSavingSubscriptionOption(false)
     await refetchSubscriptionOptions()
+    setEditingSubscriptionOption(null)
+  }
+
+  const onClickEditSubscriptionOption = (optionId: string) => {
+    setEditingSubscriptionOption(optionId)
   }
 
   const onClickDeleteSubscriptionOption = (subscriptionOptionId: string) => {
@@ -115,98 +124,22 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ onClickCreateOpt
     })
   }
 
-  const subscriptionTableColumns = [
-    {
-      title: labelTooltip('Active', 'Active subscription options are available to new members'),
-      dataIndex: 'active',
-      key: 'active',
-      width: '15%',
-      render: (_: boolean, record: SubscriptionOptionTableItem) => (
-        <Switch
-          checked={record.active}
-          disabled={togglingSubscriptionActive}
-          onClick={async () => toggleSubscriptionActive(record)}
-        />
-      ),
-    },
-    {
-      title: 'Duration (Months)',
-      dataIndex: 'duration',
-      key: 'duration',
-      width: '15%',
-    },
-    {
-      title: 'Price (USD)',
-      dataIndex: 'price',
-      key: 'price',
-      width: '15%',
-      render: (price: string, record: SubscriptionOptionTableItem) => {
-        return editingSubscriptionOption === record.id ? (
-          <InputNumber min={0} step={1} max={999999} defaultValue={Number(price)} />
-        ) : (
-          <p>{price}</p>
-        )
-      },
-    },
-    {
-      title: 'Members',
-      dataIndex: 'members',
-      key: 'members',
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      render: (description: string, record: SubscriptionOptionTableItem) => {
-        return editingSubscriptionOption === record.id ? (
-          <Input maxLength={100} defaultValue={description} />
-        ) : (
-          <p>{description}</p>
-        )
-      },
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_: any, option: SubscriptionOptionTableItem) => {
-        const SaveOrEditButton =
-          editingSubscriptionOption === option.id ? (
-            <Button
-              type="link"
-              disabled={savingSubscriptionOption || deletingSubscriptionOption}
-              onClick={() => onClickSaveSubscriptionOption(option)}
-            >
-              Save
-            </Button>
-          ) : (
-            <Button
-              type="link"
-              disabled={savingSubscriptionOption || deletingSubscriptionOption}
-              onClick={() => setEditingSubscriptionOption(option.id)}
-            >
-              Edit
-            </Button>
-          )
-        const DeleteButton = (
-          <Button
-            danger
-            type="link"
-            disabled={savingSubscriptionOption || deletingSubscriptionOption}
-            onClick={() => onClickDeleteSubscriptionOption(option.id)}
-          >
-            Delete
-          </Button>
-        )
+  const onChangeSubscriptionOption = (index: number, field: string, value: any) => {
+    if (!subscriptionOptionTableData) {
+      return
+    }
 
-        return (
-          <div>
-            {SaveOrEditButton}
-            {DeleteButton}
-          </div>
-        )
-      },
-    },
-  ]
+    switch (field) {
+      case 'price':
+        subscriptionOptionTableData[index].price = value
+        break
+      case 'description':
+        subscriptionOptionTableData[index].description = value
+        break
+      default:
+        break
+    }
+  }
 
   return (
     <>
@@ -225,9 +158,17 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ onClickCreateOpt
           <Table
             rowKey="id"
             pagination={false}
-            columns={subscriptionTableColumns}
-            loading={fetchingSubscriptionOptions}
+            loading={fetchingSubscriptionOptions || disabledState}
             dataSource={subscriptionOptionTableData}
+            columns={subscriptionTableColumns({
+              disabledState,
+              editingOptionId: editingSubscriptionOption,
+              onToggleActive: toggleSubscriptionActive,
+              onClickEdit: onClickEditSubscriptionOption,
+              onClickSave: onClickSaveSubscriptionOption,
+              onClickDelete: onClickDeleteSubscriptionOption,
+              onChange: onChangeSubscriptionOption,
+            })}
           />
         </div>
       </div>

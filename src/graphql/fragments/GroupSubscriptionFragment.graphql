@@ -3,6 +3,7 @@ fragment GroupSubscriptionDetails on GroupSubscription {
   price
   active
   duration
+  memberCount
   description
   createdAt
   updatedAt

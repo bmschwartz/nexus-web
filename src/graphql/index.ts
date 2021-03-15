@@ -1175,7 +1175,7 @@ export type GroupMembershipDetailsFragment = { __typename?: 'GroupMembership' } 
 
 export type GroupSubscriptionDetailsFragment = { __typename?: 'GroupSubscription' } & Pick<
   GroupSubscription,
-  'id' | 'price' | 'active' | 'duration' | 'description' | 'createdAt' | 'updatedAt'
+  'id' | 'price' | 'active' | 'duration' | 'memberCount' | 'description' | 'createdAt' | 'updatedAt'
 >
 
 export type MemberSubscriptionDetailsFragment = { __typename?: 'MemberSubscription' } & Pick<
@@ -2108,6 +2108,7 @@ export const GroupSubscriptionDetailsFragmentDoc = gql`
     price
     active
     duration
+    memberCount
     description
     createdAt
     updatedAt
