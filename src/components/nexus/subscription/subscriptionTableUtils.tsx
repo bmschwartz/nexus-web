@@ -1,9 +1,10 @@
+import React from 'react'
+import { Button, Input, InputNumber, Switch } from 'antd'
+
 /* eslint-disable */
+import labelTooltip from '../labelTooltip'
 import { displayTimeBeforeNow } from '../dateUtil'
 import { GetGroupSubscriptionOptionsQuery } from '../../../graphql'
-import labelTooltip from '../labelTooltip'
-import { Button, Input, InputNumber, Switch } from 'antd'
-import React from 'react'
 
 /* eslint-enable */
 
