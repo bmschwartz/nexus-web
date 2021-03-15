@@ -5,7 +5,6 @@ import { Button, Input, InputNumber, Switch } from 'antd'
 import labelTooltip from '../labelTooltip'
 import { displayTimeBeforeNow } from '../dateUtil'
 import { GetGroupSubscriptionOptionsQuery } from '../../../graphql'
-
 /* eslint-enable */
 
 export interface SubscriptionOptionTableItem {
@@ -21,18 +20,32 @@ export interface SubscriptionOptionTableItem {
 export const createSubscriptionTableData = (
   subscriptionOptionsResponse?: GetGroupSubscriptionOptionsQuery,
 ): SubscriptionOptionTableItem[] | undefined => {
-  return subscriptionOptionsResponse?.myGroup?.subscriptionOptions.map(option => {
-    const { id, active, price, duration, memberCount, description, createdAt } = option
-    return {
-      id,
-      price,
-      active,
-      duration,
-      memberCount,
-      description: description ?? '',
-      createdAt: displayTimeBeforeNow(createdAt),
-    }
-  })
+  return subscriptionOptionsResponse?.myGroup?.subscriptionOptions
+    .map(option => {
+      const { id, active, price, duration, memberCount, description, createdAt } = option
+      return {
+        id,
+        price,
+        active,
+        duration,
+        memberCount,
+        description: description ?? '',
+        createdAt: displayTimeBeforeNow(createdAt),
+      }
+    })
+    .sort((a, b) => {
+      let order = 0
+      if (a.duration !== b.duration) {
+        order = a.duration - b.duration
+      } else if (a.price !== b.price) {
+        order = a.price - b.price
+      } else if (a.memberCount !== b.memberCount) {
+        order = b.memberCount - a.memberCount
+      } else if (a.createdAt !== b.createdAt) {
+        order = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      }
+      return order
+    })
 }
 
 export interface SubscriptionTableColumnsProps {
