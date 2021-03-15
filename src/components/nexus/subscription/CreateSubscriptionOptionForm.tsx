@@ -101,7 +101,7 @@ export const CreateSubscriptionOptionForm: FC<CreateSubscriptionOptionFormProps>
                 <InputNumber name="fee" min={0} step={1} max={999999} />
               </Form.Item>
               <Form.Item name="description" label="Description" className="mb-3">
-                <Input name="description" maxLength={100} />
+                <Input name="description" maxLength={50} />
               </Form.Item>
               <SubmitButton disabled={savingSubscriptionOption} loading={savingSubscriptionOption}>
                 Submit

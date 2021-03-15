@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { Group } from 'types/group'
-import { Button, Divider, Input, notification } from 'antd'
+import { Button, Input, notification } from 'antd'
 import * as apollo from 'services/apollo'
 
 interface GroupProfileProps {
@@ -42,9 +42,6 @@ export const GroupProfile: FC<GroupProfileProps> = ({ group }) => {
 
   return (
     <>
-      <Divider orientation="left">
-        <strong>Edit Profile</strong>
-      </Divider>
       <div style={{ width: 800 }}>
         <Input.TextArea
           showCount

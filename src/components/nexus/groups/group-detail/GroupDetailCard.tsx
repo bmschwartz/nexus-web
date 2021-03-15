@@ -63,7 +63,7 @@ export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership 
 
   const onClickAddSubscription = (): void => {
     setMemberSubscriptionTabState(MemberSubscriptionTabState.VIEW_ALL)
-    changeTab(TabKey.MemberMembership)
+    changeTab(TabKey.MemberSubscription)
   }
 
   return (

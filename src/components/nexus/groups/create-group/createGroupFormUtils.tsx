@@ -49,7 +49,7 @@ export const subscriptionTableColumns = (
       key: 'description',
       render: (_: any, option: SubscriptionOption, row: number) => (
         <Input
-          maxLength={100}
+          maxLength={50}
           defaultValue={option.description}
           onChange={(e: any) => onChange(row, 'description', e.target.value)}
         />

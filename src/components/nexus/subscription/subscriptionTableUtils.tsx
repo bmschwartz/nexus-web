@@ -119,7 +119,7 @@ export const subscriptionTableColumns = ({
       render: (description: string, option: SubscriptionOptionTableItem, index: number) => {
         return editingOptionId === option.id ? (
           <Input
-            maxLength={100}
+            maxLength={50}
             defaultValue={description}
             onChange={(e: any) => onChange(index, 'description', e.target.value)}
           />
