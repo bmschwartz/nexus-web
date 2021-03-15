@@ -125,6 +125,11 @@ type DeleteExchangeAccountResult {
   operationId: ID
 }
 
+type DeleteGroupSubscriptionResult {
+  error: String
+  success: Boolean!
+}
+
 type DeleteMembershipResult {
   error: String
   success: Boolean!
@@ -163,6 +168,7 @@ type Group {
   name: String!
   orderSet(input: OrderSetInput!): OrderSet
   orderSets(limit: Int, offset: Int): GroupOrderSets!
+  subscriptionOptions: [GroupSubscription!]!
   symbolsWithPosition: SymbolsWithPositionResult
   updatedAt: DateTime!
 }
@@ -175,7 +181,7 @@ type GroupMembersResult {
 type GroupMembership {
   active: Boolean!
   createdAt: DateTime!
-  exchangeAccounts: [ExchangeAccount!]!
+  exchangeAccounts(input: MemberExchangeAccountsInput): [ExchangeAccount!]!
   group: Group!
   id: ID!
   member: User!
@@ -195,9 +201,12 @@ type GroupOrderSets {
 type GroupSubscription {
   active: Boolean!
   createdAt: DateTime!
-  fee: Float!
+  description: String
+  duration: Int!
   group: Group!
   id: ID!
+  memberCount: Int!
+  price: Float!
   updatedAt: DateTime!
 }
 
@@ -217,12 +226,12 @@ type MemberPositionsResult {
 
 type MemberSubscription {
   active: Boolean!
-  invoices: [SubscriptionInvoice!]!
   createdAt: DateTime!
   currentPrice: Float
   endDate: DateTime
   groupSubscription: GroupSubscription!
   id: ID!
+  invoices: [SubscriptionInvoice!]!
   membership: GroupMembership!
   recurring: Boolean!
   startDate: DateTime
@@ -243,6 +252,7 @@ type Mutation {
   createMembership(input: CreateGroupMembershipInput!): CreateGroupMembershipResult
   createOrderSet(input: CreateOrderSetInput!): CreateOrderSetResult
   deleteExchangeAccount(input: DeleteExchangeAccountInput!): DeleteExchangeAccountResult!
+  deleteGroupSubscription(input: DeleteGroupSubscriptionInput!): DeleteGroupSubscriptionResult
   deleteMembership(input: DeleteMembershipInput!): DeleteMembershipResult
   disableGroup(input: DisableGroupInput!): Group
   loginUser(input: LoginUserInput!): LoginResponse!
@@ -251,8 +261,10 @@ type Mutation {
   requestGroupAccess(input: RequestGroupAccessInput!): GroupMembership
   signupUser(input: SignupUserInput!): SignUpResponse!
   toggleExchangeAccountActive(input: ToggleExchangeAccountActiveInput!): ToggleExchangeAccountActiveResult!
+  toggleSubscriptionActive(input: ToggleSubscriptionActiveInput!): ToggleSubscriptionActiveResult
   updateExchangeAccount(input: UpdateExchangeAccountInput!): UpdateExchangeAccountResult!
   updateGroupDescription(input: UpdateGroupDescriptionInput!): Group
+  updateGroupSubscription(input: UpdateGroupSubscriptionInput!): UpdateGroupSubscriptionResult
   updateMembershipActive(input: UpdateMembershipActiveInput!): GroupMembership
   updateMembershipRole(input: UpdateMembershipRoleInput!): GroupMembership
   updateMembershipStatus(input: UpdateMembershipStatusInput!): GroupMembership
@@ -310,7 +322,7 @@ type OrderSetOrdersResult {
 
 type PayMemberSubscriptionResult {
   error: String
-  success: Boolean!
+  invoiceId: String
 }
 
 type Position {
@@ -341,6 +353,7 @@ type Query {
   me: User
   membership(input: MembershipInput!): GroupMembership!
   membershipRequests(input: MembershipRequestsInput!): [GroupMembership!]
+  myGroup: Group
   myMembership(input: MyMembershipInput!): GroupMembership!
   myMemberships(input: MyMembershipsInput): [GroupMembership!]
   order(input: OrderInput!): Order
@@ -354,19 +367,19 @@ type SignUpResponse {
   success: Boolean!
 }
 
-type SubscriptionBill {
+type SubscriptionInvoice {
   amountCharged: Float!
   amountPaid: Float!
-  billStatus: BillStatus!
-  billToken: ID
   createdAt: DateTime!
   email: String!
   expiresAt: DateTime
   id: ID!
   periodEnd: DateTime
   periodStart: DateTime
-  remoteBillId: ID
+  remoteId: ID
+  status: InvoiceStatus!
   subscription: MemberSubscription!
+  token: ID
   updatedAt: DateTime!
 }
 
@@ -380,9 +393,19 @@ type ToggleExchangeAccountActiveResult {
   operationId: ID
 }
 
+type ToggleSubscriptionActiveResult {
+  error: String
+  success: Boolean!
+}
+
 type UpdateExchangeAccountResult {
   error: String
   operationId: ID
+}
+
+type UpdateGroupSubscriptionResult {
+  error: String
+  success: Boolean!
 }
 
 type UpdateOrderSetResult {
@@ -397,20 +420,13 @@ type User {
   id: ID!
   memberships: [GroupMembership!]!
   updatedAt: DateTime!
+  userType: UserType!
   username: String!
 }
 
 type VerifySignUpCodeResponse {
   error: String
   success: Boolean!
-}
-
-enum BillStatus {
-  COMPLETE
-  DRAFT
-  NEW
-  PAID
-  SENT
 }
 
 enum BinanceSymbolStatus {
@@ -426,6 +442,15 @@ enum BinanceSymbolStatus {
 enum Exchange {
   BINANCE
   BITMEX
+}
+
+enum InvoiceStatus {
+  COMPLETE
+  CONFIRMED
+  EXPIRED
+  INVALID
+  NEW
+  PAID
 }
 
 enum MembershipRole {
@@ -491,6 +516,12 @@ enum StopTriggerType {
   MARK_PRICE
 }
 
+enum UserType {
+  MEMBER
+  OWNER
+  TRADER
+}
+
 input ActivateMemberSubscriptionInput {
   subscriptionId: ID!
 }
@@ -544,11 +575,10 @@ input CreateGroupInput {
   description: String!
   discord: String
   email: String
-  membershipFee: Float!
   name: String!
   payInPlatform: Boolean!
   payoutAddress: String
-  payoutCurrency: String
+  subscriptionOptions: [GroupSubscriptionInput!]!
   telegram: String
 }
 
@@ -560,8 +590,9 @@ input CreateGroupMembershipInput {
 }
 
 input CreateGroupSubscriptionInput {
+  description: String
+  duration: Int!
   fee: Float!
-  groupId: ID!
 }
 
 input CreateOrderSetInput {
@@ -588,6 +619,10 @@ input CurrencyInput {
 
 input DeleteExchangeAccountInput {
   id: ID!
+}
+
+input DeleteGroupSubscriptionInput {
+  subscriptionId: ID!
 }
 
 input DeleteMembershipInput {
@@ -631,9 +666,20 @@ input GroupMembersInput {
   statuses: [MembershipStatus!]
 }
 
+input GroupSubscriptionInput {
+  description: String
+  duration: Int!
+  fee: Float!
+}
+
 input LoginUserInput {
   email: String!
   password: String!
+}
+
+input MemberExchangeAccountsInput {
+  activeOnly: Boolean
+  exchange: Exchange
 }
 
 input MemberOrdersInput {
@@ -682,7 +728,8 @@ input OrderSetOrdersInput {
 }
 
 input PayMemberSubscriptionInput {
-  subscriptionId: ID!
+  groupId: ID!
+  membershipId: ID!
 }
 
 input PositionInput {
@@ -701,11 +748,16 @@ input RequestGroupAccessInput {
 input SignupUserInput {
   email: String!
   password: String!
+  userType: UserType!
   username: String!
 }
 
 input ToggleExchangeAccountActiveInput {
   id: ID!
+}
+
+input ToggleSubscriptionActiveInput {
+  subscriptionId: ID!
 }
 
 input UpdateExchangeAccountInput {
@@ -717,6 +769,12 @@ input UpdateExchangeAccountInput {
 input UpdateGroupDescriptionInput {
   description: String!
   groupId: ID!
+}
+
+input UpdateGroupSubscriptionInput {
+  description: String
+  fee: Float!
+  subscriptionId: ID!
 }
 
 input UpdateMembershipActiveInput {

@@ -1,43 +1,84 @@
 import React, { FC, useState } from 'react'
-import { Table, PageHeader, Switch, InputNumber, Input, Button, Modal } from 'antd'
+import { Table, PageHeader, Switch, InputNumber, Input, Button, Modal, notification } from 'antd'
 
 /* eslint-disable */
 import { createSubscriptionTableData, SubscriptionOptionTableItem } from './subscriptionTableUtils'
-import { GroupSubscription } from '../../../types/subscription'
 import labelTooltip from '../labelTooltip'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-// import * as apollo from "../../../services/apollo";
+import * as apollo from '../../../services/apollo'
+import { useGetGroupSubscriptionOptionsQuery } from '../../../graphql'
 /* eslint-enable */
 
 interface SubscriptionTableProps {
-  subscriptionOptions: GroupSubscription[]
+  onClickCreateOption: () => void
 }
 
-export const SubscriptionTable: FC<SubscriptionTableProps> = ({ subscriptionOptions }) => {
+export const SubscriptionTable: FC<SubscriptionTableProps> = ({ onClickCreateOption }) => {
   const [savingSubscriptionOption, setSavingSubscriptionOption] = useState<boolean>(false)
   const [deletingSubscriptionOption, setDeletingSubscriptionOption] = useState<boolean>(false)
   const [togglingSubscriptionActive, setTogglingSubscriptionActive] = useState<boolean>(false)
   const [editingSubscriptionOption, setEditingSubscriptionOption] = useState<string | null>(null)
+  const {
+    data: subscriptionOptions,
+    refetch: refetchSubscriptionOptions,
+    loading: fetchingSubscriptionOptions,
+  } = useGetGroupSubscriptionOptionsQuery({
+    fetchPolicy: 'cache-and-network',
+  })
 
-  const subscriptionOptionTableData: SubscriptionOptionTableItem[] = createSubscriptionTableData(
-    subscriptionOptions,
-  )
+  const subscriptionOptionTableData:
+    | SubscriptionOptionTableItem[]
+    | undefined = createSubscriptionTableData(subscriptionOptions)
 
-  const toggleSubscriptionActive = (subscriptionOption: SubscriptionOptionTableItem) => {
+  const toggleSubscriptionActive = async (subscriptionOption: SubscriptionOptionTableItem) => {
     setTogglingSubscriptionActive(true)
-    console.log('toggling subscription active', subscriptionOption.id)
-    setTimeout(() => {
-      setTogglingSubscriptionActive(false)
-    }, 1500)
+
+    const { success, error } = await apollo.toggleSubscriptionActive({
+      subscriptionId: subscriptionOption.id,
+    })
+
+    if (success) {
+      notification.success({
+        message: `Toggled Subscription Option`,
+        duration: 1.5,
+      })
+    } else {
+      notification.error({
+        message: `Error Toggling Subscription Option`,
+        description: error,
+        duration: 3, // seconds
+      })
+    }
+
+    setTogglingSubscriptionActive(false)
+    await refetchSubscriptionOptions()
   }
 
-  const onClickSaveSubscriptionOption = (subscriptionOptionId: string) => {
-    console.log('saving', subscriptionOptionId)
+  const onClickSaveSubscriptionOption = async (subscriptionOption: SubscriptionOptionTableItem) => {
     setEditingSubscriptionOption(null)
     setSavingSubscriptionOption(true)
-    setTimeout(() => {
-      setSavingSubscriptionOption(false)
-    }, 1500)
+
+    const { success, error } = await apollo.updateGroupSubscription({
+      fee: subscriptionOption.price,
+      subscriptionId: subscriptionOption.id,
+      description: subscriptionOption.description,
+    })
+
+    if (success) {
+      notification.success({
+        message: 'Saved Subscription Option',
+        duration: 1.5,
+      })
+    } else {
+      notification.error({
+        message: 'Error Saving Subscription Option',
+        description: error,
+        duration: 3, // seconds
+      })
+    }
+
+    setSavingSubscriptionOption(false)
+    await refetchSubscriptionOptions()
   }
 
   const onClickDeleteSubscriptionOption = (subscriptionOptionId: string) => {
@@ -50,23 +91,25 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ subscriptionOpti
       async onOk() {
         setDeletingSubscriptionOption(true)
 
-        console.log('deleting', subscriptionOptionId)
+        const { success, error } = await apollo.deleteGroupSubscription({
+          subscriptionId: subscriptionOptionId,
+        })
+
+        if (success) {
+          notification.success({
+            message: `Deleted Subscription Option`,
+            duration: 1.5,
+          })
+        } else {
+          notification.error({
+            message: `Error Deleting Subscription Option`,
+            description: error,
+            duration: 3, // seconds
+          })
+        }
 
         setDeletingSubscriptionOption(false)
-
-        // if (success) {
-        //   notification.success({
-        //     message: `Deleted Subscription Option`,
-        //   })
-        // } else {
-        //   notification.error({
-        //     message: `Error Deleting Subscription Option`,
-        //     description: error,
-        //     duration: 3, // seconds
-        //   })
-        // }
-
-        window.location.reload()
+        await refetchSubscriptionOptions()
       },
       onCancel() {},
     })
@@ -74,10 +117,7 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ subscriptionOpti
 
   const subscriptionTableColumns = [
     {
-      title: labelTooltip(
-        'Active',
-        'This subscription option is available to members when signing up',
-      ),
+      title: labelTooltip('Active', 'Active subscription options are available to new members'),
       dataIndex: 'active',
       key: 'active',
       width: '15%',
@@ -109,6 +149,11 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ subscriptionOpti
       },
     },
     {
+      title: 'Members',
+      dataIndex: 'members',
+      key: 'members',
+    },
+    {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
@@ -129,7 +174,7 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ subscriptionOpti
             <Button
               type="link"
               disabled={savingSubscriptionOption || deletingSubscriptionOption}
-              onClick={() => onClickSaveSubscriptionOption(option.id)}
+              onClick={() => onClickSaveSubscriptionOption(option)}
             >
               Save
             </Button>
@@ -169,6 +214,11 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ subscriptionOpti
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Subscriptions" backIcon={false} />
         </div>
+        <div className="d-flex flex-column justify-content-center">
+          <Button className="btn btn-primary" onClick={onClickCreateOption}>
+            Create New
+          </Button>
+        </div>
       </div>
       <div className="card-body">
         <div className="text-nowrap">
@@ -176,6 +226,7 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ subscriptionOpti
             rowKey="id"
             pagination={false}
             columns={subscriptionTableColumns}
+            loading={fetchingSubscriptionOptions}
             dataSource={subscriptionOptionTableData}
           />
         </div>

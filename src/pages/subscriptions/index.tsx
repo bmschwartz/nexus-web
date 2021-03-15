@@ -1,29 +1,44 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Redirect } from 'react-router-dom'
 
 /* eslint-disable */
 import * as apollo from '../../services/apollo'
 import { SubscriptionTable } from '../../components/nexus/subscription/SubscriptionTable'
-import { useGetMyGroupQuery } from '../../graphql'
-import { Spin } from 'antd'
-import { transformGroups } from '../../types/group'
+import { CreateSubscriptionOptionForm } from '../../components/nexus/subscription/CreateSubscriptionOptionForm'
 /* eslint-enable */
 
+export enum GroupSubscriptionState {
+  VIEW_ALL,
+  CREATE_NEW,
+}
+
 const Subscriptions = () => {
-  const { data, loading } = useGetMyGroupQuery({ fetchPolicy: 'cache-and-network' })
-  if (loading || !data) {
-    return <Spin />
+  const [tabState, setTabState] = useState<GroupSubscriptionState>(GroupSubscriptionState.VIEW_ALL)
+
+  const onClickCreateOption = () => {
+    setTabState(GroupSubscriptionState.CREATE_NEW)
+  }
+
+  const onClickBack = () => {
+    setTabState(GroupSubscriptionState.VIEW_ALL)
+  }
+
+  const onSaved = () => {
+    setTabState(GroupSubscriptionState.VIEW_ALL)
   }
 
   if (!apollo.isGroupOwnerOrTraderUserType()) {
     return <Redirect to="/home" />
   }
 
-  const group = transformGroups([data.myGroup])[0]
-
   return (
     <div>
-      <SubscriptionTable subscriptionOptions={group.subscriptionOptions} />
+      {tabState === GroupSubscriptionState.VIEW_ALL && (
+        <SubscriptionTable onClickCreateOption={onClickCreateOption} />
+      )}
+      {tabState === GroupSubscriptionState.CREATE_NEW && (
+        <CreateSubscriptionOptionForm onClickBack={onClickBack} onSaved={onSaved} />
+      )}
     </div>
   )
 }

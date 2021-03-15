@@ -1,0 +1,6 @@
+mutation UpdateGroupSubscription($input: UpdateGroupSubscriptionInput!) {
+  updateGroupSubscription(input: $input) {
+    success
+    error
+  }
+}

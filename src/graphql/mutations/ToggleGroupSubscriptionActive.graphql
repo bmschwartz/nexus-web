@@ -1,0 +1,6 @@
+mutation ToggleSubscriptionActive($input: ToggleSubscriptionActiveInput!) {
+  toggleSubscriptionActive(input: $input) {
+    success
+    error
+  }
+}

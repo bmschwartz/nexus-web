@@ -3,7 +3,11 @@ import { client } from './client'
 import {
   ActivateMemberSubscriptionDocument,
   CancelMemberSubscriptionDocument,
+  CreateGroupSubscriptionDocument,
+  DeleteGroupSubscriptionDocument,
   PayMemberSubscriptionDocument,
+  ToggleSubscriptionActiveDocument,
+  UpdateGroupSubscriptionDocument,
 } from '../../graphql/index'
 /* eslint-enable */
 
@@ -32,6 +36,46 @@ export interface PayMemberSubscriptionInput {
 
 export interface PayMemberSubscriptionResponse {
   invoiceId?: string
+  error?: string
+}
+
+export interface CreateGroupSubscriptionInput {
+  fee: number
+  duration: number
+  description?: string
+}
+
+export interface CreateGroupSubscriptionResponse {
+  success: boolean
+  error?: string
+}
+
+export interface UpdateGroupSubscriptionInput {
+  fee: number
+  description?: string
+  subscriptionId: string
+}
+
+export interface UpdateGroupSubscriptionResponse {
+  success: boolean
+  error?: string
+}
+
+export interface DeleteGroupSubscriptionInput {
+  subscriptionId: string
+}
+
+export interface DeleteGroupSubscriptionResponse {
+  success: boolean
+  error?: string
+}
+
+export interface ToggleSubscriptionActiveInput {
+  subscriptionId: string
+}
+
+export interface ToggleSubscriptionActiveResponse {
+  success: boolean
   error?: string
 }
 
@@ -106,5 +150,109 @@ export const payMemberSubscription = async (
     return { invoiceId, error }
   } catch (error) {
     return { error: error.message }
+  }
+}
+
+export const createGroupSubscription = async (
+  input: CreateGroupSubscriptionInput,
+): Promise<CreateGroupSubscriptionResponse> => {
+  const { fee, duration, description } = input
+  try {
+    const { data } = await client.mutate({
+      mutation: CreateGroupSubscriptionDocument,
+      variables: {
+        input: { fee, duration, description },
+      },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Error creating subscription option' }
+    }
+
+    const {
+      createGroupSubscription: { success, error },
+    } = data
+
+    return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const updateGroupSubscription = async (
+  input: UpdateGroupSubscriptionInput,
+): Promise<UpdateGroupSubscriptionResponse> => {
+  const { fee, description, subscriptionId } = input
+  try {
+    const { data } = await client.mutate({
+      mutation: UpdateGroupSubscriptionDocument,
+      variables: {
+        input: { fee, description, subscriptionId },
+      },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Error updating subscription option' }
+    }
+
+    const {
+      updateGroupSubscription: { success, error },
+    } = data
+
+    return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const deleteGroupSubscription = async (
+  input: DeleteGroupSubscriptionInput,
+): Promise<DeleteGroupSubscriptionResponse> => {
+  const { subscriptionId } = input
+  try {
+    const { data } = await client.mutate({
+      mutation: DeleteGroupSubscriptionDocument,
+      variables: {
+        input: { subscriptionId },
+      },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Error deleting subscription option' }
+    }
+
+    const {
+      deleteGroupSubscription: { success, error },
+    } = data
+
+    return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const toggleSubscriptionActive = async (
+  input: ToggleSubscriptionActiveInput,
+): Promise<ToggleSubscriptionActiveResponse> => {
+  const { subscriptionId } = input
+  try {
+    const { data } = await client.mutate({
+      mutation: ToggleSubscriptionActiveDocument,
+      variables: {
+        input: { subscriptionId },
+      },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Error toggling subscription option active' }
+    }
+
+    const {
+      toggleSubscriptionActive: { success, error },
+    } = data
+
+    return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
   }
 }

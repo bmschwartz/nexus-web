@@ -1,0 +1,6 @@
+mutation CreateGroupSubscription($input: CreateGroupSubscriptionInput!) {
+  createGroupSubscription(input: $input) {
+    success
+    error
+  }
+}

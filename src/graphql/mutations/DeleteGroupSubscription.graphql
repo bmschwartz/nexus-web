@@ -1,0 +1,6 @@
+mutation DeleteGroupSubscription($input: DeleteGroupSubscriptionInput!) {
+  deleteGroupSubscription(input: $input) {
+    success
+    error
+  }
+}

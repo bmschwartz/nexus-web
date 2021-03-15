@@ -60,7 +60,6 @@ export type CreateGroupMembershipResult = {
 }
 
 export type CreateGroupSubscriptionInput = {
-  groupId: Scalars['ID']
   fee: Scalars['Float']
   duration: Scalars['Int']
   description?: Maybe<Scalars['String']>
@@ -68,6 +67,16 @@ export type CreateGroupSubscriptionInput = {
 
 export type CreateGroupSubscriptionResult = {
   __typename?: 'CreateGroupSubscriptionResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
+export type DeleteGroupSubscriptionInput = {
+  subscriptionId: Scalars['ID']
+}
+
+export type DeleteGroupSubscriptionResult = {
+  __typename?: 'DeleteGroupSubscriptionResult'
   success: Scalars['Boolean']
   error?: Maybe<Scalars['String']>
 }
@@ -172,6 +181,7 @@ export type GroupSubscription = {
   price: Scalars['Float']
   duration: Scalars['Int']
   description?: Maybe<Scalars['String']>
+  memberCount: Scalars['Int']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
@@ -272,9 +282,31 @@ export type SubscriptionInvoice = {
   updatedAt: Scalars['DateTime']
 }
 
+export type ToggleSubscriptionActiveInput = {
+  subscriptionId: Scalars['ID']
+}
+
+export type ToggleSubscriptionActiveResult = {
+  __typename?: 'ToggleSubscriptionActiveResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
+}
+
 export type UpdateGroupDescriptionInput = {
   groupId: Scalars['ID']
   description: Scalars['String']
+}
+
+export type UpdateGroupSubscriptionInput = {
+  fee: Scalars['Float']
+  subscriptionId: Scalars['ID']
+  description?: Maybe<Scalars['String']>
+}
+
+export type UpdateGroupSubscriptionResult = {
+  __typename?: 'UpdateGroupSubscriptionResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
 }
 
 export type UpdateMembershipActiveInput = {
@@ -914,6 +946,9 @@ export type Mutation = {
   updateMembershipActive?: Maybe<GroupMembership>
   deleteMembership?: Maybe<DeleteMembershipResult>
   createGroupSubscription?: Maybe<CreateGroupSubscriptionResult>
+  updateGroupSubscription?: Maybe<UpdateGroupSubscriptionResult>
+  deleteGroupSubscription?: Maybe<DeleteGroupSubscriptionResult>
+  toggleSubscriptionActive?: Maybe<ToggleSubscriptionActiveResult>
   payMemberSubscription?: Maybe<PayMemberSubscriptionResult>
   cancelMemberSubscription?: Maybe<CancelMemberSubscriptionResult>
   activateMemberSubscription?: Maybe<ActivateMemberSubscriptionResult>
@@ -975,6 +1010,18 @@ export type MutationDeleteMembershipArgs = {
 
 export type MutationCreateGroupSubscriptionArgs = {
   input: CreateGroupSubscriptionInput
+}
+
+export type MutationUpdateGroupSubscriptionArgs = {
+  input: UpdateGroupSubscriptionInput
+}
+
+export type MutationDeleteGroupSubscriptionArgs = {
+  input: DeleteGroupSubscriptionInput
+}
+
+export type MutationToggleSubscriptionActiveArgs = {
+  input: ToggleSubscriptionActiveInput
 }
 
 export type MutationPayMemberSubscriptionArgs = {
@@ -1296,6 +1343,19 @@ export type CreateGroupMembershipMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type CreateGroupSubscriptionMutationVariables = Exact<{
+  input: CreateGroupSubscriptionInput
+}>
+
+export type CreateGroupSubscriptionMutation = { __typename?: 'Mutation' } & {
+  createGroupSubscription?: Maybe<
+    { __typename?: 'CreateGroupSubscriptionResult' } & Pick<
+      CreateGroupSubscriptionResult,
+      'success' | 'error'
+    >
+  >
+}
+
 export type CreateOrderSetMutationVariables = Exact<{
   input: CreateOrderSetInput
 }>
@@ -1316,6 +1376,19 @@ export type DeleteExchangeAccountMutation = { __typename?: 'Mutation' } & {
   deleteExchangeAccount: { __typename?: 'DeleteExchangeAccountResult' } & Pick<
     DeleteExchangeAccountResult,
     'operationId' | 'error'
+  >
+}
+
+export type DeleteGroupSubscriptionMutationVariables = Exact<{
+  input: DeleteGroupSubscriptionInput
+}>
+
+export type DeleteGroupSubscriptionMutation = { __typename?: 'Mutation' } & {
+  deleteGroupSubscription?: Maybe<
+    { __typename?: 'DeleteGroupSubscriptionResult' } & Pick<
+      DeleteGroupSubscriptionResult,
+      'success' | 'error'
+    >
   >
 }
 
@@ -1361,6 +1434,19 @@ export type ToggleExchangeAccountActiveMutation = { __typename?: 'Mutation' } & 
   >
 }
 
+export type ToggleSubscriptionActiveMutationVariables = Exact<{
+  input: ToggleSubscriptionActiveInput
+}>
+
+export type ToggleSubscriptionActiveMutation = { __typename?: 'Mutation' } & {
+  toggleSubscriptionActive?: Maybe<
+    { __typename?: 'ToggleSubscriptionActiveResult' } & Pick<
+      ToggleSubscriptionActiveResult,
+      'success' | 'error'
+    >
+  >
+}
+
 export type UpdateExchangeAccountMutationVariables = Exact<{
   input: UpdateExchangeAccountInput
 }>
@@ -1378,6 +1464,19 @@ export type UpdateGroupDescriptionMutationVariables = Exact<{
 
 export type UpdateGroupDescriptionMutation = { __typename?: 'Mutation' } & {
   updateGroupDescription?: Maybe<{ __typename?: 'Group' } & Pick<Group, 'description'>>
+}
+
+export type UpdateGroupSubscriptionMutationVariables = Exact<{
+  input: UpdateGroupSubscriptionInput
+}>
+
+export type UpdateGroupSubscriptionMutation = { __typename?: 'Mutation' } & {
+  updateGroupSubscription?: Maybe<
+    { __typename?: 'UpdateGroupSubscriptionResult' } & Pick<
+      UpdateGroupSubscriptionResult,
+      'success' | 'error'
+    >
+  >
 }
 
 export type UpdateMembershipRoleMutationVariables = Exact<{
@@ -1644,6 +1743,18 @@ export type GetGroupStatsQuery = { __typename?: 'Query' } & {
         orderSets: { __typename?: 'GroupOrderSets' } & Pick<GroupOrderSets, 'totalCount'>
         members?: Maybe<
           { __typename?: 'GroupMembersResult' } & Pick<GroupMembersResult, 'totalCount'>
+        >
+      }
+  >
+}
+
+export type GetGroupSubscriptionOptionsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetGroupSubscriptionOptionsQuery = { __typename?: 'Query' } & {
+  myGroup?: Maybe<
+    { __typename?: 'Group' } & Pick<Group, 'id'> & {
+        subscriptionOptions: Array<
+          { __typename?: 'GroupSubscription' } & GroupSubscriptionDetailsFragment
         >
       }
   >
@@ -2400,6 +2511,57 @@ export type CreateGroupMembershipMutationOptions = Apollo.BaseMutationOptions<
   CreateGroupMembershipMutation,
   CreateGroupMembershipMutationVariables
 >
+export const CreateGroupSubscriptionDocument = gql`
+  mutation CreateGroupSubscription($input: CreateGroupSubscriptionInput!) {
+    createGroupSubscription(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type CreateGroupSubscriptionMutationFn = Apollo.MutationFunction<
+  CreateGroupSubscriptionMutation,
+  CreateGroupSubscriptionMutationVariables
+>
+
+/**
+ * __useCreateGroupSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useCreateGroupSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateGroupSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createGroupSubscriptionMutation, { data, loading, error }] = useCreateGroupSubscriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateGroupSubscriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateGroupSubscriptionMutation,
+    CreateGroupSubscriptionMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    CreateGroupSubscriptionMutation,
+    CreateGroupSubscriptionMutationVariables
+  >(CreateGroupSubscriptionDocument, baseOptions)
+}
+export type CreateGroupSubscriptionMutationHookResult = ReturnType<
+  typeof useCreateGroupSubscriptionMutation
+>
+export type CreateGroupSubscriptionMutationResult = Apollo.MutationResult<
+  CreateGroupSubscriptionMutation
+>
+export type CreateGroupSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  CreateGroupSubscriptionMutation,
+  CreateGroupSubscriptionMutationVariables
+>
 export const CreateOrderSetDocument = gql`
   mutation CreateOrderSet($input: CreateOrderSetInput!) {
     createOrderSet(input: $input) {
@@ -2495,6 +2657,57 @@ export type DeleteExchangeAccountMutationResult = Apollo.MutationResult<
 export type DeleteExchangeAccountMutationOptions = Apollo.BaseMutationOptions<
   DeleteExchangeAccountMutation,
   DeleteExchangeAccountMutationVariables
+>
+export const DeleteGroupSubscriptionDocument = gql`
+  mutation DeleteGroupSubscription($input: DeleteGroupSubscriptionInput!) {
+    deleteGroupSubscription(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type DeleteGroupSubscriptionMutationFn = Apollo.MutationFunction<
+  DeleteGroupSubscriptionMutation,
+  DeleteGroupSubscriptionMutationVariables
+>
+
+/**
+ * __useDeleteGroupSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useDeleteGroupSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteGroupSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteGroupSubscriptionMutation, { data, loading, error }] = useDeleteGroupSubscriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteGroupSubscriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteGroupSubscriptionMutation,
+    DeleteGroupSubscriptionMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    DeleteGroupSubscriptionMutation,
+    DeleteGroupSubscriptionMutationVariables
+  >(DeleteGroupSubscriptionDocument, baseOptions)
+}
+export type DeleteGroupSubscriptionMutationHookResult = ReturnType<
+  typeof useDeleteGroupSubscriptionMutation
+>
+export type DeleteGroupSubscriptionMutationResult = Apollo.MutationResult<
+  DeleteGroupSubscriptionMutation
+>
+export type DeleteGroupSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  DeleteGroupSubscriptionMutation,
+  DeleteGroupSubscriptionMutationVariables
 >
 export const DeleteMembershipDocument = gql`
   mutation DeleteMembership($input: DeleteMembershipInput!) {
@@ -2691,6 +2904,57 @@ export type ToggleExchangeAccountActiveMutationOptions = Apollo.BaseMutationOpti
   ToggleExchangeAccountActiveMutation,
   ToggleExchangeAccountActiveMutationVariables
 >
+export const ToggleSubscriptionActiveDocument = gql`
+  mutation ToggleSubscriptionActive($input: ToggleSubscriptionActiveInput!) {
+    toggleSubscriptionActive(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type ToggleSubscriptionActiveMutationFn = Apollo.MutationFunction<
+  ToggleSubscriptionActiveMutation,
+  ToggleSubscriptionActiveMutationVariables
+>
+
+/**
+ * __useToggleSubscriptionActiveMutation__
+ *
+ * To run a mutation, you first call `useToggleSubscriptionActiveMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleSubscriptionActiveMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleSubscriptionActiveMutation, { data, loading, error }] = useToggleSubscriptionActiveMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useToggleSubscriptionActiveMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ToggleSubscriptionActiveMutation,
+    ToggleSubscriptionActiveMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    ToggleSubscriptionActiveMutation,
+    ToggleSubscriptionActiveMutationVariables
+  >(ToggleSubscriptionActiveDocument, baseOptions)
+}
+export type ToggleSubscriptionActiveMutationHookResult = ReturnType<
+  typeof useToggleSubscriptionActiveMutation
+>
+export type ToggleSubscriptionActiveMutationResult = Apollo.MutationResult<
+  ToggleSubscriptionActiveMutation
+>
+export type ToggleSubscriptionActiveMutationOptions = Apollo.BaseMutationOptions<
+  ToggleSubscriptionActiveMutation,
+  ToggleSubscriptionActiveMutationVariables
+>
 export const UpdateExchangeAccountDocument = gql`
   mutation UpdateExchangeAccount($input: UpdateExchangeAccountInput!) {
     updateExchangeAccount(input: $input) {
@@ -2791,6 +3055,57 @@ export type UpdateGroupDescriptionMutationResult = Apollo.MutationResult<
 export type UpdateGroupDescriptionMutationOptions = Apollo.BaseMutationOptions<
   UpdateGroupDescriptionMutation,
   UpdateGroupDescriptionMutationVariables
+>
+export const UpdateGroupSubscriptionDocument = gql`
+  mutation UpdateGroupSubscription($input: UpdateGroupSubscriptionInput!) {
+    updateGroupSubscription(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type UpdateGroupSubscriptionMutationFn = Apollo.MutationFunction<
+  UpdateGroupSubscriptionMutation,
+  UpdateGroupSubscriptionMutationVariables
+>
+
+/**
+ * __useUpdateGroupSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useUpdateGroupSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGroupSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGroupSubscriptionMutation, { data, loading, error }] = useUpdateGroupSubscriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateGroupSubscriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateGroupSubscriptionMutation,
+    UpdateGroupSubscriptionMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    UpdateGroupSubscriptionMutation,
+    UpdateGroupSubscriptionMutationVariables
+  >(UpdateGroupSubscriptionDocument, baseOptions)
+}
+export type UpdateGroupSubscriptionMutationHookResult = ReturnType<
+  typeof useUpdateGroupSubscriptionMutation
+>
+export type UpdateGroupSubscriptionMutationResult = Apollo.MutationResult<
+  UpdateGroupSubscriptionMutation
+>
+export type UpdateGroupSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  UpdateGroupSubscriptionMutation,
+  UpdateGroupSubscriptionMutationVariables
 >
 export const UpdateMembershipRoleDocument = gql`
   mutation UpdateMembershipRole($input: UpdateMembershipRoleInput!) {
@@ -3858,6 +4173,65 @@ export type GetGroupStatsLazyQueryHookResult = ReturnType<typeof useGetGroupStat
 export type GetGroupStatsQueryResult = Apollo.QueryResult<
   GetGroupStatsQuery,
   GetGroupStatsQueryVariables
+>
+export const GetGroupSubscriptionOptionsDocument = gql`
+  query GetGroupSubscriptionOptions {
+    myGroup {
+      id
+      subscriptionOptions {
+        ...GroupSubscriptionDetails
+      }
+    }
+  }
+  ${GroupSubscriptionDetailsFragmentDoc}
+`
+
+/**
+ * __useGetGroupSubscriptionOptionsQuery__
+ *
+ * To run a query within a React component, call `useGetGroupSubscriptionOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGroupSubscriptionOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGroupSubscriptionOptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetGroupSubscriptionOptionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetGroupSubscriptionOptionsQuery,
+    GetGroupSubscriptionOptionsQueryVariables
+  >,
+) {
+  return Apollo.useQuery<
+    GetGroupSubscriptionOptionsQuery,
+    GetGroupSubscriptionOptionsQueryVariables
+  >(GetGroupSubscriptionOptionsDocument, baseOptions)
+}
+export function useGetGroupSubscriptionOptionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGroupSubscriptionOptionsQuery,
+    GetGroupSubscriptionOptionsQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<
+    GetGroupSubscriptionOptionsQuery,
+    GetGroupSubscriptionOptionsQueryVariables
+  >(GetGroupSubscriptionOptionsDocument, baseOptions)
+}
+export type GetGroupSubscriptionOptionsQueryHookResult = ReturnType<
+  typeof useGetGroupSubscriptionOptionsQuery
+>
+export type GetGroupSubscriptionOptionsLazyQueryHookResult = ReturnType<
+  typeof useGetGroupSubscriptionOptionsLazyQuery
+>
+export type GetGroupSubscriptionOptionsQueryResult = Apollo.QueryResult<
+  GetGroupSubscriptionOptionsQuery,
+  GetGroupSubscriptionOptionsQueryVariables
 >
 export const MeDocument = gql`
   query Me {

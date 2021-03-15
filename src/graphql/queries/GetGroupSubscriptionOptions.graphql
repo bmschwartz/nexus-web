@@ -1,0 +1,8 @@
+query GetGroupSubscriptionOptions {
+  myGroup {
+    id
+    subscriptionOptions {
+      ...GroupSubscriptionDetails
+    }
+  }
+}

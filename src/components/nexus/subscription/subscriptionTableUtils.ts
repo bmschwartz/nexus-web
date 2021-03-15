@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { displayTimeBeforeNow } from '../dateUtil'
-import { GroupSubscription } from '../../../types/subscription'
+import { GetGroupSubscriptionOptionsQuery } from '../../../graphql'
 
 /* eslint-enable */
 
@@ -14,9 +14,9 @@ export interface SubscriptionOptionTableItem {
 }
 
 export const createSubscriptionTableData = (
-  subscriptionOptions: GroupSubscription[],
-): SubscriptionOptionTableItem[] => {
-  return subscriptionOptions.map(option => {
+  subscriptionOptionsResponse?: GetGroupSubscriptionOptionsQuery,
+): SubscriptionOptionTableItem[] | undefined => {
+  return subscriptionOptionsResponse?.myGroup?.subscriptionOptions.map(option => {
     const { id, active, price, duration, description, createdAt } = option
     return {
       id,
