@@ -1,25 +1,16 @@
-/* eslint-disable */
 import React, { useState } from 'react'
 import { Formik } from 'formik'
-import { Button, Divider, Modal, notification, Table, Tooltip } from 'antd'
+import { Button, Divider, Modal, notification, Table } from 'antd'
 import { Form, Input, Checkbox, SubmitButton } from 'formik-antd'
-import { InfoCircleOutlined } from '@ant-design/icons'
 import * as Yup from 'yup'
-import { groupExists } from '../../../../services/apollo'
-import { validateAddress } from '../validation'
-import { SubscriptionOption, subscriptionTableColumns } from './createGroupFormUtils'
-import * as apollo from '../../../../services/apollo'
 
-const labelTooltip = (label: string, tooltipText: string) => {
-  return (
-    <>
-      <span className="mr-2">{label}</span>
-      <Tooltip title={tooltipText} color="blue">
-        <InfoCircleOutlined color="blue" />
-      </Tooltip>
-    </>
-  )
-}
+/* eslint-disable */
+import labelTooltip from '../../labelTooltip'
+import { validateAddress } from '../validation'
+import * as apollo from '../../../../services/apollo'
+import { SubscriptionOption, subscriptionTableColumns } from './createGroupFormUtils'
+
+/* eslint-enable */
 
 const MAX_SUBSCRIPTION_OPTIONS = 10
 
@@ -50,7 +41,7 @@ const CreateGroupForm = () => {
         subscriptionOptionsData[index].description = value
         break
       default:
-        return
+        break
     }
   }
 
@@ -63,7 +54,7 @@ const CreateGroupForm = () => {
         if (!name) {
           return false
         }
-        const { exists, error } = await groupExists(name)
+        const { exists, error } = await apollo.groupExists(name)
         if (error) {
           return false
         }

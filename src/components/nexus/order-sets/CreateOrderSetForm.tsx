@@ -4,7 +4,6 @@ import { Form, Input, InputNumber, Select, SubmitButton, Transfer } from 'formik
 import { Divider, Modal, notification, PageHeader, Spin, Tooltip } from 'antd'
 import { TransferItem } from 'antd/lib/transfer'
 import TextArea from 'antd/lib/input/TextArea'
-import { InfoCircleOutlined } from '@ant-design/icons'
 
 /* Local */
 import { OrderSide, OrderType, StopTriggerType } from 'types/order'
@@ -30,6 +29,7 @@ import {
   getMinPrice,
   getPriceTickSize,
 } from 'types/currency'
+import labelTooltip from '../labelTooltip'
 
 /* eslint-enable */
 
@@ -132,17 +132,6 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
       default:
         break
     }
-  }
-
-  const labelTooltip = (label: string, tooltipText: string) => {
-    return (
-      <>
-        <span className="mr-2">{label}</span>
-        <Tooltip title={tooltipText} color="blue">
-          <InfoCircleOutlined color="blue" />
-        </Tooltip>
-      </>
-    )
   }
 
   return (
