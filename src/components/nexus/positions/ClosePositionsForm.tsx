@@ -56,6 +56,7 @@ export const ClosePositionsForm: FC<ClosePositionsFormProps> = ({
   })
   const { data: groupPositionsData, loading: groupPositionsLoading } = useGetGroupPositionsQuery({
     variables: groupPositionsVariables,
+    fetchPolicy: 'network-only',
   })
   const [selectedPositionSide, setSelectedPositionSide] = useState<PositionSide>(PositionSide.LONG)
   const [submittingClosePositions, setSubmittingClosePositions] = useState<boolean>(false)
