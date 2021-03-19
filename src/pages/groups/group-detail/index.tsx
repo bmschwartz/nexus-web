@@ -3,16 +3,12 @@ import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { Spin } from 'antd'
 /* eslint-disable */
-import {
-  SubscriptionInvoice as RemoteSubscriptionInvoice,
-  useGetGroupQuery,
-  useGetMyMembershipQuery,
-} from '../../../graphql/index'
+import { useGetGroupQuery, useGetMyMembershipQuery } from '../../../graphql/index'
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
-import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
-import { convertToLocalInvoiceStatus, transformMembershipData } from 'types/membership'
+import { GroupMemberDetailComponent } from 'components/nexus/groups/group-detail/GroupMemberDetailComponent'
+import { transformMembershipData } from 'types/membership'
 import { transformGroupData } from 'types/group'
-import { SubscriptionInvoice } from 'types/subscription'
+import { GroupPublicDetailComponent } from '../../../components/nexus/groups/group-detail/GroupPublicDetailComponent'
 /* eslint-enable */
 
 interface GroupDetailProps {
@@ -21,16 +17,6 @@ interface GroupDetailProps {
 
 interface RouteParams {
   groupId: string
-}
-
-export const transformInvoices = (invoices: RemoteSubscriptionInvoice[]): SubscriptionInvoice[] => {
-  return invoices.map((invoice: RemoteSubscriptionInvoice) => {
-    const { status, ...rest } = invoice
-    return {
-      status: convertToLocalInvoiceStatus(status),
-      ...rest,
-    }
-  })
 }
 
 const GroupDetailPage: FC<GroupDetailProps> = () => {
@@ -54,7 +40,7 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     transformedMembership = transformMembershipData(membershipData.myMembership)
   }
 
-  if (getGroupLoading || membershipLoading) {
+  if (!transformedGroup || getGroupLoading || membershipLoading) {
     return (
       <div>
         <Helmet title="Groups" />
@@ -66,14 +52,12 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
   return (
     <div>
       <Helmet title="Groups" />
-      {getGroupError && <strong>No access to group {getGroupError.message}</strong>}
-      {transformedGroup && transformedMembership ? (
-        <>
-          <GroupDetailHeader className="mb-3" group={transformedGroup} />
-          <GroupDetailCard group={transformedGroup} myMembership={transformedMembership} />
-        </>
+      {getGroupError && <strong>Error loading group {getGroupError.message}</strong>}
+      <GroupDetailHeader className="mb-3" group={transformedGroup} />
+      {transformedMembership ? (
+        <GroupMemberDetailComponent group={transformedGroup} myMembership={transformedMembership} />
       ) : (
-        <strong>No access to group</strong>
+        <GroupPublicDetailComponent group={transformedGroup} />
       )}
     </div>
   )

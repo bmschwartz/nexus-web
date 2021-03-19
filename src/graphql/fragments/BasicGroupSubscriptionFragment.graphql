@@ -1,4 +1,4 @@
-fragment GroupSubscriptionDetails on GroupSubscription {
+fragment BasicGroupSubscriptionDetails on GroupSubscription {
   id
   price
   active

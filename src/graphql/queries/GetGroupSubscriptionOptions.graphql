@@ -1,8 +1,0 @@
-query GetGroupSubscriptionOptions($input: GroupInput!) {
-  group(input: $input) {
-    id
-    subscriptionOptions {
-      ...GroupSubscriptionDetails
-    }
-  }
-}

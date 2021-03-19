@@ -1,0 +1,4 @@
+fragment FullGroupSubscriptionDetails on GroupSubscription {
+  memberCount
+  ...BasicGroupSubscriptionDetails
+}

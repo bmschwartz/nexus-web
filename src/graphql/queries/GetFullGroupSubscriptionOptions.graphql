@@ -1,0 +1,8 @@
+query GetFullGroupSubscriptionOptions($input: GroupInput!) {
+  group(input: $input) {
+    id
+    subscriptionOptions {
+      ...FullGroupSubscriptionDetails
+    }
+  }
+}

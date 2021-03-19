@@ -2,7 +2,7 @@ query GetMyGroupSubscriptionOptions {
   myGroup {
     id
     subscriptionOptions {
-      ...GroupSubscriptionDetails
+      ...FullGroupSubscriptionDetails
     }
   }
 }

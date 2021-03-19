@@ -1,0 +1,8 @@
+query GetBasicGroupSubscriptionOptions($input: GroupInput!) {
+  group(input: $input) {
+    id
+    subscriptionOptions {
+      ...BasicGroupSubscriptionDetails
+    }
+  }
+}

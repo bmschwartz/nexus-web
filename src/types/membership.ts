@@ -5,8 +5,8 @@ import {
   MembershipRole as RemoteMembershipRole,
   MembershipStatus as RemoteMembershipStatus,
 } from '../graphql'
-import { transformInvoices } from '../pages/groups/group-detail'
 import { InvoiceStatus, SubscriptionInvoice } from './subscription'
+import { transformInvoices } from './invoice'
 
 export interface Membership {
   id: string

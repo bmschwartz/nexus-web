@@ -29,7 +29,7 @@ interface GroupDetailCardProps {
   myMembership: Membership
 }
 
-export const GroupDetailCard: FC<GroupDetailCardProps> = ({ group, myMembership }) => {
+export const GroupMemberDetailComponent: FC<GroupDetailCardProps> = ({ group, myMembership }) => {
   const menuTabs: Tab[] = availableTabs(myMembership.role)
   const accessibleTabKeys = menuTabs.map(menuTab => menuTab.key)
 

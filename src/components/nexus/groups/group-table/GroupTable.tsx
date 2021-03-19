@@ -29,6 +29,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
       title: 'Active',
       dataIndex: 'active',
       key: 'active',
+      width: '10%',
       render: (active: boolean) => badgeForIsActiveGroup(active),
     },
     {
