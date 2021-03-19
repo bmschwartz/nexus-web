@@ -6,7 +6,12 @@ fragment MemberSubscriptionDetails on MemberSubscription {
   endDate
   createdAt
   updatedAt
-
+  groupSubscription {
+    id
+    active
+    price
+    duration
+  }
   invoices {
     ...SubscriptionInvoiceDetails
   }

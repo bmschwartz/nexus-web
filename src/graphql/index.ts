@@ -1181,7 +1181,13 @@ export type GroupSubscriptionDetailsFragment = { __typename?: 'GroupSubscription
 export type MemberSubscriptionDetailsFragment = { __typename?: 'MemberSubscription' } & Pick<
   MemberSubscription,
   'id' | 'active' | 'recurring' | 'startDate' | 'endDate' | 'createdAt' | 'updatedAt'
-> & { invoices: Array<{ __typename?: 'SubscriptionInvoice' } & SubscriptionInvoiceDetailsFragment> }
+> & {
+    groupSubscription: { __typename?: 'GroupSubscription' } & Pick<
+      GroupSubscription,
+      'id' | 'active' | 'price' | 'duration'
+    >
+    invoices: Array<{ __typename?: 'SubscriptionInvoice' } & SubscriptionInvoiceDetailsFragment>
+  }
 
 export type OrderDetailsFragment = { __typename?: 'Order' } & Pick<
   Order,
@@ -1748,10 +1754,12 @@ export type GetGroupStatsQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type GetGroupSubscriptionOptionsQueryVariables = Exact<{ [key: string]: never }>
+export type GetGroupSubscriptionOptionsQueryVariables = Exact<{
+  input: GroupInput
+}>
 
 export type GetGroupSubscriptionOptionsQuery = { __typename?: 'Query' } & {
-  myGroup?: Maybe<
+  group?: Maybe<
     { __typename?: 'Group' } & Pick<Group, 'id'> & {
         subscriptionOptions: Array<
           { __typename?: 'GroupSubscription' } & GroupSubscriptionDetailsFragment
@@ -1817,6 +1825,18 @@ export type GetMyGroupPositionsQuery = { __typename?: 'Query' } & {
         'totalCount'
       > & { positions: Array<{ __typename?: 'Position' } & PositionDetailsFragment> }
     }
+}
+
+export type GetMyGroupSubscriptionOptionsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMyGroupSubscriptionOptionsQuery = { __typename?: 'Query' } & {
+  myGroup?: Maybe<
+    { __typename?: 'Group' } & Pick<Group, 'id'> & {
+        subscriptionOptions: Array<
+          { __typename?: 'GroupSubscription' } & GroupSubscriptionDetailsFragment
+        >
+      }
+  >
 }
 
 export type GetMyMembershipQueryVariables = Exact<{
@@ -2069,6 +2089,12 @@ export const MemberSubscriptionDetailsFragmentDoc = gql`
     endDate
     createdAt
     updatedAt
+    groupSubscription {
+      id
+      active
+      price
+      duration
+    }
     invoices {
       ...SubscriptionInvoiceDetails
     }
@@ -4176,8 +4202,8 @@ export type GetGroupStatsQueryResult = Apollo.QueryResult<
   GetGroupStatsQueryVariables
 >
 export const GetGroupSubscriptionOptionsDocument = gql`
-  query GetGroupSubscriptionOptions {
-    myGroup {
+  query GetGroupSubscriptionOptions($input: GroupInput!) {
+    group(input: $input) {
       id
       subscriptionOptions {
         ...GroupSubscriptionDetails
@@ -4199,11 +4225,12 @@ export const GetGroupSubscriptionOptionsDocument = gql`
  * @example
  * const { data, loading, error } = useGetGroupSubscriptionOptionsQuery({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */
 export function useGetGroupSubscriptionOptionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     GetGroupSubscriptionOptionsQuery,
     GetGroupSubscriptionOptionsQueryVariables
   >,
@@ -4492,6 +4519,65 @@ export type GetMyGroupPositionsLazyQueryHookResult = ReturnType<
 export type GetMyGroupPositionsQueryResult = Apollo.QueryResult<
   GetMyGroupPositionsQuery,
   GetMyGroupPositionsQueryVariables
+>
+export const GetMyGroupSubscriptionOptionsDocument = gql`
+  query GetMyGroupSubscriptionOptions {
+    myGroup {
+      id
+      subscriptionOptions {
+        ...GroupSubscriptionDetails
+      }
+    }
+  }
+  ${GroupSubscriptionDetailsFragmentDoc}
+`
+
+/**
+ * __useGetMyGroupSubscriptionOptionsQuery__
+ *
+ * To run a query within a React component, call `useGetMyGroupSubscriptionOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyGroupSubscriptionOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyGroupSubscriptionOptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyGroupSubscriptionOptionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetMyGroupSubscriptionOptionsQuery,
+    GetMyGroupSubscriptionOptionsQueryVariables
+  >,
+) {
+  return Apollo.useQuery<
+    GetMyGroupSubscriptionOptionsQuery,
+    GetMyGroupSubscriptionOptionsQueryVariables
+  >(GetMyGroupSubscriptionOptionsDocument, baseOptions)
+}
+export function useGetMyGroupSubscriptionOptionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetMyGroupSubscriptionOptionsQuery,
+    GetMyGroupSubscriptionOptionsQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<
+    GetMyGroupSubscriptionOptionsQuery,
+    GetMyGroupSubscriptionOptionsQueryVariables
+  >(GetMyGroupSubscriptionOptionsDocument, baseOptions)
+}
+export type GetMyGroupSubscriptionOptionsQueryHookResult = ReturnType<
+  typeof useGetMyGroupSubscriptionOptionsQuery
+>
+export type GetMyGroupSubscriptionOptionsLazyQueryHookResult = ReturnType<
+  typeof useGetMyGroupSubscriptionOptionsLazyQuery
+>
+export type GetMyGroupSubscriptionOptionsQueryResult = Apollo.QueryResult<
+  GetMyGroupSubscriptionOptionsQuery,
+  GetMyGroupSubscriptionOptionsQueryVariables
 >
 export const GetMyMembershipDocument = gql`
   query GetMyMembership($input: MyMembershipInput!) {

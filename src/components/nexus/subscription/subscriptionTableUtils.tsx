@@ -4,7 +4,7 @@ import { Button, Input, InputNumber, Switch } from 'antd'
 /* eslint-disable */
 import labelTooltip from '../labelTooltip'
 import { displayTimeBeforeNow } from '../dateUtil'
-import { GetGroupSubscriptionOptionsQuery } from '../../../graphql'
+import { GetMyGroupSubscriptionOptionsQuery } from '../../../graphql'
 /* eslint-enable */
 
 export interface SubscriptionOptionTableItem {
@@ -18,7 +18,7 @@ export interface SubscriptionOptionTableItem {
 }
 
 export const createSubscriptionTableData = (
-  subscriptionOptionsResponse?: GetGroupSubscriptionOptionsQuery,
+  subscriptionOptionsResponse?: GetMyGroupSubscriptionOptionsQuery,
 ): SubscriptionOptionTableItem[] | undefined => {
   return subscriptionOptionsResponse?.myGroup?.subscriptionOptions
     .map(option => {

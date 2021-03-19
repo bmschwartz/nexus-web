@@ -8,6 +8,7 @@ import * as apollo from '../../../services/apollo'
 import { getCurrentInvoiceStatus } from './common'
 import useScript from '../hooks'
 import { InvoiceStatus } from '../../../types/subscription'
+import { MemberSubscriptionList } from './MemberSubscriptionList'
 
 /* eslint-enable */
 
@@ -130,11 +131,10 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
               </div>
             </>
           ) : (
-            <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-              <Button type="primary" onClick={() => onClickMakePayment()}>
-                Make a Payment
-              </Button>
-            </div>
+            <MemberSubscriptionList
+              groupId={membership.groupId}
+              onSelect={(optionId: string) => console.log(optionId)}
+            />
           )}
         </>
       )}

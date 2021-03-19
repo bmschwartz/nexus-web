@@ -9,7 +9,7 @@ import {
 } from './subscriptionTableUtils'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import * as apollo from '../../../services/apollo'
-import { useGetGroupSubscriptionOptionsQuery } from '../../../graphql'
+import { useGetMyGroupSubscriptionOptionsQuery } from '../../../graphql'
 /* eslint-enable */
 
 interface SubscriptionTableProps {
@@ -25,7 +25,7 @@ export const SubscriptionTable: FC<SubscriptionTableProps> = ({ onClickCreateOpt
     data: subscriptionOptions,
     refetch: refetchSubscriptionOptions,
     loading: fetchingSubscriptionOptions,
-  } = useGetGroupSubscriptionOptionsQuery({
+  } = useGetMyGroupSubscriptionOptionsQuery({
     fetchPolicy: 'cache-and-network',
   })
   const disabledState =

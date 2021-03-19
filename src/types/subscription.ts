@@ -3,9 +3,14 @@ export interface GroupSubscription {
   price: number
   active: boolean
   duration: number
+  memberCount: number
   description?: string
   createdAt: string
   updatedAt: string
+}
+
+export function convertRemoteSubscriptionOption(remoteOption: any): GroupSubscription {
+  return { ...remoteOption }
 }
 
 export interface SubscriptionInvoice {
