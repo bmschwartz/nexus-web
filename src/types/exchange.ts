@@ -14,6 +14,18 @@ export interface ExchangeAccount {
   orderCount: number
 }
 
+export function transformExchangeAccount(exchangeAccount: any): ExchangeAccount {
+  const { id, active, createdAt, exchange, orders } = exchangeAccount
+
+  return {
+    id,
+    active,
+    createdAt,
+    exchange,
+    orderCount: orders?.totalCount,
+  }
+}
+
 export function convertToLocalExchange(exchange: RemoteExchange): Exchange {
   switch (exchange) {
     case RemoteExchange.Bitmex:

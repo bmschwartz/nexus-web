@@ -12,17 +12,21 @@ export interface Group {
   subscriptionOptions: GroupSubscription[]
 }
 
+export function transformGroupData(group: any): Group {
+  return {
+    id: group.id,
+    name: group.name,
+    active: group.active,
+    description: group.description,
+    memberships: [],
+    subscriptionOptions: group.subscriptionOptions,
+  }
+}
+
 export function transformGroups(groups: any[]): Group[] {
   if (!groups) {
     return []
   }
 
-  return groups.map(group => ({
-    id: group.id,
-    name: group.name,
-    description: group.description,
-    active: group.active,
-    memberships: [],
-    subscriptionOptions: group.subscriptionOptions,
-  }))
+  return groups.map(transformGroupData)
 }

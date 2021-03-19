@@ -2,7 +2,6 @@ import React, { FC, ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { Spin } from 'antd'
-import { Group } from 'types/group'
 /* eslint-disable */
 import {
   SubscriptionInvoice as RemoteSubscriptionInvoice,
@@ -11,13 +10,8 @@ import {
 } from '../../../graphql/index'
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
 import { GroupDetailCard } from 'components/nexus/groups/group-detail/GroupDetailCard'
-import {
-  convertToLocalMembershipRole,
-  convertToLocalMembershipStatus,
-  Membership,
-  convertToLocalInvoiceStatus,
-} from 'types/membership'
-import { ExchangeAccount } from 'types/exchange'
+import { convertToLocalInvoiceStatus, transformMembershipData } from 'types/membership'
+import { transformGroupData } from 'types/group'
 import { SubscriptionInvoice } from 'types/subscription'
 /* eslint-enable */
 
@@ -49,50 +43,6 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
     fetchPolicy: 'cache-and-network',
     variables: { input: { groupId } },
   })
-
-  const transformGroupData = (group: any): Group => {
-    return {
-      id: group.id,
-      name: group.name,
-      active: group.active,
-      description: group.description,
-      memberships: [],
-      subscriptionOptions: group.subscriptionOptions,
-    }
-  }
-
-  const transformMembershipData = (membership: any): Membership => {
-    const { subscription } = membership
-
-    const invoices = subscription && subscription.invoices ? subscription.invoices : []
-
-    return {
-      id: membership.id,
-      groupId: membership.group.id,
-      memberId: membership.member.id,
-      username: membership.member.username,
-      active: membership.active,
-      subscription: {
-        ...membership.subscription,
-        invoices: transformInvoices(invoices),
-      },
-      role: convertToLocalMembershipRole(membership.role)!,
-      exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),
-      status: convertToLocalMembershipStatus(membership.status)!,
-    }
-  }
-
-  const transformExchangeAccount = (exchangeAccount: any): ExchangeAccount => {
-    const { id, active, createdAt, exchange, orders } = exchangeAccount
-
-    return {
-      id,
-      active,
-      createdAt,
-      exchange,
-      orderCount: orders?.totalCount,
-    }
-  }
 
   let transformedGroup
   let transformedMembership

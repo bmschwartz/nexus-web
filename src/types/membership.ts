@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { ExchangeAccount } from './exchange'
+import { ExchangeAccount, transformExchangeAccount } from './exchange'
 import {
   InvoiceStatus as RemoteInvoiceStatus,
   MembershipRole as RemoteMembershipRole,
@@ -39,6 +39,27 @@ export interface MemberSubscription {
   startDate: string
   endDate: string
   invoices: SubscriptionInvoice[]
+}
+
+export function transformMembershipData(membership: any): Membership {
+  const { subscription } = membership
+
+  const invoices = subscription && subscription.invoices ? subscription.invoices : []
+
+  return {
+    id: membership.id,
+    groupId: membership.group.id,
+    memberId: membership.member.id,
+    username: membership.member.username,
+    active: membership.active,
+    subscription: {
+      ...membership.subscription,
+      invoices: transformInvoices(invoices),
+    },
+    role: convertToLocalMembershipRole(membership.role) as MembershipRole,
+    exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),
+    status: convertToLocalMembershipStatus(membership.status) as MembershipStatus,
+  }
 }
 
 export function transformMemberships(memberships: any[]): Membership[] {
