@@ -20,8 +20,10 @@ import reducers from './redux/reducers'
 import sagas from './redux/sagas'
 import Localization from './localization'
 import * as serviceWorker from './serviceWorker'
-/* eslint-disable-next-line */
+
+/* eslint-disable */
 import { client } from './services/apollo/client'
+/* eslint-enable */
 
 // load env
 dotenv.config()
