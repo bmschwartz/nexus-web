@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom'
 /* eslint-disable */
 import { useGetMyGroupQuery } from '../../graphql'
 import { transformGroups } from '../../types/group'
-import { GroupProfile } from '../../components/nexus/groups/group-detail/GroupProfile'
+import { GroupEditProfile } from '../../components/nexus/groups/group-detail/GroupEditProfile'
 /* eslint-enable */
 
 const Profile = () => {
@@ -27,7 +27,7 @@ const Profile = () => {
     <div>
       <Helmet title="Profile" />
       <h3>Profile</h3>
-      <GroupProfile group={group} />
+      <GroupEditProfile group={group} />
     </div>
   )
 }

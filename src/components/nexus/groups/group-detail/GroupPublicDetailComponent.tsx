@@ -1,9 +1,9 @@
 import React from 'react'
 import { Group } from 'types/group'
-import { Divider } from 'antd'
 
 /* eslint-disable */
 import { MemberSubscriptionList } from '../../subscription/MemberSubscriptionList'
+import { GroupReadOnlyProfile } from './GroupReadOnlyProfile'
 /* eslint-enable */
 
 interface GroupPublicDetailComponentProps {
@@ -14,11 +14,15 @@ export const GroupPublicDetailComponent = ({ group }: GroupPublicDetailComponent
   console.log({ ...group })
   return (
     <>
-      <Divider orientation="left">Subscriptions</Divider>
       <MemberSubscriptionList
         groupId={group.id}
         onSelect={(optionId: string) => console.log(optionId)}
       />
+      <div className="card">
+        <div className="card-body">
+          <GroupReadOnlyProfile group={group} />
+        </div>
+      </div>
     </>
   )
 }

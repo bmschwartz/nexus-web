@@ -18,7 +18,7 @@ import {
   MemberSubscriptionTabState,
 } from '../../subscription/MemberSubscription'
 import { MemberExchanges, MemberExchangesTabState } from './MemberExchanges'
-import { GroupProfile } from './GroupProfile'
+import { GroupEditProfile } from './GroupEditProfile'
 import { GroupRequests } from './GroupRequests'
 import { GroupMembers, GroupMembersTabState } from './GroupMembers'
 
@@ -83,7 +83,9 @@ export const GroupMemberDetailComponent: FC<GroupDetailCardProps> = ({ group, my
             ) : (
               <>
                 {/* Member tabs */}
-                {tabKey === 'memberDashboard' && <MemberDashboard membership={myMembership} />}
+                {tabKey === 'memberDashboard' && (
+                  <MemberDashboard group={group} membership={myMembership} />
+                )}
                 {tabKey === 'memberOrders' && (
                   <MemberOrders
                     membership={myMembership}
@@ -140,7 +142,7 @@ export const GroupMemberDetailComponent: FC<GroupDetailCardProps> = ({ group, my
                   />
                 )}
                 {tabKey === 'groupRequests' && <GroupRequests group={group} />}
-                {tabKey === 'groupProfile' && <GroupProfile group={group} />}
+                {tabKey === 'groupProfile' && <GroupEditProfile group={group} />}
                 {tabKey === 'groupSettings' && <GroupSettings group={group} />}
               </>
             )}

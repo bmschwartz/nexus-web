@@ -2,11 +2,12 @@ import React from 'react'
 import { Spin } from 'antd'
 
 /* eslint-disable */
-import OrderStats from '../../components/nexus/OrderStats'
 import { Group } from '../../types/group'
-import MemberStats from '../../components/nexus/MemberStats'
 import { useGetGroupStatsQuery } from '../../graphql'
+import OrderStats from '../../components/nexus/OrderStats'
+import MemberStats from '../../components/nexus/MemberStats'
 import IncomeStats from '../../components/nexus/IncomeStats'
+import { GroupReadOnlyProfile } from '../../components/nexus/groups/group-detail/GroupReadOnlyProfile'
 /* eslint-enable */
 
 interface GroupHomeProps {
@@ -95,6 +96,15 @@ const GroupHome = ({ group }: GroupHomeProps) => {
           <div className="card">
             <div className="card-body">
               <MemberStats totalMembers={membersCount} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="card">
+            <div className="card-body">
+              <GroupReadOnlyProfile group={group} />
             </div>
           </div>
         </div>

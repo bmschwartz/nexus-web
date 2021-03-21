@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Button, Comment, PageHeader, Table } from 'antd'
+import { Button, PageHeader, Table } from 'antd'
 import { connect } from 'react-redux'
 
 import { history } from 'index'
@@ -7,7 +7,7 @@ import { Group } from 'types/group'
 import { Membership } from 'types/membership'
 
 /* eslint-disable */
-import { badgeForIsActiveGroup, createGroupTableData, GroupTableItem } from './groupTableUtils'
+import { createGroupTableData, GroupTableItem } from './groupTableUtils'
 
 /* eslint-enable */
 
@@ -25,13 +25,6 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
   const mergedTableData: GroupTableItem[] = createGroupTableData(groups, memberships)
 
   const columns = [
-    {
-      title: 'Active',
-      dataIndex: 'active',
-      key: 'active',
-      width: '10%',
-      render: (active: boolean) => badgeForIsActiveGroup(active),
-    },
     {
       title: 'Name',
       dataIndex: 'name',
@@ -66,18 +59,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
       </div>
       <div className="card-body">
         <div className="text-nowrap">
-          <Table
-            rowKey="id"
-            onRow={onRow}
-            columns={columns}
-            dataSource={mergedTableData}
-            expandable={{
-              rowExpandable: record => !!record.description,
-              expandedRowRender: (record: GroupTableItem) => (
-                <Comment content={<p>{record.description}</p>} />
-              ),
-            }}
-          />
+          <Table rowKey="id" onRow={onRow} columns={columns} dataSource={mergedTableData} />
         </div>
       </div>
     </div>

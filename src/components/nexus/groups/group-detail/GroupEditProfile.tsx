@@ -5,11 +5,11 @@ import { Editor } from 'components/nexus/editor/EditorComponent'
 import { Group } from 'types/group'
 import * as apollo from 'services/apollo'
 
-interface GroupProfileProps {
+interface GroupEditProfileProps {
   group: Group
 }
 
-export const GroupProfile: FC<GroupProfileProps> = ({ group }) => {
+export const GroupEditProfile: FC<GroupEditProfileProps> = ({ group }) => {
   const [saving, setSaving] = useState<boolean>(false)
   const [profileContent, setProfileContent] = useState<string>(group.description ?? '')
   const preEditDescription = group.description ?? ''
@@ -26,9 +26,9 @@ export const GroupProfile: FC<GroupProfileProps> = ({ group }) => {
       notification.success({
         message: `Updated Profile`,
       })
-      // setTimeout(() => {
-      //   window.location.reload()
-      // }, 1500)
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
     } else {
       notification.error({
         message: 'Error Updating Profile',

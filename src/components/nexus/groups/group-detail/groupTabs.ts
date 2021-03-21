@@ -24,7 +24,7 @@ export enum TabKey {
 export const availableTabs = (userRole: MembershipRole): Tab[] => {
   const allTabs: { key: TabKey; name: string; requiredRole: MembershipRole[] }[] = [
     // Member tabs
-    // { key: TabKey.MemberDashboard, name: 'Dashboard', requiredRole: [MembershipRole.Member] },
+    { key: TabKey.MemberDashboard, name: 'Dashboard', requiredRole: [MembershipRole.Member] },
     { key: TabKey.MemberOrders, name: 'Orders', requiredRole: [MembershipRole.Member] },
     { key: TabKey.MemberPositions, name: 'Positions', requiredRole: [MembershipRole.Member] },
     { key: TabKey.MemberExchanges, name: 'Exchanges', requiredRole: [MembershipRole.Member] },
