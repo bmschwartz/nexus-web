@@ -3,6 +3,13 @@ import { Membership, MembershipRole } from 'types/membership'
 import { hasActiveSubscription } from '../../subscription/common'
 /* eslint-enable */
 
+interface TabInfo {
+  key: TabKey
+  name: string
+  requiredRole: MembershipRole[]
+  activeSubscriptionOnly?: boolean
+}
+
 export interface Tab {
   key: string
   name: string
@@ -28,12 +35,7 @@ export const availableTabs = (membership: Membership): Tab[] => {
   const { role: userRole } = membership
   const activeSubscription = hasActiveSubscription(membership)
 
-  const allTabs: {
-    key: TabKey
-    name: string
-    requiredRole: MembershipRole[]
-    activeSubscriptionOnly?: boolean
-  }[] = [
+  const allTabs: TabInfo[] = [
     // Member tabs
     { key: TabKey.MemberDashboard, name: 'Dashboard', requiredRole: [MembershipRole.Member] },
     {
