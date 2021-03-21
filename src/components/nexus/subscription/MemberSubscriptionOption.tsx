@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 /* eslint-disable */
 import { GroupSubscription } from '../../../types/subscription'
@@ -9,7 +9,7 @@ interface MemberSubscriptionOptionProps {
   selected: boolean
   buttonText: string
   subscriptionOption: GroupSubscription
-  onSelect: (optionId: string) => void
+  onSelect: (optionId: string) => Promise<() => void>
 }
 
 export const MemberSubscriptionOption = ({
@@ -18,6 +18,7 @@ export const MemberSubscriptionOption = ({
   buttonText,
   subscriptionOption,
 }: MemberSubscriptionOptionProps) => {
+  const [loading, setLoading] = useState<boolean>()
   const { id: optionId, duration, price } = subscriptionOption
   console.log(selected)
 
@@ -29,7 +30,18 @@ export const MemberSubscriptionOption = ({
           <div className="text-dark font-weight-bold font-size-24 mb-3">
             {duration} Month{duration > 1 ? 's' : ''}
           </div>
-          <Button type="primary" onClick={() => onSelect(optionId)}>
+          <Button
+            type="primary"
+            loading={loading}
+            onClick={async () => {
+              setLoading(true)
+              const onFinish = await onSelect(optionId)
+              setTimeout(() => {
+                setLoading(false)
+                onFinish()
+              }, 1000)
+            }}
+          >
             {buttonText}
           </Button>
         </div>

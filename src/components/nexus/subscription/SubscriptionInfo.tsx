@@ -134,7 +134,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
             <MemberSubscriptionList
               isGroupMember
               groupId={membership.groupId}
-              onSelect={(optionId: string) => console.log(optionId)}
+              onSelect={async (optionId: string) => () => console.log(optionId)}
             />
           )}
         </>

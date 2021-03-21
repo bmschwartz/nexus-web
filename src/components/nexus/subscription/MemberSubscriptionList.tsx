@@ -13,7 +13,7 @@ export interface MemberSubscriptionListProps {
   groupId: string
   isGroupMember: boolean
   selectedOptionId?: string
-  onSelect: (optionId: string) => void
+  onSelect: (optionId: string) => Promise<() => void>
 }
 
 export const MemberSubscriptionList = ({
