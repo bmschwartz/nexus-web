@@ -1,4 +1,4 @@
-import { Input, InputNumber } from 'antd'
+import { InputNumber } from 'antd'
 import React from 'react'
 
 export const validPayoutCurrencies = ['BTC', 'ETH', 'LTC']
@@ -40,18 +40,6 @@ export const subscriptionTableColumns = (
           max={999999}
           defaultValue={option.fee}
           onChange={(fee: any) => onChange(row, 'fee', fee)}
-        />
-      ),
-    },
-    {
-      title: 'Description (Optional)',
-      dataIndex: 'description',
-      key: 'description',
-      render: (_: any, option: SubscriptionOption, row: number) => (
-        <Input
-          maxLength={50}
-          defaultValue={option.description}
-          onChange={(e: any) => onChange(row, 'description', e.target.value)}
         />
       ),
     },

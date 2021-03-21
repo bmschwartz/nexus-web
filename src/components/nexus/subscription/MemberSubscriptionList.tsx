@@ -17,8 +17,8 @@ export interface MemberSubscriptionListProps {
 
 export const MemberSubscriptionList = ({
   groupId,
-  selectedOptionId,
   onSelect,
+  selectedOptionId,
 }: MemberSubscriptionListProps) => {
   const { data: groupSubscriptions } = useGetBasicGroupSubscriptionOptionsQuery({
     variables: { input: { groupId } },
@@ -30,6 +30,12 @@ export const MemberSubscriptionList = ({
     const localOptions = groupSubscriptions.group.subscriptionOptions
       .map(convertRemoteSubscriptionOption)
       .filter(option => option.active || option.id === selectedOptionId)
+      .sort((a, b) => {
+        if (a.duration === b.duration) {
+          return a.price < b.price ? -1 : 1
+        }
+        return a.duration < b.duration ? -1 : 1
+      })
 
     subscriptions = _.chunk(localOptions, SUBSCRIPTION_ROW_LENGTH)
   }

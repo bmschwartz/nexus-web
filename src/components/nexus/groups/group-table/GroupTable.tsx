@@ -7,8 +7,7 @@ import { Group } from 'types/group'
 import { Membership } from 'types/membership'
 
 /* eslint-disable */
-import { createGroupTableData, GroupTableItem } from './groupTableUtils'
-
+import { badgeForIsMember, createGroupTableData, GroupTableItem } from './groupTableUtils'
 /* eslint-enable */
 
 interface GroupTableProps {
@@ -26,10 +25,16 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
 
   const columns = [
     {
+      title: 'Member',
+      dataIndex: 'isMember',
+      key: 'member',
+      width: '5%',
+      render: (isMember: boolean, record: GroupTableItem) => badgeForIsMember(isMember, record),
+    },
+    {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      sorter: (a: GroupTableItem, b: GroupTableItem) => (a.name > b.name ? -1 : 1),
       render: (text: string) => <Button type="link">{text}</Button>,
     },
   ]

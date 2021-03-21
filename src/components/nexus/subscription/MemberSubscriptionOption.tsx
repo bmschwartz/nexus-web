@@ -16,7 +16,7 @@ export const MemberSubscriptionOption = ({
   onSelect,
   subscriptionOption,
 }: MemberSubscriptionOptionProps) => {
-  const { id: optionId, duration, price, description } = subscriptionOption
+  const { id: optionId, duration, price } = subscriptionOption
   console.log(selected)
 
   return (
@@ -27,8 +27,6 @@ export const MemberSubscriptionOption = ({
           <div className="text-dark font-weight-bold font-size-24 mb-3">
             {duration} Month{duration > 1 ? 's' : ''}
           </div>
-          <div className="font-size-16 mb-3">{description}</div>
-
           <Button type="primary" onClick={() => onSelect(optionId)}>
             Select Plan
           </Button>

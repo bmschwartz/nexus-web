@@ -1,4 +1,7 @@
-import { MembershipRole } from 'types/membership'
+import { Membership, MembershipRole } from 'types/membership'
+/* eslint-disable */
+import { hasActiveSubscription } from '../../subscription/common'
+/* eslint-enable */
 
 export interface Tab {
   key: string
@@ -21,13 +24,36 @@ export enum TabKey {
   GroupRequests = 'groupRequests',
 }
 
-export const availableTabs = (userRole: MembershipRole): Tab[] => {
-  const allTabs: { key: TabKey; name: string; requiredRole: MembershipRole[] }[] = [
+export const availableTabs = (membership: Membership): Tab[] => {
+  const { role: userRole } = membership
+  const activeSubscription = hasActiveSubscription(membership)
+
+  const allTabs: {
+    key: TabKey
+    name: string
+    requiredRole: MembershipRole[]
+    activeSubscriptionOnly?: boolean
+  }[] = [
     // Member tabs
     { key: TabKey.MemberDashboard, name: 'Dashboard', requiredRole: [MembershipRole.Member] },
-    { key: TabKey.MemberOrders, name: 'Orders', requiredRole: [MembershipRole.Member] },
-    { key: TabKey.MemberPositions, name: 'Positions', requiredRole: [MembershipRole.Member] },
-    { key: TabKey.MemberExchanges, name: 'Exchanges', requiredRole: [MembershipRole.Member] },
+    {
+      key: TabKey.MemberOrders,
+      name: 'Orders',
+      requiredRole: [MembershipRole.Member],
+      activeSubscriptionOnly: true,
+    },
+    {
+      key: TabKey.MemberExchanges,
+      name: 'Exchanges',
+      requiredRole: [MembershipRole.Member],
+      activeSubscriptionOnly: true,
+    },
+    {
+      key: TabKey.MemberPositions,
+      name: 'Positions',
+      requiredRole: [MembershipRole.Member],
+      activeSubscriptionOnly: true,
+    },
     // { key: TabKey.MemberMembership, name: 'Membership', requiredRole: [MembershipRole.Member] },
     { key: TabKey.MemberSubscription, name: 'Subscription', requiredRole: [MembershipRole.Member] },
 
@@ -63,6 +89,7 @@ export const availableTabs = (userRole: MembershipRole): Tab[] => {
 
   return allTabs
     .filter(tab => tab.requiredRole.includes(userRole))
+    .filter(tab => (tab.activeSubscriptionOnly ? activeSubscription : true))
     .map(({ key, name }) => ({
       key,
       name,

@@ -5,19 +5,30 @@ import { Membership } from 'types/membership'
 
 /* eslint-disable */
 import { GroupReadOnlyProfile } from './GroupReadOnlyProfile'
+import { hasActiveSubscription, NoActiveSubscription } from '../../subscription/common'
 /* eslint-enable */
 
 interface MemberDashboardProps {
   group: Group
   membership: Membership
+  onClickAddSubscription: () => void
 }
 
-export const MemberDashboard: FC<MemberDashboardProps> = ({ group }) => {
+export const MemberDashboard: FC<MemberDashboardProps> = ({
+  group,
+  membership,
+  onClickAddSubscription,
+}) => {
   return (
-    <div className="card">
-      <div className="card-body">
-        <GroupReadOnlyProfile group={group} />
+    <>
+      {!hasActiveSubscription(membership) && (
+        <NoActiveSubscription onClickAddSubscription={onClickAddSubscription} />
+      )}
+      <div className="card">
+        <div className="card-body">
+          <GroupReadOnlyProfile group={group} />
+        </div>
       </div>
-    </div>
+    </>
   )
 }

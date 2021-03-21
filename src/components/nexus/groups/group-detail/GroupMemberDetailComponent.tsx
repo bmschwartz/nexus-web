@@ -30,7 +30,7 @@ interface GroupDetailCardProps {
 }
 
 export const GroupMemberDetailComponent: FC<GroupDetailCardProps> = ({ group, myMembership }) => {
-  const menuTabs: Tab[] = availableTabs(myMembership.role)
+  const menuTabs: Tab[] = availableTabs(myMembership)
   const accessibleTabKeys = menuTabs.map(menuTab => menuTab.key)
 
   const [tabKey, setTabKey] = useQueryParam('tab', withDefault(StringParam, menuTabs[0].key))
@@ -84,7 +84,11 @@ export const GroupMemberDetailComponent: FC<GroupDetailCardProps> = ({ group, my
               <>
                 {/* Member tabs */}
                 {tabKey === 'memberDashboard' && (
-                  <MemberDashboard group={group} membership={myMembership} />
+                  <MemberDashboard
+                    group={group}
+                    membership={myMembership}
+                    onClickAddSubscription={onClickAddSubscription}
+                  />
                 )}
                 {tabKey === 'memberOrders' && (
                   <MemberOrders
