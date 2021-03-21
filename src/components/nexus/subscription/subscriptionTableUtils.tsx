@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Input, InputNumber, Switch } from 'antd'
+import { Button, InputNumber, Switch } from 'antd'
 
 /* eslint-disable */
 import labelTooltip from '../labelTooltip'
@@ -111,22 +111,6 @@ export const subscriptionTableColumns = ({
       dataIndex: 'memberCount',
       key: 'members',
       width: '10%',
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      render: (description: string, option: SubscriptionOptionTableItem, index: number) => {
-        return editingOptionId === option.id ? (
-          <Input
-            maxLength={50}
-            defaultValue={description}
-            onChange={(e: any) => onChange(index, 'description', e.target.value)}
-          />
-        ) : (
-          <span>{description}</span>
-        )
-      },
     },
     {
       title: 'Action',

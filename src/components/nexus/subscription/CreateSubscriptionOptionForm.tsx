@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
 import { notification, PageHeader } from 'antd'
-import { Form, SubmitButton, Input, InputNumber } from 'formik-antd'
+import { Form, SubmitButton, InputNumber } from 'formik-antd'
 
 /* Local */
 
@@ -25,9 +25,6 @@ export const getSubscriptionOptionFormSchema = () => {
       .min(0)
       .max(999999)
       .required(),
-    description: Yup.string()
-      .label('Description')
-      .notRequired(),
   })
 }
 
@@ -99,9 +96,6 @@ export const CreateSubscriptionOptionForm: FC<CreateSubscriptionOptionFormProps>
               </Form.Item>
               <Form.Item name="fee" label="Fee (USD)" className="mb-3">
                 <InputNumber name="fee" min={0} step={1} max={999999} />
-              </Form.Item>
-              <Form.Item name="description" label="Description" className="mb-3">
-                <Input name="description" maxLength={50} />
               </Form.Item>
               <SubmitButton disabled={savingSubscriptionOption} loading={savingSubscriptionOption}>
                 Submit
