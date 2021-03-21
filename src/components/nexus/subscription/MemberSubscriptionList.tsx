@@ -11,6 +11,7 @@ const SUBSCRIPTION_ROW_LENGTH = 3
 
 export interface MemberSubscriptionListProps {
   groupId: string
+  isGroupMember: boolean
   selectedOptionId?: string
   onSelect: (optionId: string) => void
 }
@@ -18,6 +19,7 @@ export interface MemberSubscriptionListProps {
 export const MemberSubscriptionList = ({
   groupId,
   onSelect,
+  isGroupMember,
   selectedOptionId,
 }: MemberSubscriptionListProps) => {
   const { data: groupSubscriptions } = useGetBasicGroupSubscriptionOptionsQuery({
@@ -49,6 +51,7 @@ export const MemberSubscriptionList = ({
               <MemberSubscriptionOption
                 key={subscriptionOption.id}
                 onSelect={onSelect}
+                buttonText={isGroupMember ? 'Select Plan' : 'Join Now!'}
                 subscriptionOption={subscriptionOption}
                 selected={subscriptionOption.id === selectedOptionId}
               />

@@ -45,7 +45,7 @@ export interface InviteMemberInput {
 }
 
 export interface InviteMemberResponse {
-  success: boolean
+  membershipId?: string
   error?: string
 }
 
@@ -120,7 +120,7 @@ export const inviteMember = async ({
     })
 
     if (!getUserData || !getUserData.userIdByEmail) {
-      return { success: false, error: 'Unable to invite user' }
+      return { error: 'Unable to invite user' }
     }
 
     const memberId = getUserData.userIdByEmail
@@ -138,12 +138,12 @@ export const inviteMember = async ({
     })
 
     if (!inviteResponse) {
-      return { success: false, error: 'Unable to invite user' }
+      return { error: 'Unable to invite user' }
     }
 
     return inviteResponse.createMembership
   } catch (e) {
-    return { success: false, error: e.message }
+    return { error: e.message }
   }
 }
 

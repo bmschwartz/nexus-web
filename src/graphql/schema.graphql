@@ -210,6 +210,11 @@ type GroupSubscription {
   updatedAt: DateTime!
 }
 
+type JoinGroupResult {
+  error: String
+  success: Boolean!
+}
+
 type LoginResponse {
   token: String
 }
@@ -255,6 +260,7 @@ type Mutation {
   deleteGroupSubscription(input: DeleteGroupSubscriptionInput!): DeleteGroupSubscriptionResult
   deleteMembership(input: DeleteMembershipInput!): DeleteMembershipResult
   disableGroup(input: DisableGroupInput!): Group
+  joinGroup(input: JoinGroupInput!): JoinGroupResult
   loginUser(input: LoginUserInput!): LoginResponse!
   payMemberSubscription(input: PayMemberSubscriptionInput!): PayMemberSubscriptionResult
   renameGroup(input: RenameGroupInput!): Group
@@ -670,6 +676,10 @@ input GroupSubscriptionInput {
   description: String
   duration: Int!
   fee: Float!
+}
+
+input JoinGroupInput {
+  groupId: ID!
 }
 
 input LoginUserInput {

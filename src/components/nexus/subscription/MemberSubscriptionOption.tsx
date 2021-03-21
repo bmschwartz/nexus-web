@@ -7,6 +7,7 @@ import { Button } from 'antd'
 
 interface MemberSubscriptionOptionProps {
   selected: boolean
+  buttonText: string
   subscriptionOption: GroupSubscription
   onSelect: (optionId: string) => void
 }
@@ -14,6 +15,7 @@ interface MemberSubscriptionOptionProps {
 export const MemberSubscriptionOption = ({
   selected,
   onSelect,
+  buttonText,
   subscriptionOption,
 }: MemberSubscriptionOptionProps) => {
   const { id: optionId, duration, price } = subscriptionOption
@@ -28,7 +30,7 @@ export const MemberSubscriptionOption = ({
             {duration} Month{duration > 1 ? 's' : ''}
           </div>
           <Button type="primary" onClick={() => onSelect(optionId)}>
-            Select Plan
+            {buttonText}
           </Button>
         </div>
       </div>

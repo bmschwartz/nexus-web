@@ -55,7 +55,7 @@ export type CreateGroupMembershipInput = {
 
 export type CreateGroupMembershipResult = {
   __typename?: 'CreateGroupMembershipResult'
-  success: Scalars['Boolean']
+  membershipId?: Maybe<Scalars['ID']>
   error?: Maybe<Scalars['String']>
 }
 
@@ -199,6 +199,16 @@ export enum InvoiceStatus {
   Complete = 'COMPLETE',
   Expired = 'EXPIRED',
   Invalid = 'INVALID',
+}
+
+export type JoinGroupInput = {
+  groupId: Scalars['ID']
+}
+
+export type JoinGroupResult = {
+  __typename?: 'JoinGroupResult'
+  membershipId?: Maybe<Scalars['ID']>
+  error?: Maybe<Scalars['String']>
 }
 
 export type MembershipInput = {
@@ -939,6 +949,7 @@ export type Mutation = {
   renameGroup?: Maybe<Group>
   updateGroupDescription?: Maybe<Group>
   disableGroup?: Maybe<Group>
+  joinGroup?: Maybe<JoinGroupResult>
   requestGroupAccess?: Maybe<GroupMembership>
   createMembership?: Maybe<CreateGroupMembershipResult>
   updateMembershipRole?: Maybe<GroupMembership>
@@ -982,6 +993,10 @@ export type MutationUpdateGroupDescriptionArgs = {
 
 export type MutationDisableGroupArgs = {
   input: DisableGroupInput
+}
+
+export type MutationJoinGroupArgs = {
+  input: JoinGroupInput
 }
 
 export type MutationRequestGroupAccessArgs = {
@@ -1350,7 +1365,7 @@ export type CreateGroupMembershipMutation = { __typename?: 'Mutation' } & {
   createMembership?: Maybe<
     { __typename?: 'CreateGroupMembershipResult' } & Pick<
       CreateGroupMembershipResult,
-      'success' | 'error'
+      'membershipId' | 'error'
     >
   >
 }
@@ -1411,6 +1426,16 @@ export type DeleteMembershipMutationVariables = Exact<{
 export type DeleteMembershipMutation = { __typename?: 'Mutation' } & {
   deleteMembership?: Maybe<
     { __typename?: 'DeleteMembershipResult' } & Pick<DeleteMembershipResult, 'success' | 'error'>
+  >
+}
+
+export type JoinGroupMutationVariables = Exact<{
+  input: JoinGroupInput
+}>
+
+export type JoinGroupMutation = { __typename?: 'Mutation' } & {
+  joinGroup?: Maybe<
+    { __typename?: 'JoinGroupResult' } & Pick<JoinGroupResult, 'membershipId' | 'error'>
   >
 }
 
@@ -2517,7 +2542,7 @@ export type CreateGroupMutationOptions = Apollo.BaseMutationOptions<
 export const CreateGroupMembershipDocument = gql`
   mutation CreateGroupMembership($input: CreateGroupMembershipInput!) {
     createMembership(input: $input) {
-      success
+      membershipId
       error
     }
   }
@@ -2809,6 +2834,50 @@ export type DeleteMembershipMutationResult = Apollo.MutationResult<DeleteMembers
 export type DeleteMembershipMutationOptions = Apollo.BaseMutationOptions<
   DeleteMembershipMutation,
   DeleteMembershipMutationVariables
+>
+export const JoinGroupDocument = gql`
+  mutation JoinGroup($input: JoinGroupInput!) {
+    joinGroup(input: $input) {
+      membershipId
+      error
+    }
+  }
+`
+export type JoinGroupMutationFn = Apollo.MutationFunction<
+  JoinGroupMutation,
+  JoinGroupMutationVariables
+>
+
+/**
+ * __useJoinGroupMutation__
+ *
+ * To run a mutation, you first call `useJoinGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinGroupMutation, { data, loading, error }] = useJoinGroupMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useJoinGroupMutation(
+  baseOptions?: Apollo.MutationHookOptions<JoinGroupMutation, JoinGroupMutationVariables>,
+) {
+  return Apollo.useMutation<JoinGroupMutation, JoinGroupMutationVariables>(
+    JoinGroupDocument,
+    baseOptions,
+  )
+}
+export type JoinGroupMutationHookResult = ReturnType<typeof useJoinGroupMutation>
+export type JoinGroupMutationResult = Apollo.MutationResult<JoinGroupMutation>
+export type JoinGroupMutationOptions = Apollo.BaseMutationOptions<
+  JoinGroupMutation,
+  JoinGroupMutationVariables
 >
 export const PayMemberSubscriptionDocument = gql`
   mutation PayMemberSubscription($input: PayMemberSubscriptionInput!) {

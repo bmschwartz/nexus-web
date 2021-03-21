@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { client } from './client'
 import {
+  JoinGroupDocument,
   MembershipRole,
   MembershipStatus,
   RequestGroupAccessDocument,
@@ -38,6 +39,34 @@ export interface UpdateMembershipStatusInput {
 export interface UpdateMembershipStatusResponse {
   success: boolean
   error?: string
+}
+
+export interface JoinGroupInput {
+  groupId: string
+}
+
+export interface JoinGroupResponse {
+  membershipId?: string
+  error?: string
+}
+
+export const joinGroup = async ({ groupId }: JoinGroupInput): Promise<JoinGroupResponse> => {
+  try {
+    const { data } = await client.mutate({
+      mutation: JoinGroupDocument,
+      variables: {
+        input: { groupId },
+      },
+    })
+
+    if (!data) {
+      return { error: 'Unable to Join Group' }
+    }
+
+    return data.joinGroup
+  } catch (e) {
+    return { error: e.message }
+  }
 }
 
 export const updateMembershipRole = async ({
