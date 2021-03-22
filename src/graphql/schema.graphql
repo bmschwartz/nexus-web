@@ -104,7 +104,7 @@ type CreateExchangeAccountResult {
 
 type CreateGroupMembershipResult {
   error: String
-  success: Boolean!
+  membershipId: ID
 }
 
 type CreateGroupSubscriptionResult {
@@ -212,7 +212,7 @@ type GroupSubscription {
 
 type JoinGroupResult {
   error: String
-  success: Boolean!
+  membershipId: ID
 }
 
 type LoginResponse {
@@ -265,7 +265,9 @@ type Mutation {
   payMemberSubscription(input: PayMemberSubscriptionInput!): PayMemberSubscriptionResult
   renameGroup(input: RenameGroupInput!): Group
   requestGroupAccess(input: RequestGroupAccessInput!): GroupMembership
+  resetPayment(input: ResetPaymentInput!): ResetPaymentResult
   signupUser(input: SignupUserInput!): SignUpResponse!
+  switchSubscriptionOption(input: SwitchSubscriptionOptionInput!): SwitchSubscriptionOptionResult
   toggleExchangeAccountActive(input: ToggleExchangeAccountActiveInput!): ToggleExchangeAccountActiveResult!
   toggleSubscriptionActive(input: ToggleSubscriptionActiveInput!): ToggleSubscriptionActiveResult
   updateExchangeAccount(input: UpdateExchangeAccountInput!): UpdateExchangeAccountResult!
@@ -368,6 +370,10 @@ type Query {
   userIdByEmail(input: UserIdByEmailInput!): ID
 }
 
+type ResetPaymentResult {
+  error: String
+}
+
 type SignUpResponse {
   error: String
   success: Boolean!
@@ -387,6 +393,11 @@ type SubscriptionInvoice {
   subscription: MemberSubscription!
   token: ID
   updatedAt: DateTime!
+}
+
+type SwitchSubscriptionOptionResult {
+  error: String
+  success: Boolean!
 }
 
 type SymbolsWithPositionResult {
@@ -680,6 +691,7 @@ input GroupSubscriptionInput {
 
 input JoinGroupInput {
   groupId: ID!
+  subscriptionOptionId: ID
 }
 
 input LoginUserInput {
@@ -740,6 +752,7 @@ input OrderSetOrdersInput {
 input PayMemberSubscriptionInput {
   groupId: ID!
   membershipId: ID!
+  subscriptionOptionId: ID!
 }
 
 input PositionInput {
@@ -755,11 +768,20 @@ input RequestGroupAccessInput {
   groupId: ID!
 }
 
+input ResetPaymentInput {
+  invoiceId: ID!
+}
+
 input SignupUserInput {
   email: String!
   password: String!
   userType: UserType!
   username: String!
+}
+
+input SwitchSubscriptionOptionInput {
+  membershipId: ID!
+  subscriptionOptionId: ID!
 }
 
 input ToggleExchangeAccountActiveInput {

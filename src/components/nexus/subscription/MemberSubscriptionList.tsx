@@ -13,7 +13,8 @@ export interface MemberSubscriptionListProps {
   groupId: string
   isGroupMember: boolean
   selectedOptionId?: string
-  onSelect: (optionId: string) => Promise<() => void>
+  subscriptionInactive?: boolean
+  onSelect: (optionId: string, onFinish: () => void) => void
 }
 
 export const MemberSubscriptionList = ({
@@ -21,11 +22,36 @@ export const MemberSubscriptionList = ({
   onSelect,
   isGroupMember,
   selectedOptionId,
+  subscriptionInactive,
 }: MemberSubscriptionListProps) => {
   const { data: groupSubscriptions } = useGetBasicGroupSubscriptionOptionsQuery({
     variables: { input: { groupId } },
     fetchPolicy: 'cache-and-network',
   })
+
+  const isPaymentButton = (optionId: string) => {
+    return isSelectedOption(optionId) && !!subscriptionInactive
+  }
+
+  const getOptionButtonText = (optionId: string) => {
+    if (!isGroupMember) {
+      return 'Join Now!'
+    }
+    if (!selectedOptionId) {
+      return 'Select Plan'
+    }
+    if (!!selectedOptionId && optionId !== selectedOptionId) {
+      return 'Change Plan'
+    }
+    if (isPaymentButton(optionId)) {
+      return 'Make Payment'
+    }
+    return 'Select'
+  }
+
+  const isSelectedOption = (optionId: string) => {
+    return optionId === selectedOptionId
+  }
 
   let subscriptions: GroupSubscription[][] = []
   if (groupSubscriptions?.group?.subscriptionOptions) {
@@ -51,9 +77,11 @@ export const MemberSubscriptionList = ({
               <MemberSubscriptionOption
                 key={subscriptionOption.id}
                 onSelect={onSelect}
-                buttonText={isGroupMember ? 'Select Plan' : 'Join Now!'}
+                paymentButton={isPaymentButton(subscriptionOption.id)}
+                buttonText={getOptionButtonText(subscriptionOption.id)}
                 subscriptionOption={subscriptionOption}
-                selected={subscriptionOption.id === selectedOptionId}
+                selected={isSelectedOption(subscriptionOption.id)}
+                changePlan={!!selectedOptionId && subscriptionOption.id !== selectedOptionId}
               />
             </div>
           ))}

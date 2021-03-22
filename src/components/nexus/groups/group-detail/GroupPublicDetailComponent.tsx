@@ -17,10 +17,13 @@ export const GroupPublicDetailComponent = ({ group }: GroupPublicDetailComponent
   useScript(process.env.REACT_APP_BTCPAY_SCRIPT_URL || '')
 
   // eslint-disable-next-line no-unused-vars
-  const onClickJoinGroup = async (optionId: string): Promise<() => void> => {
+  const onClickJoinGroup = async (subscriptionOptionId: string, onFinish: () => void) => {
     const groupId = group.id
 
-    const { membershipId, error: joinGroupError } = await apollo.joinGroup({ groupId })
+    const { membershipId, error: joinGroupError } = await apollo.joinGroup({
+      groupId,
+      subscriptionOptionId,
+    })
 
     if (!membershipId) {
       notification.error({
@@ -30,9 +33,10 @@ export const GroupPublicDetailComponent = ({ group }: GroupPublicDetailComponent
       })
     }
 
-    return () => {
+    setTimeout(() => {
+      onFinish()
       window.location.reload()
-    }
+    }, 1500)
   }
 
   return (

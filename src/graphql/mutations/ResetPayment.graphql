@@ -1,0 +1,5 @@
+mutation ResetPayment($input: ResetPaymentInput!) {
+  resetPayment(input: $input) {
+    error
+  }
+}

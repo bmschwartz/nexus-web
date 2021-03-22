@@ -43,6 +43,7 @@ export interface UpdateMembershipStatusResponse {
 
 export interface JoinGroupInput {
   groupId: string
+  subscriptionOptionId?: string
 }
 
 export interface JoinGroupResponse {
@@ -50,12 +51,15 @@ export interface JoinGroupResponse {
   error?: string
 }
 
-export const joinGroup = async ({ groupId }: JoinGroupInput): Promise<JoinGroupResponse> => {
+export const joinGroup = async ({
+  groupId,
+  subscriptionOptionId,
+}: JoinGroupInput): Promise<JoinGroupResponse> => {
   try {
     const { data } = await client.mutate({
       mutation: JoinGroupDocument,
       variables: {
-        input: { groupId },
+        input: { groupId, subscriptionOptionId },
       },
     })
 

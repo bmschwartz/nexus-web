@@ -203,6 +203,7 @@ export enum InvoiceStatus {
 
 export type JoinGroupInput = {
   groupId: Scalars['ID']
+  subscriptionOptionId?: Maybe<Scalars['ID']>
 }
 
 export type JoinGroupResult = {
@@ -258,6 +259,7 @@ export type MyMembershipsInput = {
 export type PayMemberSubscriptionInput = {
   groupId: Scalars['ID']
   membershipId: Scalars['ID']
+  subscriptionOptionId: Scalars['ID']
 }
 
 export type PayMemberSubscriptionResult = {
@@ -275,6 +277,15 @@ export type RequestGroupAccessInput = {
   groupId: Scalars['ID']
 }
 
+export type ResetPaymentInput = {
+  invoiceId: Scalars['ID']
+}
+
+export type ResetPaymentResult = {
+  __typename?: 'ResetPaymentResult'
+  error?: Maybe<Scalars['String']>
+}
+
 export type SubscriptionInvoice = {
   __typename?: 'SubscriptionInvoice'
   id: Scalars['ID']
@@ -290,6 +301,17 @@ export type SubscriptionInvoice = {
   expiresAt?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+}
+
+export type SwitchSubscriptionOptionInput = {
+  membershipId: Scalars['ID']
+  subscriptionOptionId: Scalars['ID']
+}
+
+export type SwitchSubscriptionOptionResult = {
+  __typename?: 'SwitchSubscriptionOptionResult'
+  success: Scalars['Boolean']
+  error?: Maybe<Scalars['String']>
 }
 
 export type ToggleSubscriptionActiveInput = {
@@ -960,7 +982,9 @@ export type Mutation = {
   updateGroupSubscription?: Maybe<UpdateGroupSubscriptionResult>
   deleteGroupSubscription?: Maybe<DeleteGroupSubscriptionResult>
   toggleSubscriptionActive?: Maybe<ToggleSubscriptionActiveResult>
+  resetPayment?: Maybe<ResetPaymentResult>
   payMemberSubscription?: Maybe<PayMemberSubscriptionResult>
+  switchSubscriptionOption?: Maybe<SwitchSubscriptionOptionResult>
   cancelMemberSubscription?: Maybe<CancelMemberSubscriptionResult>
   activateMemberSubscription?: Maybe<ActivateMemberSubscriptionResult>
   createOrderSet?: Maybe<CreateOrderSetResult>
@@ -1039,8 +1063,16 @@ export type MutationToggleSubscriptionActiveArgs = {
   input: ToggleSubscriptionActiveInput
 }
 
+export type MutationResetPaymentArgs = {
+  input: ResetPaymentInput
+}
+
 export type MutationPayMemberSubscriptionArgs = {
   input: PayMemberSubscriptionInput
+}
+
+export type MutationSwitchSubscriptionOptionArgs = {
+  input: SwitchSubscriptionOptionInput
 }
 
 export type MutationCancelMemberSubscriptionArgs = {
@@ -1458,6 +1490,27 @@ export type RequestGroupAccessMutationVariables = Exact<{
 
 export type RequestGroupAccessMutation = { __typename?: 'Mutation' } & {
   requestGroupAccess?: Maybe<{ __typename?: 'GroupMembership' } & Pick<GroupMembership, 'id'>>
+}
+
+export type ResetPaymentMutationVariables = Exact<{
+  input: ResetPaymentInput
+}>
+
+export type ResetPaymentMutation = { __typename?: 'Mutation' } & {
+  resetPayment?: Maybe<{ __typename?: 'ResetPaymentResult' } & Pick<ResetPaymentResult, 'error'>>
+}
+
+export type SwitchSubscriptionOptionMutationVariables = Exact<{
+  input: SwitchSubscriptionOptionInput
+}>
+
+export type SwitchSubscriptionOptionMutation = { __typename?: 'Mutation' } & {
+  switchSubscriptionOption?: Maybe<
+    { __typename?: 'SwitchSubscriptionOptionResult' } & Pick<
+      SwitchSubscriptionOptionResult,
+      'success' | 'error'
+    >
+  >
 }
 
 export type ToggleExchangeAccountActiveMutationVariables = Exact<{
@@ -2975,6 +3028,100 @@ export type RequestGroupAccessMutationResult = Apollo.MutationResult<RequestGrou
 export type RequestGroupAccessMutationOptions = Apollo.BaseMutationOptions<
   RequestGroupAccessMutation,
   RequestGroupAccessMutationVariables
+>
+export const ResetPaymentDocument = gql`
+  mutation ResetPayment($input: ResetPaymentInput!) {
+    resetPayment(input: $input) {
+      error
+    }
+  }
+`
+export type ResetPaymentMutationFn = Apollo.MutationFunction<
+  ResetPaymentMutation,
+  ResetPaymentMutationVariables
+>
+
+/**
+ * __useResetPaymentMutation__
+ *
+ * To run a mutation, you first call `useResetPaymentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResetPaymentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resetPaymentMutation, { data, loading, error }] = useResetPaymentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useResetPaymentMutation(
+  baseOptions?: Apollo.MutationHookOptions<ResetPaymentMutation, ResetPaymentMutationVariables>,
+) {
+  return Apollo.useMutation<ResetPaymentMutation, ResetPaymentMutationVariables>(
+    ResetPaymentDocument,
+    baseOptions,
+  )
+}
+export type ResetPaymentMutationHookResult = ReturnType<typeof useResetPaymentMutation>
+export type ResetPaymentMutationResult = Apollo.MutationResult<ResetPaymentMutation>
+export type ResetPaymentMutationOptions = Apollo.BaseMutationOptions<
+  ResetPaymentMutation,
+  ResetPaymentMutationVariables
+>
+export const SwitchSubscriptionOptionDocument = gql`
+  mutation SwitchSubscriptionOption($input: SwitchSubscriptionOptionInput!) {
+    switchSubscriptionOption(input: $input) {
+      success
+      error
+    }
+  }
+`
+export type SwitchSubscriptionOptionMutationFn = Apollo.MutationFunction<
+  SwitchSubscriptionOptionMutation,
+  SwitchSubscriptionOptionMutationVariables
+>
+
+/**
+ * __useSwitchSubscriptionOptionMutation__
+ *
+ * To run a mutation, you first call `useSwitchSubscriptionOptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSwitchSubscriptionOptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [switchSubscriptionOptionMutation, { data, loading, error }] = useSwitchSubscriptionOptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSwitchSubscriptionOptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SwitchSubscriptionOptionMutation,
+    SwitchSubscriptionOptionMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    SwitchSubscriptionOptionMutation,
+    SwitchSubscriptionOptionMutationVariables
+  >(SwitchSubscriptionOptionDocument, baseOptions)
+}
+export type SwitchSubscriptionOptionMutationHookResult = ReturnType<
+  typeof useSwitchSubscriptionOptionMutation
+>
+export type SwitchSubscriptionOptionMutationResult = Apollo.MutationResult<
+  SwitchSubscriptionOptionMutation
+>
+export type SwitchSubscriptionOptionMutationOptions = Apollo.BaseMutationOptions<
+  SwitchSubscriptionOptionMutation,
+  SwitchSubscriptionOptionMutationVariables
 >
 export const ToggleExchangeAccountActiveDocument = gql`
   mutation ToggleExchangeAccountActive($input: ToggleExchangeAccountActiveInput!) {

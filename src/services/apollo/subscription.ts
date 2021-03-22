@@ -8,6 +8,8 @@ import {
   PayMemberSubscriptionDocument,
   ToggleSubscriptionActiveDocument,
   UpdateGroupSubscriptionDocument,
+  SwitchSubscriptionOptionDocument,
+  ResetPaymentDocument,
 } from '../../graphql/index'
 /* eslint-enable */
 
@@ -29,9 +31,18 @@ export interface CancelMemberSubscriptionResponse {
   error?: string
 }
 
+export interface ResetPaymentInput {
+  invoiceId: string
+}
+
+export interface ResetPaymentResponse {
+  error?: string
+}
+
 export interface PayMemberSubscriptionInput {
   groupId: string
   membershipId: string
+  subscriptionOptionId: string
 }
 
 export interface PayMemberSubscriptionResponse {
@@ -75,6 +86,16 @@ export interface ToggleSubscriptionActiveInput {
 }
 
 export interface ToggleSubscriptionActiveResponse {
+  success: boolean
+  error?: string
+}
+
+export interface SwitchSubscriptionOptionInput {
+  membershipId: string
+  subscriptionOptionId: string
+}
+
+export interface SwitchSubscriptionOptionResponse {
   success: boolean
   error?: string
 }
@@ -127,15 +148,39 @@ export const cancelMemberSubscription = async (
   }
 }
 
+export const resetPayment = async (input: ResetPaymentInput): Promise<ResetPaymentResponse> => {
+  const { invoiceId } = input
+  try {
+    const { data } = await client.mutate({
+      mutation: ResetPaymentDocument,
+      variables: {
+        input: { invoiceId },
+      },
+    })
+
+    if (!data) {
+      return { error: 'Error deleting invoice' }
+    }
+
+    const {
+      resetPayment: { error },
+    } = data
+
+    return { error }
+  } catch (e) {
+    return { error: e.message }
+  }
+}
+
 export const payMemberSubscription = async (
   input: PayMemberSubscriptionInput,
 ): Promise<PayMemberSubscriptionResponse> => {
-  const { membershipId, groupId } = input
+  const { membershipId, groupId, subscriptionOptionId } = input
   try {
     const { data } = await client.mutate({
       mutation: PayMemberSubscriptionDocument,
       variables: {
-        input: { membershipId, groupId },
+        input: { membershipId, groupId, subscriptionOptionId },
       },
     })
 
@@ -150,6 +195,33 @@ export const payMemberSubscription = async (
     return { invoiceId, error }
   } catch (error) {
     return { error: error.message }
+  }
+}
+
+export const switchSubscriptionOption = async (
+  input: SwitchSubscriptionOptionInput,
+): Promise<SwitchSubscriptionOptionResponse> => {
+  const { membershipId, subscriptionOptionId } = input
+
+  try {
+    const { data } = await client.mutate({
+      mutation: SwitchSubscriptionOptionDocument,
+      variables: {
+        input: { membershipId, subscriptionOptionId },
+      },
+    })
+
+    if (!data) {
+      return { success: false, error: 'Error switching subscription option' }
+    }
+
+    const {
+      switchSubscriptionOption: { success, error },
+    } = data
+
+    return { success, error }
+  } catch (error) {
+    return { success: false, error: error.message }
   }
 }
 

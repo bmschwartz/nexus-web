@@ -1,0 +1,6 @@
+mutation SwitchSubscriptionOption($input: SwitchSubscriptionOptionInput!) {
+  switchSubscriptionOption(input: $input) {
+    success
+    error
+  }
+}

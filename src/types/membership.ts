@@ -38,6 +38,7 @@ export interface MemberSubscription {
   recurring: boolean
   startDate: string
   endDate: string
+  groupSubscriptionId: string
   invoices: SubscriptionInvoice[]
 }
 
@@ -53,8 +54,9 @@ export function transformMembershipData(membership: any): Membership {
     username: membership.member.username,
     active: membership.active,
     subscription: {
-      ...membership.subscription,
+      ...subscription,
       invoices: transformInvoices(invoices),
+      groupSubscriptionId: subscription.groupSubscription.id,
     },
     role: convertToLocalMembershipRole(membership.role) as MembershipRole,
     exchangeAccounts: membership.exchangeAccounts.map(transformExchangeAccount),
