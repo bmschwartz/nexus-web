@@ -1,8 +1,9 @@
 fragment SubscriptionInvoiceDetails on SubscriptionInvoice {
   id
   email
-  amountPaid
-  amountCharged
+  usdPrice
+  btcPaid
+  btcPrice
   status
   remoteId
   token

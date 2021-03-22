@@ -390,8 +390,8 @@ type SignUpResponse {
 }
 
 type SubscriptionInvoice {
-  amountCharged: Float!
-  amountPaid: Float!
+  btcPaid: Float!
+  btcPrice: Float!
   createdAt: DateTime!
   email: String!
   expiresAt: DateTime
@@ -403,6 +403,7 @@ type SubscriptionInvoice {
   subscription: MemberSubscription!
   token: ID
   updatedAt: DateTime!
+  usdPrice: Float!
 }
 
 type SwitchSubscriptionOptionResult {

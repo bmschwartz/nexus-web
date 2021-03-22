@@ -300,8 +300,9 @@ export type SubscriptionInvoice = {
   __typename?: 'SubscriptionInvoice'
   id: Scalars['ID']
   email: Scalars['String']
-  amountPaid: Scalars['Float']
-  amountCharged: Scalars['Float']
+  btcPaid: Scalars['Float']
+  btcPrice: Scalars['Float']
+  usdPrice: Scalars['Float']
   status: InvoiceStatus
   subscription: MemberSubscription
   remoteId?: Maybe<Scalars['ID']>
@@ -1317,8 +1318,9 @@ export type SubscriptionInvoiceDetailsFragment = { __typename?: 'SubscriptionInv
   SubscriptionInvoice,
   | 'id'
   | 'email'
-  | 'amountPaid'
-  | 'amountCharged'
+  | 'usdPrice'
+  | 'btcPaid'
+  | 'btcPrice'
   | 'status'
   | 'remoteId'
   | 'token'
@@ -2210,8 +2212,9 @@ export const SubscriptionInvoiceDetailsFragmentDoc = gql`
   fragment SubscriptionInvoiceDetails on SubscriptionInvoice {
     id
     email
-    amountPaid
-    amountCharged
+    usdPrice
+    btcPaid
+    btcPrice
     status
     remoteId
     token

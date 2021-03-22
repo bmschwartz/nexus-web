@@ -27,6 +27,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
 
   const { subscription } = membership
   const { pendingInvoice } = subscription
+  console.log(pendingInvoice)
   const currentInvoiceStatus = pendingInvoice?.status
 
   const onClickActivateSubscription = async () => {
