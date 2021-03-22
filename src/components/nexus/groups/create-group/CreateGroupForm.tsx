@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Formik } from 'formik'
 import { Button, Divider, Modal, notification, Table } from 'antd'
-import { Form, Input, Checkbox, SubmitButton } from 'formik-antd'
+import { Form, Input, SubmitButton } from 'formik-antd'
 import * as Yup from 'yup'
 
 /* eslint-disable */
@@ -9,6 +9,7 @@ import labelTooltip from '../../labelTooltip'
 import { validateAddress } from '../validation'
 import * as apollo from '../../../../services/apollo'
 import { SubscriptionOption, subscriptionTableColumns } from './createGroupFormUtils'
+import { Editor } from '../../editor/EditorComponent'
 
 /* eslint-enable */
 
@@ -17,11 +18,14 @@ const MAX_SUBSCRIPTION_OPTIONS = 10
 const defaultSubscriptionOptionItem: SubscriptionOption = { duration: 1, fee: 100 }
 
 const CreateGroupForm = () => {
+  const [description, setDescription] = useState<string>('')
   const [currentPayoutCurrency] = useState<string | null>('BTC')
   const [submittingCreateGroup, setSubmittingCreateGroup] = useState<boolean>(false)
   const [subscriptionOptionsData, setSubscriptionOptionsData] = useState<SubscriptionOption[]>([
     { ...defaultSubscriptionOptionItem },
   ])
+
+  console.log(description)
 
   const hasInvalidSubscriptionOption = (subscriptionOptions: SubscriptionOption[]): boolean => {
     return subscriptionOptions
@@ -36,9 +40,6 @@ const CreateGroupForm = () => {
         break
       case 'fee':
         subscriptionOptionsData[index].fee = value
-        break
-      case 'description':
-        subscriptionOptionsData[index].description = value
         break
       default:
         break
@@ -61,26 +62,14 @@ const CreateGroupForm = () => {
         return !exists
       })
       .required(),
-    description: Yup.string()
-      .label('Description')
-      .max(5000)
-      .required(),
-    payInPlatform: Yup.bool().required(),
     payoutAddress: Yup.string()
       .label('Payout Address')
-      .when('payInPlatform', {
-        is: true,
-        then: Yup.string()
-          .required('Payout Address is Required')
-          .test('ValidPayoutAddress', `Invalid ${currentPayoutCurrency} Address`, address => {
-            if (!address || !currentPayoutCurrency) {
-              return false
-            }
-            return validateAddress(address, currentPayoutCurrency)
-          }),
-        otherwise: Yup.string()
-          .nullable()
-          .notRequired(),
+      .required('Payout Address is Required')
+      .test('ValidPayoutAddress', `Invalid ${currentPayoutCurrency} Address`, address => {
+        if (!address || !currentPayoutCurrency) {
+          return false
+        }
+        return validateAddress(address, currentPayoutCurrency)
       }),
     email: Yup.string()
       .label('Email')
@@ -117,7 +106,6 @@ const CreateGroupForm = () => {
       <Formik
         initialValues={{
           name: '',
-          description: '',
           telegram: '',
           discord: '',
           email: '',
@@ -139,6 +127,7 @@ const CreateGroupForm = () => {
 
           const { groupId, error } = await apollo.createGroup({
             subscriptionOptions: subscriptionOptionsData,
+            description,
             ...values,
           })
           if (groupId) {
@@ -157,7 +146,7 @@ const CreateGroupForm = () => {
           }
         }}
       >
-        {({ values }) => (
+        {() => (
           <div>
             <div className="card-body">
               <Form {...formItemLayout} labelAlign="left">
@@ -168,7 +157,12 @@ const CreateGroupForm = () => {
                   <Input name="name" placeholder="Enter Group Name" />
                 </Form.Item>
                 <Form.Item name="description" label="Description">
-                  <Input.TextArea name="description" placeholder="Enter Description..." />
+                  {/* <Input.TextArea name="description" placeholder="Enter Description..." /> */}
+                  <Editor
+                    onChange={setDescription}
+                    disableSave={submittingCreateGroup}
+                    disableReset={submittingCreateGroup}
+                  />
                 </Form.Item>
                 <Divider orientation="left">
                   <strong>Contact</strong>
@@ -190,25 +184,14 @@ const CreateGroupForm = () => {
                   Members will automatically be billed at the end of the pay period
                 </p>
                 <Form.Item
-                  name="payInPlatform"
-                  label={labelTooltip(
-                    'Pay In Platform',
-                    'Members will pay for access through the website',
-                  )}
-                >
-                  <Checkbox value={values.payInPlatform} name="payInPlatform" />
-                </Form.Item>
-                <Form.Item
                   name="payoutAddress"
                   label={labelTooltip(
                     'Payout Address (BTC)',
                     'Your earnings will be sent to this BTC address',
                   )}
-                  hidden={!values.payInPlatform}
                 >
                   <Input
                     name="payoutAddress"
-                    disabled={!values.payInPlatform}
                     placeholder="e.g. 1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"
                   />
                 </Form.Item>
