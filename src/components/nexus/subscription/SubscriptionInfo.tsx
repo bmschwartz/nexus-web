@@ -1,12 +1,11 @@
-import React, { FC, useState } from 'react'
-import { Button, Modal, notification } from 'antd'
+import React, { FC } from 'react'
+import { Alert, Button, Modal, notification } from 'antd'
 import * as dotenv from 'dotenv'
 
 /* eslint-disable */
 import useScript from '../hooks'
 import * as apollo from 'services/apollo'
 import { Membership } from 'types/membership'
-import { getCurrentInvoiceStatus } from './common'
 import { InvoiceStatus } from '../../../types/subscription'
 import { MemberSubscriptionList } from './MemberSubscriptionList'
 
@@ -20,12 +19,33 @@ interface SubscriptionInfoProps {
 
 export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
   useScript(process.env.REACT_APP_BTCPAY_SCRIPT_URL || '')
-  const [receivedPayment, setReceivedPayment] = useState<boolean>(false)
-
   const { subscription } = membership
+  const { pendingInvoice } = subscription
+
+  console.log(pendingInvoice)
+  const currentInvoiceStatus = pendingInvoice?.status
 
   const onClickActivateSubscription = async () => {
     await apollo.activateMemberSubscription({ subscriptionId: subscription.id })
+  }
+
+  const openInvoice = (invoiceId?: string | null, onFinish?: () => void) => {
+    if (!invoiceId) {
+      return
+    }
+
+    // @ts-ignore
+    window.btcpay.showInvoice(invoiceId)
+
+    // @ts-ignore
+    window.btcpay.onModalReceiveMessage((event: any) => {
+      if (event.data === 'close') {
+        if (onFinish) {
+          onFinish()
+        }
+        window.location.reload()
+      }
+    })
   }
 
   const makePayment = async (subscriptionOptionId: string, onFinish: () => void) => {
@@ -42,41 +62,8 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
         maskClosable: true,
       })
     } else {
-      // @ts-ignore
-      window.btcpay.showInvoice(invoiceId)
-
-      // @ts-ignore
-      window.btcpay.onModalReceiveMessage((event: any) => {
-        console.log(event)
-        if (typeof event.data === 'object') {
-          if (event.data.status === 'paid' && event.data.invoiceId === invoiceId) {
-            setReceivedPayment(true)
-            console.log('set received payment to true')
-          }
-        }
-        if (event.data === 'close') {
-          if (receivedPayment) {
-            onFinish()
-            console.log('received payment is true')
-            window.location.reload()
-          } else {
-            console.log('received payment is false')
-            resetPayment(invoiceId)
-              .then(() => window.location.reload())
-              .catch(() => window.location.reload())
-              .finally(() => onFinish())
-          }
-        }
-      })
+      openInvoice(invoiceId, onFinish)
     }
-  }
-
-  const resetPayment = async (invoiceId: string) => {
-    const { error } = await apollo.resetPayment({ invoiceId })
-    if (error) {
-      console.error(error)
-    }
-    console.log('reset payment!')
   }
 
   const onClickSubscriptionOption = async (subscriptionOptionId: string, onFinish: () => void) => {
@@ -115,8 +102,6 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
   const onClickCancelSubscription = async () => {
     await apollo.cancelMemberSubscription({ subscriptionId: subscription.id })
   }
-
-  const currentInvoiceStatus = getCurrentInvoiceStatus(subscription.invoices)
 
   return (
     <>
@@ -169,27 +154,61 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
       ) : (
         <>
           {currentInvoiceStatus === InvoiceStatus.Paid ||
-          currentInvoiceStatus === InvoiceStatus.Confirmed ? (
+          currentInvoiceStatus === InvoiceStatus.Confirmed ||
+          currentInvoiceStatus === InvoiceStatus.New ? (
             <>
-              <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-                <strong className="mr-3 font-italic">
-                  -- Awaiting Payment. Check email for bill --
-                </strong>
-              </div>
-              {/* <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4"> */}
-              {/*  <Button type="primary" onClick={() => onClickMakePayment()}> */}
-              {/*    Resend Bill */}
-              {/*  </Button> */}
-              {/* </div> */}
+              {currentInvoiceStatus !== InvoiceStatus.New ? (
+                <div className="row mb-3">
+                  <div className="col-lg-6 col-md-6">
+                    <Alert
+                      message="Payment Found"
+                      description="Waiting for more confirmations"
+                      type="success"
+                      showIcon
+                    />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="row mb-3">
+                    <div className="col-lg-6 col-md-6">
+                      <Alert
+                        message="Payment Not on Blockchain"
+                        description="This may take 10 to 15 minutes after sending funds"
+                        type="info"
+                        showIcon
+                      />
+                    </div>
+                  </div>
+                  <Button type="primary" onClick={() => openInvoice(pendingInvoice?.remoteId)}>
+                    Reopen Invoice
+                  </Button>
+                </>
+              )}
             </>
           ) : (
-            <MemberSubscriptionList
-              isGroupMember
-              subscriptionInactive
-              groupId={membership.groupId}
-              selectedOptionId={subscription.groupSubscriptionId}
-              onSelect={onClickSubscriptionOption}
-            />
+            <div>
+              <div className="row mb-3">
+                <div className="col-lg-6 col-md-6">
+                  {(pendingInvoice?.status === InvoiceStatus.Expired ||
+                    pendingInvoice?.status === InvoiceStatus.Invalid) && (
+                    <Alert
+                      message={`Payment ${pendingInvoice.status}`}
+                      description="Click Make Payment or Change Plan"
+                      type="error"
+                      showIcon
+                    />
+                  )}
+                </div>
+              </div>
+              <MemberSubscriptionList
+                isGroupMember
+                subscriptionInactive
+                groupId={membership.groupId}
+                selectedOptionId={subscription.groupSubscriptionId}
+                onSelect={onClickSubscriptionOption}
+              />
+            </div>
           )}
         </>
       )}

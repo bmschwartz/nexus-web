@@ -236,15 +236,16 @@ export type MemberSubscription = {
   __typename?: 'MemberSubscription'
   id: Scalars['ID']
   active: Scalars['Boolean']
-  membership: GroupMembership
-  groupSubscription: GroupSubscription
   currentPrice?: Maybe<Scalars['Float']>
   recurring: Scalars['Boolean']
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+  membership: GroupMembership
   invoices: Array<SubscriptionInvoice>
+  pendingInvoice?: Maybe<SubscriptionInvoice>
+  groupSubscription: GroupSubscription
 }
 
 export type MyMembershipInput = {
@@ -1239,6 +1240,9 @@ export type MemberSubscriptionDetailsFragment = { __typename?: 'MemberSubscripti
       GroupSubscription,
       'id' | 'active' | 'price' | 'duration'
     >
+    pendingInvoice?: Maybe<
+      { __typename?: 'SubscriptionInvoice' } & SubscriptionInvoiceDetailsFragment
+    >
     invoices: Array<{ __typename?: 'SubscriptionInvoice' } & SubscriptionInvoiceDetailsFragment>
   }
 
@@ -2211,6 +2215,9 @@ export const MemberSubscriptionDetailsFragmentDoc = gql`
       active
       price
       duration
+    }
+    pendingInvoice {
+      ...SubscriptionInvoiceDetails
     }
     invoices {
       ...SubscriptionInvoiceDetails

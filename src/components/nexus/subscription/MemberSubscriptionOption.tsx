@@ -15,7 +15,6 @@ interface MemberSubscriptionOptionProps {
 }
 
 export const MemberSubscriptionOption = ({
-  selected,
   onSelect,
   buttonText,
   changePlan,
@@ -23,7 +22,6 @@ export const MemberSubscriptionOption = ({
 }: MemberSubscriptionOptionProps) => {
   const [loading, setLoading] = useState<boolean>()
   const { id: optionId, duration, price } = subscriptionOption
-  console.log(selected)
 
   const buttonType = changePlan ? 'default' : 'primary'
 

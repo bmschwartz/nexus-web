@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
+import { v4 } from 'uuid'
 
 /* eslint-disable */
 import { MemberSubscriptionOption } from './MemberSubscriptionOption'
@@ -71,7 +72,7 @@ export const MemberSubscriptionList = ({
   return (
     <div>
       {subscriptions.map(row => (
-        <div className="row">
+        <div key={v4()} className="row">
           {row.map(subscriptionOption => (
             <div key={`col-${subscriptionOption.id}`} className="col-lg-4 col-md-12">
               <MemberSubscriptionOption

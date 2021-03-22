@@ -12,6 +12,9 @@ fragment MemberSubscriptionDetails on MemberSubscription {
     price
     duration
   }
+  pendingInvoice {
+    ...SubscriptionInvoiceDetails
+  }
   invoices {
     ...SubscriptionInvoiceDetails
   }

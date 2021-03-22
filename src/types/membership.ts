@@ -6,7 +6,7 @@ import {
   MembershipStatus as RemoteMembershipStatus,
 } from '../graphql'
 import { InvoiceStatus, SubscriptionInvoice } from './subscription'
-import { transformInvoices } from './invoice'
+import { transformInvoice, transformInvoices } from './invoice'
 
 export interface Membership {
   id: string
@@ -40,12 +40,14 @@ export interface MemberSubscription {
   endDate: string
   groupSubscriptionId: string
   invoices: SubscriptionInvoice[]
+  pendingInvoice?: SubscriptionInvoice
 }
 
 export function transformMembershipData(membership: any): Membership {
   const { subscription } = membership
 
   const invoices = subscription && subscription.invoices ? subscription.invoices : []
+  const pendingInvoice = subscription?.pendingInvoice
 
   return {
     id: membership.id,
@@ -56,6 +58,7 @@ export function transformMembershipData(membership: any): Membership {
     subscription: {
       ...subscription,
       invoices: transformInvoices(invoices),
+      pendingInvoice: pendingInvoice ? transformInvoice(pendingInvoice) : undefined,
       groupSubscriptionId: subscription.groupSubscription.id,
     },
     role: convertToLocalMembershipRole(membership.role) as MembershipRole,

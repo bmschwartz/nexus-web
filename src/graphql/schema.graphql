@@ -238,6 +238,7 @@ type MemberSubscription {
   id: ID!
   invoices: [SubscriptionInvoice!]!
   membership: GroupMembership!
+  pendingInvoice: SubscriptionInvoice
   recurring: Boolean!
   startDate: DateTime
   updatedAt: DateTime!
