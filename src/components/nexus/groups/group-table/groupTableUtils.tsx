@@ -1,6 +1,5 @@
 import React from 'react'
 import * as _ from 'lodash'
-import { Tooltip } from 'antd'
 import { Group } from 'types/group'
 import { Membership, MembershipRole, MembershipStatus } from 'types/membership'
 
@@ -48,18 +47,15 @@ export const badgeForIsMember = (isMember: boolean, record: GroupTableItem) => {
   }
 
   const color = record.activeMembership ? 'success' : 'orange'
-  const tooltipText = record.activeMembership ? 'Active Subscription' : 'Subscription is not active'
 
   return (
     <div style={{ textAlign: 'center' }}>
       <span className={`font-size-21 text-${color}`}>
-        <Tooltip title={tooltipText} color="blue">
-          {record.activeMembership ? (
-            <i className="fa fa-check-circle" />
-          ) : (
-            <i className="fa fa-warning" />
-          )}
-        </Tooltip>
+        {record.activeMembership ? (
+          <i className="fa fa-check-circle" />
+        ) : (
+          <i className="fa fa-warning" />
+        )}
       </span>
     </div>
   )
