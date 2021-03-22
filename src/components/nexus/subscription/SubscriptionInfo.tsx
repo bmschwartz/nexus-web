@@ -6,9 +6,11 @@ import * as dotenv from 'dotenv'
 import useScript from '../hooks'
 import * as apollo from 'services/apollo'
 import { Membership } from 'types/membership'
-import { InvoiceStatus } from '../../../types/subscription'
+import { GroupSubscription, InvoiceStatus } from '../../../types/subscription'
 import { MemberSubscriptionList } from './MemberSubscriptionList'
-
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { PaymentConfirmationModalContent } from './PaymentConfirmationModalContent'
+import { useGetActivePlatformFeeQuery } from '../../../graphql'
 /* eslint-enable */
 
 dotenv.config()
@@ -19,10 +21,12 @@ interface SubscriptionInfoProps {
 
 export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
   useScript(process.env.REACT_APP_BTCPAY_SCRIPT_URL || '')
+  const { data: platformFeeData } = useGetActivePlatformFeeQuery({
+    fetchPolicy: 'cache-and-network',
+  })
+
   const { subscription } = membership
   const { pendingInvoice } = subscription
-
-  console.log(pendingInvoice)
   const currentInvoiceStatus = pendingInvoice?.status
 
   const onClickActivateSubscription = async () => {
@@ -48,36 +52,60 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
     })
   }
 
-  const makePayment = async (subscriptionOptionId: string, onFinish: () => void) => {
-    const { invoiceId, error } = await apollo.payMemberSubscription({
-      groupId: membership.groupId,
-      membershipId: membership.id,
-      subscriptionOptionId,
+  const makePayment = async (subscriptionOption: GroupSubscription, onFinish: () => void) => {
+    Modal.confirm({
+      okType: 'primary',
+      okText: 'Make Payment',
+      title: <h5>Subscription Payment</h5>,
+      icon: <ExclamationCircleOutlined />,
+      maskClosable: true,
+      content: (
+        <PaymentConfirmationModalContent
+          platformFee={platformFeeData?.activePlatformFee}
+          subscriptionOption={subscriptionOption}
+        />
+      ),
+      async onOk() {
+        const { invoiceId, error } = await apollo.payMemberSubscription({
+          groupId: membership.groupId,
+          membershipId: membership.id,
+          subscriptionOptionId: subscriptionOption.id,
+        })
+
+        if (error || !invoiceId) {
+          Modal.error({
+            title: 'Make a Payment',
+            content: error,
+            maskClosable: true,
+          })
+        } else {
+          openInvoice(invoiceId, onFinish)
+        }
+      },
+      onCancel() {
+        onFinish()
+      },
     })
+  }
 
-    if (error || !invoiceId) {
-      Modal.error({
-        title: 'Make a Payment',
-        content: error,
-        maskClosable: true,
-      })
+  const onClickSubscriptionOption = async (
+    subscriptionOption: GroupSubscription,
+    onFinish: () => void,
+  ) => {
+    if (subscription.groupSubscriptionId === subscriptionOption.id) {
+      await makePayment(subscriptionOption, onFinish)
     } else {
-      openInvoice(invoiceId, onFinish)
+      await switchSubscriptionOption(subscriptionOption, onFinish)
     }
   }
 
-  const onClickSubscriptionOption = async (subscriptionOptionId: string, onFinish: () => void) => {
-    if (subscription.groupSubscriptionId === subscriptionOptionId) {
-      await makePayment(subscriptionOptionId, onFinish)
-    } else {
-      await switchSubscriptionOption(subscriptionOptionId, onFinish)
-    }
-  }
-
-  const switchSubscriptionOption = async (subscriptionOptionId: string, onFinish: () => void) => {
+  const switchSubscriptionOption = async (
+    subscriptionOption: GroupSubscription,
+    onFinish: () => void,
+  ) => {
     const { error } = await apollo.switchSubscriptionOption({
       membershipId: membership.id,
-      subscriptionOptionId,
+      subscriptionOptionId: subscriptionOption.id,
     })
 
     if (error) {

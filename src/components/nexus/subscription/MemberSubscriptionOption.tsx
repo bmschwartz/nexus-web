@@ -11,7 +11,7 @@ interface MemberSubscriptionOptionProps {
   changePlan: boolean
   paymentButton: boolean
   subscriptionOption: GroupSubscription
-  onSelect: (optionId: string, onFinish: () => void) => void
+  onSelect: (subscriptionOption: GroupSubscription, onFinish: () => void) => void
 }
 
 export const MemberSubscriptionOption = ({
@@ -21,7 +21,7 @@ export const MemberSubscriptionOption = ({
   subscriptionOption,
 }: MemberSubscriptionOptionProps) => {
   const [loading, setLoading] = useState<boolean>()
-  const { id: optionId, duration, price } = subscriptionOption
+  const { duration, price } = subscriptionOption
 
   const buttonType = changePlan ? 'default' : 'primary'
 
@@ -41,7 +41,7 @@ export const MemberSubscriptionOption = ({
             loading={loading}
             onClick={async () => {
               setLoading(true)
-              onSelect(optionId, () => {
+              onSelect(subscriptionOption, () => {
                 setLoading(false)
               })
             }}

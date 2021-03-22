@@ -334,6 +334,14 @@ type PayMemberSubscriptionResult {
   invoiceId: String
 }
 
+type PlatformFee {
+  active: Boolean!
+  createdAt: DateTime!
+  id: ID!
+  price: Float!
+  updatedAt: DateTime!
+}
+
 type Position {
   avgPrice: Float
   createdAt: DateTime!
@@ -349,6 +357,7 @@ type Position {
 }
 
 type Query {
+  activePlatformFee: PlatformFee
   allGroups: [Group!]!
   asyncOperationStatus(input: AsyncOperationStatusInput!): AsyncOperationStatus
   binanceCurrencies: [BinanceCurrency!]!

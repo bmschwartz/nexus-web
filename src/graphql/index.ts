@@ -269,6 +269,15 @@ export type PayMemberSubscriptionResult = {
   error?: Maybe<Scalars['String']>
 }
 
+export type PlatformFee = {
+  __typename?: 'PlatformFee'
+  id: Scalars['ID']
+  price: Scalars['Float']
+  active: Scalars['Boolean']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
 export type RenameGroupInput = {
   groupId: Scalars['ID']
   name: Scalars['String']
@@ -888,6 +897,7 @@ export type Query = {
   allGroups: Array<Group>
   group?: Maybe<Group>
   groupExists: Scalars['Boolean']
+  activePlatformFee?: Maybe<PlatformFee>
   membership: GroupMembership
   myMembership: GroupMembership
   myMemberships?: Maybe<Array<GroupMembership>>
@@ -1284,6 +1294,11 @@ export type OrderSetDetailsFragment = { __typename?: 'OrderSet' } & Pick<
   | 'createdAt'
 >
 
+export type PlatformFeeDetailsFragment = { __typename?: 'PlatformFee' } & Pick<
+  PlatformFee,
+  'id' | 'price' | 'active' | 'createdAt' | 'updatedAt'
+>
+
 export type PositionDetailsFragment = { __typename?: 'Position' } & Pick<
   Position,
   | 'id'
@@ -1624,6 +1639,12 @@ export type GetAllGroupsQueryVariables = Exact<{ [key: string]: never }>
 
 export type GetAllGroupsQuery = { __typename?: 'Query' } & {
   allGroups: Array<{ __typename?: 'Group' } & GroupDetailsFragment>
+}
+
+export type GetActivePlatformFeeQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetActivePlatformFeeQuery = { __typename?: 'Query' } & {
+  activePlatformFee?: Maybe<{ __typename?: 'PlatformFee' } & PlatformFeeDetailsFragment>
 }
 
 export type GetAsyncOperationStatusQueryVariables = Exact<{
@@ -2268,6 +2289,15 @@ export const OrderSetDetailsFragmentDoc = gql`
     description
     leverage
     createdAt
+  }
+`
+export const PlatformFeeDetailsFragmentDoc = gql`
+  fragment PlatformFeeDetails on PlatformFee {
+    id
+    price
+    active
+    createdAt
+    updatedAt
   }
 `
 export const ActivateMemberSubscriptionDocument = gql`
@@ -3663,6 +3693,60 @@ export type GetAllGroupsLazyQueryHookResult = ReturnType<typeof useGetAllGroupsL
 export type GetAllGroupsQueryResult = Apollo.QueryResult<
   GetAllGroupsQuery,
   GetAllGroupsQueryVariables
+>
+export const GetActivePlatformFeeDocument = gql`
+  query GetActivePlatformFee {
+    activePlatformFee {
+      ...PlatformFeeDetails
+    }
+  }
+  ${PlatformFeeDetailsFragmentDoc}
+`
+
+/**
+ * __useGetActivePlatformFeeQuery__
+ *
+ * To run a query within a React component, call `useGetActivePlatformFeeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetActivePlatformFeeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetActivePlatformFeeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetActivePlatformFeeQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetActivePlatformFeeQuery,
+    GetActivePlatformFeeQueryVariables
+  >,
+) {
+  return Apollo.useQuery<GetActivePlatformFeeQuery, GetActivePlatformFeeQueryVariables>(
+    GetActivePlatformFeeDocument,
+    baseOptions,
+  )
+}
+export function useGetActivePlatformFeeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetActivePlatformFeeQuery,
+    GetActivePlatformFeeQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<GetActivePlatformFeeQuery, GetActivePlatformFeeQueryVariables>(
+    GetActivePlatformFeeDocument,
+    baseOptions,
+  )
+}
+export type GetActivePlatformFeeQueryHookResult = ReturnType<typeof useGetActivePlatformFeeQuery>
+export type GetActivePlatformFeeLazyQueryHookResult = ReturnType<
+  typeof useGetActivePlatformFeeLazyQuery
+>
+export type GetActivePlatformFeeQueryResult = Apollo.QueryResult<
+  GetActivePlatformFeeQuery,
+  GetActivePlatformFeeQueryVariables
 >
 export const GetAsyncOperationStatusDocument = gql`
   query GetAsyncOperationStatus($input: AsyncOperationStatusInput!) {

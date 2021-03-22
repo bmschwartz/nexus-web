@@ -15,7 +15,7 @@ export interface MemberSubscriptionListProps {
   isGroupMember: boolean
   selectedOptionId?: string
   subscriptionInactive?: boolean
-  onSelect: (optionId: string, onFinish: () => void) => void
+  onSelect: (subscriptionOption: GroupSubscription, onFinish: () => void) => void
 }
 
 export const MemberSubscriptionList = ({

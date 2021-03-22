@@ -1,0 +1,7 @@
+fragment PlatformFeeDetails on PlatformFee {
+  id
+  price
+  active
+  createdAt
+  updatedAt
+}

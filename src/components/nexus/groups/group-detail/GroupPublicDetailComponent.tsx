@@ -3,6 +3,8 @@ import { notification } from 'antd'
 
 import { Group } from 'types/group'
 import * as apollo from 'services/apollo'
+import { GroupSubscription } from 'types/subscription'
+
 /* eslint-disable */
 import useScript from '../../hooks'
 import { GroupReadOnlyProfile } from './GroupReadOnlyProfile'
@@ -17,12 +19,12 @@ export const GroupPublicDetailComponent = ({ group }: GroupPublicDetailComponent
   useScript(process.env.REACT_APP_BTCPAY_SCRIPT_URL || '')
 
   // eslint-disable-next-line no-unused-vars
-  const onClickJoinGroup = async (subscriptionOptionId: string, onFinish: () => void) => {
+  const onClickJoinGroup = async (subscriptionOption: GroupSubscription, onFinish: () => void) => {
     const groupId = group.id
 
     const { membershipId, error: joinGroupError } = await apollo.joinGroup({
       groupId,
-      subscriptionOptionId,
+      subscriptionOptionId: subscriptionOption.id,
     })
 
     if (!membershipId) {
