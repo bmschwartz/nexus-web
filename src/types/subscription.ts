@@ -16,9 +16,9 @@ export function convertRemoteSubscriptionOption(remoteOption: any): GroupSubscri
 export interface SubscriptionInvoice {
   id: string
   email: string
-  btcPaid: number
-  btcPrice: number
   usdPrice: number
+  btcPaid?: number | null
+  btcPrice?: number | null
 
   status: InvoiceStatus | null
   token?: string | null

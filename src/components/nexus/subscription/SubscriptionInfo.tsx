@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Alert, Button, Modal, notification } from 'antd'
+import { Alert, Modal, notification } from 'antd'
 import * as dotenv from 'dotenv'
 
 /* eslint-disable */
@@ -11,6 +11,7 @@ import { MemberSubscriptionList } from './MemberSubscriptionList'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { PaymentConfirmationModalContent } from './PaymentConfirmationModalContent'
 import { useGetActivePlatformFeeQuery } from '../../../graphql'
+import { PendingInvoiceComponent } from './PendingInvoiceComponent'
 /* eslint-enable */
 
 dotenv.config()
@@ -27,7 +28,6 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
 
   const { subscription } = membership
   const { pendingInvoice } = subscription
-  const currentInvoiceStatus = pendingInvoice?.status
 
   const openInvoice = (invoiceId?: string | null, onFinish?: () => void) => {
     if (!invoiceId) {
@@ -123,75 +123,56 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
     })
   }
 
+  const showSubscriptionExpired = () => {
+    if (pendingInvoice) {
+      return false
+    }
+    return subscription.endDate && new Date(subscription.endDate) < new Date()
+  }
+
+  const showSubscriptionOptions = () => {
+    if (!pendingInvoice) {
+      return true
+    }
+    const { status } = pendingInvoice
+    return status === InvoiceStatus.Expired || status === InvoiceStatus.Invalid
+  }
+
   return (
     <>
-      {subscription.active ? (
+      {showSubscriptionExpired() && (
+        <div className="row mb-3">
+          <div className="col-lg-6 col-md-6">
+            <Alert
+              message="Subscription Expired"
+              description="Reactivate your subscription"
+              type="error"
+              showIcon
+            />
+          </div>
+        </div>
+      )}
+      {subscription.active && (
         <>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
             <strong>Subscription expiring in {subscription.endDate} days</strong>
           </div>
         </>
-      ) : (
-        <>
-          {currentInvoiceStatus === InvoiceStatus.Paid ||
-          currentInvoiceStatus === InvoiceStatus.Confirmed ||
-          currentInvoiceStatus === InvoiceStatus.New ? (
-            <>
-              {currentInvoiceStatus !== InvoiceStatus.New ? (
-                <div className="row mb-3">
-                  <div className="col-lg-6 col-md-6">
-                    <Alert
-                      message="Received Payment"
-                      description="Waiting for more confirmations"
-                      type="success"
-                      showIcon
-                    />
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="row mb-3">
-                    <div className="col-lg-6 col-md-6">
-                      <Alert
-                        message="Payment Not on Blockchain"
-                        description="This may take 10 to 15 minutes after sending funds"
-                        type="info"
-                        showIcon
-                      />
-                    </div>
-                  </div>
-                  <Button type="primary" onClick={() => openInvoice(pendingInvoice?.remoteId)}>
-                    Reopen Invoice
-                  </Button>
-                </>
-              )}
-            </>
-          ) : (
-            <div>
-              <div className="row mb-3">
-                <div className="col-lg-6 col-md-6">
-                  {(pendingInvoice?.status === InvoiceStatus.Expired ||
-                    pendingInvoice?.status === InvoiceStatus.Invalid) && (
-                    <Alert
-                      message={`Payment ${pendingInvoice.status}`}
-                      description="Click Make Payment or Change Plan"
-                      type="error"
-                      showIcon
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </>
       )}
-      <MemberSubscriptionList
-        isGroupMember
-        groupId={membership.groupId}
-        subscriptionInactive={!subscription.active}
-        selectedOptionId={subscription.groupSubscriptionId}
-        onSelect={onClickSubscriptionOption}
-      />
+
+      {pendingInvoice && (
+        <PendingInvoiceComponent invoice={pendingInvoice} openInvoice={openInvoice} />
+      )}
+
+      {showSubscriptionOptions() && (
+        <MemberSubscriptionList
+          isGroupMember
+          groupId={membership.groupId}
+          subscriptionInactive={!subscription.active}
+          selectedOptionId={subscription.groupSubscriptionId}
+          onSelect={onClickSubscriptionOption}
+        />
+      )}
     </>
   )
 }

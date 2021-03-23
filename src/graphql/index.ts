@@ -300,8 +300,8 @@ export type SubscriptionInvoice = {
   __typename?: 'SubscriptionInvoice'
   id: Scalars['ID']
   email: Scalars['String']
-  btcPaid: Scalars['Float']
-  btcPrice: Scalars['Float']
+  btcPaid?: Maybe<Scalars['Float']>
+  btcPrice?: Maybe<Scalars['Float']>
   usdPrice: Scalars['Float']
   status: InvoiceStatus
   subscription: MemberSubscription

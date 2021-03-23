@@ -390,8 +390,8 @@ type SignUpResponse {
 }
 
 type SubscriptionInvoice {
-  btcPaid: Float!
-  btcPrice: Float!
+  btcPaid: Float
+  btcPrice: Float
   createdAt: DateTime!
   email: String!
   expiresAt: DateTime
