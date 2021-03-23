@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { Alert, Button, Modal, notification } from 'antd'
 import * as dotenv from 'dotenv'
 
@@ -21,6 +21,8 @@ interface SubscriptionInfoProps {
 
 export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
   useScript(process.env.REACT_APP_BTCPAY_SCRIPT_URL || '')
+  const [cancelingSubscription, setCancelingSubscription] = useState<boolean>(false)
+  const [reactivatingSubscription, setReactivatingSubscription] = useState<boolean>(false)
   const { data: platformFeeData } = useGetActivePlatformFeeQuery({
     fetchPolicy: 'cache-and-network',
   })
@@ -31,7 +33,51 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
   const currentInvoiceStatus = pendingInvoice?.status
 
   const onClickActivateSubscription = async () => {
-    await apollo.activateMemberSubscription({ subscriptionId: subscription.id })
+    setReactivatingSubscription(true)
+
+    const { error } = await apollo.activateMemberSubscription({ subscriptionId: subscription.id })
+
+    if (error) {
+      notification.error({
+        message: 'Reactivate Subscription',
+        description: error,
+        duration: 3, // seconds
+      })
+      setReactivatingSubscription(false)
+    } else {
+      notification.success({
+        message: 'Reactivated Subscription',
+        duration: 1.5,
+        onClose: () => {
+          setReactivatingSubscription(false)
+          window.location.reload()
+        },
+      })
+    }
+  }
+
+  const onClickCancelSubscription = async () => {
+    setCancelingSubscription(true)
+
+    const { error } = await apollo.cancelMemberSubscription({ subscriptionId: subscription.id })
+
+    if (error) {
+      notification.error({
+        message: 'Cancel Subscription',
+        description: error,
+        duration: 3, // seconds
+      })
+      setCancelingSubscription(false)
+    } else {
+      notification.success({
+        message: 'Canceled Subscription',
+        duration: 1.5,
+        onClose: () => {
+          setCancelingSubscription(false)
+          window.location.reload()
+        },
+      })
+    }
   }
 
   const openInvoice = (invoiceId?: string | null, onFinish?: () => void) => {
@@ -128,10 +174,6 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
     })
   }
 
-  const onClickCancelSubscription = async () => {
-    await apollo.cancelMemberSubscription({ subscriptionId: subscription.id })
-  }
-
   return (
     <>
       {subscription.active ? (
@@ -156,6 +198,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
             <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
               <Button
                 danger
+                loading={cancelingSubscription}
                 disabled={!subscription.active || !subscription.recurring}
                 onClick={() => onClickCancelSubscription()}
               >
@@ -171,6 +214,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
               <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
                 <Button
                   type="primary"
+                  loading={reactivatingSubscription}
                   disabled={!subscription.active && !subscription.recurring}
                   onClick={() => onClickActivateSubscription()}
                 >
@@ -190,7 +234,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
                 <div className="row mb-3">
                   <div className="col-lg-6 col-md-6">
                     <Alert
-                      message="Payment Found"
+                      message="Received Payment"
                       description="Waiting for more confirmations"
                       type="success"
                       showIcon
