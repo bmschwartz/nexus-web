@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { Alert, Button, Modal, notification } from 'antd'
 import * as dotenv from 'dotenv'
 
@@ -21,64 +21,13 @@ interface SubscriptionInfoProps {
 
 export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
   useScript(process.env.REACT_APP_BTCPAY_SCRIPT_URL || '')
-  const [cancelingSubscription, setCancelingSubscription] = useState<boolean>(false)
-  const [reactivatingSubscription, setReactivatingSubscription] = useState<boolean>(false)
   const { data: platformFeeData } = useGetActivePlatformFeeQuery({
     fetchPolicy: 'cache-and-network',
   })
 
   const { subscription } = membership
   const { pendingInvoice } = subscription
-  console.log(pendingInvoice)
   const currentInvoiceStatus = pendingInvoice?.status
-
-  const onClickActivateSubscription = async () => {
-    setReactivatingSubscription(true)
-
-    const { error } = await apollo.activateMemberSubscription({ subscriptionId: subscription.id })
-
-    if (error) {
-      notification.error({
-        message: 'Reactivate Subscription',
-        description: error,
-        duration: 3, // seconds
-      })
-      setReactivatingSubscription(false)
-    } else {
-      notification.success({
-        message: 'Reactivated Subscription',
-        duration: 1.5,
-        onClose: () => {
-          setReactivatingSubscription(false)
-          window.location.reload()
-        },
-      })
-    }
-  }
-
-  const onClickCancelSubscription = async () => {
-    setCancelingSubscription(true)
-
-    const { error } = await apollo.cancelMemberSubscription({ subscriptionId: subscription.id })
-
-    if (error) {
-      notification.error({
-        message: 'Cancel Subscription',
-        description: error,
-        duration: 3, // seconds
-      })
-      setCancelingSubscription(false)
-    } else {
-      notification.success({
-        message: 'Canceled Subscription',
-        duration: 1.5,
-        onClose: () => {
-          setCancelingSubscription(false)
-          window.location.reload()
-        },
-      })
-    }
-  }
 
   const openInvoice = (invoiceId?: string | null, onFinish?: () => void) => {
     if (!invoiceId) {
@@ -179,50 +128,8 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
       {subscription.active ? (
         <>
           <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Active</strong>
-            {subscription.active ? 'Yes' : 'No'}
+            <strong>Subscription expiring in {subscription.endDate} days</strong>
           </div>
-          <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Auto Renew</strong>
-            {subscription.recurring ? 'Yes' : 'No'}
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">Start Date</strong>
-            {subscription.startDate}
-          </div>
-          <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-            <strong className="mr-3">End Date</strong>
-            {subscription.endDate}
-          </div>
-          {subscription.active && subscription.recurring && (
-            <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-              <Button
-                danger
-                loading={cancelingSubscription}
-                disabled={!subscription.active || !subscription.recurring}
-                onClick={() => onClickCancelSubscription()}
-              >
-                Cancel Subscription
-              </Button>
-            </div>
-          )}
-          {subscription.active && !subscription.recurring && (
-            <>
-              <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-                <strong className="mr-3 font-italic">-- Subscription will not Renew --</strong>
-              </div>
-              <div className="d-flex flex-nowrap align-items-center mt-3 pb-3 pl-4 pr-4">
-                <Button
-                  type="primary"
-                  loading={reactivatingSubscription}
-                  disabled={!subscription.active && !subscription.recurring}
-                  onClick={() => onClickActivateSubscription()}
-                >
-                  Reactivate Subscription
-                </Button>
-              </div>
-            </>
-          )}
         </>
       ) : (
         <>
@@ -274,17 +181,17 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
                   )}
                 </div>
               </div>
-              <MemberSubscriptionList
-                isGroupMember
-                subscriptionInactive
-                groupId={membership.groupId}
-                selectedOptionId={subscription.groupSubscriptionId}
-                onSelect={onClickSubscriptionOption}
-              />
             </div>
           )}
         </>
       )}
+      <MemberSubscriptionList
+        isGroupMember
+        groupId={membership.groupId}
+        subscriptionInactive={!subscription.active}
+        selectedOptionId={subscription.groupSubscriptionId}
+        onSelect={onClickSubscriptionOption}
+      />
     </>
   )
 }

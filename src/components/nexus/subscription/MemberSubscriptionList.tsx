@@ -31,7 +31,11 @@ export const MemberSubscriptionList = ({
   })
 
   const isPaymentButton = (optionId: string) => {
-    return isSelectedOption(optionId) && !!subscriptionInactive
+    return isSelectedOption(optionId)
+  }
+
+  const isExtendSubscriptionButton = (optionId: string) => {
+    return isPaymentButton(optionId) && !subscriptionInactive
   }
 
   const getOptionButtonText = (optionId: string) => {
@@ -43,6 +47,9 @@ export const MemberSubscriptionList = ({
     }
     if (!!selectedOptionId && optionId !== selectedOptionId) {
       return 'Change Plan'
+    }
+    if (isExtendSubscriptionButton(optionId)) {
+      return 'Extend Subscription'
     }
     if (isPaymentButton(optionId)) {
       return 'Make Payment'
