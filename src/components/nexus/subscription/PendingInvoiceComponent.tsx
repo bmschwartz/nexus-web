@@ -47,12 +47,7 @@ export const PendingInvoiceComponent: FC<PendingInvoiceComponentProps> = ({
         <div>
           <div className="row mb-3">
             <div className="col-lg-6 col-md-6">
-              <Alert
-                message={`Payment ${status}`}
-                description="Click Make Payment or Change Plan"
-                type="error"
-                showIcon
-              />
+              <Alert message={`Payment ${status}`} type="error" showIcon closable />
             </div>
           </div>
         </div>
