@@ -20,15 +20,28 @@ import { MemberExchanges, MemberExchangesTabState } from './MemberExchanges'
 import { GroupEditProfile } from './GroupEditProfile'
 import { GroupRequests } from './GroupRequests'
 import { GroupMembers, GroupMembersTabState } from './GroupMembers'
+import { useParams } from 'react-router-dom'
 
 /* eslint-enable */
 
 interface GroupDetailCardProps {
   group: Group
+  page?: string
   myMembership: Membership
 }
 
-export const GroupMemberDetailComponent: FC<GroupDetailCardProps> = ({ group, myMembership }) => {
+interface RouteParams {
+  groupId: string
+  orderId?: string
+}
+
+export const GroupMemberDetailComponent: FC<GroupDetailCardProps> = ({
+  group,
+  myMembership,
+  page,
+}) => {
+  const { groupId }: RouteParams = useParams()
+  console.log(groupId, page)
   const menuTabs: Tab[] = availableTabs(myMembership)
   const accessibleTabKeys = menuTabs.map(menuTab => menuTab.key)
 

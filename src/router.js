@@ -61,26 +61,41 @@ const routes = [
   {
     exact: true,
     path: '/groups/:groupId/dashboard',
+    extra: {
+      page: 'dashboard',
+    },
     Component: lazy(() => import('pages/groups/group-detail')),
   },
   {
     exact: true,
     path: '/groups/:groupId/orders',
+    extra: {
+      page: 'orders',
+    },
     Component: lazy(() => import('pages/groups/group-detail')),
   },
   {
     exact: true,
     path: '/groups/:groupId/positions',
+    extra: {
+      page: 'positions',
+    },
     Component: lazy(() => import('pages/groups/group-detail')),
   },
   {
     exact: true,
     path: '/groups/:groupId/exchanges',
+    extra: {
+      page: 'exchanges',
+    },
     Component: lazy(() => import('pages/groups/group-detail')),
   },
   {
     exact: true,
     path: '/groups/:groupId/subscription',
+    extra: {
+      page: 'subscription',
+    },
     Component: lazy(() => import('pages/groups/group-detail')),
   },
 
@@ -148,7 +163,7 @@ const Router = ({ history, routerAnimation }) => {
                   >
                     <Switch location={location}>
                       <Route exact path="/" render={redirectFromSiteRoot} />
-                      {routes.map(({ path, Component, exact }) => (
+                      {routes.map(({ path, Component, exact, extra }) => (
                         <Route
                           path={path}
                           key={path}
@@ -157,7 +172,7 @@ const Router = ({ history, routerAnimation }) => {
                             return (
                               <div className={routerAnimation}>
                                 <Suspense fallback={null}>
-                                  <Component />
+                                  {extra ? <Component {...extra} /> : <Component />}
                                 </Suspense>
                               </div>
                             )

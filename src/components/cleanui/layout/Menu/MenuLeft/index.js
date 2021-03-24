@@ -50,7 +50,7 @@ const MenuLeft = ({
   const [openedKeys, setOpenedKeys] = useState(store.get('app.menu.openedKeys') || [])
   const { data: myMembershipData } = useGetMyMembershipQuery({
     fetchPolicy: 'cache-and-network',
-    variables: { input: { groupId: selectedGroupId(pathname) } },
+    variables: { input: { groupId: selectedGroupId(pathname) ?? '' } },
   })
 
   const membershipId = myMembershipData?.myMembership.id

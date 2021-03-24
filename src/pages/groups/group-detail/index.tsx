@@ -1,17 +1,18 @@
 import React, { FC, ReactNode } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { Spin } from 'antd'
 /* eslint-disable */
+import { transformGroupData } from 'types/group'
+import { transformMembershipData } from 'types/membership'
 import { useGetGroupQuery, useGetMyMembershipQuery } from '../../../graphql/index'
 import { GroupDetailHeader } from 'components/nexus/groups/group-detail/GroupDetailHeader'
 import { GroupMemberDetailComponent } from 'components/nexus/groups/group-detail/GroupMemberDetailComponent'
-import { transformMembershipData } from 'types/membership'
-import { transformGroupData } from 'types/group'
 import { GroupPublicDetailComponent } from '../../../components/nexus/groups/group-detail/GroupPublicDetailComponent'
 /* eslint-enable */
 
 interface GroupDetailProps {
+  page?: string
   children?: ReactNode
 }
 
@@ -19,10 +20,8 @@ interface RouteParams {
   groupId: string
 }
 
-const GroupDetailPage: FC<GroupDetailProps> = () => {
+const GroupDetailPage: FC<GroupDetailProps> = ({ page }) => {
   const { groupId }: RouteParams = useParams()
-  const location = useLocation()
-  console.log(location)
   const { data: getGroupData, loading: getGroupLoading, error: getGroupError } = useGetGroupQuery({
     fetchPolicy: 'cache-and-network',
     variables: { input: { groupId } },
@@ -57,7 +56,11 @@ const GroupDetailPage: FC<GroupDetailProps> = () => {
       {getGroupError && <strong>Error loading group {getGroupError.message}</strong>}
       <GroupDetailHeader className="mb-3" group={transformedGroup} />
       {transformedMembership ? (
-        <GroupMemberDetailComponent group={transformedGroup} myMembership={transformedMembership} />
+        <GroupMemberDetailComponent
+          page={page}
+          group={transformedGroup}
+          myMembership={transformedMembership}
+        />
       ) : (
         <GroupPublicDetailComponent group={transformedGroup} />
       )}
