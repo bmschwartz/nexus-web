@@ -1,5 +1,4 @@
 import React, { FC, useState } from 'react'
-import { Tabs } from 'antd'
 import { StringParam, useQueryParam, withDefault } from 'use-query-params'
 
 /* eslint-disable */
@@ -70,13 +69,6 @@ export const GroupMemberDetailComponent: FC<GroupDetailCardProps> = ({ group, my
     <div className="row">
       <div className="col-xl-12 col-lg-12">
         <div>
-          <div className="card-header card-header-flex flex-column">
-            <Tabs activeKey={tabKey} className="mr-auto kit-tabs-bold" onChange={changeTab}>
-              {menuTabs.map(({ key, name }: Tab) => {
-                return <Tabs.TabPane key={key} tab={name} />
-              })}
-            </Tabs>
-          </div>
           <div className="card-body">
             {!accessibleTabKeys.includes(tabKey) ? (
               <p>No access!</p>

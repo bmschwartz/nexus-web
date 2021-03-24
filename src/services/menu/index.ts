@@ -1,9 +1,15 @@
-const GROUP_DETAIL_PAGES = [
-  ['dashboard', 'Dashboard'],
-  ['orders', 'Orders'],
-  ['positions', 'Positions'],
-  ['exchanges', 'Exchanges'],
-  ['subscription', 'Subscription'],
+interface GroupDetailPageItem {
+  page: string
+  title: string
+  memberOnly: boolean
+}
+
+const GROUP_DETAIL_PAGES: GroupDetailPageItem[] = [
+  { page: 'dashboard', title: 'Dashboard', memberOnly: false },
+  { page: 'orders', title: 'Orders', memberOnly: true },
+  { page: 'positions', title: 'Positions', memberOnly: true },
+  { page: 'exchanges', title: 'Exchanges', memberOnly: true },
+  { page: 'subscription', title: 'Subscription', memberOnly: true },
 ]
 
 const GROUP_DETAIL_MENU_ICON_MAP = {
@@ -14,47 +20,49 @@ const GROUP_DETAIL_MENU_ICON_MAP = {
   subscription: 'fe fe-dollar-sign',
 }
 
-const menuItemForSelectedGroup = (groupId, page, title) => {
+const menuItemForSelectedGroup = (groupId: string, pageItem: GroupDetailPageItem) => {
+  const { title, page, memberOnly } = pageItem
   return {
     title,
     key: `${groupId}${page}`,
     icon: GROUP_DETAIL_MENU_ICON_MAP[page],
     url: `/groups/${groupId}/${page}`,
+    memberOnly,
     memberPage: true,
     ownerTraderPage: false,
-    groupDetailPage: true,
   }
 }
 
-const groupDetailMenuItems = groupId => {
-  const detailItems = GROUP_DETAIL_PAGES.map(([page, title]) =>
-    menuItemForSelectedGroup(groupId, page, title),
-  )
-
-  const backButton = {
-    title: 'Back to Groups',
-    key: 'backToGroups',
-    icon: 'fe fe-corner-up-left',
-    url: '/groups',
-    backButton: true,
-    memberPage: true,
-    ownerTraderPage: false,
-    groupDetailPage: false,
-  }
-  const groupDetailCategory = {
-    title: 'Group Detail',
-    category: true,
-    memberPage: true,
-    ownerTraderPage: false,
-    groupDetailPage: true,
-  }
-
-  return [backButton, groupDetailCategory, ...detailItems]
+const backToGroupsButton = {
+  title: 'Back to Groups',
+  key: 'backToGroups',
+  icon: 'fe fe-corner-up-left',
+  url: '/groups',
+  backButton: true,
+  memberPage: true,
+  memberOnly: false,
+  ownerTraderPage: false,
 }
 
-export default function getMenuData(groupId) {
+const groupDetailCategory = {
+  title: 'Group Detail',
+  category: true,
+  memberPage: true,
+  memberOnly: false,
+  ownerTraderPage: false,
+}
+
+const groupDetailMenuItems = (groupId: string, isMember: boolean) => {
+  const detailMenuItems = GROUP_DETAIL_PAGES.map(pageItem =>
+    menuItemForSelectedGroup(groupId, pageItem),
+  ).filter(page => (page.memberOnly ? isMember : true))
+
+  return [backToGroupsButton, groupDetailCategory, ...detailMenuItems]
+}
+
+export function getMenuData(groupId: string, membershipId: string) {
   if (groupId) {
-    return groupDetailMenuItems(groupId)
+    return groupDetailMenuItems(groupId, !!membershipId)
   }
 
   return [

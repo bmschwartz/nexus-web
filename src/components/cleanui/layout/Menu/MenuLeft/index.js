@@ -9,8 +9,9 @@ import { find } from 'lodash'
 import style from './style.module.scss'
 
 /* eslint-disable */
-import getMenuData from '../../../../../services/menu'
 import * as apollo from '../../../../../services/apollo'
+import { getMenuData } from '../../../../../services/menu'
+import { useGetMyMembershipQuery } from '../../../../../graphql'
 /* eslint-enable */
 
 const mapStateToProps = ({ settings, user }) => ({
@@ -31,7 +32,7 @@ const selectedGroupId = pathname => {
   return pathname.replace('/groups/', '').split('/')[0]
 }
 
-const menuData = pathname => getMenuData(selectedGroupId(pathname))
+const menuData = (pathname, membershipId) => getMenuData(selectedGroupId(pathname), membershipId)
 
 const MenuLeft = ({
   dispatch,
@@ -47,11 +48,17 @@ const MenuLeft = ({
 }) => {
   const [selectedKeys, setSelectedKeys] = useState(store.get('app.menu.selectedKeys') || [])
   const [openedKeys, setOpenedKeys] = useState(store.get('app.menu.openedKeys') || [])
+  const { data: myMembershipData } = useGetMyMembershipQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: { input: { groupId: selectedGroupId(pathname) } },
+  })
+
+  const membershipId = myMembershipData?.myMembership.id
 
   useEffect(() => {
     applySelectedKeys()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  }, [pathname, membershipId])
 
   const applySelectedKeys = () => {
     const flattenItems = (items, key) =>
@@ -62,7 +69,10 @@ const MenuLeft = ({
         }
         return flattenedItems
       }, [])
-    const selectedItem = find(flattenItems(menuData(pathname), 'children'), ['url', pathname])
+    const selectedItem = find(flattenItems(menuData(pathname, membershipId), 'children'), [
+      'url',
+      pathname,
+    ])
     setSelectedKeys(selectedItem ? [selectedItem.key] : [])
   }
 
@@ -145,7 +155,7 @@ const MenuLeft = ({
         return generateItem(menuItem)
       })
 
-    return menuData(pathname).map(menuItem => {
+    return menuData(pathname, membershipId).map(menuItem => {
       if (menuItem.roles && !menuItem.roles.includes(role)) {
         return null
       }

@@ -50,7 +50,7 @@ const GroupTable: FC<GroupTableProps> = ({ groups, memberships, dispatch }) => {
             },
           },
         })
-        history.push(`/groups/${row.id}`)
+        history.push(`/groups/${row.id}/dashboard`)
       },
     }
   }

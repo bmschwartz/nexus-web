@@ -60,7 +60,27 @@ const routes = [
   },
   {
     exact: true,
-    path: '/groups/:groupId',
+    path: '/groups/:groupId/dashboard',
+    Component: lazy(() => import('pages/groups/group-detail')),
+  },
+  {
+    exact: true,
+    path: '/groups/:groupId/orders',
+    Component: lazy(() => import('pages/groups/group-detail')),
+  },
+  {
+    exact: true,
+    path: '/groups/:groupId/positions',
+    Component: lazy(() => import('pages/groups/group-detail')),
+  },
+  {
+    exact: true,
+    path: '/groups/:groupId/exchanges',
+    Component: lazy(() => import('pages/groups/group-detail')),
+  },
+  {
+    exact: true,
+    path: '/groups/:groupId/subscription',
     Component: lazy(() => import('pages/groups/group-detail')),
   },
 

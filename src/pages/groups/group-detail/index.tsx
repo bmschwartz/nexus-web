@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { Spin } from 'antd'
 /* eslint-disable */
@@ -21,6 +21,8 @@ interface RouteParams {
 
 const GroupDetailPage: FC<GroupDetailProps> = () => {
   const { groupId }: RouteParams = useParams()
+  const location = useLocation()
+  console.log(location)
   const { data: getGroupData, loading: getGroupLoading, error: getGroupError } = useGetGroupQuery({
     fetchPolicy: 'cache-and-network',
     variables: { input: { groupId } },
