@@ -1,5 +1,5 @@
 import React from 'react'
-import { Spin } from 'antd'
+import { PageHeader, Spin } from 'antd'
 import { Helmet } from 'react-helmet'
 import * as apollo from 'services/apollo'
 import { Redirect } from 'react-router-dom'
@@ -26,7 +26,11 @@ const Profile = () => {
   return (
     <div>
       <Helmet title="Profile" />
-      <h3>Profile</h3>
+      <div className="card-header card-header-flex mb-3">
+        <div className="d-flex flex-column justify-content-center mr-auto">
+          <PageHeader className="site-page-header" title="Profile" backIcon={false} />
+        </div>
+      </div>
       <GroupEditProfile group={group} />
     </div>
   )
