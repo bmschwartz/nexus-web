@@ -33,16 +33,22 @@ const menuItemForSelectedGroup = (groupId: string, pageItem: GroupDetailPageItem
   }
 }
 
-const backToGroupsButton = {
-  title: 'Back to Groups',
-  key: 'backToGroups',
+const backToButton = (
+  page: string,
+  url: string,
+  memberPage = true,
+  memberOnly = false,
+  ownerTraderPage = true,
+) => ({
+  title: `Back to ${page}`,
+  key: `backTo${page}`,
   icon: 'fe fe-corner-up-left',
-  url: '/groups',
+  url,
   backButton: true,
-  memberPage: true,
-  memberOnly: false,
-  ownerTraderPage: false,
-}
+  memberPage,
+  memberOnly,
+  ownerTraderPage,
+})
 
 const groupDetailCategory = {
   title: 'Group Detail',
@@ -57,7 +63,7 @@ const groupDetailMenuItems = (groupId: string, isMember: boolean) => {
     menuItemForSelectedGroup(groupId, pageItem),
   ).filter(page => (page.memberOnly ? isMember : true))
 
-  return [backToGroupsButton, groupDetailCategory, ...detailMenuItems]
+  return [backToButton('Groups', '/groups'), groupDetailCategory, ...detailMenuItems]
 }
 
 export function getMenuData(groupId: string, membershipId: string) {
