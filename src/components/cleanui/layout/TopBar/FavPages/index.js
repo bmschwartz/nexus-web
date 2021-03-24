@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { injectIntl } from 'react-intl'
 import { Dropdown, Input, Tooltip, message } from 'antd'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import store from 'store'
 import style from './style.module.scss'
-
-const mapStateToProps = ({ menu }) => ({
-  menuData: menu.menuData,
-})
 
 const FavPages = ({ menuData = [], intl: { formatMessage } }) => {
   const [searchText, setSearchText] = useState('')
@@ -141,4 +136,4 @@ const FavPages = ({ menuData = [], intl: { formatMessage } }) => {
   )
 }
 
-export default injectIntl(connect(mapStateToProps)(FavPages))
+export default injectIntl(FavPages)

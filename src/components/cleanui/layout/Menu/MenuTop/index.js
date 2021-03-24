@@ -7,21 +7,20 @@ import store from 'store'
 import { find } from 'lodash'
 import style from './style.module.scss'
 
-const mapStateToProps = ({ menu, settings, user }) => ({
-  menuData: menu.menuData,
+const mapStateToProps = ({ settings, user }) => ({
   logo: settings.logo,
   menuColor: settings.menuColor,
   role: user.role,
 })
 
 const MenuTop = ({
-  menuData = [],
   location: { pathname },
 
   menuColor,
   role,
 }) => {
   const [selectedKeys, setSelectedKeys] = useState(store.get('app.menu.selectedKeys') || [])
+  const menuData = []
 
   useEffect(() => {
     applySelectedKeys()

@@ -9,11 +9,11 @@ import { find } from 'lodash'
 import style from './style.module.scss'
 
 /* eslint-disable */
+import getMenuData from '../../../../../services/menu'
 import * as apollo from '../../../../../services/apollo'
 /* eslint-enable */
 
-const mapStateToProps = ({ menu, settings, user }) => ({
-  menuData: menu.menuData,
+const mapStateToProps = ({ settings, user }) => ({
   isMenuCollapsed: settings.isMenuCollapsed,
   isMobileView: settings.isMobileView,
   isMenuUnfixed: settings.isMenuUnfixed,
@@ -24,9 +24,17 @@ const mapStateToProps = ({ menu, settings, user }) => ({
   role: user.role,
 })
 
+const selectedGroupId = pathname => {
+  if (!pathname.startsWith('/groups/')) {
+    return null
+  }
+  return pathname.replace('/groups/', '').split('/')[0]
+}
+
+const menuData = pathname => getMenuData(selectedGroupId(pathname))
+
 const MenuLeft = ({
   dispatch,
-  menuData = [],
   location: { pathname },
 
   isMenuCollapsed,
@@ -43,7 +51,7 @@ const MenuLeft = ({
   useEffect(() => {
     applySelectedKeys()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, menuData])
+  }, [pathname])
 
   const applySelectedKeys = () => {
     const flattenItems = (items, key) =>
@@ -54,7 +62,7 @@ const MenuLeft = ({
         }
         return flattenedItems
       }, [])
-    const selectedItem = find(flattenItems(menuData, 'children'), ['url', pathname])
+    const selectedItem = find(flattenItems(menuData(pathname), 'children'), ['url', pathname])
     setSelectedKeys(selectedItem ? [selectedItem.key] : [])
   }
 
@@ -85,6 +93,7 @@ const MenuLeft = ({
   const generateMenuItems = () => {
     const generateItem = item => {
       const { key, title, url, icon, disabled, count } = item
+      console.log(item)
       if (item.category) {
         return <Menu.ItemGroup key={Math.random()} title={item.title} />
       }
@@ -136,7 +145,7 @@ const MenuLeft = ({
         return generateItem(menuItem)
       })
 
-    return menuData.map(menuItem => {
+    return menuData(pathname).map(menuItem => {
       if (menuItem.roles && !menuItem.roles.includes(role)) {
         return null
       }

@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, withRouter } from 'react-router-dom'
-import { connect } from 'react-redux'
 import { reduce } from 'lodash'
 import styles from './style.module.scss'
-
-const mapStateToProps = ({ menu }) => ({
-  menuData: menu.menuData,
-})
 
 const Breadcrumbs = props => {
   const [breadcrumbs, setBreadcrumbs] = useState([])
@@ -87,4 +82,4 @@ const Breadcrumbs = props => {
   )
 }
 
-export default withRouter(connect(mapStateToProps)(Breadcrumbs))
+export default withRouter(Breadcrumbs)

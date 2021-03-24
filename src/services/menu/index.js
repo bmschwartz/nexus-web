@@ -1,4 +1,63 @@
-export default async function getMenuData() {
+const GROUP_DETAIL_PAGES = [
+  ['dashboard', 'Dashboard'],
+  ['orders', 'Orders'],
+  ['positions', 'Positions'],
+  ['exchanges', 'Exchanges'],
+  ['subscription', 'Subscription'],
+]
+
+const GROUP_DETAIL_MENU_ICON_MAP = {
+  dashboard: 'fe fe-home',
+  orders: 'fe fe-book-open',
+  positions: 'fe fe-layers',
+  exchanges: 'fe fe-server',
+  subscription: 'fe fe-dollar-sign',
+}
+
+const menuItemForSelectedGroup = (groupId, page, title) => {
+  return {
+    title,
+    key: `${groupId}${page}`,
+    icon: GROUP_DETAIL_MENU_ICON_MAP[page],
+    url: `/groups/${groupId}/${page}`,
+    memberPage: true,
+    ownerTraderPage: false,
+    groupDetailPage: true,
+  }
+}
+
+const groupDetailMenuItems = groupId => {
+  const detailItems = GROUP_DETAIL_PAGES.map(([page, title]) =>
+    menuItemForSelectedGroup(groupId, page, title),
+  )
+
+  const backButton = {
+    title: 'Back to Groups',
+    key: 'backToGroups',
+    icon: 'fe fe-corner-up-left',
+    url: '/groups',
+    backButton: true,
+    memberPage: true,
+    ownerTraderPage: false,
+    groupDetailPage: false,
+  }
+  const groupDetailCategory = {
+    title: 'Group Detail',
+    category: true,
+    memberPage: true,
+    ownerTraderPage: false,
+    groupDetailPage: true,
+  }
+
+  console.log([backButton, groupDetailCategory, ...detailItems])
+  return [backButton, groupDetailCategory, ...detailItems]
+}
+
+export default function getMenuData(groupId) {
+  if (groupId) {
+    return groupDetailMenuItems(groupId)
+  }
+
   return [
     {
       title: 'Home',
@@ -43,7 +102,7 @@ export default async function getMenuData() {
     {
       title: 'Groups',
       key: 'groups',
-      icon: 'fe fe-users',
+      icon: 'fe fe-globe',
       url: '/groups',
       memberPage: true,
       ownerTraderPage: false,
