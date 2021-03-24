@@ -3,7 +3,6 @@ import { Formik } from 'formik'
 import { Form, Input, InputNumber, Select, SubmitButton, Transfer } from 'formik-antd'
 import { Divider, Modal, notification, PageHeader, Spin, Tooltip } from 'antd'
 import { TransferItem } from 'antd/lib/transfer'
-import TextArea from 'antd/lib/input/TextArea'
 
 /* Local */
 import { OrderSide, OrderType, StopTriggerType } from 'types/order'
@@ -149,6 +148,7 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
           orderType: OrderType.LIMIT,
           percent: 5,
           leverage: 1,
+          description: '',
           memberSelectionType: selectedMemberSelectionType,
           exchangeAccountIds: [],
           stopOrderType: StopOrderOption.NONE,
@@ -352,7 +352,11 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                     name="stopOrderType"
                     style={{ width: 200 }}
                     size="large"
-                    onChange={handleChange}
+                    onChange={e => {
+                      setFieldValue('stopPrice', null)
+                      setFieldValue('trailingStopPercent', null)
+                      handleChange(e)
+                    }}
                   >
                     {Object.values(StopOrderOption).map(type => (
                       <Select.Option key={type} value={type}>
@@ -488,7 +492,11 @@ export const CreateOrderSetForm: FC<CreateOrderSetFormProps> = ({
                   <strong>Additional</strong>
                 </Divider>
                 <Form.Item name="description" label="Description" className="mb-3">
-                  <TextArea name="description" rows={4} placeholder="Description (optional)" />
+                  <Input.TextArea
+                    name="description"
+                    rows={4}
+                    placeholder="Description (optional)"
+                  />
                 </Form.Item>
 
                 <SubmitButton disabled={submittingOrder} loading={submittingOrder}>

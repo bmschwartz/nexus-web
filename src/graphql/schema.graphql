@@ -85,7 +85,7 @@ type CancelMemberSubscriptionResult {
 
 type CancelOrderResponse {
   error: String
-  operationId: ID
+  success: Boolean!
 }
 
 type CancelOrderSetResult {

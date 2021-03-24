@@ -51,7 +51,9 @@ export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack, ord
 
         if (success) {
           notification.success({
+            duration: 3,
             message: `Canceled order`,
+            onClose: async () => refetchOrder(),
           })
         } else {
           notification.error({
@@ -60,8 +62,6 @@ export const MemberOrderDetail: FC<MemberOrderDetailProps> = ({ onClickBack, ord
             duration: 3, // seconds
           })
         }
-
-        refetchOrder()
       },
       onCancel() {},
     })

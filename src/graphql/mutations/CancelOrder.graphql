@@ -1,6 +1,6 @@
 mutation CancelOrder($input: CancelOrderInput!) {
   cancelOrder(input: $input) {
-    operationId
+    success
     error
   }
 }

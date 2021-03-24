@@ -475,7 +475,7 @@ export type CancelOrderInput = {
 
 export type CancelOrderResponse = {
   __typename?: 'CancelOrderResponse'
-  operationId?: Maybe<Scalars['ID']>
+  success: Scalars['Boolean']
   error?: Maybe<Scalars['String']>
 }
 
@@ -1363,7 +1363,7 @@ export type CancelOrderMutationVariables = Exact<{
 
 export type CancelOrderMutation = { __typename?: 'Mutation' } & {
   cancelOrder?: Maybe<
-    { __typename?: 'CancelOrderResponse' } & Pick<CancelOrderResponse, 'operationId' | 'error'>
+    { __typename?: 'CancelOrderResponse' } & Pick<CancelOrderResponse, 'success' | 'error'>
   >
 }
 
@@ -2408,7 +2408,7 @@ export type CancelMemberSubscriptionMutationOptions = Apollo.BaseMutationOptions
 export const CancelOrderDocument = gql`
   mutation CancelOrder($input: CancelOrderInput!) {
     cancelOrder(input: $input) {
-      operationId
+      success
       error
     }
   }

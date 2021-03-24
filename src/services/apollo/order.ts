@@ -90,15 +90,18 @@ export const cancelOrder = async (input: CancelOrderInput): Promise<CancelOrderR
   const { orderId } = input
 
   try {
-    const {
-      data: { success, error },
-    } = await client.mutate({
+    const { data } = await client.mutate({
       mutation: CancelOrderDocument,
       variables: {
         input: { id: orderId },
       },
     })
 
+    if (!data) {
+      return { success: false, error: 'Could not cancel order' }
+    }
+
+    const { success, error } = data.cancelOrder
     return { success, error }
   } catch (error) {
     return { success: false, error: error.message }
@@ -111,11 +114,7 @@ export const cancelOrderSet = async (
   const { orderSetId, stopOrderTypes } = input
 
   try {
-    const {
-      data: {
-        cancelOrderSet: { success, error },
-      },
-    } = await client.mutate({
+    const { data } = await client.mutate({
       mutation: CancelOrderSetDocument,
       variables: {
         input: {
@@ -124,6 +123,13 @@ export const cancelOrderSet = async (
         },
       },
     })
+
+    if (!data) {
+      return { success: false, error: 'Could not cancel orders' }
+    }
+
+    const { success, error } = data.cancelOrderSet
+
     return { success, error }
   } catch (error) {
     return { success: false, error: error.message }
