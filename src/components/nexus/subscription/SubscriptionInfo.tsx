@@ -183,7 +183,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
       )}
       {subscription.active && (
         <div className="row mb-3">
-          <div className="col-lg-6 col-md-6">
+          <div className="col-lg-6 col-md-12">
             <Alert
               message="Subscription Active"
               description={expirationText}

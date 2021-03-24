@@ -15,6 +15,7 @@ export const GroupReadOnlyProfile = ({ group }: GroupReadOnlyProfileProps) => {
 
   return (
     <div
+      className="pt-3"
       dangerouslySetInnerHTML={{
         __html: marked(groupProfile),
       }}

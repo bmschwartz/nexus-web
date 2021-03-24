@@ -54,7 +54,7 @@ const GroupDetailPage: FC<GroupDetailProps> = ({ page }) => {
     <div>
       <Helmet title="Groups" />
       {getGroupError && <strong>Error loading group {getGroupError.message}</strong>}
-      <GroupDetailHeader className="mb-3" group={transformedGroup} />
+      <GroupDetailHeader group={transformedGroup} />
       {transformedMembership ? (
         <GroupMemberDetailComponent
           page={page}

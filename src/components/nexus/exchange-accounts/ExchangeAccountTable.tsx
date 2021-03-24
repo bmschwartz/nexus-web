@@ -198,22 +198,12 @@ export const ExchangeAccountTable: FC<ExchangeAccountTableProps> = ({
         <div className="d-flex flex-column justify-content-center mr-auto">
           <PageHeader className="site-page-header" title="Exchange Accounts" backIcon={false} />
         </div>
-        {/* {showSuccessNotification &&
-          notification.success({
-            message: 'Finished Account Change',
-          })}
-        {showErrorNotification &&
-          notification.error({
-            message: 'Failed Account Change',
-            description: asyncOperationData?.asyncOperationStatus?.operation.error || '',
-            duration: 3, // seconds
-          })} */}
-        {membership.active && (
+        {membership.subscription.active && (
           <div className="d-flex flex-column justify-content-center">
             <Button
               className="btn btn-primary"
-              disabled={!membership.active || submittingAccountOperation}
-              onClick={() => membership.active && onClickCreate()}
+              disabled={!membership.subscription.active || submittingAccountOperation}
+              onClick={() => membership.subscription.active && onClickCreate()}
             >
               Create Exchange Account
             </Button>

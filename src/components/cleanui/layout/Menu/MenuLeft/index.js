@@ -189,7 +189,7 @@ const MenuLeft = ({
     ? {
         width: leftMenuWidth,
         collapsible: false,
-        collapsed: false,
+        collapsed: true,
         onCollapse,
       }
     : {

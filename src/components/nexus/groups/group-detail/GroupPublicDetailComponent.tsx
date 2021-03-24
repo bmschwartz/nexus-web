@@ -42,7 +42,7 @@ export const GroupPublicDetailComponent = ({ group }: GroupPublicDetailComponent
   }
 
   return (
-    <>
+    <div className="mt-3">
       <MemberSubscriptionList
         groupId={group.id}
         isGroupMember={false}
@@ -53,6 +53,6 @@ export const GroupPublicDetailComponent = ({ group }: GroupPublicDetailComponent
           <GroupReadOnlyProfile group={group} />
         </div>
       </div>
-    </>
+    </div>
   )
 }
