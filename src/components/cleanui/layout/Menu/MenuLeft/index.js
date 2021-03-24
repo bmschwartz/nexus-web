@@ -93,7 +93,7 @@ const MenuLeft = ({
   const generateMenuItems = () => {
     const generateItem = item => {
       const { key, title, url, icon, disabled, count } = item
-      console.log(item)
+
       if (item.category) {
         return <Menu.ItemGroup key={Math.random()} title={item.title} />
       }

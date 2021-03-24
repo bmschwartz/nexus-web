@@ -49,7 +49,6 @@ const groupDetailMenuItems = groupId => {
     groupDetailPage: true,
   }
 
-  console.log([backButton, groupDetailCategory, ...detailItems])
   return [backButton, groupDetailCategory, ...detailItems]
 }
 
