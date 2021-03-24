@@ -25,8 +25,6 @@ const CreateGroupForm = () => {
     { ...defaultSubscriptionOptionItem },
   ])
 
-  console.log(description)
-
   const hasInvalidSubscriptionOption = (subscriptionOptions: SubscriptionOption[]): boolean => {
     return subscriptionOptions
       .map(option => option.fee >= 0 && option.duration >= 0)

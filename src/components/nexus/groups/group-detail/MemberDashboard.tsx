@@ -22,11 +22,10 @@ export const MemberDashboard: FC<MemberDashboardProps> = ({
   return (
     <>
       {!hasActiveSubscription(membership) && (
-        <div className="card">
-          <div className="card-body">
-            <NoActiveSubscription onClickAddSubscription={onClickAddSubscription} />
-          </div>
-        </div>
+        <NoActiveSubscription
+          groupId={membership.groupId}
+          onClickAddSubscription={onClickAddSubscription}
+        />
       )}
       <div className="card">
         <div className="card-body">

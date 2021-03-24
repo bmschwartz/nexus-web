@@ -46,7 +46,10 @@ export const MemberPositions: FC<MemberPositionsProps> = ({
   return (
     <div>
       {!hasActiveSubscription(membership) && (
-        <NoActiveSubscription onClickAddSubscription={onClickAddSubscription} />
+        <NoActiveSubscription
+          groupId={membership.groupId}
+          onClickAddSubscription={onClickAddSubscription}
+        />
       )}
       {shouldShowViewAll() && (
         <MemberPositionsTable membershipId={membership.id} onClickPosition={onClickPosition} />

@@ -90,8 +90,7 @@ export const MyOrdersTable: FC<MyOrdersTableProps> = () => {
 
   const memberships = myOrdersData?.me?.memberships
   const totalCount = memberships?.reduce((total: number, current: any) => {
-    console.log(total, current)
-    return total + 1
+    return total + current
   }, 0)
 
   console.log(memberships, totalCount)

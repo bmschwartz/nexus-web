@@ -1,5 +1,6 @@
 import { Button, Result } from 'antd'
 import React, { FC } from 'react'
+import { Link } from 'react-router-dom'
 
 /* eslint-disable */
 import { Membership } from '../../../types/membership'
@@ -12,20 +13,30 @@ export function hasActiveSubscription(membership: Membership) {
 }
 
 interface NoActiveSubscriptionProps {
+  groupId: string
   onClickAddSubscription: () => void
 }
 
-export const NoActiveSubscription: FC<NoActiveSubscriptionProps> = ({ onClickAddSubscription }) => {
+export const NoActiveSubscription: FC<NoActiveSubscriptionProps> = ({
+  groupId,
+  onClickAddSubscription,
+}) => {
   return (
-    <Result
-      status="warning"
-      title="You do not have an active subscription"
-      extra={
-        <Button type="primary" key="subscription" onClick={onClickAddSubscription}>
-          Go to Subscription
-        </Button>
-      }
-    />
+    <div className="card">
+      <div className="card-body">
+        <Result
+          status="warning"
+          title="You do not have an active subscription"
+          extra={
+            <Link to={`/groups/${groupId}/subscription`}>
+              <Button type="primary" key="subscription" onClick={onClickAddSubscription}>
+                Go to Subscription
+              </Button>
+            </Link>
+          }
+        />
+      </div>
+    </div>
   )
 }
 

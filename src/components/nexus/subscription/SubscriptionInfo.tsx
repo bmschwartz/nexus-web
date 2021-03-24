@@ -73,6 +73,7 @@ export const SubscriptionInfo: FC<SubscriptionInfoProps> = ({ membership }) => {
             title: 'Make a Payment',
             content: error,
             maskClosable: true,
+            afterClose: () => window.location.reload(),
           })
         } else {
           openInvoice(invoiceId, onFinish)

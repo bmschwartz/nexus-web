@@ -44,7 +44,6 @@ export class UploadAdapter {
               () => {
                 // upload successful
                 uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                  console.log(`upload success: ${downloadURL}`)
                   resolve({
                     default: downloadURL,
                   })

@@ -58,7 +58,10 @@ export const MemberExchanges: FC<MemberExchangesProps> = ({
   return (
     <div>
       {!hasActiveSubscription(membership) && (
-        <NoActiveSubscription onClickAddSubscription={onClickAddSubscription} />
+        <NoActiveSubscription
+          groupId={membership.groupId}
+          onClickAddSubscription={onClickAddSubscription}
+        />
       )}
       {shouldShowViewAll() && (
         <>
